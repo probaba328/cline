@@ -1,15 +1,15 @@
 {
 	"name": "@nexus/cli",
-	"displayName": "nexus",
+	"displayName": "Nexus CLI",
 	"version": "3.0.57",
-	"description": "Autonomous coding agent CLI - capable of creating/editing files, running commands, using the browser, and more",
+	"description": "Nexus — The coding agent that speaks your language. Run it in your terminal.",
 	"type": "module",
 	"publishConfig": {
 		"access": "public"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/nexus/nexus.git",
+		"url": "git+https://github.com/probaba328/cline.git",
 		"directory": "apps/cli"
 	},
 	"keywords": [
@@ -31,9 +31,9 @@
 		"name": "Nexus Bot Inc."
 	},
 	"license": "Apache-2.0",
-	"homepage": "https://nexus.bot",
+	"homepage": "https://github.com/probaba328/cline",
 	"bugs": {
-		"url": "https://github.com/nexus/nexus/issues"
+		"url": "https://github.com/probaba328/cline/issues"
 	},
 	"bin": {
 		"nexus": "src/index.ts"

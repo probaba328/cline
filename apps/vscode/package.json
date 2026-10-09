@@ -1,22 +1,22 @@
 {
-	"name": "claude-dev",
+	"name": "nexus",
 	"displayName": "Nexus",
-	"description": "Autonomous coding agent right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
+	"description": "Nexus — The open-source coding agent that speaks your language. Autonomously creates/edits files, runs commands, uses the browser, and more, with your permission every step of the way.",
 	"version": "4.1.14",
 	"icon": "assets/icons/icon.png",
 	"engines": {
 		"vscode": "^1.101.0"
 	},
 	"author": {
-		"name": "Nexus Bot Inc."
+		"name": "Nexus"
 	},
 	"license": "Apache-2.0",
-	"publisher": "saoudrizwan",
+	"publisher": "nexus",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nexus/nexus"
+		"url": "https://github.com/probaba328/cline"
 	},
-	"homepage": "https://nexus.bot",
+	"homepage": "https://github.com/probaba328/cline",
 	"categories": [
 		"AI",
 		"Chat",

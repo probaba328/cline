@@ -5,235 +5,212 @@
 <h1 align="center">Nexus</h1>
 
 <p align="center">
-The open source coding agent in your IDE and terminal.
+  <strong>The coding agent that speaks your language</strong>
+</p>
+
+<p align="center">
+  An open-source AI coding agent for your IDE and terminal — fork of <a href="https://github.com/cline/cline">Cline</a>
 </p>
 
 <div align="center">
 
-<div align="center">
-<table>
-<tbody>
-<td align="center">
-<a href="https://docs.nexus.bot" target="_blank"><strong>Docs</strong></a>
-</td>
-<td align="center">
-<a href="https://discord.gg/nexus" target="_blank"><strong>Discord</strong></a>
-</td>
-<td align="center">
-<a href="https://www.reddit.com/r/nexus/" target="_blank"><strong>r/nexus</strong></a>
-</td>
-<td align="center">
-<a href="https://github.com/nexus/nexus/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>Feature Requests</strong></a>
-</td>
-<td align="center">
-<a href="https://nexus.bot/join-us" target="_blank"><strong>Join us!</strong></a>
-</td>
-</tbody>
-</table>
-</div>
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![GitHub Issues](https://img.shields.io/github/issues/probaba328/cline)](https://github.com/probaba328/cline/issues)
 
-</div>
-
-<br>
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="50%">
-
-### CLI
-
-Run Nexus in your terminal.
-Interactive chat or fully headless
-for CI/CD and scripting.
-
-```
-npm i -g nexus
-```
-
-<a href="./apps/cli/README.md">Learn more</a>
-<br><br>
-
-</td>
-<td align="center" width="50%">
-
-### Kanban
-
-Run many agents in parallel from a
-web-based task board. Each card gets its own
-worktree, auto-commit, and dependency chains.
-
-```
-npm i -g kanban
-```
-
-<a href="https://github.com/nexus/kanban">Learn more</a>
-<br><br>
-
-</td>
-</tr>
-<tr>
-<td align="center" width="50%">
-
-### VS Code Extension
-
-AI coding assistant in your editor.
-Create files, run commands, browse the web,
-and use tools with human-in-the-loop approval.
-
-<a href="https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev">Install from VS Marketplace</a>
-<br><br>
-
-</td>
-<td align="center" width="50%">
-
-### JetBrains Plugin
-
-The same Nexus experience in IntelliJ IDEA,
-PyCharm, WebStorm, GoLand, and the rest of
-the JetBrains family.
-
-<a href="https://plugins.jetbrains.com/plugin/28247-nexus">Install from JetBrains Marketplace</a>
-<br><br>
-
-</td>
-</tr>
-</table>
-</div>
-
-<div align="center">
-<table>
-<tr>
-<td align="center">
-
-### SDK
-
-Build your own AI agents and integrations powered by the same engine that runs the CLI, Kanban, VS Code extension, and JetBrains plugin. Custom tools, multi-agent teams, connectors, scheduled automations, and more.
-
-```
-npm install @nexus/sdk
-```
-
-<a href="https://docs.nexus.bot/nexus-sdk/overview">Documentation</a>
-<br><br>
-
-</td>
-</tr>
-</table>
 </div>
 
 ---
 
-## Index
+## What is Nexus?
 
-| Product | Description | Location | CHANGELOG |
-|---------|------------|--------------|--------------|
-| **SDK** | Node.js programmatic agent API and extension exports. | [`sdk/`](https://github.com/nexus/nexus/tree/main/sdk) | [CHANGELOG.md](https://github.com/nexus/nexus/blob/main/sdk/CHANGELOG.md) |
-| **CLI** | Terminal UI, headless mode, shell commands, and CLI-specific flows. | [`apps/cli/`](https://github.com/nexus/nexus/tree/main/apps/cli) | [CHANGELOG.md](https://github.com/nexus/nexus/blob/main/apps/cli/CHANGELOG.md) |
-| **VS Code Extension** | The Marketplace extension and extension host integration. | [`/`](https://github.com/nexus/nexus/tree/main) (WIP migrating) | [CHANGELOG.md](https://github.com/nexus/nexus/blob/main/CHANGELOG.md) |
-| **JetBrains Plugin** | JetBrains-hosted client that talks to the shared agent core. | Currently we are not open-sourcing JetBrains plugins | - |
-| **Kanban** | Web-based multi-agent task board. | [`nexus/kanban`](https://github.com/nexus/kanban) | [CHANGELOG.md](https://github.com/nexus/kanban/blob/main/CHANGELOG.md) |
-| **Docs site** | Public documentation pages. | [`docs/`](https://docs.nexus.bot/) | - |
+Nexus is an open-source autonomous coding agent that integrates directly into your development environment. It can create and edit files, run terminal commands, browse the web, and coordinate changes across your entire codebase — all with your approval at every step.
 
-## Edits Code Across Your Project
+Nexus is a fork of [Cline](https://github.com/cline/cline) with a focus on internationalization and global developer communities.
 
-Nexus reads your project structure, understands the relationships between files, and makes coordinated changes across your codebase. It monitors linter and compiler errors as it works, fixing issues like missing imports, type mismatches, and syntax errors before you even see them. In VS Code and JetBrains, every edit shows up as a diff you can review, modify, or revert. All changes are tracked with checkpoints, so you can easily undo the agent's work.
+**Key principles:**
+- **BYOK** — Bring your own API key. Works with any major LLM provider.
+- **i18n** — Automatic interface language detection based on your system locale.
+- **Open source** — Apache 2.0 license, fully transparent.
+- **Secure** — API keys are stored encrypted locally.
 
-## Runs Bash Commands
+---
 
-Nexus executes commands directly in your terminal and watches the output in real time. Install packages, run build scripts, execute tests, deploy applications, manage databases. For long-running processes like dev servers, Nexus continues working in the background and reacts to new output as it appears, catching compile errors, test failures, and server crashes as they happen.
+## Installation
 
-## Plan and Act
+### VS Code Extension
 
-Toggle between Plan mode and Act mode. In Plan mode, Nexus explores your codebase, asks clarifying questions, and lays out a strategy. Once you're aligned, switch to Act mode and Nexus executes the plan. Every file edit and terminal command requires your approval, so you stay in control of what actually changes. Or toggle auto-approve and let Nexus run autonomously.
+Search for **Nexus** in the VS Code Extensions Marketplace, or install from source:
 
-## Rules and Skills
+```bash
+cd apps/vscode
+bun install
+bun run build:webview
+bun esbuild.mjs
+```
 
-Define project-specific rules in `.nexusrules` files that guide how Nexus works in your codebase: coding standards, architecture conventions, deployment procedures, testing requirements. Rules are picked up automatically by the CLI, VS Code extension, and JetBrains plugin. Use skills to let the model load specific rules when needed.
+Then launch VS Code with the extension in development mode:
 
-## Works With Every Model
+```bash
+DISPLAY=:1 code --no-sandbox \
+  --user-data-dir=/tmp/vscode-userdata \
+  --extensionDevelopmentPath=$(pwd)/apps/vscode \
+  .
+```
 
-Nexus is not locked to a single AI provider. Use whichever model fits your workflow:
+### CLI
 
-| Provider | Models |
-|----------|--------|
-| Anthropic | Claude Opus, Sonnet, Haiku |
-| OpenAI | GPT series models |
-| Google | Gemini series models |
-| OpenRouter | 200+ models from any provider |
-| Vercel AI Gateway | Route to many providers through one gateway |
-| AWS Bedrock | Claude, Llama, and more |
-| Azure / GCP Vertex | All hosted models |
-| Cerebras / Groq | Fast inference models |
-| Ollama / LM Studio | Run local models on your machine |
-| Any OpenAI-compatible API | Self-hosted or third-party endpoints |
+```bash
+npm install -g @nexus/cli
+nexus --help
+```
 
-## Extend With Plugins or MCP Servers
+Or run from source:
 
-Extend Nexus's capabilities with plugins. Using the SDK, register tools and lifecycle hooks programmatically through the plugin system for logging, auditing, policy enforcement, or adding domain-specific capabilities. Simple plugin example below.
+```bash
+bun run cli
+```
+
+---
+
+## Usage
+
+### VS Code
+
+Click the Nexus icon in the Activity Bar to open the chat panel. Type a task and Nexus will:
+
+1. Explore your codebase to understand the context
+2. Propose a plan
+3. Make file edits with your approval
+4. Run commands and react to output
+
+### CLI
+
+```bash
+# Interactive mode
+nexus -i
+
+# One-shot task
+nexus "Add unit tests for the auth module"
+
+# Non-interactive (for CI/scripts)
+nexus --no-interactive "Fix lint errors"
+```
+
+---
+
+## Providers
+
+Nexus works with all major LLM providers out of the box:
+
+| Provider | Notes |
+|----------|-------|
+| Anthropic | Claude Sonnet, Opus, Haiku |
+| OpenAI | GPT-4o, o1, o3 |
+| Google | Gemini 2.0, 2.5 |
+| AWS Bedrock | Cross-region inference |
+| Azure OpenAI | Enterprise deployments |
+| OpenRouter | 200+ models via single API |
+| Ollama | Local models |
+| LM Studio | Local models |
+
+Configure your provider in the settings panel or via environment variables:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+nexus -i
+```
+
+---
+
+## SDK
+
+Build your own agents with the Nexus SDK:
+
+```bash
+npm install @nexus/sdk
+```
 
 ```typescript
-import { Agent, createTool } from "@nexus/sdk"
+import { NexusCore } from "@nexus/sdk";
 
-const deployTool = createTool({
-  name: "deploy",
-  description: "Deploy the current branch to staging.",
-  inputSchema: { type: "object", properties: { env: { type: "string" } }, required: ["env"] },
-  execute: async (input) => {
-    // your deployment logic
-  },
-})
-
-const agent = new Agent({ tools: [deployTool], /* ... */ })
+const core = new NexusCore({ /* config */ });
+await core.start({ task: "Refactor the database layer" });
 ```
-...or use [MCP servers](https://github.com/modelcontextprotocol) to connect to databases, query APIs, manage cloud infrastructure, and interact with external systems. Use [community-built servers](https://github.com/modelcontextprotocol/servers) or ask Nexus to create custom tools on the fly. In the CLI, manage servers with `nexus mcp`.
 
-## Multi-Agent Teams
+See the [SDK documentation](./sdk/README.md) for full API reference.
 
-Coordinate multiple agents working together on complex tasks. A coordinator agent breaks the work into subtasks and delegates to specialist agents, each with their own tools and context. Team state persists across sessions so you can pick up where you left off.
+---
+
+## MCP Servers
+
+Extend Nexus with [Model Context Protocol](https://github.com/modelcontextprotocol) servers to connect to databases, APIs, cloud infrastructure, and external services.
 
 ```bash
-nexus --team-name auth-sprint "Plan and implement user authentication with tests"
+# Manage MCP servers from the CLI
+nexus mcp add <server-name>
+nexus mcp list
 ```
 
-## Scheduled Agents
+---
 
-Run agents on cron schedules for recurring automations. Daily PR summaries, weekly dependency checks, codebase health reports. Schedules persist across restarts and run independently of any terminal session.
+## Development
+
+### Prerequisites
+
+- [Bun](https://bun.sh) `1.3.13`
+- Node.js `>=22`
+
+### Setup
 
 ```bash
-nexus schedule create "PR summary" \
-  --cron "0 9 * * MON-FRI" \
-  --prompt "List all open PRs and their review status" \
-  --workspace /path/to/repo
+git clone https://github.com/probaba328/cline.git
+cd cline
+bun install
+bun run build:sdk
 ```
 
-## Connect to Slack, Telegram, Discord, and More
-
-Chat with your agent from any messaging platform: Telegram, Slack, Discord, Google Chat, WhatsApp, and Linear. Each conversation thread maps to an agent session with full context. Set up access control to restrict who can interact with your agent.
+### Run tests
 
 ```bash
-# Connect to Telegram
-nexus connect telegram -k $BOT_TOKEN
-# Connect to Slack through webhook
-nexus connect slack --bot-token $SLACK_TOKEN --signing-secret $SECRET --base-url $URL
-# Connect to Slack using socket mode
-nexus connect slack --bot-token $SLACK_TOKEN --app-token $SLACK_APP_TOKEN
+# All unit tests
+bun run test:unit
+
+# Specific package
+bun -F @nexus/core test:unit
 ```
 
-## Headless CLI for CI/CD
+### Project structure
 
-Run Nexus with zero interaction for scripting and automation. Pipe input, get JSON output, chain commands, integrate into CI/CD pipelines.
-
-```bash
-nexus "Run tests and fix any failures"
-git diff origin/main | nexus "Review these changes for issues"
-nexus --json "List all TODO comments" | jq -r 'select(.type == "agent_event" and .event.text) | .event.text'
 ```
+apps/
+  cli/          — Terminal CLI (@nexus/cli)
+  vscode/       — VS Code extension
+  nexus-hub/    — Desktop hub service
+sdk/
+  packages/
+    shared/     — Shared types & utilities (@nexus/shared)
+    llms/       — LLM provider integrations (@nexus/llms)
+    agents/     — Stateless agent loop (@nexus/agents)
+    core/       — Session orchestration (@nexus/core)
+    sdk/        — Public SDK entry point (@nexus/sdk)
+```
+
+---
 
 ## Contributing
 
-Start with the [Contributing Guide](CONTRIBUTING.md). Join our [Discord](https://discord.gg/nexus) and head to the `#contributors` channel to connect with other contributors. Check our [careers page](https://nexus.bot/join-us) for full-time roles.
+Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a pull request.
+
+```bash
+# Fork the repo, then:
+git checkout -b feature/my-feature
+bun run check   # lint + build + typecheck
+git commit -m "feat: my feature"
+git push origin feature/my-feature
+```
+
+---
 
 ## License
 
-[Apache 2.0 © 2026 Nexus Bot Inc.](./LICENSE)
+[Apache 2.0](./LICENSE) — Nexus is a fork of [Cline](https://github.com/cline/cline), which is also Apache 2.0 licensed.

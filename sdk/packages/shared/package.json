@@ -4,7 +4,7 @@
 	"description": "Shared utilities, types, and schemas for Nexus packages",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nexus/nexus",
+		"url": "https://github.com/probaba328/cline",
 		"directory": "sdk/packages/shared"
 	},
 	"type": "module",
