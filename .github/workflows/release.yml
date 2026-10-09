@@ -1,0 +1,208 @@
+name: release
+
+# Tetikleyiciler:
+# 1. v*.*.* etiketine push → otomatik yayın
+# 2. workflow_dispatch → sürüm adı belirtilerek manuel yayın
+on:
+    push:
+        tags:
+            - "v[0-9]+.[0-9]+.[0-9]+"
+            - "v[0-9]+.[0-9]+.[0-9]+-*"
+    workflow_dispatch:
+        inputs:
+            etiket:
+                description: "Yayınlanacak etiket (örn. v4.2.0)"
+                required: true
+                type: string
+            on_yayini:
+                description: "Ön yayın olarak işaretle"
+                required: false
+                default: false
+                type: boolean
+
+permissions:
+    contents: write
+    packages: write
+
+concurrency:
+    group: release-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    # Önce kalite kontrollerini çalıştır
+    kalite-kontrol:
+        name: Kalite Kontrolü
+        uses: ./.github/workflows/build.yml
+
+    # Marketplace'e yayınla + GitHub Release oluştur
+    yayinla:
+        name: Yayınla
+        needs: kalite-kontrol
+        runs-on: ubuntu-latest
+        environment: publish
+        defaults:
+            run:
+                working-directory: apps/vscode
+        steps:
+            - name: Kodu İndir
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+
+            # Etiket bilgisini çöz (push veya manual)
+            - name: Etiket Bilgisini Çöz
+              id: etiket_coz
+              run: |
+                  if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+                    TAG="${{ github.event.inputs.etiket }}"
+                  else
+                    TAG="${GITHUB_REF#refs/tags/}"
+                  fi
+
+                  if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.]+)?$ ]]; then
+                    echo "HATA: Etiket formatı geçersiz → beklenen: vX.Y.Z"
+                    exit 1
+                  fi
+                  echo "etiket=$TAG" >> $GITHUB_OUTPUT
+                  echo "surum=${TAG#v}" >> $GITHUB_OUTPUT
+
+            - name: Bun Kurulumu
+              uses: oven-sh/setup-bun@v2
+              with:
+                  bun-version: 1.3.13
+
+            # Node.js: vsce ve publish script'leri için gerekli
+            - name: Node.js Kurulumu
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Bağımlılıkları Yükle
+              working-directory: ${{ github.workspace }}
+              run: bun install --frozen-lockfile
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: SDK Paketlerini Derle
+              working-directory: ${{ github.workspace }}
+              run: bun run build:sdk
+
+            - name: better-sqlite3 Binary Kontrolü
+              run: |
+                  NODE_FILE="node_modules/better-sqlite3/build/Release/better_sqlite3.node"
+                  if [ ! -f "$NODE_FILE" ]; then
+                    echo "HATA: better-sqlite3 native binary bulunamadı"
+                    exit 1
+                  fi
+
+            # Paket sürümünün etiketle eşleştiğini doğrula
+            - name: Sürüm Doğrulama
+              run: |
+                  PKG_VERSION=$(node -p "require('./package.json').version")
+                  TAG_VERSION="${{ steps.etiket_coz.outputs.surum }}"
+                  if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
+                    echo "HATA: package.json sürümü ($PKG_VERSION) etiketle ($TAG_VERSION) uyuşmuyor"
+                    exit 1
+                  fi
+                  echo "Sürüm doğrulandı: $PKG_VERSION"
+
+            # CHANGELOG'dan bu sürüme ait bölümü çıkar
+            - name: CHANGELOG Girişini Çıkar
+              id: changelog
+              working-directory: ${{ github.workspace }}
+              run: |
+                  VERSION="${{ steps.etiket_coz.outputs.surum }}"
+                  CONTENT=$(awk -v v="$VERSION" '
+                    $0 == "## [" v "]" { found=1; next }
+                    found && /^## \[/ { exit }
+                    found { print }
+                    END { if (!found) exit 1 }
+                  ' CHANGELOG.md)
+                  if [[ -z "$CONTENT" ]]; then
+                    echo "HATA: CHANGELOG.md içinde ## [$VERSION] girişi bulunamadı"
+                    exit 1
+                  fi
+                  echo "icerik<<EOF" >> $GITHUB_OUTPUT
+                  echo "$CONTENT" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
+            - name: Marketplace Tokenlarını Doğrula
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}
+                  OVSX_PAT: ${{ secrets.OVSX_PAT }}
+              run: |
+                  EKSIK=""
+                  [[ -z "$VSCE_PAT" ]] && EKSIK="$EKSIK VSCE_PAT"
+                  [[ -z "$OVSX_PAT" ]] && EKSIK="$EKSIK OVSX_PAT"
+                  if [[ -n "$EKSIK" ]]; then
+                    echo "HATA: Şu secret'lar eksik:$EKSIK"
+                    echo "Repo ayarlarından → Settings → Secrets → Actions altına ekleyin."
+                    exit 1
+                  fi
+                  echo "Marketplace tokenları mevcut."
+
+            # Yayıncı araçlarını kur
+            - name: Yayıncı Araçlarını Kur (vsce + ovsx)
+              run: npm install -g @vscode/vsce ovsx
+
+            # Uzantıyı derle ve VSIX paketle
+            - name: Uzantıyı Derle ve Paketle
+              run: bun run package
+
+            - name: VSIX Dosyasını Bul
+              id: vsix
+              run: |
+                  VSIX_PATH=$(find . -maxdepth 2 -name "*.vsix" | head -1)
+                  if [[ -z "$VSIX_PATH" ]]; then
+                    echo "HATA: VSIX dosyası bulunamadı"
+                    exit 1
+                  fi
+                  echo "yol=$VSIX_PATH" >> $GITHUB_OUTPUT
+                  echo "ad=$(basename $VSIX_PATH)" >> $GITHUB_OUTPUT
+
+            # VS Code Marketplace'e yayınla
+            - name: VS Code Marketplace'e Yayınla
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}
+              run: |
+                  if [[ "${{ github.event.inputs.on_yayini }}" == "true" ]]; then
+                    vsce publish --pat "$VSCE_PAT" --pre-release
+                  else
+                    vsce publish --pat "$VSCE_PAT"
+                  fi
+
+            # Open VSX'e yayınla
+            - name: Open VSX'e Yayınla
+              env:
+                  OVSX_PAT: ${{ secrets.OVSX_PAT }}
+              run: |
+                  if [[ "${{ github.event.inputs.on_yayini }}" == "true" ]]; then
+                    ovsx publish "${{ steps.vsix.outputs.yol }}" --pat "$OVSX_PAT" --pre-release
+                  else
+                    ovsx publish "${{ steps.vsix.outputs.yol }}" --pat "$OVSX_PAT"
+                  fi
+
+            # GitHub Release oluştur (VSIX + CHANGELOG notu ile)
+            - name: GitHub Release Oluştur
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: ${{ steps.etiket_coz.outputs.etiket }}
+                  name: "Nexus ${{ steps.etiket_coz.outputs.etiket }}"
+                  body: ${{ steps.changelog.outputs.icerik }}
+                  prerelease: ${{ github.event.inputs.on_yayini == 'true' }}
+                  files: apps/vscode/${{ steps.vsix.outputs.ad }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Yayın Özeti
+              run: |
+                  echo "## Yayın Tamamlandı 🚀" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "| Alan | Değer |" >> $GITHUB_STEP_SUMMARY
+                  echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+                  echo "| Sürüm | \`${{ steps.etiket_coz.outputs.etiket }}\` |" >> $GITHUB_STEP_SUMMARY
+                  echo "| VSIX | \`${{ steps.vsix.outputs.ad }}\` |" >> $GITHUB_STEP_SUMMARY
+                  echo "| VS Code Marketplace | ✅ Yayınlandı |" >> $GITHUB_STEP_SUMMARY
+                  echo "| Open VSX | ✅ Yayınlandı |" >> $GITHUB_STEP_SUMMARY
+                  echo "| GitHub Release | ✅ Oluşturuldu |" >> $GITHUB_STEP_SUMMARY
