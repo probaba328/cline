@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Japanese",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "キャンセル",
+		"confirm": "確認",
+		"save": "保存",
+		"close": "閉じる",
+		"done": "完了",
+		"back": "戻る",
+		"next": "次へ",
+		"loading": "読み込み中...",
+		"error": "エラー",
+		"success": "成功",
+		"settings": "設定",
+		"submit": "送信",
+		"delete": "削除",
+		"edit": "編集",
+		"copy": "コピー",
+		"copied": "コピーしました！"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Nexusに何か聞いてみましょう...",
+		"send": "送信",
+		"newTask": "新しいタスク",
+		"thinking": "考え中...",
+		"approve": "承認",
+		"reject": "却下",
+		"approveAll": "すべて承認"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "設定",
+		"provider": "プロバイダー",
+		"model": "モデル",
+		"apiKey": "APIキー",
+		"language": "言語",
+		"telemetry": "利用状況とエラーの報告",
+		"telemetryDescription": "匿名の利用データを送信してNexusの改善にご協力ください。個人データやコードは収集されません。",
+		"telemetryEnable": "有効にする",
+		"telemetryDisable": "無効にする"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Nexusへようこそ",
+		"subtitle": "あなたの言語で話しかけるコーディングアシスタント",
+		"getStarted": "始める",
+		"selectProvider": "始めるにはプロバイダーを選択してください"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "認証エラー — APIキーを確認してください",
+		"networkError": "ネットワークエラーです。接続をご確認ください。",
+		"unknown": "予期しないエラーが発生しました。"
 	}
 }

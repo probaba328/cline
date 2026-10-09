@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Russian",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "Отмена",
+		"confirm": "Подтвердить",
+		"save": "Сохранить",
+		"close": "Закрыть",
+		"done": "Готово",
+		"back": "Назад",
+		"next": "Далее",
+		"loading": "Загрузка...",
+		"error": "Ошибка",
+		"success": "Успешно",
+		"settings": "Настройки",
+		"submit": "Отправить",
+		"delete": "Удалить",
+		"edit": "Редактировать",
+		"copy": "Копировать",
+		"copied": "Скопировано!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Спросите у Nexus что-нибудь...",
+		"send": "Отправить",
+		"newTask": "Новая задача",
+		"thinking": "Думаю...",
+		"approve": "Одобрить",
+		"reject": "Отклонить",
+		"approveAll": "Одобрить всё"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "Настройки",
+		"provider": "Провайдер",
+		"model": "Модель",
+		"apiKey": "API-ключ",
+		"language": "Язык",
+		"telemetry": "Отчёты об использовании и ошибках",
+		"telemetryDescription": "Помогите нам улучшить Nexus, отправляя анонимные данные об использовании. Личные данные и код не собираются.",
+		"telemetryEnable": "Включить",
+		"telemetryDisable": "Отключить"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Добро пожаловать в Nexus",
+		"subtitle": "Помощник по программированию, говорящий на вашем языке",
+		"getStarted": "Начать",
+		"selectProvider": "Выберите провайдера, чтобы начать"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "Не авторизован — проверьте ваш API-ключ",
+		"networkError": "Ошибка сети. Пожалуйста, проверьте подключение.",
+		"unknown": "Произошла непредвиденная ошибка."
 	}
 }

@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Hindi",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "रद्द करें",
+		"confirm": "पुष्टि करें",
+		"save": "सहेजें",
+		"close": "बंद करें",
+		"done": "हो गया",
+		"back": "वापस",
+		"next": "अगला",
+		"loading": "लोड हो रहा है...",
+		"error": "त्रुटि",
+		"success": "सफलता",
+		"settings": "सेटिंग्स",
+		"submit": "जमा करें",
+		"delete": "हटाएं",
+		"edit": "संपादित करें",
+		"copy": "कॉपी करें",
+		"copied": "कॉपी हो गया!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Nexus से कुछ पूछें...",
+		"send": "भेजें",
+		"newTask": "नया कार्य",
+		"thinking": "सोच रहा है...",
+		"approve": "अनुमोदित करें",
+		"reject": "अस्वीकार करें",
+		"approveAll": "सभी को अनुमोदित करें"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "सेटिंग्स",
+		"provider": "प्रदाता",
+		"model": "मॉडल",
+		"apiKey": "API कुंजी",
+		"language": "भाषा",
+		"telemetry": "उपयोग और त्रुटि रिपोर्टिंग",
+		"telemetryDescription": "अनाम उपयोग डेटा भेजकर Nexus को बेहतर बनाने में मदद करें। कोई व्यक्तिगत डेटा या कोड एकत्र नहीं किया जाता।",
+		"telemetryEnable": "सक्षम करें",
+		"telemetryDisable": "अक्षम करें"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Nexus में आपका स्वागत है",
+		"subtitle": "वह कोडिंग सहायक जो आपकी भाषा बोलता है",
+		"getStarted": "शुरू करें",
+		"selectProvider": "शुरू करने के लिए एक प्रदाता चुनें"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "अनधिकृत — अपनी API कुंजी जांचें",
+		"networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
+		"unknown": "एक अप्रत्याशित त्रुटि हुई।"
 	}
 }

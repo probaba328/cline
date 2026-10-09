@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "German",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "Abbrechen",
+		"confirm": "Bestätigen",
+		"save": "Speichern",
+		"close": "Schließen",
+		"done": "Fertig",
+		"back": "Zurück",
+		"next": "Weiter",
+		"loading": "Wird geladen...",
+		"error": "Fehler",
+		"success": "Erfolgreich",
+		"settings": "Einstellungen",
+		"submit": "Absenden",
+		"delete": "Löschen",
+		"edit": "Bearbeiten",
+		"copy": "Kopieren",
+		"copied": "Kopiert!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Frag Nexus etwas...",
+		"send": "Senden",
+		"newTask": "Neue Aufgabe",
+		"thinking": "Denkt nach...",
+		"approve": "Genehmigen",
+		"reject": "Ablehnen",
+		"approveAll": "Alle genehmigen"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "Einstellungen",
+		"provider": "Anbieter",
+		"model": "Modell",
+		"apiKey": "API-Schlüssel",
+		"language": "Sprache",
+		"telemetry": "Nutzungs- & Fehlerberichte",
+		"telemetryDescription": "Helfen Sie uns, Nexus zu verbessern, indem Sie anonyme Nutzungsdaten senden. Es werden keine persönlichen Daten oder Code gesammelt.",
+		"telemetryEnable": "Aktivieren",
+		"telemetryDisable": "Deaktivieren"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Willkommen bei Nexus",
+		"subtitle": "Der Coding-Assistent, der Ihre Sprache spricht",
+		"getStarted": "Loslegen",
+		"selectProvider": "Wählen Sie einen Anbieter, um zu beginnen"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "Nicht autorisiert — API-Schlüssel prüfen",
+		"networkError": "Netzwerkfehler. Bitte Verbindung prüfen.",
+		"unknown": "Ein unerwarteter Fehler ist aufgetreten."
 	}
 }

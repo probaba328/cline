@@ -34,17 +34,17 @@ If your language isn't listed yet:
 |------|----------|--------|
 | `en.json` | English | ✅ Complete (source) |
 | `tr.json` | Turkish | ✅ Complete |
-| `de.json` | German | 🔜 Needs translation |
-| `fr.json` | French | 🔜 Needs translation |
-| `es.json` | Spanish | 🔜 Needs translation |
-| `pt-BR.json` | Portuguese (Brazil) | 🔜 Needs translation |
-| `ja.json` | Japanese | 🔜 Needs translation |
-| `ko.json` | Korean | 🔜 Needs translation |
-| `zh-CN.json` | Chinese (Simplified) | 🔜 Needs translation |
-| `zh-TW.json` | Chinese (Traditional) | 🔜 Needs translation |
-| `ar.json` | Arabic | 🔜 Needs translation |
-| `ru.json` | Russian | 🔜 Needs translation |
-| `hi.json` | Hindi | 🔜 Needs translation |
+| `de.json` | German | ✅ Complete |
+| `fr.json` | French | ✅ Complete |
+| `es.json` | Spanish | ✅ Complete |
+| `pt-BR.json` | Portuguese (Brazil) | ✅ Complete |
+| `ja.json` | Japanese | ✅ Complete |
+| `ko.json` | Korean | ✅ Complete |
+| `zh-CN.json` | Chinese (Simplified) | ✅ Complete |
+| `zh-TW.json` | Chinese (Traditional) | ✅ Complete |
+| `ar.json` | Arabic | ✅ Complete |
+| `ru.json` | Russian | ✅ Complete |
+| `hi.json` | Hindi | ✅ Complete |
 
 ## Questions?
 

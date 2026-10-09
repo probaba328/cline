@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Portuguese (Brazil)",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"save": "Salvar",
+		"close": "Fechar",
+		"done": "Concluído",
+		"back": "Voltar",
+		"next": "Próximo",
+		"loading": "Carregando...",
+		"error": "Erro",
+		"success": "Sucesso",
+		"settings": "Configurações",
+		"submit": "Enviar",
+		"delete": "Excluir",
+		"edit": "Editar",
+		"copy": "Copiar",
+		"copied": "Copiado!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Pergunte algo ao Nexus...",
+		"send": "Enviar",
+		"newTask": "Nova tarefa",
+		"thinking": "Pensando...",
+		"approve": "Aprovar",
+		"reject": "Rejeitar",
+		"approveAll": "Aprovar tudo"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "Configurações",
+		"provider": "Provedor",
+		"model": "Modelo",
+		"apiKey": "Chave de API",
+		"language": "Idioma",
+		"telemetry": "Relatórios de uso e erros",
+		"telemetryDescription": "Ajude a melhorar o Nexus enviando dados de uso anônimos. Nenhum dado pessoal ou código é coletado.",
+		"telemetryEnable": "Ativar",
+		"telemetryDisable": "Desativar"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Bem-vindo ao Nexus",
+		"subtitle": "O assistente de programação que fala a sua língua",
+		"getStarted": "Começar",
+		"selectProvider": "Selecione um provedor para começar"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "Não autorizado — verifique sua chave de API",
+		"networkError": "Erro de rede. Por favor verifique sua conexão.",
+		"unknown": "Ocorreu um erro inesperado."
 	}
 }

@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Korean",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "취소",
+		"confirm": "확인",
+		"save": "저장",
+		"close": "닫기",
+		"done": "완료",
+		"back": "뒤로",
+		"next": "다음",
+		"loading": "로딩 중...",
+		"error": "오류",
+		"success": "성공",
+		"settings": "설정",
+		"submit": "제출",
+		"delete": "삭제",
+		"edit": "편집",
+		"copy": "복사",
+		"copied": "복사됨!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "Nexus에게 무엇이든 물어보세요...",
+		"send": "전송",
+		"newTask": "새 작업",
+		"thinking": "생각 중...",
+		"approve": "승인",
+		"reject": "거부",
+		"approveAll": "모두 승인"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "설정",
+		"provider": "공급자",
+		"model": "모델",
+		"apiKey": "API 키",
+		"language": "언어",
+		"telemetry": "사용 및 오류 보고",
+		"telemetryDescription": "익명 사용 데이터를 전송하여 Nexus 개선에 도움을 주세요. 개인 정보나 코드는 수집되지 않습니다.",
+		"telemetryEnable": "활성화",
+		"telemetryDisable": "비활성화"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "Nexus에 오신 것을 환영합니다",
+		"subtitle": "당신의 언어로 대화하는 코딩 어시스턴트",
+		"getStarted": "시작하기",
+		"selectProvider": "시작하려면 공급자를 선택하세요"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "인증 실패 — API 키를 확인해 주세요",
+		"networkError": "네트워크 오류. 연결을 확인해 주세요.",
+		"unknown": "예기치 않은 오류가 발생했습니다."
 	}
 }

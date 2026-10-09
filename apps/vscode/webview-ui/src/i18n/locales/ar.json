@@ -1,56 +1,56 @@
 {
 	"_meta": {
 		"language": "Arabic",
-		"status": "needs-translation",
+		"status": "complete",
 		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
 	},
 	"common": {
-		"cancel": "",
-		"confirm": "",
-		"save": "",
-		"close": "",
-		"done": "",
-		"back": "",
-		"next": "",
-		"loading": "",
-		"error": "",
-		"success": "",
-		"settings": "",
-		"submit": "",
-		"delete": "",
-		"edit": "",
-		"copy": "",
-		"copied": ""
+		"cancel": "إلغاء",
+		"confirm": "تأكيد",
+		"save": "حفظ",
+		"close": "إغلاق",
+		"done": "تم",
+		"back": "رجوع",
+		"next": "التالي",
+		"loading": "جارٍ التحميل...",
+		"error": "خطأ",
+		"success": "نجاح",
+		"settings": "الإعدادات",
+		"submit": "إرسال",
+		"delete": "حذف",
+		"edit": "تعديل",
+		"copy": "نسخ",
+		"copied": "تم النسخ!"
 	},
 	"chat": {
-		"placeholder": "",
-		"send": "",
-		"newTask": "",
-		"thinking": "",
-		"approve": "",
-		"reject": "",
-		"approveAll": ""
+		"placeholder": "اسأل Nexus عن أي شيء...",
+		"send": "إرسال",
+		"newTask": "مهمة جديدة",
+		"thinking": "يفكر...",
+		"approve": "موافقة",
+		"reject": "رفض",
+		"approveAll": "الموافقة على الكل"
 	},
 	"settings": {
-		"title": "",
-		"provider": "",
-		"model": "",
-		"apiKey": "",
-		"language": "",
-		"telemetry": "",
-		"telemetryDescription": "",
-		"telemetryEnable": "",
-		"telemetryDisable": ""
+		"title": "الإعدادات",
+		"provider": "المزود",
+		"model": "النموذج",
+		"apiKey": "مفتاح API",
+		"language": "اللغة",
+		"telemetry": "تقارير الاستخدام والأخطاء",
+		"telemetryDescription": "ساعد في تحسين Nexus عن طريق إرسال بيانات استخدام مجهولة. لا يتم جمع أي بيانات شخصية أو كود.",
+		"telemetryEnable": "تفعيل",
+		"telemetryDisable": "تعطيل"
 	},
 	"onboarding": {
-		"welcome": "",
-		"subtitle": "",
-		"getStarted": "",
-		"selectProvider": ""
+		"welcome": "مرحباً بك في Nexus",
+		"subtitle": "مساعد البرمجة الذي يتحدث لغتك",
+		"getStarted": "ابدأ الآن",
+		"selectProvider": "اختر مزوداً للبدء"
 	},
 	"errors": {
-		"unauthorized": "",
-		"networkError": "",
-		"unknown": ""
+		"unauthorized": "غير مصرح — تحقق من مفتاح API الخاص بك",
+		"networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك.",
+		"unknown": "حدث خطأ غير متوقع."
 	}
 }
