@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icons/icon.png" width="80" alt="Nexus" />
+  <img src="assets/icons/nexus-logo.svg" width="80" alt="Nexus" />
 </p>
 
 <h1 align="center">Nexus</h1>
@@ -9,29 +9,47 @@
 </p>
 
 <p align="center">
-  An open-source AI coding agent for your IDE and terminal — fork of <a href="https://github.com/cline/cline">Cline</a>
+  <a href="https://github.com/probaba328/cline/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0" />
+  </a>
+  <a href="https://github.com/probaba328/cline/issues">
+    <img src="https://img.shields.io/github/issues/probaba328/cline" alt="GitHub Issues" />
+  </a>
+  <a href="https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md">
+    <img src="https://img.shields.io/badge/i18n-13%20languages-green" alt="13 languages" />
+  </a>
 </p>
-
-<div align="center">
-
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![GitHub Issues](https://img.shields.io/github/issues/probaba328/cline)](https://github.com/probaba328/cline/issues)
-
-</div>
 
 ---
 
 ## What is Nexus?
 
-Nexus is an open-source autonomous coding agent that integrates directly into your development environment. It can create and edit files, run terminal commands, browse the web, and coordinate changes across your entire codebase — all with your approval at every step.
+Nexus is an open-source autonomous coding agent that lives inside your IDE and terminal. It reads and edits your files, runs terminal commands, browses the web, and coordinates changes across your entire codebase — always with your explicit approval at every step. Nexus is a fork of [Cline](https://github.com/cline/cline) rebuilt around three core beliefs: that great developer tools should work in every language, that your API keys belong to you alone, and that nothing should happen in your editor without your knowledge.
 
-Nexus is a fork of [Cline](https://github.com/cline/cline) with a focus on internationalization and global developer communities.
+---
 
-**Key principles:**
-- **BYOK** — Bring your own API key. Works with any major LLM provider.
-- **i18n** — Automatic interface language detection based on your system locale.
-- **Open source** — Apache 2.0 license, fully transparent.
-- **Secure** — API keys are stored encrypted locally.
+## Why Nexus?
+
+Nexus shares Cline's powerful agent core but diverges in three important ways:
+
+| | Cline | Nexus |
+|---|---|---|
+| **Interface language** | English only | 13 languages, auto-detected from your IDE locale |
+| **API key ownership** | BYOK | BYOK — keys stored in OS keychain only, never sent to Nexus servers |
+| **Telemetry** | Opt-out | Opt-in — disabled by default, anonymous usage only |
+| **Fork goal** | General coding agent | Global developer communities |
+
+### i18n — first-class internationalization
+
+Nexus automatically detects your VS Code display language and switches the UI accordingly. No configuration needed. If your language isn't fully translated yet, it falls back gracefully to English — and you can help fix that (see [Contributing Translations](#contributing-translations) below).
+
+### Security by design
+
+Every API key you enter is stored exclusively in your operating system's credential store (macOS Keychain, Windows Credential Manager, Linux libsecret) via VS Code's SecretStorage API. Nexus never writes credentials to disk as plain text, never logs them, and never transmits them anywhere except the AI provider endpoint you configure. See [SECURITY.md](./SECURITY.md) for the full policy.
+
+### Bring Your Own Key (BYOK)
+
+Nexus requires no account, no subscription, and no Nexus-controlled backend to function. Bring your key from any supported provider, plug it in, and start coding. You pay your provider directly; Nexus takes nothing.
 
 ---
 
@@ -39,16 +57,20 @@ Nexus is a fork of [Cline](https://github.com/cline/cline) with a focus on inter
 
 ### VS Code Extension
 
-Search for **Nexus** in the VS Code Extensions Marketplace, or install from source:
+Search for **Nexus** in the VS Code Extensions Marketplace.
+
+To build and run from source:
 
 ```bash
-cd apps/vscode
+git clone https://github.com/probaba328/cline.git
+cd cline
 bun install
-bun run build:webview
-bun esbuild.mjs
+cd apps/vscode
+bun run build:webview   # builds the React UI (~15s)
+bun esbuild.mjs         # bundles the extension
 ```
 
-Then launch VS Code with the extension in development mode:
+Then launch a development host:
 
 ```bash
 DISPLAY=:1 code --no-sandbox \
@@ -57,156 +79,165 @@ DISPLAY=:1 code --no-sandbox \
   .
 ```
 
+Click the Nexus icon in the Activity Bar to open the chat panel.
+
 ### CLI
 
 ```bash
-npm install -g @nexus/cli
-nexus --help
-```
-
-Or run from source:
-
-```bash
+# Run from source
 bun run cli
-```
 
----
-
-## Usage
-
-### VS Code
-
-Click the Nexus icon in the Activity Bar to open the chat panel. Type a task and Nexus will:
-
-1. Explore your codebase to understand the context
-2. Propose a plan
-3. Make file edits with your approval
-4. Run commands and react to output
-
-### CLI
-
-```bash
 # Interactive mode
-nexus -i
+bun run cli -i
 
 # One-shot task
-nexus "Add unit tests for the auth module"
-
-# Non-interactive (for CI/scripts)
-nexus --no-interactive "Fix lint errors"
+bun run cli "Add unit tests for the auth module"
 ```
 
----
-
-## Providers
-
-Nexus works with all major LLM providers out of the box:
-
-| Provider | Notes |
-|----------|-------|
-| Anthropic | Claude Sonnet, Opus, Haiku |
-| OpenAI | GPT-4o, o1, o3 |
-| Google | Gemini 2.0, 2.5 |
-| AWS Bedrock | Cross-region inference |
-| Azure OpenAI | Enterprise deployments |
-| OpenRouter | 200+ models via single API |
-| Ollama | Local models |
-| LM Studio | Local models |
-
-Configure your provider in the settings panel or via environment variables:
+Configure your provider credential once:
 
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-nexus -i
+bun run cli -i
 ```
 
 ---
 
-## SDK
+## Supported Languages
 
-Build your own agents with the Nexus SDK:
+Nexus ships with translations for 13 languages. The interface language is detected automatically from your VS Code locale (`vscode.env.language`), with English as the fallback.
 
-```bash
-npm install @nexus/sdk
-```
-
-```typescript
-import { NexusCore } from "@nexus/sdk";
-
-const core = new NexusCore({ /* config */ });
-await core.start({ task: "Refactor the database layer" });
-```
-
-See the [SDK documentation](./sdk/README.md) for full API reference.
-
----
-
-## MCP Servers
-
-Extend Nexus with [Model Context Protocol](https://github.com/modelcontextprotocol) servers to connect to databases, APIs, cloud infrastructure, and external services.
-
-```bash
-# Manage MCP servers from the CLI
-nexus mcp add <server-name>
-nexus mcp list
-```
+| Language | Locale code | Status |
+|----------|-------------|--------|
+| English | `en` | ✅ Complete (source) |
+| Turkish | `tr` | ✅ Complete |
+| German | `de` | ✅ Complete |
+| French | `fr` | ✅ Complete |
+| Spanish | `es` | ✅ Complete |
+| Portuguese (Brazil) | `pt-BR` | ✅ Complete |
+| Japanese | `ja` | ✅ Complete |
+| Korean | `ko` | ✅ Complete |
+| Chinese (Simplified) | `zh-CN` | ✅ Complete |
+| Chinese (Traditional) | `zh-TW` | ✅ Complete |
+| Arabic | `ar` | ✅ Complete |
+| Russian | `ru` | ✅ Complete |
+| Hindi | `hi` | ✅ Complete |
 
 ---
 
-## Development
+## Contributing Translations
 
-### Prerequisites
+Translation files live in `apps/vscode/webview-ui/src/i18n/locales/`. Each file uses the same JSON key structure.
 
-- [Bun](https://bun.sh) `1.3.13`
-- Node.js `>=22`
+**To improve an existing translation:**
 
-### Setup
+1. Fork the repo and open the file for your language (e.g. `fr.json`)
+2. Fill in or correct string values — keys must stay unchanged
+3. Open a pull request titled `i18n: improve [Language] translation`
+
+**To add a new language:**
+
+1. Copy `en.json` and name it with the [BCP 47 tag](https://www.iana.org/assignments/language-subtag-registry) for your language
+2. Register it in `apps/vscode/webview-ui/src/i18n/index.ts`
+3. Open a pull request titled `i18n: add [Language] translation`
+
+Full guide: [CONTRIBUTING_TRANSLATION.md](./CONTRIBUTING_TRANSLATION.md)
+
+---
+
+## Supported AI Models
+
+Nexus works with every major LLM provider out of the box. There is no preferred provider — use whatever model fits your workflow and budget.
+
+| Provider | Notable models |
+|----------|---------------|
+| [Anthropic](https://anthropic.com) | Claude Opus, Sonnet, Haiku |
+| [OpenAI](https://openai.com) | GPT-4o, o1, o3-mini |
+| [Google](https://ai.google.dev) | Gemini 2.0 Flash, Gemini 2.5 Pro |
+| [AWS Bedrock](https://aws.amazon.com/bedrock/) | Cross-region inference for Claude & Llama |
+| [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) | Enterprise GPT-4o deployments |
+| [OpenRouter](https://openrouter.ai) | 200+ models via a single API key |
+| [Ollama](https://ollama.com) | Local models (Llama 3, Mistral, Phi, …) |
+| [LM Studio](https://lmstudio.ai) | Local models with a GUI |
+| [Requesty](https://requesty.ai) | Unified model gateway |
+| [Groq](https://groq.com) | Ultra-fast inference |
+
+Configure your provider in the Settings panel or via environment variables:
 
 ```bash
-git clone https://github.com/probaba328/cline.git
-cd cline
-bun install
-bun run build:sdk
+# Anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# OpenAI
+export OPENAI_API_KEY=sk-...
+
+# OpenRouter
+export OPENROUTER_API_KEY=sk-or-...
 ```
 
-### Run tests
+---
 
-```bash
-# All unit tests
-bun run test:unit
+## Security Policy
 
-# Specific package
-bun -F @nexus/core test:unit
-```
+**API keys** are stored only in your OS keychain via VS Code SecretStorage. They are never logged, never written to disk as plain text, and never sent to Nexus-controlled servers.
 
-### Project structure
+**Telemetry** is opt-in and disabled by default. When enabled, only anonymous usage events are collected — no code, no prompts, no file paths, no personal data. You can disable telemetry at any time:
 
-```
-apps/
-  cli/          — Terminal CLI (@nexus/cli)
-  vscode/       — VS Code extension
-  nexus-hub/    — Desktop hub service
-sdk/
-  packages/
-    shared/     — Shared types & utilities (@nexus/shared)
-    llms/       — LLM provider integrations (@nexus/llms)
-    agents/     — Stateless agent loop (@nexus/agents)
-    core/       — Session orchestration (@nexus/core)
-    sdk/        — Public SDK entry point (@nexus/sdk)
-```
+- **VS Code settings:** set `telemetry.telemetryLevel` to `off`
+- **Nexus settings panel:** Settings → Usage & Error Reporting → Disable
+
+**Network:** Nexus connects only to the AI provider endpoint you configure. No data is routed through Nexus infrastructure.
+
+Full details: [SECURITY.md](./SECURITY.md) · Report a vulnerability: [security@nexus.bot](mailto:security@nexus.bot)
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before submitting a pull request.
+Contributions are welcome — bug fixes, new features, translations, and documentation improvements alike.
 
 ```bash
-# Fork the repo, then:
-git checkout -b feature/my-feature
-bun run check   # lint + build + typecheck
-git commit -m "feat: my feature"
-git push origin feature/my-feature
+# 1. Fork and clone
+git clone https://github.com/probaba328/cline.git
+cd cline
+
+# 2. Install dependencies (Bun required)
+bun install
+
+# 3. Build SDK packages (required before running tests)
+bun run build:sdk
+
+# 4. Create a feature branch
+git checkout -b feat/my-feature
+
+# 5. Make changes, then check types and lint
+bun run check
+
+# 6. Run tests
+bun run test:unit
+
+# 7. Push and open a pull request
+git push origin feat/my-feature
+```
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for commit message conventions and code style guidelines.
+
+### Project structure
+
+```
+apps/
+  cli/              CLI tool (@nexus/cli)
+  vscode/           VS Code extension
+    src/            Extension host (Node.js)
+    webview-ui/     Chat panel UI (React)
+  nexus-hub/        Hub daemon
+sdk/
+  packages/
+    shared/         Shared types & utilities (@nexus/shared)
+    llms/           LLM provider integrations (@nexus/llms)
+    agents/         Stateless agent loop (@nexus/agents)
+    core/           Session orchestration (@nexus/core)
+    sdk/            Public SDK entry point (@nexus/sdk)
 ```
 
 ---
