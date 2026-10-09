@@ -6,7 +6,7 @@ import HistoryView from "./components/history/HistoryView"
 import MarketplaceView from "./components/marketplace/MarketplaceView"
 import McpView from "./components/mcp/configuration/McpConfigurationView"
 import { openNexusPassSubscriptionIfPending } from "./components/onboarding/nexusPassSubscribe"
-import OnboardingView from "./components/onboarding/OnboardingView"
+import { NexusSetupWizard } from "./components/onboarding/NexusSetupWizard"
 import SettingsView from "./components/settings/SettingsView"
 import WorktreesView from "./components/worktrees/WorktreesView"
 import { useNexusAuth } from "./context/NexusAuthContext"
@@ -73,7 +73,7 @@ const AppContent = () => {
 	}
 
 	if (showWelcome) {
-		return <OnboardingView />
+		return <NexusSetupWizard />
 	}
 
 	return (
