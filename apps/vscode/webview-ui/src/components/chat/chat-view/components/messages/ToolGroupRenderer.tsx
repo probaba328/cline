@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n"
 import { ClineMessage, ClineSayTool } from "@shared/ExtensionMessage"
 import { StringRequest } from "@shared/proto/cline/common"
 import { memo, useCallback, useMemo, useState } from "react"
@@ -394,5 +395,5 @@ export function getToolGroupSummaryFromParsedTools(tools: ClineSayTool[]): strin
 		parts.push(`performed ${counts.search} search${counts.search > 1 ? "es" : ""}`)
 	}
 
-	return parts.length === 0 ? "Context" : "Nexus" + action + parts.join(", ")
+	return parts.length === 0 ? "Context" : t("toolGroup.prefix") + action + parts.join(", ")
 }

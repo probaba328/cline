@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n"
 import { LightbulbIcon } from "lucide-react"
 import { memo, useCallback, useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
@@ -20,7 +21,7 @@ const FEATURE_TIPS: FeatureTipItem[] = [
 		text: "Set up MCP Servers to give Cline access to external tools and APIs.",
 	},
 	{
-		text: "Nexus creates checkpoints after changes — you can always restore to a previous state.",
+		text: t("checkpoints.tip"),
 	},
 	{
 		text: "Use /compact to condense long conversations and free up context window space.",

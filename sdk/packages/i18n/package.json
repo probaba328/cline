@@ -1,0 +1,40 @@
+{
+	"name": "@cline/i18n",
+	"version": "0.1.0",
+	"description": "Automatic device language detection and translations for Nexus",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "BUILD_MODE=package bun bun.mts",
+		"typecheck": "bun tsc --noEmit",
+		"test": "bun run test:unit",
+		"test:unit": "vitest run --config vitest.config.ts"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/probaba328/cline",
+		"directory": "sdk/packages/i18n"
+	},
+	"license": "Apache-2.0",
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"typescript": "^5.4.5",
+		"vitest": "^4.0.17"
+	}
+}

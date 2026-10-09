@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n"
 import {
 	ClineAskUseSubagents,
 	ClineMessage,
@@ -197,7 +198,7 @@ export default function SubagentStatusRow({ message, isLast, lastModifiedMessage
 			resumedBeforeNextVisibleMessage)
 
 	const singular = data.items.length === 1
-	const title = singular ? "Nexus wants to use a subagent:" : "Nexus wants to use subagents:"
+	const title = singular ? t("subagent.wantsToUse") : t("subagent.wantsToUseMultiple")
 	const isPromptConstructionRow = message.ask === "use_subagents" || message.say === "use_subagents"
 	const toggleItem = (index: number) => {
 		setExpandedItems((prev) => ({

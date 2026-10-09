@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n";
 import {
 	diffPalettes,
 	getDefaultForeground,
@@ -157,15 +158,15 @@ export const THEMES: readonly ThemeDefinition[] = [
 	},
 	{
 		id: "dark",
-		label: "Nexus Dark",
-		description: "Nexus's accents on deep charcoal",
+		label: t("themes.darkLabel"),
+		description: t("themes.darkDescription"),
 		variant: "dark",
 		background: "#14161b",
 		foreground: "#e8eaed",
 	},
 	{
 		id: "light",
-		label: "Nexus Light",
+		label: t("themes.lightLabel"),
 		description: "Crisp white, high-contrast accents",
 		variant: "light",
 		background: "#ffffff",

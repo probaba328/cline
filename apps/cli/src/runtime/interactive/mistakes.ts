@@ -1,3 +1,5 @@
+import { t } from "@cline/i18n";
+
 export interface MistakeLimitContext {
 	iteration: number;
 	consecutiveMistakes: number;
@@ -23,7 +25,7 @@ export function createMistakeLimitDecisionResolver(input: {
 		const summary = detail
 			? `${context.reason}: ${detail}`
 			: `${context.reason} at iteration ${context.iteration}`;
-		const questionText = `mistake_limit_reached (${context.consecutiveMistakes}/${context.maxConsecutiveMistakes})\nLatest: ${summary}\nHow should Nexus continue?`;
+		const questionText = `mistake_limit_reached (${context.consecutiveMistakes}/${context.maxConsecutiveMistakes})\nLatest: ${summary}\n${t("cli.mistakePromptSuffix")}`;
 		const questionOptions = ["Try a different approach", "Stop this run"];
 		const answer = input.askQuestionRef.current
 			? await input.askQuestionRef.current(questionText, questionOptions)

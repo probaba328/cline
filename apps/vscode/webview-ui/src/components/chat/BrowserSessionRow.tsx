@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n"
 import { BROWSER_VIEWPORT_PRESETS } from "@shared/BrowserSettings"
 import { BrowserAction, BrowserActionResult, ClineMessage, ClineSayBrowserAction } from "@shared/ExtensionMessage"
 import { StringRequest } from "@shared/proto/cline/common"
@@ -359,7 +360,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
 					<span className="codicon codicon-inspect" style={browserIconStyle} />
 				)}
 				<span style={approveTextStyle}>
-					{isAutoApproved ? "Nexus is using the browser:" : "Nexus wants to use the browser:"}
+					{isAutoApproved ? t("browser.isUsing") : t("browser.wantsToUse")}
 				</span>
 			</div>
 			<div

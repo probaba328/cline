@@ -1,3 +1,4 @@
+import { t } from "@cline/i18n"
 import { GeneratedMediaContent } from "@cline/ui"
 import { COMMAND_OUTPUT_STRING } from "@shared/combineCommandSequences"
 import {
@@ -403,8 +404,8 @@ export const ChatRowContent = memo(
 					const content = tool?.content || ""
 					const isApplyingPatch = content?.startsWith("%%bash") && !content.endsWith("*** End Patch\nEOF")
 					const editToolTitle = isApplyingPatch
-						? "Nexus is creating patches to edit this file:"
-						: "Nexus wants to edit this file:"
+						? t("tools.isCreatingPatches")
+						: t("tools.wantsToEdit")
 					return (
 						<div>
 							<div className={HEADER_CLASSNAMES}>
@@ -520,8 +521,8 @@ export const ChatRowContent = memo(
 									toolIcon("sign-out", "yellow", -90, "This is outside of your workspace")}
 								<span style={{ fontWeight: "bold" }}>
 									{message.type === "ask"
-										? "Nexus wants to view the top level files in this directory:"
-										: "Nexus viewed the top level files in this directory:"}
+										? t("tools.wantsToViewDir")
+										: t("tools.viewedDir")}
 								</span>
 							</div>
 							<CodeAccordian
@@ -542,8 +543,8 @@ export const ChatRowContent = memo(
 									toolIcon("sign-out", "yellow", -90, "This is outside of your workspace")}
 								<span style={{ fontWeight: "bold" }}>
 									{message.type === "ask"
-										? "Nexus wants to recursively view all files in this directory:"
-										: "Nexus recursively viewed all files in this directory:"}
+										? t("tools.wantsToViewDirRecursive")
+										: t("tools.viewedDirRecursive")}
 								</span>
 							</div>
 							<CodeAccordian
@@ -564,8 +565,8 @@ export const ChatRowContent = memo(
 									toolIcon("sign-out", "yellow", -90, "This file is outside of your workspace")}
 								<span style={{ fontWeight: "bold" }}>
 									{message.type === "ask"
-										? "Nexus wants to view source code definition names used in this directory:"
-										: "Nexus viewed source code definition names used in this directory:"}
+										? t("tools.wantsToViewSourceDefs")
+										: t("tools.viewedSourceDefs")}
 								</span>
 							</div>
 							<CodeAccordian
@@ -645,8 +646,8 @@ export const ChatRowContent = memo(
 									toolIcon("sign-out", "yellow", -90, "This URL is external")}
 								<span className="font-bold">
 									{message.type === "ask"
-										? "Nexus wants to fetch content from this URL:"
-										: "Nexus fetched content from this URL:"}
+										? t("tools.wantsToFetch")
+										: t("tools.fetchedUrl")}
 								</span>
 							</div>
 							<div
@@ -674,8 +675,8 @@ export const ChatRowContent = memo(
 									toolIcon("sign-out", "yellow", -90, "This search is external")}
 								<span className="font-bold">
 									{message.type === "ask"
-										? "Nexus wants to search the web for:"
-										: "Nexus searched the web for:"}
+										? t("tools.wantsToSearch")
+										: t("tools.searchedWeb")}
 								</span>
 							</div>
 							<div className="bg-code border border-editor-group-border overflow-hidden rounded-xs select-text py-[9px] px-2.5">
