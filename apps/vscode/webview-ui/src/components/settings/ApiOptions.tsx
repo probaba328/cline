@@ -47,6 +47,8 @@ import { VSCodeLmProvider } from "./providers/VSCodeLmProvider"
 import { XaiProvider } from "./providers/XaiProvider"
 import { ZAiProvider } from "./providers/ZAiProvider"
 import { useApiConfigurationHandlers } from "./utils/useApiConfigurationHandlers"
+import { OfflineModeIndicator } from "./OfflineModeIndicator"
+import { RecommendedModels } from "./RecommendedModels"
 
 interface ApiOptionsProps {
 	showModelOptions: boolean
@@ -269,6 +271,10 @@ const ApiOptions = ({
 				}
 				`}
 			</style>
+			{!remoteConfigSettings?.remoteConfiguredProviders?.length && (
+				<RecommendedModels selectedProvider={selectedProvider} onSelectProvider={handleProviderChange} />
+			)}
+
 			<DropdownContainer className="dropdown-container">
 				{remoteConfigSettings?.remoteConfiguredProviders && remoteConfigSettings.remoteConfiguredProviders.length > 0 ? (
 					<Tooltip>
@@ -347,6 +353,8 @@ const ApiOptions = ({
 					)}
 				</ProviderDropdownWrapper>
 			</DropdownContainer>
+
+			<OfflineModeIndicator provider={selectedProvider} />
 
 			{apiConfiguration && selectedProvider === "hicap" && (
 				<HicapProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />

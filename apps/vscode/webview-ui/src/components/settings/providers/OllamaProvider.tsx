@@ -11,6 +11,7 @@ import { ApiKeyField } from "../common/ApiKeyField"
 import { BaseUrlField } from "../common/BaseUrlField"
 import { DebouncedTextField } from "../common/DebouncedTextField"
 import OllamaModelPicker from "../OllamaModelPicker"
+import { OllamaSetupGuide } from "../OllamaSetupGuide"
 import { useApiConfigurationHandlers } from "../utils/useApiConfigurationHandlers"
 import { useProviderApiKeyField } from "../utils/useProviderApiKeyField"
 
@@ -140,12 +141,15 @@ export const OllamaProvider = ({ showModelOptions, isPopup, currentMode }: Ollam
 				selectedModelId={selectedModel.modelId || ""}
 			/>
 
-			{/* Show status message based on model availability */}
+			{/* Show status message and setup guide when no models are available */}
 			{ollamaModels.length === 0 && (
-				<p className="text-sm mt-1 text-description italic">
-					Unable to fetch models from Ollama server. Please ensure Ollama is running and accessible, or enter the model
-					ID manually above.
-				</p>
+				<>
+					<p className="text-sm mt-1 text-description italic">
+						Unable to fetch models from Ollama server. Please ensure Ollama is running and accessible, or enter
+						the model ID manually above.
+					</p>
+					<OllamaSetupGuide />
+				</>
 			)}
 
 			{/* Render only after the provider config RPC has resolved: the
