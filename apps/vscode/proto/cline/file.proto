@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package cline;
+package nexus;
 
-import "cline/common.proto";
+import "nexus/common.proto";
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 // Service for file-related operations
 service FileService {
@@ -40,26 +40,26 @@ service FileService {
   // Search for files in the workspace with fuzzy matching
   rpc searchFiles(FileSearchRequest) returns (FileSearchResults);
 
-  // Toggle a Cline rule (enable or disable)
-  rpc toggleClineRule(ToggleClineRuleRequest) returns (ToggleClineRules);
+  // Toggle a Nexus rule (enable or disable)
+  rpc toggleNexusRule(ToggleNexusRuleRequest) returns (ToggleNexusRules);
 
   // Toggle a Cursor rule (enable or disable)
-  rpc toggleCursorRule(ToggleCursorRuleRequest) returns (ClineRulesToggles);
+  rpc toggleCursorRule(ToggleCursorRuleRequest) returns (NexusRulesToggles);
 
   // Toggle a Windsurf rule (enable or disable)
-  rpc toggleWindsurfRule(ToggleWindsurfRuleRequest) returns (ClineRulesToggles);
+  rpc toggleWindsurfRule(ToggleWindsurfRuleRequest) returns (NexusRulesToggles);
 
   // Toggle an Agents rule (enable or disable)
-  rpc toggleAgentsRule(ToggleAgentsRuleRequest) returns (ClineRulesToggles);
+  rpc toggleAgentsRule(ToggleAgentsRuleRequest) returns (NexusRulesToggles);
 
-  // Refreshes all rule toggles (Cline, External, and Workflows)
+  // Refreshes all rule toggles (Nexus, External, and Workflows)
   rpc refreshRules(EmptyRequest) returns (RefreshedRules);
 
   // Opens a task's conversation history file on disk
   rpc openDiskConversationHistory(StringRequest) returns (Empty);
 
   // Toggles a workflow on or off
-  rpc toggleWorkflow(ToggleWorkflowRequest) returns (ClineRulesToggles);
+  rpc toggleWorkflow(ToggleWorkflowRequest) returns (NexusRulesToggles);
 
   // Check if file exists in the project
   rpc ifFileExistsRelativePath(StringRequest) returns (BooleanResponse);
@@ -97,13 +97,13 @@ service FileService {
 
 // Response for refreshRules operation
 message RefreshedRules {
-  ClineRulesToggles global_cline_rules_toggles = 1;
-  ClineRulesToggles local_cline_rules_toggles = 2;
-  ClineRulesToggles local_cursor_rules_toggles = 3;
-  ClineRulesToggles local_windsurf_rules_toggles = 4;
-  ClineRulesToggles local_agents_rules_toggles = 5;
-  ClineRulesToggles local_workflow_toggles = 6;
-  ClineRulesToggles global_workflow_toggles = 7;
+  NexusRulesToggles global_cline_rules_toggles = 1;
+  NexusRulesToggles local_cline_rules_toggles = 2;
+  NexusRulesToggles local_cursor_rules_toggles = 3;
+  NexusRulesToggles local_windsurf_rules_toggles = 4;
+  NexusRulesToggles local_agents_rules_toggles = 5;
+  NexusRulesToggles local_workflow_toggles = 6;
+  NexusRulesToggles global_workflow_toggles = 7;
 }
 
 // Request to toggle a Windsurf rule
@@ -208,24 +208,24 @@ enum RuleScope {
   REMOTE = 2;
 }
 
-// Request to toggle a Cline rule
-message ToggleClineRuleRequest {
+// Request to toggle a Nexus rule
+message ToggleNexusRuleRequest {
   Metadata metadata = 1;
   RuleScope scope = 2; // Scope of the rule (local, global, or remote)
   string rule_path = 3; // Path to the rule file
   bool enabled = 4; // Whether to enable or disable the rule
 }
 
-// Maps from filepath to enabled/disabled status, matching app's ClineRulesToggles type
-message ClineRulesToggles {
+// Maps from filepath to enabled/disabled status, matching app's NexusRulesToggles type
+message NexusRulesToggles {
   map<string, bool> toggles = 1;
 }
 
-// Response for toggleClineRule operation
-message ToggleClineRules {
-  ClineRulesToggles global_cline_rules_toggles = 1;
-  ClineRulesToggles local_cline_rules_toggles = 2;
-  ClineRulesToggles remote_rules_toggles = 3;
+// Response for toggleNexusRule operation
+message ToggleNexusRules {
+  NexusRulesToggles global_cline_rules_toggles = 1;
+  NexusRulesToggles local_cline_rules_toggles = 2;
+  NexusRulesToggles remote_rules_toggles = 3;
 }
 
 // Request to toggle a Cursor rule

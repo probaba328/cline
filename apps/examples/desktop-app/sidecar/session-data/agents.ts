@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
-import { SqliteSessionStore } from "@cline/core";
-import type { MessageWithMetadata } from "@cline/shared";
+import { SqliteSessionStore } from "@nexus/core";
+import type { MessageWithMetadata } from "@nexus/shared";
 
 /**
  * Child agents of a chat session: `spawn_agent` subagent runs and team-task

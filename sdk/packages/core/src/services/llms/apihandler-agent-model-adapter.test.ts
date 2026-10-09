@@ -3,8 +3,8 @@ import type {
 	ApiStreamChunk,
 	HandlerModelInfo,
 	Message,
-} from "@cline/llms";
-import type { AgentModelEvent, AgentModelRequest } from "@cline/shared";
+} from "@nexus/llms";
+import type { AgentModelEvent, AgentModelRequest } from "@nexus/shared";
 import { describe, expect, it, vi } from "vitest";
 import { createAgentModelFromApiHandler } from "./apihandler-agent-model-adapter";
 

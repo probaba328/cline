@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package cline;
+package nexus;
 
-import "cline/common.proto";
+import "nexus/common.proto";
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 service CheckpointsService {
   rpc checkpointRestore(CheckpointRestoreRequest) returns (Empty);

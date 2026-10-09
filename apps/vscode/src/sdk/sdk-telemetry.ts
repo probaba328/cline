@@ -1,11 +1,11 @@
 import {
 	type ConfiguredTelemetryHandle,
-	createClineTelemetryServiceConfig,
+	createNexusTelemetryServiceConfig,
 	createConfiguredTelemetryHandle,
 	type ITelemetryService,
 	type TelemetryMetadata,
 	type TelemetryProperties,
-} from "@cline/core"
+} from "@nexus/core"
 import * as os from "os"
 import { StateManager } from "@/core/storage/StateManager"
 import { HostProvider } from "@/hosts/host-provider"
@@ -32,13 +32,13 @@ export function createVscodeSdkTelemetryHandle(options: CreateVscodeSdkTelemetry
 	const sdkHandle =
 		options.telemetryHandle ??
 		createConfiguredTelemetryHandle({
-			...createClineTelemetryServiceConfig({
+			...createNexusTelemetryServiceConfig({
 				metadata: {
 					extension_version: ExtensionRegistryInfo.version,
 					// VscodeTelemetryPolicyService replaces these with the authoritative
 					// getHostVersion values before any event is emitted. "unknown" surfaces
 					// a failed host version lookup instead of mislabeling the host as VSCode.
-					cline_type: "unknown",
+					nexus_type: "unknown",
 					platform: "unknown",
 					platform_version: "unknown",
 					os_type: process.platform,
@@ -218,8 +218,8 @@ export class VscodeTelemetryPolicyService implements ITelemetryService {
 		try {
 			const hostVersion = await HostProvider.env.getHostVersion({})
 			return {
-				...(hostVersion.clineVersion ? { host_plugin_version: hostVersion.clineVersion } : {}),
-				...(hostVersion.clineType ? { cline_type: hostVersion.clineType } : {}),
+				...(hostVersion.nexusVersion ? { host_plugin_version: hostVersion.nexusVersion } : {}),
+				...(hostVersion.nexusType ? { nexus_type: hostVersion.nexusType } : {}),
 				...(hostVersion.platform ? { platform: hostVersion.platform } : {}),
 				...(hostVersion.version ? { platform_version: hostVersion.version } : {}),
 			}

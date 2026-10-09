@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import type { MessageWithMetadata } from "@cline/llms";
+import type { MessageWithMetadata } from "@nexus/llms";
 import {
 	type AgentConfig,
 	type AgentEvent,
@@ -17,12 +17,12 @@ import {
 	type AgentRuntimeEvent,
 	type BasicLogger,
 	isChatWorkspacePath,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	resolveChatWorkspacePath,
-	setClineDir,
+	setNexusDir,
 	setHomeDir,
-} from "@cline/shared/storage";
+} from "@nexus/shared/storage";
 import simpleGit from "simple-git";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TelemetryService } from "../../services/telemetry/TelemetryService";
@@ -168,36 +168,36 @@ function normalizeStartInput(
 describe("LocalRuntimeHost", () => {
 	const envSnapshot = {
 		HOME: process.env.HOME,
-		CLINE_DIR: process.env.CLINE_DIR,
-		CLINE_DATA_DIR: process.env.CLINE_DATA_DIR,
+		NEXUS_DIR: process.env.NEXUS_DIR,
+		NEXUS_DATA_DIR: process.env.NEXUS_DATA_DIR,
 	};
 	let isolatedHomeDir = "";
 
 	beforeEach(() => {
 		isolatedHomeDir = mkdtempSync(join(tmpdir(), "core-session-home-"));
 		process.env.HOME = isolatedHomeDir;
-		process.env.CLINE_DIR = join(isolatedHomeDir, ".cline");
-		delete process.env.CLINE_DATA_DIR;
+		process.env.NEXUS_DIR = join(isolatedHomeDir, ".nexus");
+		delete process.env.NEXUS_DATA_DIR;
 		setHomeDir(isolatedHomeDir);
-		setClineDir(process.env.CLINE_DIR);
+		setNexusDir(process.env.NEXUS_DIR);
 	});
 
 	afterEach(() => {
 		process.env.HOME = envSnapshot.HOME;
-		process.env.CLINE_DIR = envSnapshot.CLINE_DIR;
-		if (envSnapshot.CLINE_DATA_DIR === undefined) {
-			delete process.env.CLINE_DATA_DIR;
+		process.env.NEXUS_DIR = envSnapshot.NEXUS_DIR;
+		if (envSnapshot.NEXUS_DATA_DIR === undefined) {
+			delete process.env.NEXUS_DATA_DIR;
 		} else {
-			process.env.CLINE_DATA_DIR = envSnapshot.CLINE_DATA_DIR;
+			process.env.NEXUS_DATA_DIR = envSnapshot.NEXUS_DATA_DIR;
 		}
 		setHomeDir(envSnapshot.HOME ?? "~");
-		setClineDir(envSnapshot.CLINE_DIR ?? join("~", ".cline"));
+		setNexusDir(envSnapshot.NEXUS_DIR ?? join("~", ".nexus"));
 		rmSync(isolatedHomeDir, { recursive: true, force: true });
 	});
 
 	it("recovers stale detached command logs for non-daemon hosts", async () => {
 		const detachedLogDirectory = mkdtempSync(
-			join(tmpdir(), "cline-command-local-host-recovery-"),
+			join(tmpdir(), "nexus-command-local-host-recovery-"),
 		);
 		writeFileSync(join(detachedLogDirectory, "output.log"), "stale output");
 		writeFileSync(join(detachedLogDirectory, "completed-at"), "0");
@@ -442,8 +442,8 @@ describe("LocalRuntimeHost", () => {
 			}),
 		);
 
-		// `session.started` is emitted from `ClineCore.start` (see
-		// `ClineCore.test.ts`), not from `LocalRuntimeHost`, so that the
+		// `session.started` is emitted from `NexusCore.start` (see
+		// `NexusCore.test.ts`), not from `LocalRuntimeHost`, so that the
 		// signal fires for every backend. We assert that it is NOT emitted
 		// here and only transport-scoped events remain.
 		expect(adapter.emit).not.toHaveBeenCalledWith(
@@ -520,8 +520,8 @@ describe("LocalRuntimeHost", () => {
 			normalizeStartInput({
 				config: createConfig({
 					sessionId,
-					providerId: "cline-pass",
-					modelId: "cline-pass/glm-5.2",
+					providerId: "nexus-pass",
+					modelId: "nexus-pass/glm-5.2",
 					apiKey: undefined,
 				}),
 				prompt: "hello",
@@ -529,11 +529,11 @@ describe("LocalRuntimeHost", () => {
 		);
 
 		expect(oauthTokenManager.resolveProviderApiKey).toHaveBeenCalledWith({
-			providerId: "cline-pass",
+			providerId: "nexus-pass",
 		});
 		expect(createAgent).toHaveBeenCalledWith(
 			expect.objectContaining({
-				providerId: "cline-pass",
+				providerId: "nexus-pass",
 				apiKey: "workos:resolved-token",
 			}),
 		);

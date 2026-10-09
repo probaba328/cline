@@ -1,4 +1,4 @@
-import type { AgentMessageRole } from "@cline/ui/components/agent-chat";
+import type { AgentMessageRole } from "@nexus/ui/components/agent-chat";
 import type { ChatMessage } from "@/lib/chat-schema";
 
 export type ChatRenderItem =
@@ -101,7 +101,7 @@ export function getThoughtDurationMilliseconds(
 	return thinkingTimestamp - previousTimestamp;
 }
 
-export { formatThoughtLabel } from "@cline/ui/components/agent-chat";
+export { formatThoughtLabel } from "@nexus/ui/components/agent-chat";
 
 export type CollapseWorkOptions = {
 	/**

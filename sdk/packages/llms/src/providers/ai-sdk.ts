@@ -14,7 +14,7 @@ import type {
 	ModelToolExecution,
 	ModelToolName,
 	ProviderErrorClass,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	type AiSdkFormatterMessage,
 	type AiSdkFormatterPart,
@@ -31,7 +31,7 @@ import {
 	validateAndReserveBase64Media,
 	validateAndReserveImageMedia,
 	validateImageMedia,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	type CallSettings,
 	generateImage,
@@ -662,7 +662,7 @@ function buildAiSdkRuntimeContext(
 		typeof metadata.distinctId === "string" ? metadata.distinctId : undefined;
 
 	return {
-		// `distinctId` is Cline's canonical identity field. Langfuse's data
+		// `distinctId` is Nexus's canonical identity field. Langfuse's data
 		// model calls the same value `userId`, so expose both in runtime
 		// context and explicitly map distinctId to Langfuse's userId below.
 		...(distinctId ? { distinctId, userId: distinctId } : {}),
@@ -675,11 +675,11 @@ function buildAiSdkRuntimeContext(
 		...(typeof metadata.clientVersion === "string"
 			? { clientVersion: metadata.clientVersion }
 			: {}),
-		...(typeof metadata.clineCoreVersion === "string"
-			? { clineCoreVersion: metadata.clineCoreVersion }
+		...(typeof metadata.nexusCoreVersion === "string"
+			? { nexusCoreVersion: metadata.nexusCoreVersion }
 			: {}),
 		...(tags && tags.length > 0 ? { tags } : {}),
-		// Keep Cline correlation fields available even when the integration
+		// Keep Nexus correlation fields available even when the integration
 		// does not promote them to first-class Langfuse fields.
 		...(typeof metadata.conversationId === "string"
 			? { conversationId: metadata.conversationId }
@@ -1909,9 +1909,9 @@ async function createProviderModule(
 	context: GatewayProviderContext,
 ): Promise<ProviderFactoryResult> {
 	switch (kind) {
-		case "cline": {
-			const { createClineProviderModule } = await import("./vendors/cline");
-			return createClineProviderModule(config, context);
+		case "nexus": {
+			const { createNexusProviderModule } = await import("./vendors/nexus");
+			return createNexusProviderModule(config, context);
 		}
 		case "openai": {
 			const { createOpenAIProviderModule } = await import("./vendors/openai");
@@ -1986,7 +1986,7 @@ async function createProviderModule(
  *
  * All-empty turns (no text, no reasoning, no tool call) are a cross-provider
  * phenomenon: production telemetry shows them on hosted backends (openrouter,
- * cline, generic OpenAI-compatible endpoints), not just local Ollama. An
+ * nexus, generic OpenAI-compatible endpoints), not just local Ollama. An
  * empty assistant turn is a hard failure in the agent runtime ("Model
  * returned empty response"), so a single transient flake kills the task.
  * The same telemetry shows mid-stream network deaths (UND_ERR_SOCKET,
@@ -2222,14 +2222,14 @@ function createAiSdkProvider(kind: ProviderModuleKind): GatewayProviderFactory {
 							experimental_repairToolCall: repairMalformedToolCall as never,
 							experimental_telemetry: {
 								isEnabled: langfuse,
-								functionId: "cline-agent-turn",
+								functionId: "nexus-agent-turn",
 								includeRuntimeContext: {
 									distinctId: true,
 									userId: true,
 									sessionId: true,
 									clientName: true,
 									clientVersion: true,
-									clineCoreVersion: true,
+									nexusCoreVersion: true,
 									tags: true,
 									conversationId: true,
 									runId: true,
@@ -2337,7 +2337,7 @@ function createAiSdkProvider(kind: ProviderModuleKind): GatewayProviderFactory {
 }
 
 export const createOpenAIProvider = createAiSdkProvider("openai");
-export const createClineProvider = createAiSdkProvider("cline");
+export const createNexusProvider = createAiSdkProvider("nexus");
 export const createOpenAICompatibleProvider =
 	createAiSdkProvider("openai-compatible");
 export const createAnthropicProvider = createAiSdkProvider("anthropic");

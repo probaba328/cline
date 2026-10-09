@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
 	buildAgentHooks: vi.fn(() => ({})),
 }))
 
-vi.mock("./cline-session-factory", () => ({
+vi.mock("./nexus-session-factory", () => ({
 	buildSessionConfig: mocks.buildSessionConfig,
 }))
 

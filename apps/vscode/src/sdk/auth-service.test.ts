@@ -3,15 +3,15 @@
 // These tests verify the auth service's core logic:
 // - Token persistence (read/write/clear from secrets)
 // - Auth state management (authenticated/unauthenticated)
-// - Auth info conversion (SDK OAuthCredentials → ClineAuthInfo)
+// - Auth info conversion (SDK OAuthCredentials → NexusAuthInfo)
 // - Logout flow
 // - Streaming subscription management
 // - workos: prefix handling
 
 import path from "node:path"
-import { getValidClineCredentials, type ITelemetryService, type OAuthCredentials } from "@cline/core"
+import { getValidNexusCredentials, type ITelemetryService, type OAuthCredentials } from "@nexus/core"
 import { beforeEach, describe, expect, it, vi } from "vitest"
-import { AuthService, type ClineAuthInfo, LogoutReason } from "./auth-service"
+import { AuthService, type NexusAuthInfo, LogoutReason } from "./auth-service"
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -44,12 +44,12 @@ vi.mock("@/core/storage/StateManager", () => ({
 	},
 }))
 
-// Mock ClineEnv
+// Mock NexusEnv
 vi.mock("@/config", () => ({
-	ClineEnv: {
+	NexusEnv: {
 		config: () => ({
-			apiBaseUrl: "https://api.cline.bot",
-			appBaseUrl: "https://app.cline.bot",
+			apiBaseUrl: "https://api.nexus.bot",
+			appBaseUrl: "https://app.nexus.bot",
 		}),
 	},
 }))
@@ -65,7 +65,7 @@ vi.mock("@/core/controller/grpc-handler", () => ({
 vi.mock("@/hosts/host-provider", () => ({
 	HostProvider: {
 		get: () => ({
-			getCallbackUrl: async (path: string) => `vscode://cline.cline${path}`,
+			getCallbackUrl: async (path: string) => `vscode://nexus.nexus${path}`,
 		}),
 	},
 }))
@@ -81,9 +81,9 @@ vi.mock("@/shared/net", () => ({
 	getAxiosSettings: () => ({}),
 }))
 
-// Mock buildBasicClineHeaders
+// Mock buildBasicNexusHeaders
 vi.mock("@/services/EnvUtils", () => ({
-	buildBasicClineHeaders: async () => ({}),
+	buildBasicNexusHeaders: async () => ({}),
 }))
 
 // Mock feature flags
@@ -107,10 +107,10 @@ vi.mock("axios", () => ({
 	},
 }))
 
-const mockLoginClineOAuth = vi.hoisted(() => vi.fn())
+const mockLoginNexusOAuth = vi.hoisted(() => vi.fn())
 
-// Mock @cline/core OAuth functions
-vi.mock("@cline/core", async () => ({
+// Mock @nexus/core OAuth functions
+vi.mock("@nexus/core", async () => ({
 	sdkDebug: () => {},
 	hashSecret: () => "hashed",
 	createOAuthClientCallbacks: (opts: {
@@ -125,14 +125,14 @@ vi.mock("@cline/core", async () => ({
 		},
 		onPrompt: opts.onPrompt,
 	}),
-	loginClineOAuth: mockLoginClineOAuth,
+	loginNexusOAuth: mockLoginNexusOAuth,
 	loginOcaOAuth: vi.fn(),
 	loginOpenAICodex: vi.fn(),
-	refreshClineToken: vi.fn(),
-	getValidClineCredentials: vi.fn(),
+	refreshNexusToken: vi.fn(),
+	getValidNexusCredentials: vi.fn(),
 }))
 
-// Stateful in-memory provider-settings store. Cline credentials are persisted
+// Stateful in-memory provider-settings store. Nexus credentials are persisted
 // to providers.json (via the SDK's ProviderSettingsManager), not to secrets, so
 // the credential round-trip tests exercise this store.
 const mockProviderSettings = new Map<string, Record<string, unknown>>()
@@ -152,7 +152,7 @@ vi.mock("./provider-migration", () => ({
 
 /** Type that exposes private members for test access */
 interface AuthServiceTestAccess {
-	_clineAuthInfo: ClineAuthInfo | null
+	_clineAuthInfo: NexusAuthInfo | null
 	_authenticated: boolean
 	_activeAuthStatusUpdateHandlers: Map<string, unknown>
 	instance: AuthService | null
@@ -172,7 +172,7 @@ function resetSingleton(): void {
 // Test fixtures
 // ---------------------------------------------------------------------------
 
-function createTestAuthInfo(overrides?: Partial<ClineAuthInfo>): ClineAuthInfo {
+function createTestAuthInfo(overrides?: Partial<NexusAuthInfo>): NexusAuthInfo {
 	return {
 		idToken: "test-access-token",
 		refreshToken: "test-refresh-token",
@@ -191,7 +191,7 @@ function createTestAuthInfo(overrides?: Partial<ClineAuthInfo>): ClineAuthInfo {
 				},
 			],
 		},
-		provider: "cline",
+		provider: "nexus",
 		startedAt: Date.now(),
 		...overrides,
 	}
@@ -334,7 +334,7 @@ describe("AuthService", () => {
 			const authInfo = createTestAuthInfo()
 			testAccess(authService)._clineAuthInfo = authInfo
 
-			expect(authService.getProviderName()).toBe("cline")
+			expect(authService.getProviderName()).toBe("nexus")
 		})
 	})
 
@@ -372,7 +372,7 @@ describe("AuthService", () => {
 				expiresAt: Math.floor(Date.now() / 1000) - 100, // already expired
 			})
 			testAccess(authService)._authenticated = true
-			vi.mocked(getValidClineCredentials).mockResolvedValue(createTestOAuthCredentials())
+			vi.mocked(getValidNexusCredentials).mockResolvedValue(createTestOAuthCredentials())
 
 			const token = await authService.getAuthToken()
 			expect(token).toBe("workos:oauth-access-token")
@@ -387,7 +387,7 @@ describe("AuthService", () => {
 			// The SDK resolver owns the user.auth_logged_out (token_invalid)
 			// event for this case — the adapter must stay silent or the event
 			// double-counts (see the boundary test below with the real resolver).
-			vi.mocked(getValidClineCredentials).mockResolvedValue(null)
+			vi.mocked(getValidNexusCredentials).mockResolvedValue(null)
 
 			const token = await authService.getAuthToken()
 
@@ -401,7 +401,7 @@ describe("AuthService", () => {
 				expiresAt: Math.floor(Date.now() / 1000) - 100, // already expired
 			})
 			testAccess(authService)._authenticated = true
-			vi.mocked(getValidClineCredentials).mockResolvedValue({
+			vi.mocked(getValidNexusCredentials).mockResolvedValue({
 				...createTestOAuthCredentials(),
 				expires: Date.now() - 1000, // refresh returned an expired token (ms)
 			})
@@ -413,7 +413,7 @@ describe("AuthService", () => {
 
 	describe("createAuthRequest()", () => {
 		it("returns the SDK device auth instruction so the webview can display the browser confirmation code", async () => {
-			mockLoginClineOAuth.mockImplementationOnce(async ({ callbacks, useWorkOSDeviceAuth }) => {
+			mockLoginNexusOAuth.mockImplementationOnce(async ({ callbacks, useWorkOSDeviceAuth }) => {
 				expect(useWorkOSDeviceAuth).toBe(true)
 				callbacks.onAuth({
 					url: "https://example.com/device?user_code=ABCD-EFGH",
@@ -428,8 +428,8 @@ describe("AuthService", () => {
 			expect(response.value).toBe("Enter this code in your browser: ABCD-EFGH")
 		})
 
-		it("persists the session start time in Cline auth metadata", async () => {
-			mockLoginClineOAuth.mockImplementationOnce(async ({ callbacks }) => {
+		it("persists the session start time in Nexus auth metadata", async () => {
+			mockLoginNexusOAuth.mockImplementationOnce(async ({ callbacks }) => {
 				callbacks.onAuth({
 					url: "https://example.com/device?user_code=ABCD-EFGH",
 					instructions: "Enter this code in your browser: ABCD-EFGH",
@@ -439,9 +439,9 @@ describe("AuthService", () => {
 			})
 
 			await authService.createAuthRequest()
-			await waitForCondition(() => mockProviderSettings.has("cline"))
+			await waitForCondition(() => mockProviderSettings.has("nexus"))
 
-			const persisted = mockProviderSettings.get("cline") as { auth?: { metadata?: Record<string, unknown> } }
+			const persisted = mockProviderSettings.get("nexus") as { auth?: { metadata?: Record<string, unknown> } }
 			expect(persisted.auth?.metadata).toMatchObject({
 				provider: "workos",
 				sessionStartedAtMs: 1_700_000_000_000,
@@ -456,7 +456,7 @@ describe("AuthService", () => {
 			const loginCompleted = new Promise<OAuthCredentials>((resolve) => {
 				resolveLogin = resolve
 			})
-			mockLoginClineOAuth.mockImplementationOnce(async ({ callbacks }) => {
+			mockLoginNexusOAuth.mockImplementationOnce(async ({ callbacks }) => {
 				callbacks.onAuth({
 					url: "https://example.com/device?user_code=ABCD-EFGH",
 					instructions: "Enter this code in your browser: ABCD-EFGH",
@@ -475,7 +475,7 @@ describe("AuthService", () => {
 		})
 
 		it("does not mark the welcome view completed when OAuth fails", async () => {
-			mockLoginClineOAuth.mockImplementationOnce(async ({ callbacks }) => {
+			mockLoginNexusOAuth.mockImplementationOnce(async ({ callbacks }) => {
 				callbacks.onAuth({
 					url: "https://example.com/device?user_code=ABCD-EFGH",
 					instructions: "Enter this code in your browser: ABCD-EFGH",
@@ -498,9 +498,9 @@ describe("AuthService", () => {
 			testAccess(authService)._clineAuthInfo = authInfo
 			testAccess(authService)._authenticated = true
 
-			// Seed persisted Cline credentials in providers.json.
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			// Seed persisted Nexus credentials in providers.json.
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "workos:test-access-token", refreshToken: "test-refresh-token", accountId: "user-123" },
 			})
 
@@ -511,26 +511,26 @@ describe("AuthService", () => {
 			expect(testAccess(authService)._authenticated).toBe(false)
 
 			// Persisted credentials should be cleared from providers.json.
-			expect(mockProviderSettings.get("cline")?.auth).toBeUndefined()
-			expect(mockCaptureAuthLoggedOut).toHaveBeenCalledWith("cline", LogoutReason.USER_INITIATED)
+			expect(mockProviderSettings.get("nexus")?.auth).toBeUndefined()
+			expect(mockCaptureAuthLoggedOut).toHaveBeenCalledWith("nexus", LogoutReason.USER_INITIATED)
 		})
 	})
 
 	describe("token persistence (providers.json)", () => {
-		// Cline OAuth credentials are persisted to providers.json via the SDK's
+		// Nexus OAuth credentials are persisted to providers.json via the SDK's
 		// ProviderSettingsManager, not to VSCode secrets. These tests exercise
 		// the round-trip through the public restore/logout surface.
 
 		it("restores credentials persisted in providers.json", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: {
 					accessToken: "workos:persisted-access-token",
 					refreshToken: "persisted-refresh-token",
 					accountId: "user-123",
 				},
 			})
-			vi.mocked(getValidClineCredentials).mockResolvedValue({
+			vi.mocked(getValidNexusCredentials).mockResolvedValue({
 				access: "persisted-access-token",
 				refresh: "persisted-refresh-token",
 				expires: Date.now() + 3600 * 1000,
@@ -544,9 +544,9 @@ describe("AuthService", () => {
 			expect(testAccess(authService)._clineAuthInfo?.idToken).toBe("persisted-access-token")
 			expect(testAccess(authService)._clineAuthInfo?.startedAt).toBeUndefined()
 			expect(
-				(mockProviderSettings.get("cline")?.auth as { metadata?: Record<string, unknown> } | undefined)?.metadata,
+				(mockProviderSettings.get("nexus")?.auth as { metadata?: Record<string, unknown> } | undefined)?.metadata,
 			).toBeUndefined()
-			expect(getValidClineCredentials).toHaveBeenCalledWith(
+			expect(getValidNexusCredentials).toHaveBeenCalledWith(
 				expect.any(Object),
 				expect.objectContaining({ telemetry: mockSdkTelemetry }),
 				expect.any(Object),
@@ -554,8 +554,8 @@ describe("AuthService", () => {
 		})
 
 		it("does not let undefined incoming metadata erase existing metadata on restore refresh", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: {
 					accessToken: "workos:persisted-access-token",
 					refreshToken: "persisted-refresh-token",
@@ -567,7 +567,7 @@ describe("AuthService", () => {
 					},
 				},
 			})
-			vi.mocked(getValidClineCredentials).mockResolvedValue({
+			vi.mocked(getValidNexusCredentials).mockResolvedValue({
 				access: "persisted-access-token",
 				refresh: "persisted-refresh-token",
 				expires: Date.now() + 3600 * 1000,
@@ -582,7 +582,7 @@ describe("AuthService", () => {
 
 			await authService.restoreRefreshTokenAndRetrieveAuthInfo()
 
-			const persisted = mockProviderSettings.get("cline") as { auth?: { metadata?: Record<string, unknown> } }
+			const persisted = mockProviderSettings.get("nexus") as { auth?: { metadata?: Record<string, unknown> } }
 			expect(persisted.auth?.metadata).toMatchObject({
 				provider: "workos",
 				sessionStartedAtMs: 1_700_000_000_000,
@@ -590,7 +590,7 @@ describe("AuthService", () => {
 			})
 		})
 
-		it("sets unauthenticated state when providers.json has no Cline auth", async () => {
+		it("sets unauthenticated state when providers.json has no Nexus auth", async () => {
 			await authService.restoreRefreshTokenAndRetrieveAuthInfo()
 
 			expect(testAccess(authService)._authenticated).toBe(false)
@@ -598,18 +598,18 @@ describe("AuthService", () => {
 		})
 
 		it("clears persisted credentials when stored tokens are no longer valid", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "workos:stale", refreshToken: "stale-refresh", accountId: "user-123" },
 			})
-			// getValidClineCredentials returning null models an unrecoverable token.
-			vi.mocked(getValidClineCredentials).mockResolvedValue(null)
+			// getValidNexusCredentials returning null models an unrecoverable token.
+			vi.mocked(getValidNexusCredentials).mockResolvedValue(null)
 
 			await authService.restoreRefreshTokenAndRetrieveAuthInfo()
 
 			expect(testAccess(authService)._authenticated).toBe(false)
 			expect(testAccess(authService)._clineAuthInfo).toBeNull()
-			expect(mockProviderSettings.get("cline")?.auth).toBeUndefined()
+			expect(mockProviderSettings.get("nexus")?.auth).toBeUndefined()
 			// The SDK resolver owns the token_invalid event — no adapter emission.
 			expect(mockCaptureAuthLoggedOut).not.toHaveBeenCalled()
 		})
@@ -617,11 +617,11 @@ describe("AuthService", () => {
 
 	describe("restoreRefreshTokenAndRetrieveAuthInfo()", () => {
 		it("strips the workos: prefix from the persisted access token", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "workos:raw-access-token", refreshToken: "r", accountId: "user-123" },
 			})
-			vi.mocked(getValidClineCredentials).mockResolvedValue({
+			vi.mocked(getValidNexusCredentials).mockResolvedValue({
 				access: "raw-access-token",
 				refresh: "r",
 				expires: Date.now() + 3600 * 1000,
@@ -644,50 +644,50 @@ describe("AuthService", () => {
 		})
 
 		it("reports nothing when refreshing the stored session fails transiently", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "workos:stale", refreshToken: "stale-refresh", accountId: "user-123" },
 			})
 			// The resolver throws only on transient failures (network/timeout/5xx);
 			// stored credentials are kept and the next refresh recovers, so an
 			// offline startup must not book as a logout. (The SDK reports these
 			// as user.auth_refresh_soft_failure.)
-			vi.mocked(getValidClineCredentials).mockRejectedValue(new Error("fetch failed"))
+			vi.mocked(getValidNexusCredentials).mockRejectedValue(new Error("fetch failed"))
 
 			await authService.restoreRefreshTokenAndRetrieveAuthInfo()
 
 			expect(testAccess(authService)._authenticated).toBe(false)
-			expect(mockProviderSettings.get("cline")?.auth).toBeDefined()
+			expect(mockProviderSettings.get("nexus")?.auth).toBeDefined()
 			expect(mockCaptureAuthLoggedOut).not.toHaveBeenCalled()
 		})
 
 		it("reports restore_error when restore fails outside the credential refresh", async () => {
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "workos:stale", refreshToken: "stale-refresh", accountId: "user-123" },
 			})
-			vi.mocked(getValidClineCredentials).mockResolvedValue(createTestOAuthCredentials())
+			vi.mocked(getValidNexusCredentials).mockResolvedValue(createTestOAuthCredentials())
 			vi.spyOn(authService, "sendAuthStatusUpdate").mockRejectedValue(new Error("state push failed"))
 
 			await authService.restoreRefreshTokenAndRetrieveAuthInfo()
 
 			expect(testAccess(authService)._authenticated).toBe(false)
 			expect(mockCaptureAuthLoggedOut).toHaveBeenCalledTimes(1)
-			expect(mockCaptureAuthLoggedOut).toHaveBeenCalledWith("cline", LogoutReason.RESTORE_ERROR)
+			expect(mockCaptureAuthLoggedOut).toHaveBeenCalledWith("nexus", LogoutReason.RESTORE_ERROR)
 		})
 
 		it("emits exactly one auth_logged_out — from the SDK resolver — when the stored refresh token is rejected", async () => {
-			// Boundary test: run the REAL getValidClineCredentials (the module
+			// Boundary test: run the REAL getValidNexusCredentials (the module
 			// mock normally hides its telemetry) so a reintroduced adapter-side
 			// emission would surface as a second event here. The specifier is a
 			// variable so tsc doesn't pull the SDK sources into this project's
-			// program (same reason the @cline/core vitest stub is tsc-excluded);
+			// program (same reason the @nexus/core vitest stub is tsc-excluded);
 			// vitest resolves it at runtime.
-			const realClineAuthModulePath = path.resolve(import.meta.dirname, "../../../../sdk/packages/core/src/auth/cline.ts")
-			const { getValidClineCredentials: realGetValidClineCredentials } = (await import(
-				/* @vite-ignore */ realClineAuthModulePath
-			)) as { getValidClineCredentials: typeof getValidClineCredentials }
-			vi.mocked(getValidClineCredentials).mockImplementation(realGetValidClineCredentials as never)
+			const realNexusAuthModulePath = path.resolve(import.meta.dirname, "../../../../sdk/packages/core/src/auth/nexus.ts")
+			const { getValidNexusCredentials: realGetValidNexusCredentials } = (await import(
+				/* @vite-ignore */ realNexusAuthModulePath
+			)) as { getValidNexusCredentials: typeof getValidNexusCredentials }
+			vi.mocked(getValidNexusCredentials).mockImplementation(realGetValidNexusCredentials as never)
 			// The resolver refreshes over global fetch; reject the refresh token.
 			vi.stubGlobal(
 				"fetch",
@@ -699,8 +699,8 @@ describe("AuthService", () => {
 						}),
 				),
 			)
-			mockProviderSettings.set("cline", {
-				provider: "cline",
+			mockProviderSettings.set("nexus", {
+				provider: "nexus",
 				auth: {
 					accessToken: "workos:stale",
 					refreshToken: "stale-refresh",
@@ -716,7 +716,7 @@ describe("AuthService", () => {
 			}
 
 			expect(testAccess(authService)._authenticated).toBe(false)
-			expect(mockProviderSettings.get("cline")?.auth).toBeUndefined()
+			expect(mockProviderSettings.get("nexus")?.auth).toBeUndefined()
 			// Exactly one user.auth_logged_out in total: the SDK resolver's
 			// token_invalid (on the SDK telemetry instance) and nothing from
 			// the adapter (on the app telemetry service).

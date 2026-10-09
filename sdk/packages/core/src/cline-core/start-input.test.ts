@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { normalizeClineCoreStartInput } from "./start-input";
-import type { ClineCoreStartInput } from "./types";
+import { normalizeNexusCoreStartInput } from "./start-input";
+import type { NexusCoreStartInput } from "./types";
 
 function createInput(
-	overrides: Partial<ClineCoreStartInput> = {},
-): ClineCoreStartInput {
+	overrides: Partial<NexusCoreStartInput> = {},
+): NexusCoreStartInput {
 	return {
 		config: {
 			providerId: "anthropic",
@@ -25,9 +25,9 @@ function createInput(
 	};
 }
 
-describe("normalizeClineCoreStartInput", () => {
+describe("normalizeNexusCoreStartInput", () => {
 	it("captures the client surface, version, and default user mode", () => {
-		const normalized = normalizeClineCoreStartInput(createInput());
+		const normalized = normalizeNexusCoreStartInput(createInput());
 
 		expect(normalized.source).toBe("vscode");
 		expect(normalized.sessionMetadata).toMatchObject({
@@ -39,7 +39,7 @@ describe("normalizeClineCoreStartInput", () => {
 	});
 
 	it("keeps an explicit session mode separate from the client", () => {
-		const normalized = normalizeClineCoreStartInput(
+		const normalized = normalizeNexusCoreStartInput(
 			createInput({ mode: "automation" }),
 		);
 

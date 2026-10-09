@@ -9,7 +9,7 @@ import { Logger } from "@/shared/services/Logger"
 import { getServerAuthHash } from "@/utils/mcpAuth"
 import { arePathsEqual } from "@/utils/path"
 
-const MCP_SETTINGS_FILE_NAME = "cline_mcp_settings.json"
+const MCP_SETTINGS_FILE_NAME = "nexus_mcp_settings.json"
 const MCP_SETTINGS_MIGRATION_KEY = "__vscodeLegacyMcpSettingsMigration"
 
 type JsonRecord = Record<string, unknown>
@@ -245,23 +245,23 @@ export async function getLegacyMcpSettingsSources(vscodeContext: vscode.Extensio
 	}
 	const documentsDir = await getDocumentsPath()
 	sources.push({
-		id: "documentsClineMcp",
-		path: path.join(documentsDir, "Cline", "MCP", MCP_SETTINGS_FILE_NAME),
+		id: "documentsNexusMcp",
+		path: path.join(documentsDir, "Nexus", "MCP", MCP_SETTINGS_FILE_NAME),
 	})
 	return sources
 }
 
 export function getSharedMcpSettingsPath(storage: StorageContext): string {
-	const explicitPath = process.env.CLINE_MCP_SETTINGS_PATH?.trim()
+	const explicitPath = process.env.NEXUS_MCP_SETTINGS_PATH?.trim()
 	if (explicitPath) {
 		return explicitPath
 	}
-	const explicitDataDir = process.env.CLINE_DATA_DIR?.trim()
+	const explicitDataDir = process.env.NEXUS_DATA_DIR?.trim()
 	if (explicitDataDir) {
 		return path.join(explicitDataDir, "settings", MCP_SETTINGS_FILE_NAME)
 	}
-	const clineDir = process.env.CLINE_DIR?.trim() || path.join(os.homedir(), ".cline")
-	return path.join(clineDir, "data", "settings", MCP_SETTINGS_FILE_NAME)
+	const nexusDir = process.env.NEXUS_DIR?.trim() || path.join(os.homedir(), ".nexus")
+	return path.join(nexusDir, "data", "settings", MCP_SETTINGS_FILE_NAME)
 }
 
 function readMigrationState(storage: StorageContext): JsonRecord {

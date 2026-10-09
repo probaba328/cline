@@ -98,12 +98,12 @@ describe("plugin-loader", () => {
 			"utf8",
 		);
 
-		const sdkDir = join(dir, "node_modules", "@cline", "shared");
+		const sdkDir = join(dir, "node_modules", "@nexus", "shared");
 		await mkdir(sdkDir, { recursive: true });
 		await writeFile(
 			join(sdkDir, "package.json"),
 			JSON.stringify({
-				name: "@cline/shared",
+				name: "@nexus/shared",
 				type: "module",
 				exports: "./index.js",
 			}),
@@ -117,7 +117,7 @@ describe("plugin-loader", () => {
 		await writeFile(
 			join(dir, "plugin-with-sdk-dep.ts"),
 			[
-				"import { sdkMarker } from '@cline/shared';",
+				"import { sdkMarker } from '@nexus/shared';",
 				"export default {",
 				"  name: sdkMarker,",
 				"  manifest: { capabilities: ['tools'] },",
@@ -129,11 +129,11 @@ describe("plugin-loader", () => {
 		await writeFile(
 			join(copyDir, "portable-subagents.ts"),
 			[
-				"import { safeJsonStringify } from '@cline/shared';",
-				"import { resolveClineDataDir } from '@cline/shared/storage';",
+				"import { safeJsonStringify } from '@nexus/shared';",
+				"import { resolveNexusDataDir } from '@nexus/shared/storage';",
 				"import YAML from 'yaml';",
 				"export default {",
-				"  name: typeof safeJsonStringify === 'function' ? YAML.stringify({ ok: !!resolveClineDataDir() }) : 'invalid',",
+				"  name: typeof safeJsonStringify === 'function' ? YAML.stringify({ ok: !!resolveNexusDataDir() }) : 'invalid',",
 				"  manifest: { capabilities: ['tools'] },",
 				"};",
 			].join("\n"),
@@ -147,7 +147,7 @@ describe("plugin-loader", () => {
 			JSON.stringify({
 				name: "packaged-plugin",
 				type: "module",
-				cline: {
+				nexus: {
 					plugins: ["index.ts"],
 				},
 			}),
@@ -172,7 +172,7 @@ describe("plugin-loader", () => {
 			JSON.stringify({
 				name: "packaged-sdk-subpath",
 				type: "module",
-				cline: {
+				nexus: {
 					plugins: ["index.ts"],
 				},
 			}),
@@ -181,7 +181,7 @@ describe("plugin-loader", () => {
 		await writeFile(
 			join(packagedSdkSubpathDir, "index.ts"),
 			[
-				"import { createConfiguredTelemetryHandle } from '@cline/core/telemetry';",
+				"import { createConfiguredTelemetryHandle } from '@nexus/core/telemetry';",
 				"export default {",
 				"  name: typeof createConfiguredTelemetryHandle === 'function' ? 'sdk-subpath-ok' : 'invalid',",
 				"  manifest: { capabilities: ['tools'] },",
@@ -197,7 +197,7 @@ describe("plugin-loader", () => {
 			JSON.stringify({
 				name: "packaged-type-only-imports",
 				type: "module",
-				cline: {
+				nexus: {
 					plugins: ["index.ts"],
 				},
 			}),
@@ -331,14 +331,14 @@ describe("plugin-loader", () => {
 	});
 
 	it("resolves standalone plugin dependencies from the npm wrapper path", async () => {
-		const previousWrapperPath = process.env.CLINE_WRAPPER_PATH;
+		const previousWrapperPath = process.env.NEXUS_WRAPPER_PATH;
 		const wrapperRoot = join(dir, "wrapper-root");
 		const wrapperBinDir = join(wrapperRoot, "bin");
 		const depDir = join(wrapperRoot, "node_modules", "wrapper-host-dep");
 		const pluginPath = join(dir, "plugin-with-wrapper-dep.ts");
 		await mkdir(wrapperBinDir, { recursive: true });
 		await mkdir(depDir, { recursive: true });
-		await writeFile(join(wrapperBinDir, "cline"), "#!/usr/bin/env node\n");
+		await writeFile(join(wrapperBinDir, "nexus"), "#!/usr/bin/env node\n");
 		await writeFile(
 			join(depDir, "package.json"),
 			JSON.stringify({
@@ -366,14 +366,14 @@ describe("plugin-loader", () => {
 		);
 
 		try {
-			process.env.CLINE_WRAPPER_PATH = join(wrapperBinDir, "cline");
+			process.env.NEXUS_WRAPPER_PATH = join(wrapperBinDir, "nexus");
 			const plugin = await loadAgentPluginFromPath(pluginPath);
 			expect(plugin.name).toBe("wrapper-host-dep");
 		} finally {
 			if (previousWrapperPath === undefined) {
-				delete process.env.CLINE_WRAPPER_PATH;
+				delete process.env.NEXUS_WRAPPER_PATH;
 			} else {
-				process.env.CLINE_WRAPPER_PATH = previousWrapperPath;
+				process.env.NEXUS_WRAPPER_PATH = previousWrapperPath;
 			}
 		}
 	});

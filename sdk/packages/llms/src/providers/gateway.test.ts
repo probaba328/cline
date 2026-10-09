@@ -18,7 +18,7 @@ import {
 	IMAGE_UNSUPPORTED_PLACEHOLDER,
 	type ITelemetryService,
 	resetSdkErrorRateLimiterForTests,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { normalizeModelsDevProviderModels } from "../catalog/catalog-live";
 import { createOpenAICompatibleProvider } from "./ai-sdk";
@@ -250,19 +250,19 @@ async function captureReasoningOptions({
 	options,
 	defaults,
 }: {
-	providerId: "cline" | "openrouter";
+	providerId: "nexus" | "openrouter";
 	options: Record<string, unknown>;
 	defaults?: GatewayModelHandleOptions;
 }): Promise<unknown> {
 	mockSuccessfulStream();
-	const isCline = providerId === "cline";
-	const modelId = isCline ? "anthropic/claude-sonnet-4.6" : "openai/gpt-5.4";
+	const isNexus = providerId === "nexus";
+	const modelId = isNexus ? "anthropic/claude-sonnet-4.6" : "openai/gpt-5.4";
 	const gateway = createGateway({
 		providerConfigs: [
-			isCline
+			isNexus
 				? {
-						providerId: "cline",
-						apiKey: "cline-key",
+						providerId: "nexus",
+						apiKey: "nexus-key",
 						models: [
 							{
 								id: modelId,
@@ -298,13 +298,13 @@ async function captureReasoningOptions({
 
 const originalOpenRouterApiKey = process.env.OPENROUTER_API_KEY;
 const originalCaptureProviderRequest =
-	process.env.CLINE_CAPTURE_PROVIDER_REQUEST;
-const originalCaptureWire = process.env.CLINE_CAPTURE_WIRE;
-const originalCaptureDir = process.env.CLINE_CAPTURE_DIR;
-const originalCaptureDataDir = process.env.CLINE_DATA_DIR;
+	process.env.NEXUS_CAPTURE_PROVIDER_REQUEST;
+const originalCaptureWire = process.env.NEXUS_CAPTURE_WIRE;
+const originalCaptureDir = process.env.NEXUS_CAPTURE_DIR;
+const originalCaptureDataDir = process.env.NEXUS_DATA_DIR;
 const originalCaptureMaxPreviewBytes =
-	process.env.CLINE_CAPTURE_MAX_PREVIEW_BYTES;
-const originalCaptureCleanup = process.env.CLINE_CAPTURE_CLEANUP;
+	process.env.NEXUS_CAPTURE_MAX_PREVIEW_BYTES;
+const originalCaptureCleanup = process.env.NEXUS_CAPTURE_CLEANUP;
 
 function readCaptureRecords(dir: string): Array<Record<string, unknown>> {
 	return readdirSync(dir)
@@ -386,36 +386,36 @@ describe("sdk-gateway", () => {
 			process.env.OPENROUTER_API_KEY = originalOpenRouterApiKey;
 		}
 		if (originalCaptureProviderRequest === undefined) {
-			delete process.env.CLINE_CAPTURE_PROVIDER_REQUEST;
+			delete process.env.NEXUS_CAPTURE_PROVIDER_REQUEST;
 		} else {
-			process.env.CLINE_CAPTURE_PROVIDER_REQUEST =
+			process.env.NEXUS_CAPTURE_PROVIDER_REQUEST =
 				originalCaptureProviderRequest;
 		}
 		if (originalCaptureWire === undefined) {
-			delete process.env.CLINE_CAPTURE_WIRE;
+			delete process.env.NEXUS_CAPTURE_WIRE;
 		} else {
-			process.env.CLINE_CAPTURE_WIRE = originalCaptureWire;
+			process.env.NEXUS_CAPTURE_WIRE = originalCaptureWire;
 		}
 		if (originalCaptureDir === undefined) {
-			delete process.env.CLINE_CAPTURE_DIR;
+			delete process.env.NEXUS_CAPTURE_DIR;
 		} else {
-			process.env.CLINE_CAPTURE_DIR = originalCaptureDir;
+			process.env.NEXUS_CAPTURE_DIR = originalCaptureDir;
 		}
 		if (originalCaptureDataDir === undefined) {
-			delete process.env.CLINE_DATA_DIR;
+			delete process.env.NEXUS_DATA_DIR;
 		} else {
-			process.env.CLINE_DATA_DIR = originalCaptureDataDir;
+			process.env.NEXUS_DATA_DIR = originalCaptureDataDir;
 		}
 		if (originalCaptureMaxPreviewBytes === undefined) {
-			delete process.env.CLINE_CAPTURE_MAX_PREVIEW_BYTES;
+			delete process.env.NEXUS_CAPTURE_MAX_PREVIEW_BYTES;
 		} else {
-			process.env.CLINE_CAPTURE_MAX_PREVIEW_BYTES =
+			process.env.NEXUS_CAPTURE_MAX_PREVIEW_BYTES =
 				originalCaptureMaxPreviewBytes;
 		}
 		if (originalCaptureCleanup === undefined) {
-			delete process.env.CLINE_CAPTURE_CLEANUP;
+			delete process.env.NEXUS_CAPTURE_CLEANUP;
 		} else {
-			process.env.CLINE_CAPTURE_CLEANUP = originalCaptureCleanup;
+			process.env.NEXUS_CAPTURE_CLEANUP = originalCaptureCleanup;
 		}
 	});
 
@@ -571,14 +571,14 @@ describe("sdk-gateway", () => {
 					type: "tool-call",
 					toolCallId: "search_1",
 					toolName: "web_search",
-					input: { query: "Cline" },
+					input: { query: "Nexus" },
 					providerExecuted: true,
 				},
 				{
 					type: "tool-result",
 					toolCallId: "search_1",
 					toolName: "web_search",
-					input: { query: "Cline" },
+					input: { query: "Nexus" },
 					output: { results: [] },
 					providerExecuted: true,
 				},
@@ -598,7 +598,7 @@ describe("sdk-gateway", () => {
 					{
 						name: "web_search",
 						maxUses: 3,
-						allowedDomains: ["cline.bot"],
+						allowedDomains: ["nexus.bot"],
 					},
 				],
 			}),
@@ -623,7 +623,7 @@ describe("sdk-gateway", () => {
 		expect(nativeWebSearchSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				maxUses: 3,
-				allowedDomains: ["cline.bot"],
+				allowedDomains: ["nexus.bot"],
 			}),
 		);
 		expect(streamTextSpy).toHaveBeenCalledWith(
@@ -947,8 +947,8 @@ describe("sdk-gateway", () => {
 		expect(strategyProviders).toEqual([
 			"aihubmix",
 			"anthropic",
-			"cline",
-			"cline-pass",
+			"nexus",
+			"nexus-pass",
 			"minimax",
 			"oca",
 			"openrouter",
@@ -1710,19 +1710,19 @@ describe("sdk-gateway", () => {
 		expect(events[0]).toEqual(generatedImageEvent("image/png", "aGVsbG8="));
 	});
 
-	it("uses the OpenRouter image transport for dedicated Cline image models", async () => {
+	it("uses the OpenRouter image transport for dedicated Nexus image models", async () => {
 		generateImageSpy.mockResolvedValue({
 			images: [{ mediaType: "image/png", base64: "aGVsbG8=" }],
 		});
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
+					providerId: "nexus",
 					apiKey: "test",
 					models: [
 						{
 							id: "openai/gpt-image-test",
-							name: "Cline Image Test",
+							name: "Nexus Image Test",
 							operation: "image-generation",
 							modalities: { input: ["text"], output: ["image"] },
 						},
@@ -1733,7 +1733,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "openai/gpt-image-test",
 				messages: baseMessages,
 			}),
@@ -1760,7 +1760,7 @@ describe("sdk-gateway", () => {
 		]);
 	});
 
-	it("uses the OpenRouter image transport for mixed Cline image models", async () => {
+	it("uses the OpenRouter image transport for mixed Nexus image models", async () => {
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([
 				{
@@ -1773,12 +1773,12 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
+					providerId: "nexus",
 					apiKey: "test",
 					models: [
 						{
 							id: "google/gemini-image-test",
-							name: "Cline Gemini Image Test",
+							name: "Nexus Gemini Image Test",
 							modalities: {
 								input: ["text", "image"],
 								output: ["text", "image"],
@@ -1791,7 +1791,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "google/gemini-image-test",
 				messages: baseMessages,
 				reasoning: { enabled: true, effort: "low" },
@@ -3378,8 +3378,8 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 					models: [
 						{
 							id: "openai/gpt-5.4",
@@ -3395,7 +3395,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "openai/gpt-5.4",
 				messages: baseMessages,
 			}),
@@ -3527,7 +3527,7 @@ describe("sdk-gateway", () => {
 		expect(usageEvent?.usage.totalCost).toBeCloseTo(0.003475, 12);
 	});
 
-	it("reads nested raw market cost for cline before falling back to pricing", async () => {
+	it("reads nested raw market cost for nexus before falling back to pricing", async () => {
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([
 				{
@@ -3547,8 +3547,8 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 					models: [
 						{
 							id: "openai/gpt-5.4",
@@ -3564,7 +3564,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "openai/gpt-5.4",
 				messages: baseMessages,
 			}),
@@ -3815,8 +3815,8 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 					models: [{ id: "openai/gpt-5.3-codex", name: "GPT-5.3 Codex" }],
 				},
 			],
@@ -3824,7 +3824,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "openai/gpt-5.3-codex",
 				messages: baseMessages,
 			}),
@@ -3864,8 +3864,8 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 					models: [
 						{
 							id: "anthropic/claude-opus-4.6",
@@ -3878,7 +3878,7 @@ describe("sdk-gateway", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-opus-4.6",
 				messages: baseMessages,
 			}),
@@ -5580,9 +5580,9 @@ describe("sdk-gateway", () => {
 
 	it.each([
 		{
-			providerId: "cline",
+			providerId: "nexus",
 			modelId: "qwen/qwen3.6-plus",
-			providerOptionsKey: "cline",
+			providerOptionsKey: "nexus",
 			aliasKey: undefined,
 		},
 		{
@@ -5760,8 +5760,8 @@ describe("sdk-gateway", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 					models: [
 						{
 							id: "openai/gpt-5.4",
@@ -5777,7 +5777,7 @@ describe("sdk-gateway", () => {
 
 		await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "openai/gpt-5.4",
 				messages: baseMessages,
 				reasoning: {
@@ -5799,7 +5799,7 @@ describe("sdk-gateway", () => {
 		expect(call?.providerOptions?.openaiCompatible).not.toHaveProperty(
 			"reasoningSummary",
 		);
-		expect(call?.providerOptions?.cline).not.toHaveProperty("reasoningSummary");
+		expect(call?.providerOptions?.nexus).not.toHaveProperty("reasoningSummary");
 	});
 
 	it("passes native Z.AI thinking enabled and disabled provider options for GLM", async () => {
@@ -5921,8 +5921,8 @@ describe("sdk-gateway", () => {
 					apiKey: "openrouter-key",
 				},
 				{
-					providerId: "cline",
-					apiKey: "cline-key",
+					providerId: "nexus",
+					apiKey: "nexus-key",
 				},
 				{
 					providerId: "vercel-ai-gateway",
@@ -5953,7 +5953,7 @@ describe("sdk-gateway", () => {
 		);
 		await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "z-ai/glm-4.7",
 				messages: baseMessages,
 				reasoning: {
@@ -5973,7 +5973,7 @@ describe("sdk-gateway", () => {
 		);
 		await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "z-ai/glm-4.7",
 				messages: baseMessages,
 				reasoning: {
@@ -6010,7 +6010,7 @@ describe("sdk-gateway", () => {
 					openaiCompatible: expect.objectContaining({
 						reasoning: { exclude: true },
 					}),
-					cline: expect.objectContaining({
+					nexus: expect.objectContaining({
 						reasoning: { exclude: true },
 					}),
 				}),
@@ -6044,7 +6044,7 @@ describe("sdk-gateway", () => {
 			const call = streamTextSpy.mock.calls[4]?.[0] as {
 				providerOptions?: Record<string, Record<string, unknown> | undefined>;
 			};
-			expect(call.providerOptions?.cline).not.toEqual(
+			expect(call.providerOptions?.nexus).not.toEqual(
 				expect.objectContaining({ reasoning: expect.anything() }),
 			);
 			expect(call.providerOptions?.openaiCompatible).not.toEqual(
@@ -6185,7 +6185,7 @@ describe("sdk-gateway", () => {
 	])("$name", async ({ options, defaults }) => {
 		expect(
 			await captureReasoningOptions({
-				providerId: "cline",
+				providerId: "nexus",
 				options,
 				defaults,
 			}),
@@ -6418,18 +6418,18 @@ describe("sdk-gateway", () => {
 	it("allows unregistered model ids on known providers", async () => {
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([
-				{ type: "text-delta", textDelta: "Cline custom model" },
+				{ type: "text-delta", textDelta: "Nexus custom model" },
 				{ type: "finish", usage: { inputTokens: 4, outputTokens: 2 } },
 			]),
 		});
 
 		const gateway = createGateway({
-			providerConfigs: [{ providerId: "cline", apiKey: "test-key" }],
+			providerConfigs: [{ providerId: "nexus", apiKey: "test-key" }],
 		});
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "google/gemma-4-31b-it",
 				messages: baseMessages,
 			}),
@@ -6438,7 +6438,7 @@ describe("sdk-gateway", () => {
 		expect(openaiCompatibleSpy).toHaveBeenCalledWith("google/gemma-4-31b-it");
 		expect(events[0]).toEqual({
 			type: "text-delta",
-			text: "Cline custom model",
+			text: "Nexus custom model",
 		});
 	});
 
@@ -6526,8 +6526,8 @@ describe("sdk-gateway", () => {
 
 	it("writes AI SDK prompt captures with request metadata correlation", async () => {
 		const captureDir = mkdtempSync(join(tmpdir(), "llms-capture-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([
 				{
@@ -6599,8 +6599,8 @@ describe("sdk-gateway", () => {
 
 	it("falls back to a stable per-request capture filename without captureId", async () => {
 		const captureDir = mkdtempSync(join(tmpdir(), "llms-capture-fallback-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([{ type: "finish", finishReason: "stop" }]),
 		});
@@ -6629,9 +6629,9 @@ describe("sdk-gateway", () => {
 
 	it("honors the full capture preview byte cap override", async () => {
 		const captureDir = mkdtempSync(join(tmpdir(), "llms-full-capture-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "full";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
-		process.env.CLINE_CAPTURE_MAX_PREVIEW_BYTES = "24";
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "full";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_MAX_PREVIEW_BYTES = "24";
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([{ type: "finish", finishReason: "stop" }]),
 		});
@@ -6672,9 +6672,9 @@ describe("sdk-gateway", () => {
 	it("does not write provider request captures without an explicit capture or data dir", async () => {
 		const cwd = process.cwd();
 		const tempCwd = mkdtempSync(join(tmpdir(), "llms-capture-cwd-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		delete process.env.CLINE_CAPTURE_DIR;
-		delete process.env.CLINE_DATA_DIR;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		delete process.env.NEXUS_CAPTURE_DIR;
+		delete process.env.NEXUS_DATA_DIR;
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([{ type: "finish", finishReason: "stop" }]),
 		});
@@ -6699,7 +6699,7 @@ describe("sdk-gateway", () => {
 			);
 
 			await expect(
-				access(join(tempCwd, ".cline", "provider-request-captures")),
+				access(join(tempCwd, ".nexus", "provider-request-captures")),
 			).rejects.toThrow();
 		} finally {
 			process.chdir(cwd);
@@ -7082,9 +7082,9 @@ describe("sdk-gateway", () => {
 
 	it("wraps provider fetch for wire capture while delegating to the configured fetch", async () => {
 		const captureDir = mkdtempSync(join(tmpdir(), "llms-wire-capture-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		process.env.CLINE_CAPTURE_WIRE = "true";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		process.env.NEXUS_CAPTURE_WIRE = "true";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
 		const customFetch = vi.fn(
 			async () => new Response("ok"),
 		) as unknown as typeof fetch;
@@ -7149,9 +7149,9 @@ describe("sdk-gateway", () => {
 
 	it("increments capture attempts instead of overwriting repeated wire requests", async () => {
 		const captureDir = mkdtempSync(join(tmpdir(), "llms-wire-attempts-"));
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		process.env.CLINE_CAPTURE_WIRE = "true";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		process.env.NEXUS_CAPTURE_WIRE = "true";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
 		const customFetch = vi.fn(
 			async () => new Response("ok"),
 		) as unknown as typeof fetch;
@@ -7209,8 +7209,8 @@ describe("sdk-gateway", () => {
 		writeFileSync(oldFile, "{}\n", { mode: 0o600 });
 		const oldDate = new Date(Date.now() - 48 * 60 * 60 * 1000);
 		utimesSync(oldFile, oldDate, oldDate);
-		process.env.CLINE_CAPTURE_PROVIDER_REQUEST = "summary";
-		process.env.CLINE_CAPTURE_DIR = captureDir;
+		process.env.NEXUS_CAPTURE_PROVIDER_REQUEST = "summary";
+		process.env.NEXUS_CAPTURE_DIR = captureDir;
 		streamTextSpy.mockReturnValue({
 			fullStream: makeStreamParts([{ type: "finish", finishReason: "stop" }]),
 		});
@@ -7235,8 +7235,8 @@ describe("sdk-gateway", () => {
 		const keepFile = join(keepDir, "old.ai_sdk_prompt.1.provider-request.json");
 		writeFileSync(keepFile, "{}\n", { mode: 0o600 });
 		utimesSync(keepFile, oldDate, oldDate);
-		process.env.CLINE_CAPTURE_DIR = keepDir;
-		process.env.CLINE_CAPTURE_CLEANUP = "off";
+		process.env.NEXUS_CAPTURE_DIR = keepDir;
+		process.env.NEXUS_CAPTURE_CLEANUP = "off";
 		await collect(
 			await gateway.stream({
 				providerId: "openrouter",

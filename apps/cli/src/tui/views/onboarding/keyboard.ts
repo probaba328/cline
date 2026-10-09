@@ -1,7 +1,7 @@
-import type { ProviderConfigFieldKey } from "@cline/core";
+import type { ProviderConfigFieldKey } from "@nexus/core";
 import { useKeyboard } from "@opentui/react";
 import type { Dispatch, SetStateAction } from "react";
-import type { ClineModelPickerEntry } from "../../components/model-selector/cline-model-picker";
+import type { NexusModelPickerEntry } from "../../components/model-selector/nexus-model-picker";
 import type { SearchableListState } from "../../components/searchable-list";
 import {
 	isOnboardingOAuthProviderId,
@@ -9,8 +9,8 @@ import {
 } from "./auth";
 import { FIELD_ORDER } from "./fields";
 import {
-	type ClinePassSubscriptionOption,
-	type ClinePassSubscriptionStatus,
+	type NexusPassSubscriptionOption,
+	type NexusPassSubscriptionStatus,
 	type MenuOption,
 	type OnboardingStep,
 	THINKING_LEVELS,
@@ -26,11 +26,11 @@ export function useOnboardingKeyboard(input: {
 	menuSelected: number;
 	providerList: SearchableListState;
 	modelList: SearchableListState;
-	clineEntries: ClineModelPickerEntry[];
-	clineModelSelected: number;
-	clinePassSubscriptionStatus: ClinePassSubscriptionStatus;
-	clinePassSubscriptionOptions: ClinePassSubscriptionOption[];
-	clinePassSubscriptionSelected: number;
+	nexusEntries: NexusModelPickerEntry[];
+	nexusModelSelected: number;
+	nexusPassSubscriptionStatus: NexusPassSubscriptionStatus;
+	nexusPassSubscriptionOptions: NexusPassSubscriptionOption[];
+	nexusPassSubscriptionSelected: number;
 	thinkingSelected: number;
 	setStep: (step: OnboardingStep) => void;
 	setMenuSelected: Dispatch<SetStateAction<number>>;
@@ -42,12 +42,12 @@ export function useOnboardingKeyboard(input: {
 	setDeviceVerifyUrl: (value: string) => void;
 	setDeviceError: (value: string) => void;
 	setDeviceStatus: (value: string) => void;
-	setClineModelSelected: Dispatch<SetStateAction<number>>;
-	setClinePassSubscriptionSelected: Dispatch<SetStateAction<number>>;
+	setNexusModelSelected: Dispatch<SetStateAction<number>>;
+	setNexusPassSubscriptionSelected: Dispatch<SetStateAction<number>>;
 	setThinkingSelected: Dispatch<SetStateAction<number>>;
-	continueFromClinePassSubscription: () => void;
-	refreshClinePassSubscriptionStatus: () => void;
-	openClinePassSubscriptionPage: () => void;
+	continueFromNexusPassSubscription: () => void;
+	refreshNexusPassSubscriptionStatus: () => void;
+	openNexusPassSubscriptionPage: () => void;
 	abortOAuth: () => void;
 	abortDeviceCode: () => void;
 	resetAuth: () => void;
@@ -56,7 +56,7 @@ export function useOnboardingKeyboard(input: {
 	startDeviceCodeFlow: (providerId: OnboardingOAuthProviderId) => void;
 	selectProvider: (providerId: string) => void;
 	loadModelsForProvider: (providerId: string) => void;
-	saveClineModelSelection: (modelId: string, modelName: string) => void;
+	saveNexusModelSelection: (modelId: string, modelName: string) => void;
 	saveCodexCliConfig: () => void;
 	saveByoConfig: () => void;
 	saveModelSelection: () => void;
@@ -102,20 +102,20 @@ export function useOnboardingKeyboard(input: {
 				input.setStep("byo_provider");
 				return;
 			}
-			if (input.step === "cline_pass_subscription") {
+			if (input.step === "nexus_pass_subscription") {
 				input.setStep("menu");
 				input.setMenuSelected(0);
 				return;
 			}
-			if (input.step === "cline_model") {
+			if (input.step === "nexus_model") {
 				input.setStep("menu");
 				input.setMenuSelected(0);
 				return;
 			}
 			if (input.step === "model_picker") {
-				if (input.activeProviderId === "cline") {
-					input.setClineModelSelected(0);
-					input.setStep("cline_model");
+				if (input.activeProviderId === "nexus") {
+					input.setNexusModelSelected(0);
+					input.setStep("nexus_model");
 				} else {
 					input.setStep("menu");
 					input.setMenuSelected(0);
@@ -127,9 +127,9 @@ export function useOnboardingKeyboard(input: {
 				return;
 			}
 			if (input.step === "thinking_level") {
-				if (input.activeProviderId === "cline") {
-					input.setClineModelSelected(0);
-					input.setStep("cline_model");
+				if (input.activeProviderId === "nexus") {
+					input.setNexusModelSelected(0);
+					input.setStep("nexus_model");
 				} else {
 					input.setStep("model_picker");
 					input.loadModelsForProvider(input.activeProviderId);
@@ -139,45 +139,45 @@ export function useOnboardingKeyboard(input: {
 		}
 
 		if (input.step === "oauth_pending") {
-			if (key.name === "d" && input.oauthProvider === "cline") {
+			if (key.name === "d" && input.oauthProvider === "nexus") {
 				input.abortOAuth();
 				input.resetAuth();
-				input.startDeviceCodeFlow("cline");
+				input.startDeviceCodeFlow("nexus");
 			}
 			return;
 		}
 
 		if (input.step === "device_code") return;
 
-		if (input.step === "cline_pass_subscription") {
-			const total = input.clinePassSubscriptionOptions.length;
+		if (input.step === "nexus_pass_subscription") {
+			const total = input.nexusPassSubscriptionOptions.length;
 			if (total === 0) return;
 			if (key.name === "up" || (key.ctrl && key.name === "p")) {
-				input.setClinePassSubscriptionSelected((s) =>
+				input.setNexusPassSubscriptionSelected((s) =>
 					s <= 0 ? total - 1 : s - 1,
 				);
 				return;
 			}
 			if (key.name === "down" || (key.ctrl && key.name === "n")) {
-				input.setClinePassSubscriptionSelected((s) =>
+				input.setNexusPassSubscriptionSelected((s) =>
 					s >= total - 1 ? 0 : s + 1,
 				);
 				return;
 			}
 			if (key.name === "return" || key.name === "enter") {
 				const option =
-					input.clinePassSubscriptionOptions[
-						Math.min(input.clinePassSubscriptionSelected, total - 1)
+					input.nexusPassSubscriptionOptions[
+						Math.min(input.nexusPassSubscriptionSelected, total - 1)
 					];
 				if (!option) return;
 				if (option.value === "subscribe") {
-					input.openClinePassSubscriptionPage();
+					input.openNexusPassSubscriptionPage();
 				} else if (option.value === "refresh") {
-					if (input.clinePassSubscriptionStatus !== "loading") {
-						input.refreshClinePassSubscriptionStatus();
+					if (input.nexusPassSubscriptionStatus !== "loading") {
+						input.refreshNexusPassSubscriptionStatus();
 					}
 				} else if (option.value === "skip") {
-					input.continueFromClinePassSubscription();
+					input.continueFromNexusPassSubscription();
 				} else if (option.value === "back") {
 					input.setStep("menu");
 					input.setMenuSelected(0);
@@ -255,22 +255,22 @@ export function useOnboardingKeyboard(input: {
 			return;
 		}
 
-		if (input.step === "cline_model") {
-			const total = input.clineEntries.length;
+		if (input.step === "nexus_model") {
+			const total = input.nexusEntries.length;
 			if (total === 0) return;
 			if (key.name === "up" || (key.ctrl && key.name === "p")) {
-				input.setClineModelSelected((s) => (s <= 0 ? total - 1 : s - 1));
+				input.setNexusModelSelected((s) => (s <= 0 ? total - 1 : s - 1));
 				return;
 			}
 			if (key.name === "down" || (key.ctrl && key.name === "n")) {
-				input.setClineModelSelected((s) => (s >= total - 1 ? 0 : s + 1));
+				input.setNexusModelSelected((s) => (s >= total - 1 ? 0 : s + 1));
 				return;
 			}
 			if (key.name === "return") {
-				const entry = input.clineEntries[input.clineModelSelected];
+				const entry = input.nexusEntries[input.nexusModelSelected];
 				if (!entry) return;
 				if (entry.kind === "model") {
-					input.saveClineModelSelection(entry.model.id, entry.model.name);
+					input.saveNexusModelSelection(entry.model.id, entry.model.name);
 				} else {
 					input.setStep("model_picker");
 					input.loadModelsForProvider(input.activeProviderId);

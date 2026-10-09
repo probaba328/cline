@@ -1,5 +1,5 @@
-import { EmptyRequest, StringArrayRequest } from "@shared/proto/cline/common"
-import { GetTaskHistoryRequest, TaskFavoriteRequest, type TaskItem } from "@shared/proto/cline/task"
+import { EmptyRequest, StringArrayRequest } from "@shared/proto/nexus/common"
+import { GetTaskHistoryRequest, TaskFavoriteRequest, type TaskItem } from "@shared/proto/nexus/task"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
 import Fuse, { FuseResult } from "fuse.js"
 import { FunnelIcon } from "lucide-react"

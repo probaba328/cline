@@ -13,10 +13,10 @@ import {
 } from "react";
 
 const BASE =
-	"inline-flex items-center justify-center whitespace-nowrap rounded-cline-ui-md font-cline-ui-medium cursor-pointer " +
+	"inline-flex items-center justify-center whitespace-nowrap rounded-nexus-ui-md font-nexus-ui-medium cursor-pointer " +
 	"disabled:pointer-events-none disabled:opacity-50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 " +
 	"[&_svg]:pointer-events-none [&_svg]:shrink-0 shrink-0 " +
-	"outline-none focus-visible:ring-2 focus-visible:ring-cline-ui-ring/60 transition-colors";
+	"outline-none focus-visible:ring-2 focus-visible:ring-nexus-ui-ring/60 transition-colors";
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 
@@ -33,10 +33,10 @@ export const buttonVariants = cva(BASE, {
 			destructive: "",
 		},
 		size: {
-			xs: "h-7 px-2.5 gap-1.5 text-cline-ui-xs [&_svg:not([class*='size-'])]:size-3",
-			sm: "h-8 px-3 gap-1.5 text-cline-ui-sm [&_svg:not([class*='size-'])]:size-3.5",
-			md: "h-9 px-3.5 gap-2 text-cline-ui-sm [&_svg:not([class*='size-'])]:size-4",
-			lg: "h-10 px-4 gap-2 text-cline-ui-base [&_svg:not([class*='size-'])]:size-4",
+			xs: "h-7 px-2.5 gap-1.5 text-nexus-ui-xs [&_svg:not([class*='size-'])]:size-3",
+			sm: "h-8 px-3 gap-1.5 text-nexus-ui-sm [&_svg:not([class*='size-'])]:size-3.5",
+			md: "h-9 px-3.5 gap-2 text-nexus-ui-sm [&_svg:not([class*='size-'])]:size-4",
+			lg: "h-10 px-4 gap-2 text-nexus-ui-base [&_svg:not([class*='size-'])]:size-4",
 		},
 	},
 	compoundVariants: [
@@ -45,55 +45,55 @@ export const buttonVariants = cva(BASE, {
 			variant: "fill",
 			tone: "accent",
 			className:
-				"bg-cline-ui-primary text-cline-ui-primary-foreground hover:bg-cline-ui-primary-emphasis",
+				"bg-nexus-ui-primary text-nexus-ui-primary-foreground hover:bg-nexus-ui-primary-emphasis",
 		},
 		{
 			variant: "fill",
 			tone: "neutral",
 			className:
-				"bg-cline-ui-secondary text-cline-ui-secondary-foreground hover:bg-cline-ui-border",
+				"bg-nexus-ui-secondary text-nexus-ui-secondary-foreground hover:bg-nexus-ui-border",
 		},
 		{
 			variant: "fill",
 			tone: "destructive",
 			className:
-				"bg-cline-ui-destructive text-cline-ui-destructive-foreground hover:bg-cline-ui-destructive/90",
+				"bg-nexus-ui-destructive text-nexus-ui-destructive-foreground hover:bg-nexus-ui-destructive/90",
 		},
 		// surface
 		{
 			variant: "surface",
 			tone: "accent",
 			className:
-				"bg-cline-ui-accent text-cline-ui-accent-foreground hover:bg-cline-ui-primary/15",
+				"bg-nexus-ui-accent text-nexus-ui-accent-foreground hover:bg-nexus-ui-primary/15",
 		},
 		{
 			variant: "surface",
 			tone: "neutral",
 			className:
-				"bg-cline-ui-surface-hover-lighter text-cline-ui-foreground hover:bg-cline-ui-surface-hover",
+				"bg-nexus-ui-surface-hover-lighter text-nexus-ui-foreground hover:bg-nexus-ui-surface-hover",
 		},
 		{
 			variant: "surface",
 			tone: "destructive",
 			className:
-				"bg-cline-ui-destructive/10 text-cline-ui-destructive hover:bg-cline-ui-destructive/15",
+				"bg-nexus-ui-destructive/10 text-nexus-ui-destructive hover:bg-nexus-ui-destructive/15",
 		},
 		// ghost
 		{
 			variant: "ghost",
 			tone: "accent",
-			className: "text-cline-ui-primary hover:bg-cline-ui-primary/10",
+			className: "text-nexus-ui-primary hover:bg-nexus-ui-primary/10",
 		},
 		{
 			variant: "ghost",
 			tone: "neutral",
 			className:
-				"text-cline-ui-muted-foreground hover:bg-cline-ui-surface-hover hover:text-cline-ui-foreground",
+				"text-nexus-ui-muted-foreground hover:bg-nexus-ui-surface-hover hover:text-nexus-ui-foreground",
 		},
 		{
 			variant: "ghost",
 			tone: "destructive",
-			className: "text-cline-ui-destructive hover:bg-cline-ui-destructive/10",
+			className: "text-nexus-ui-destructive hover:bg-nexus-ui-destructive/10",
 		},
 	],
 	defaultVariants: {
@@ -214,55 +214,55 @@ export const iconButtonVariants = cva(BASE, {
 			variant: "fill",
 			tone: "accent",
 			className:
-				"bg-cline-ui-primary text-cline-ui-primary-foreground hover:bg-cline-ui-primary-emphasis",
+				"bg-nexus-ui-primary text-nexus-ui-primary-foreground hover:bg-nexus-ui-primary-emphasis",
 		},
 		{
 			variant: "fill",
 			tone: "neutral",
 			className:
-				"bg-cline-ui-secondary text-cline-ui-secondary-foreground hover:bg-cline-ui-border",
+				"bg-nexus-ui-secondary text-nexus-ui-secondary-foreground hover:bg-nexus-ui-border",
 		},
 		{
 			variant: "fill",
 			tone: "destructive",
 			className:
-				"bg-cline-ui-destructive text-cline-ui-destructive-foreground hover:bg-cline-ui-destructive/90",
+				"bg-nexus-ui-destructive text-nexus-ui-destructive-foreground hover:bg-nexus-ui-destructive/90",
 		},
 		// surface
 		{
 			variant: "surface",
 			tone: "accent",
 			className:
-				"bg-cline-ui-accent text-cline-ui-accent-foreground hover:bg-cline-ui-primary/15",
+				"bg-nexus-ui-accent text-nexus-ui-accent-foreground hover:bg-nexus-ui-primary/15",
 		},
 		{
 			variant: "surface",
 			tone: "neutral",
 			className:
-				"bg-cline-ui-surface-hover-lighter text-cline-ui-foreground hover:bg-cline-ui-surface-hover",
+				"bg-nexus-ui-surface-hover-lighter text-nexus-ui-foreground hover:bg-nexus-ui-surface-hover",
 		},
 		{
 			variant: "surface",
 			tone: "destructive",
 			className:
-				"bg-cline-ui-destructive/10 text-cline-ui-destructive hover:bg-cline-ui-destructive/15",
+				"bg-nexus-ui-destructive/10 text-nexus-ui-destructive hover:bg-nexus-ui-destructive/15",
 		},
 		// ghost
 		{
 			variant: "ghost",
 			tone: "accent",
-			className: "text-cline-ui-primary hover:bg-cline-ui-primary/10",
+			className: "text-nexus-ui-primary hover:bg-nexus-ui-primary/10",
 		},
 		{
 			variant: "ghost",
 			tone: "neutral",
 			className:
-				"text-cline-ui-muted-foreground hover:bg-cline-ui-surface-hover hover:text-cline-ui-foreground",
+				"text-nexus-ui-muted-foreground hover:bg-nexus-ui-surface-hover hover:text-nexus-ui-foreground",
 		},
 		{
 			variant: "ghost",
 			tone: "destructive",
-			className: "text-cline-ui-destructive hover:bg-cline-ui-destructive/10",
+			className: "text-nexus-ui-destructive hover:bg-nexus-ui-destructive/10",
 		},
 	],
 	defaultVariants: {

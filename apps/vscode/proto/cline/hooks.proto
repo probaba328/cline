@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package cline;
+package nexus;
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 // Input message for all hooks
 message HookInput {
@@ -114,7 +114,7 @@ message PreCompactData {
   string compaction_strategy = 4;
 
   // API request tracking
-  int64 previous_api_req_index = 5; // Index of last API request in clineMessages
+  int64 previous_api_req_index = 5; // Index of last API request in nexusMessages
 
   // Token usage data from last API request
   int64 tokens_in = 6;

@@ -1,10 +1,10 @@
-import type { MessageWithMetadata } from "@cline/llms";
+import type { MessageWithMetadata } from "@nexus/llms";
 import type {
 	AgentConfig,
 	AutomationEventEnvelope,
 	BasicLogger,
 	ITelemetryService,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type { CronEventSuppression } from "../cron/events/cron-event-ingress";
 import type {
 	CronEventLogRecord,
@@ -23,11 +23,11 @@ import type {
 } from "../runtime/host/runtime-host";
 import type { FeatureFlagsService } from "../services/feature-flags";
 import type { CheckpointWorkspaceCompareResult } from "../session/checkpoint-diff";
-import type { ClineCoreStartConfig } from "../types/config";
+import type { NexusCoreStartConfig } from "../types/config";
 import type { SessionMessagesArtifactUploader } from "../types/session";
 
 export type { RuntimeHostMode } from "../runtime/host/runtime-host";
-export type { ClineCoreSettingsApi } from "../settings";
+export type { NexusCoreSettingsApi } from "../settings";
 
 export interface HubOptions {
 	endpoint?: string;
@@ -48,7 +48,7 @@ export interface RemoteOptions {
 	cwd?: string;
 }
 
-export interface ClineCoreAutomationOptions {
+export interface NexusCoreAutomationOptions {
 	/** @deprecated Use `cronSpecsDir`. */
 	cronDir?: string;
 	cronSpecsDir?: string;
@@ -64,18 +64,18 @@ export interface ClineCoreAutomationOptions {
 	autoStart?: boolean;
 }
 
-export type ClineAutomationSpec = CronSpecRecord;
-export type ClineAutomationRun = CronRunRecord;
-export type ClineAutomationEventLog = CronEventLogRecord;
-export type ClineAutomationEventSuppression = CronEventSuppression;
-export type ClineAutomationRunStatus =
+export type NexusAutomationSpec = CronSpecRecord;
+export type NexusAutomationRun = CronRunRecord;
+export type NexusAutomationEventLog = CronEventLogRecord;
+export type NexusAutomationEventSuppression = CronEventSuppression;
+export type NexusAutomationRunStatus =
 	| "queued"
 	| "running"
 	| "done"
 	| "failed"
 	| "cancelled";
 
-export interface ClineAutomationListSpecsOptions {
+export interface NexusAutomationListSpecsOptions {
 	triggerKind?: "one_off" | "schedule" | "event";
 	enabled?: boolean;
 	parseStatus?: "valid" | "invalid";
@@ -83,13 +83,13 @@ export interface ClineAutomationListSpecsOptions {
 	limit?: number;
 }
 
-export interface ClineAutomationListRunsOptions {
+export interface NexusAutomationListRunsOptions {
 	specId?: string;
-	status?: ClineAutomationRunStatus | ClineAutomationRunStatus[];
+	status?: NexusAutomationRunStatus | NexusAutomationRunStatus[];
 	limit?: number;
 }
 
-export interface ClineAutomationListEventsOptions {
+export interface NexusAutomationListEventsOptions {
 	eventType?: string;
 	source?: string;
 	processingStatus?:
@@ -101,34 +101,34 @@ export interface ClineAutomationListEventsOptions {
 	limit?: number;
 }
 
-export interface ClineAutomationEventIngressResult {
-	event: ClineAutomationEventLog;
+export interface NexusAutomationEventIngressResult {
+	event: NexusAutomationEventLog;
 	duplicate: boolean;
 	matchedSpecIds: string[];
-	queuedRuns: ClineAutomationRun[];
-	suppressions: ClineAutomationEventSuppression[];
+	queuedRuns: NexusAutomationRun[];
+	suppressions: NexusAutomationEventSuppression[];
 }
 
-export interface ClineCoreAutomationApi {
+export interface NexusCoreAutomationApi {
 	start(): Promise<void>;
 	stop(): Promise<void>;
 	reconcileNow(): Promise<void>;
 	ingestEvent(
 		event: AutomationEventEnvelope,
-	): ClineAutomationEventIngressResult;
+	): NexusAutomationEventIngressResult;
 	listEvents(
-		options?: ClineAutomationListEventsOptions,
-	): ClineAutomationEventLog[];
-	getEvent(eventId: string): ClineAutomationEventLog | undefined;
-	listSpecs(options?: ClineAutomationListSpecsOptions): ClineAutomationSpec[];
-	listRuns(options?: ClineAutomationListRunsOptions): ClineAutomationRun[];
+		options?: NexusAutomationListEventsOptions,
+	): NexusAutomationEventLog[];
+	getEvent(eventId: string): NexusAutomationEventLog | undefined;
+	listSpecs(options?: NexusAutomationListSpecsOptions): NexusAutomationSpec[];
+	listRuns(options?: NexusAutomationListRunsOptions): NexusAutomationRun[];
 }
 
-export type ClineCoreListHistoryOptions = SessionHistoryListOptions;
+export type NexusCoreListHistoryOptions = SessionHistoryListOptions;
 
-export interface ClineCoreStartInput
+export interface NexusCoreStartInput
 	extends Omit<StartSessionInput, "config" | "localRuntime"> {
-	config: ClineCoreStartConfig;
+	config: NexusCoreStartConfig;
 	localRuntime?: LocalRuntimeStartOptions;
 }
 
@@ -155,7 +155,7 @@ export interface RestoreOptions {
 export interface RestoreInput {
 	sessionId: string;
 	checkpointRunCount: number;
-	start?: ClineCoreStartInput;
+	start?: NexusCoreStartInput;
 	cwd?: string;
 	restore?: RestoreOptions;
 }
@@ -175,7 +175,7 @@ export interface CompareCheckpointInput {
 
 export type CompareCheckpointResult = CheckpointWorkspaceCompareResult;
 
-export interface ClineCoreOptions {
+export interface NexusCoreOptions {
 	/**
 	 * A human-readable name for this SDK client (e.g. `"my-app"`, `"acme-bot"`).
 	 * Used to identify the consumer in telemetry and logs.
@@ -184,7 +184,7 @@ export interface ClineCoreOptions {
 	/**
 	 * A stable identifier for this machine or user, used for telemetry attribution.
 	 * Defaults to the system machine ID, falling back to a generated `cl-<nanoid>` persisted
-	 * at `~/.cline/data/machine-id`.
+	 * at `~/.nexus/data/machine-id`.
 	 */
 	distinctId?: string;
 	/**
@@ -216,7 +216,7 @@ export interface ClineCoreOptions {
 	 */
 	telemetry?: ITelemetryService;
 	/**
-	 * Feature flags service for this ClineCore instance.
+	 * Feature flags service for this NexusCore instance.
 	 * If omitted, Core uses a no-op provider with default flag values.
 	 */
 	featureFlags?: FeatureFlagsService;
@@ -236,11 +236,11 @@ export interface ClineCoreOptions {
 	 */
 	messagesArtifactUploader?: SessionMessagesArtifactUploader;
 	/**
-	 * Enables file-based and event-driven automation through this ClineCore
-	 * instance. When configured, callers use `cline.automation.*` instead of
+	 * Enables file-based and event-driven automation through this NexusCore
+	 * instance. When configured, callers use `nexus.automation.*` instead of
 	 * constructing cron services directly.
 	 */
-	automation?: boolean | ClineCoreAutomationOptions;
+	automation?: boolean | NexusCoreAutomationOptions;
 	/**
 	 * Custom `fetch` implementation forwarded to the AI gateway providers used
 	 * by local sessions. When supplied, it is threaded into each
@@ -257,9 +257,9 @@ export interface ClineCoreOptions {
 	 * to-local auto mode). For hub and remote runtimes the HTTP call happens
 	 * inside the process that owns the gateway, so configure `fetch` there:
 	 *   - `startHubServer({ fetch })` / `ensureHubServer({ fetch })` from
-	 *     `@cline/hub`
+	 *     `@nexus/hub`
 	 *   - `createLocalHubScheduleRuntimeHandlers({ fetch })` from
-	 *     `@cline/core/hub` for the scheduler
+	 *     `@nexus/core/hub` for the scheduler
 	 */
 	fetch?: typeof fetch;
 	/**
@@ -276,7 +276,7 @@ export interface ClineCoreOptions {
 	 * pathless starts expose neither `cwd` nor `workspaceRoot` to this hook.
 	 */
 	prepare?: (
-		input: ClineCoreStartInput,
+		input: NexusCoreStartInput,
 	) =>
 		| Promise<StartSessionBootstrap | undefined>
 		| StartSessionBootstrap
@@ -285,7 +285,7 @@ export interface ClineCoreOptions {
 
 export interface StartSessionBootstrap {
 	applyToStartSessionInput(
-		input: ClineCoreStartInput,
-	): Promise<ClineCoreStartInput> | ClineCoreStartInput;
+		input: NexusCoreStartInput,
+	): Promise<NexusCoreStartInput> | NexusCoreStartInput;
 	dispose?(): Promise<void> | void;
 }

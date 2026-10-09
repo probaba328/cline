@@ -9,12 +9,12 @@ import {
 	ProviderSettingsManager,
 	stopLocalHubServerGracefully,
 	toHubStatusUrl,
-} from "@cline/core";
+} from "@nexus/core";
 import {
 	claimHubDaemonProcess,
 	type HubUINotifyPayload,
 	type SessionRecord,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { configureMenubarConnectorCliLaunch } from "./connector-cli-launch";
 
 interface TrackedClient {
@@ -88,7 +88,7 @@ function isBundledDaemonEntryInvocation(): boolean {
 		entryArg.includes("/$bunfs/") &&
 		(entryArg.endsWith("/entry.js") || entryArg.endsWith("/entry.ts"));
 	return (
-		process.argv.includes("--cline-hub-daemon") ||
+		process.argv.includes("--nexus-hub-daemon") ||
 		isBunEmbeddedEntry ||
 		entryArg.endsWith("/daemon-entry.js") ||
 		entryArg.endsWith("/daemon-entry.ts") ||
@@ -235,8 +235,8 @@ function formatClientLabel(clientType: string | undefined): string {
 	if (!normalized || normalized === "unknown") {
 		return "Client";
 	}
-	if (normalized.includes("cline")) {
-		return "Cline";
+	if (normalized.includes("nexus")) {
+		return "Nexus";
 	}
 	return normalized
 		.split(/[-_\s]+/)
@@ -268,8 +268,8 @@ function summarizeClient(client: TrackedClient): {
 	) {
 		return {
 			key: "code-app",
-			label: "Cline Desktop",
-			name: "Cline Desktop",
+			label: "Nexus Desktop",
+			name: "Nexus Desktop",
 		};
 	}
 	return {
@@ -448,13 +448,13 @@ async function main(): Promise<void> {
 		address: hubUrl,
 		authToken: hubAuthToken,
 		clientType: "menubar-app",
-		displayName: "Cline Menu Bar App",
+		displayName: "Nexus Menu Bar App",
 	});
 	const sessionClient = new HubSessionClient({
 		address: hubUrl,
 		authToken: hubAuthToken,
 		clientType: "menubar-background-client",
-		displayName: "Cline Background Client",
+		displayName: "Nexus Background Client",
 	});
 
 	await uiClient.connect();
@@ -622,7 +622,7 @@ async function main(): Promise<void> {
 				enableSpawn: false,
 				enableTeams: true,
 				autoApproveTools: true,
-				source: "cline-menubar",
+				source: "nexus-menubar",
 				interactive: false,
 			});
 			await sessionClient.sendRuntimeSession(started.sessionId, {
@@ -951,7 +951,7 @@ async function main(): Promise<void> {
 // of which would then try to become a hub daemon and die on EADDRINUSE.
 const claimedDaemonSentinel = claimHubDaemonProcess();
 if (claimedDaemonSentinel || isBundledDaemonEntryInvocation()) {
-	await import("@cline/core/hub/daemon-entry");
+	await import("@nexus/core/hub/daemon-entry");
 } else {
 	main().catch((err) => {
 		const msg = err instanceof Error ? err.message : String(err);

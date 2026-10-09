@@ -1,4 +1,4 @@
-import { ClineMessage } from "@shared/ExtensionMessage"
+import { NexusMessage } from "@shared/ExtensionMessage"
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react"
 import React, { useCallback, useLayoutEffect, useMemo, useState } from "react"
 import Thumbnails from "@/components/common/Thumbnails"
@@ -18,7 +18,7 @@ import TaskWorkingDirectoryBadge from "./TaskWorkingDirectoryBadge"
 
 const IS_DEV = process.env.IS_DEV === "true"
 interface TaskHeaderProps {
-	task: ClineMessage
+	task: NexusMessage
 	tokensIn: number
 	tokensOut: number
 	doesModelSupportPromptCache: boolean

@@ -8,7 +8,7 @@ import type {
 	ChatTurnResult,
 	ExtensionContext,
 	ITelemetryService,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type { CronEventIngressResult } from "../cron/events/cron-event-ingress";
 import type { CronService } from "../cron/service/cron-service";
 import type { HubScheduleRuntimeHandlers } from "../cron/service/schedule-service";
@@ -20,33 +20,33 @@ import {
 } from "../session/history-origin";
 import { SessionSource } from "../types/common";
 import type {
-	ClineAutomationEventIngressResult,
-	ClineAutomationEventLog,
-	ClineAutomationListEventsOptions,
-	ClineAutomationListRunsOptions,
-	ClineAutomationListSpecsOptions,
-	ClineAutomationRun,
-	ClineAutomationSpec,
-	ClineCoreAutomationApi,
-	ClineCoreAutomationOptions,
+	NexusAutomationEventIngressResult,
+	NexusAutomationEventLog,
+	NexusAutomationListEventsOptions,
+	NexusAutomationListRunsOptions,
+	NexusAutomationListSpecsOptions,
+	NexusAutomationRun,
+	NexusAutomationSpec,
+	NexusCoreAutomationApi,
+	NexusCoreAutomationOptions,
 } from "./types";
 
 export function normalizeAutomationOptions(
-	options: ClineCoreAutomationOptions | boolean | undefined,
-): ClineCoreAutomationOptions | undefined {
+	options: NexusCoreAutomationOptions | boolean | undefined,
+): NexusCoreAutomationOptions | undefined {
 	if (options === true) return {};
 	if (!options) return undefined;
 	return options;
 }
 
 export function normalizeAutomationCronScope(
-	scope: ClineCoreAutomationOptions["cronScope"],
+	scope: NexusCoreAutomationOptions["cronScope"],
 ): "global" | "workspace" | undefined {
 	if (scope === "user") return "global";
 	return scope;
 }
 
-export class ClineCoreAutomationController implements ClineCoreAutomationApi {
+export class NexusCoreAutomationController implements NexusCoreAutomationApi {
 	constructor(private readonly getService: () => CronService) {}
 
 	async start(): Promise<void> {
@@ -63,7 +63,7 @@ export class ClineCoreAutomationController implements ClineCoreAutomationApi {
 
 	ingestEvent(
 		event: AutomationEventEnvelope,
-	): ClineAutomationEventIngressResult {
+	): NexusAutomationEventIngressResult {
 		const result: CronEventIngressResult = this.getService().ingestEvent(event);
 		return {
 			event: result.event,
@@ -75,31 +75,31 @@ export class ClineCoreAutomationController implements ClineCoreAutomationApi {
 	}
 
 	listEvents(
-		options?: ClineAutomationListEventsOptions,
-	): ClineAutomationEventLog[] {
+		options?: NexusAutomationListEventsOptions,
+	): NexusAutomationEventLog[] {
 		return this.getService().listEventLogs(options);
 	}
 
-	getEvent(eventId: string): ClineAutomationEventLog | undefined {
+	getEvent(eventId: string): NexusAutomationEventLog | undefined {
 		return this.getService().getEventLog(eventId);
 	}
 
-	listSpecs(options?: ClineAutomationListSpecsOptions): ClineAutomationSpec[] {
+	listSpecs(options?: NexusAutomationListSpecsOptions): NexusAutomationSpec[] {
 		return this.getService().listSpecs(options);
 	}
 
-	listRuns(options?: ClineAutomationListRunsOptions): ClineAutomationRun[] {
+	listRuns(options?: NexusAutomationListRunsOptions): NexusAutomationRun[] {
 		return this.getService().listRuns(options);
 	}
 }
 
-export interface ClineCoreAutomationRuntimeHandlersInput {
+export interface NexusCoreAutomationRuntimeHandlersInput {
 	host: RuntimeHost;
 	getExtensionContext(): ExtensionContext | undefined;
 }
 
-export function createClineCoreAutomationRuntimeHandlers(
-	input: ClineCoreAutomationRuntimeHandlersInput,
+export function createNexusCoreAutomationRuntimeHandlers(
+	input: NexusCoreAutomationRuntimeHandlersInput,
 ): HubScheduleRuntimeHandlers {
 	const { host } = input;
 	return {
@@ -163,12 +163,12 @@ export function createClineCoreAutomationRuntimeHandlers(
 				delivery: request.delivery,
 			});
 			if (!result) {
-				throw new Error("ClineCore automation runtime returned no result");
+				throw new Error("NexusCore automation runtime returned no result");
 			}
 			return { result: toChatTurnResult(result) };
 		},
 		async abortSession(sessionId) {
-			await host.abort(sessionId, new Error("ClineCore automation abort"));
+			await host.abort(sessionId, new Error("NexusCore automation abort"));
 			return { applied: true };
 		},
 		async stopSession(sessionId) {
@@ -178,9 +178,9 @@ export function createClineCoreAutomationRuntimeHandlers(
 	};
 }
 
-export interface ClineCoreAutomationExtensionContextInput {
+export interface NexusCoreAutomationExtensionContextInput {
 	automationService?: CronService;
-	automation: ClineCoreAutomationApi;
+	automation: NexusCoreAutomationApi;
 	context?: ExtensionContext;
 	clientName?: string;
 	distinctId?: string;
@@ -188,8 +188,8 @@ export interface ClineCoreAutomationExtensionContextInput {
 	telemetry?: ITelemetryService;
 }
 
-export function createClineCoreAutomationExtensionContext(
-	input: ClineCoreAutomationExtensionContextInput,
+export function createNexusCoreAutomationExtensionContext(
+	input: NexusCoreAutomationExtensionContextInput,
 ): ExtensionContext | undefined {
 	const automation = createAutomationPluginContext(
 		input.automationService,
@@ -218,7 +218,7 @@ export function createClineCoreAutomationExtensionContext(
 
 function createAutomationPluginContext(
 	automationService: CronService | undefined,
-	automation: ClineCoreAutomationApi,
+	automation: NexusCoreAutomationApi,
 ): AgentExtensionAutomationContext | undefined {
 	if (!automationService) {
 		return undefined;

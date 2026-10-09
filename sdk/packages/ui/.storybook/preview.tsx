@@ -1,18 +1,18 @@
 import type { Decorator, Preview } from "@storybook/react-vite";
 import "./preview.css";
 
-const withClineTheme: Decorator = (Story, context) => {
+const withNexusTheme: Decorator = (Story, context) => {
 	const isDark = context.globals.theme === "dark";
 	document.documentElement.classList.toggle("dark", isDark);
 	return (
-		<div className="cline-storybook-surface">
+		<div className="nexus-storybook-surface">
 			<Story />
 		</div>
 	);
 };
 
 const preview: Preview = {
-	decorators: [withClineTheme],
+	decorators: [withNexusTheme],
 	parameters: {
 		backgrounds: { disable: true },
 		controls: {
@@ -39,7 +39,7 @@ const preview: Preview = {
 	},
 	globalTypes: {
 		theme: {
-			description: "Cline color theme",
+			description: "Nexus color theme",
 			defaultValue: "dark",
 			toolbar: {
 				dynamicTitle: true,

@@ -1,10 +1,10 @@
-import type { OnboardingModel } from "../proto/cline/state"
+import type { OnboardingModel } from "../proto/nexus/state"
 
 /**
  * The list of models available to new users during the onboarding flow.
  * NOTE: Can be overridden by feature flag onboarding models payload.
  */
-export const CLINE_ONBOARDING_MODELS: OnboardingModel[] = [
+export const NEXUS_ONBOARDING_MODELS: OnboardingModel[] = [
 	{
 		group: "free",
 		id: "kwaipilot/kat-coder-pro",

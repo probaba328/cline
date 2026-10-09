@@ -1,5 +1,5 @@
 @layer components {
-	.cline-chat-conversation {
+	.nexus-chat-conversation {
 		position: relative;
 		display: flex;
 		min-width: 0;
@@ -9,7 +9,7 @@
 		color: var(--foreground);
 	}
 
-	.cline-chat-conversation-viewport {
+	.nexus-chat-conversation-viewport {
 		width: 100%;
 		min-width: 0;
 		min-height: 0;
@@ -17,7 +17,7 @@
 		overflow-y: auto;
 	}
 
-	.cline-chat-conversation-content {
+	.nexus-chat-conversation-content {
 		display: flex;
 		width: 100%;
 		min-width: 0;
@@ -27,7 +27,7 @@
 		box-sizing: border-box;
 	}
 
-	.cline-chat-empty-state {
+	.nexus-chat-empty-state {
 		display: flex;
 		width: 100%;
 		min-height: 16rem;
@@ -41,28 +41,28 @@
 		text-align: center;
 	}
 
-	.cline-chat-empty-state-icon {
+	.nexus-chat-empty-state-icon {
 		display: grid;
 		place-items: center;
 	}
 
-	.cline-chat-empty-state h3,
-	.cline-chat-empty-state p {
+	.nexus-chat-empty-state h3,
+	.nexus-chat-empty-state p {
 		margin: 0;
 	}
 
-	.cline-chat-empty-state h3 {
+	.nexus-chat-empty-state h3 {
 		color: var(--foreground);
 		font-size: var(--text-sm);
 		font-weight: var(--font-weight-medium);
 	}
 
-	.cline-chat-empty-state p {
+	.nexus-chat-empty-state p {
 		margin-top: 0.25rem;
 		font-size: var(--text-sm);
 	}
 
-	.cline-chat-scroll-button {
+	.nexus-chat-scroll-button {
 		position: absolute;
 		right: 1rem;
 		bottom: 1rem;
@@ -81,12 +81,12 @@
 		cursor: pointer;
 	}
 
-	.cline-chat-scroll-button:hover {
+	.nexus-chat-scroll-button:hover {
 		background: var(--accent);
 		color: var(--accent-foreground);
 	}
 
-	.cline-chat-message {
+	.nexus-chat-message {
 		position: relative;
 		display: flex;
 		width: 100%;
@@ -101,7 +101,7 @@
 	/* Invisible hover bridge across only the gap before the absolutely-positioned
 	 * actions. Keeping it narrow avoids intercepting pointer events intended for
 	 * the following message. */
-	.cline-chat-message::after {
+	.nexus-chat-message::after {
 		content: "";
 		position: absolute;
 		top: 100%;
@@ -110,11 +110,11 @@
 		height: 0.5rem;
 	}
 
-	.cline-chat-message[data-role="user"] {
+	.nexus-chat-message[data-role="user"] {
 		align-items: flex-end;
 	}
 
-	.cline-chat-message-content {
+	.nexus-chat-message-content {
 		max-width: 100%;
 		min-width: 0;
 		box-sizing: border-box;
@@ -124,7 +124,7 @@
 
 	/* User bubbles use the card surface with a subtle edge so they remain
 	 * distinct from the transcript without overpowering assistant content. */
-	.cline-chat-message[data-role="user"] > .cline-chat-message-content {
+	.nexus-chat-message[data-role="user"] > .nexus-chat-message-content {
 		max-width: 85%;
 		padding: 0.6rem 0.8rem;
 		border-radius: calc(var(--radius));
@@ -132,7 +132,7 @@
 		border: 1px solid var(--neutral-a3);
 	}
 
-	.cline-chat-message[data-role="error"] > .cline-chat-message-content {
+	.nexus-chat-message[data-role="error"] > .nexus-chat-message-content {
 		padding: 0.75rem;
 		border: 1px solid var(--error-border);
 		border-radius: var(--radius);
@@ -140,15 +140,15 @@
 		color: var(--error-text);
 	}
 
-	.cline-chat-message[data-role="system"] > .cline-chat-message-content,
-	.cline-chat-message[data-role="status"] > .cline-chat-message-content {
+	.nexus-chat-message[data-role="system"] > .nexus-chat-message-content,
+	.nexus-chat-message[data-role="status"] > .nexus-chat-message-content {
 		color: var(--muted-foreground);
 	}
 
 	/* Actions appear and vanish instantly — a fade on hover chrome reads as
 	 * lag, not polish. They float as a quiet self-backed rectangle OVER
 	 * whatever follows, so the transcript reserves no blank space for them. */
-	.cline-chat-message-actions {
+	.nexus-chat-message-actions {
 		position: absolute;
 		top: 100%;
 		z-index: 10;
@@ -166,25 +166,25 @@
 		opacity: 0;
 	}
 
-	.cline-chat-message-actions[data-side="start"] {
+	.nexus-chat-message-actions[data-side="start"] {
 		left: 0;
 	}
 
-	.cline-chat-message-actions[data-side="end"] {
+	.nexus-chat-message-actions[data-side="end"] {
 		right: 0;
 	}
 
-	.cline-chat-message:hover > .cline-chat-message-actions,
-	.cline-chat-message:has(
-			> .cline-chat-message-actions .cline-chat-message-action:focus-visible
+	.nexus-chat-message:hover > .nexus-chat-message-actions,
+	.nexus-chat-message:has(
+			> .nexus-chat-message-actions .nexus-chat-message-action:focus-visible
 		)
-		> .cline-chat-message-actions,
-	.cline-chat-message-actions[data-visible="true"] {
+		> .nexus-chat-message-actions,
+	.nexus-chat-message-actions[data-visible="true"] {
 		pointer-events: auto;
 		opacity: 1;
 	}
 
-	.cline-chat-message-action {
+	.nexus-chat-message-action {
 		width: 1.75rem;
 		height: 1.75rem;
 		min-width: 1.75rem;
@@ -194,27 +194,27 @@
 		font-size: var(--text-xs);
 	}
 
-	.cline-chat-message-action > svg {
+	.nexus-chat-message-action > svg {
 		width: 0.875rem;
 		height: 0.875rem;
 	}
 
 	/* The timestamp ends flush against the pill border without a trailing
 	 * inset of its own, so give it one. */
-	.cline-chat-message-actions > time {
+	.nexus-chat-message-actions > time {
 		margin-inline-start: 0.25rem;
 		margin-inline-end: 0.1875rem;
 	}
 
-	.cline-chat-reasoning {
+	.nexus-chat-reasoning {
 		width: 100%;
 		min-width: 0;
 		margin: 0.6rem 0;
 	}
 
-	.cline-chat-reasoning-trigger,
-	.cline-chat-tool-trigger,
-	.cline-chat-work-trigger {
+	.nexus-chat-reasoning-trigger,
+	.nexus-chat-tool-trigger,
+	.nexus-chat-work-trigger {
 		display: flex;
 		max-width: 100%;
 		min-height: 1.75rem;
@@ -232,46 +232,46 @@
 		transition: color 120ms ease;
 	}
 
-	button.cline-chat-reasoning-trigger,
-	button.cline-chat-tool-trigger,
-	button.cline-chat-work-trigger {
+	button.nexus-chat-reasoning-trigger,
+	button.nexus-chat-tool-trigger,
+	button.nexus-chat-work-trigger {
 		cursor: pointer;
 	}
 
-	button.cline-chat-reasoning-trigger:disabled,
-	button.cline-chat-tool-trigger:disabled,
-	button.cline-chat-work-trigger:disabled {
+	button.nexus-chat-reasoning-trigger:disabled,
+	button.nexus-chat-tool-trigger:disabled,
+	button.nexus-chat-work-trigger:disabled {
 		cursor: not-allowed;
 		opacity: 0.5;
 	}
 
-	.cline-chat-reasoning-trigger:hover,
-	.cline-chat-work-trigger:hover {
+	.nexus-chat-reasoning-trigger:hover,
+	.nexus-chat-work-trigger:hover {
 		color: var(--foreground);
 	}
 
-	.cline-chat-disclosure-icon {
+	.nexus-chat-disclosure-icon {
 		flex: 0 0 auto;
 		transition: transform 180ms cubic-bezier(0.45, 0, 0.55, 1);
 	}
 
-	[aria-expanded="true"] > .cline-chat-disclosure-icon {
+	[aria-expanded="true"] > .nexus-chat-disclosure-icon {
 		transform: rotate(180deg);
 	}
 
 	/* The work summary's chevron points right while collapsed and continues
 	 * counterclockwise to point up when expanded. */
-	.cline-chat-work-trigger > .cline-chat-disclosure-icon {
+	.nexus-chat-work-trigger > .nexus-chat-disclosure-icon {
 		transform: rotate(-90deg);
 	}
 
-	.cline-chat-work-trigger[aria-expanded="true"] > .cline-chat-disclosure-icon {
+	.nexus-chat-work-trigger[aria-expanded="true"] > .nexus-chat-disclosure-icon {
 		transform: rotate(-180deg);
 	}
 
 	/* Disclosure open/close glides on a symmetric ease-in-out (the iOS-style
 	 * curve) rather than snapping. */
-	.cline-chat-disclosure-content-motion {
+	.nexus-chat-disclosure-content-motion {
 		display: grid;
 		min-width: 0;
 		grid-template-rows: 0fr;
@@ -283,21 +283,21 @@
 			visibility 0s linear 180ms;
 	}
 
-	.cline-chat-disclosure-content-motion[data-state="open"] {
+	.nexus-chat-disclosure-content-motion[data-state="open"] {
 		grid-template-rows: 1fr;
 		opacity: 1;
 		visibility: visible;
 		transition-delay: 0s;
 	}
 
-	.cline-chat-disclosure-content-motion-inner {
+	.nexus-chat-disclosure-content-motion-inner {
 		min-height: 0;
 		overflow: hidden;
 	}
 
 	/* Running reasoning/tool titles use their inherited text color as the bright
 	 * band, so the same shimmer fits muted thinking text and primary tool text. */
-	.cline-chat-streaming-title {
+	.nexus-chat-streaming-title {
 		display: inline-block;
 		background-image: linear-gradient(
 			90deg,
@@ -310,10 +310,10 @@
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
-		animation: cline-chat-title-shimmer 2.25s linear infinite;
+		animation: nexus-chat-title-shimmer 2.25s linear infinite;
 	}
 
-	.cline-chat-thinking-icon {
+	.nexus-chat-thinking-icon {
 		flex: 0 0 auto;
 	}
 
@@ -321,7 +321,7 @@
 	 * the transcript around. The X axis is pinned shut: `overflow-y: auto`
 	 * alone would compute overflow-x to `auto` and let a long unbreakable
 	 * token add a horizontal scrollbar. */
-	.cline-chat-thinking-content {
+	.nexus-chat-thinking-content {
 		max-height: 12rem;
 		overflow-x: hidden;
 		overflow-y: auto;
@@ -335,20 +335,20 @@
 		);
 	}
 
-	/* The reveal rule below is `.cline-chat-message:hover`, so hovering anywhere
+	/* The reveal rule below is `.nexus-chat-message:hover`, so hovering anywhere
 	 * in the message pops the action row — including the reasoning disclosure
 	 * nested in the message content. The actions act on the message body, so
 	 * suppress the reveal while the pointer is inside the thinking panel.
 	 * `[data-visible]` still wins, keeping pending/error states pinned open. */
-	.cline-chat-message:has(
-		> .cline-chat-message-content .cline-chat-reasoning:hover
+	.nexus-chat-message:has(
+		> .nexus-chat-message-content .nexus-chat-reasoning:hover
 	)
-	> .cline-chat-message-actions:not([data-visible="true"]) {
+	> .nexus-chat-message-actions:not([data-visible="true"]) {
 		pointer-events: none;
 		opacity: 0;
 	}
 
-	.cline-chat-reasoning-content {
+	.nexus-chat-reasoning-content {
 		max-width: 100%;
 		min-width: 0;
 		margin-top: 0.375rem;
@@ -362,7 +362,7 @@
 		box-sizing: border-box;
 	}
 
-	.cline-chat-tool {
+	.nexus-chat-tool {
 		width: 100%;
 		min-width: 0;
 		margin: 0.5rem 0;
@@ -371,19 +371,19 @@
 	/* Running rows share the thinking indicator's muted gray (the base trigger
 	 * color above) — the spinner alone signals activity. Errors go red; hover
 	 * brightens without shifting hue. */
-	.cline-chat-tool-trigger[data-status="error"] {
+	.nexus-chat-tool-trigger[data-status="error"] {
 		color: var(--error-text);
 	}
 
-	button.cline-chat-tool-trigger:hover {
+	button.nexus-chat-tool-trigger:hover {
 		color: var(--foreground);
 	}
 
-	button.cline-chat-tool-trigger[data-status="error"]:hover {
+	button.nexus-chat-tool-trigger[data-status="error"]:hover {
 		color: color-mix(in oklab, var(--error-text) 80%, var(--foreground));
 	}
 
-	.cline-chat-tool-icon {
+	.nexus-chat-tool-icon {
 		display: inline-grid;
 		flex: 0 0 auto;
 		place-items: center;
@@ -391,24 +391,24 @@
 
 	/* Row labels stay on one line, take the full available width, and
 	 * ellipsize at the container edge — the data layer never truncates. */
-	.cline-chat-tool-label {
+	.nexus-chat-tool-label {
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.cline-chat-tool-diff {
+	.nexus-chat-tool-diff {
 		flex: 0 0 auto;
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 	}
 
-	.cline-chat-tool-diff [data-diff="additions"] {
+	.nexus-chat-tool-diff [data-diff="additions"] {
 		color: var(--success-text);
 	}
 
-	.cline-chat-tool-diff [data-diff="deletions"] {
+	.nexus-chat-tool-diff [data-diff="deletions"] {
 		color: var(--error-text);
 	}
 
@@ -416,7 +416,7 @@
 	 * it fills the same 1rem box the icons render at and the label never
 	 * shifts when they swap. It draws in currentColor to match whatever the
 	 * row text renders as (muted gray normally, red on error). */
-	.cline-chat-tool-progress {
+	.nexus-chat-tool-progress {
 		width: 1rem;
 		height: 1rem;
 		flex: 0 0 auto;
@@ -424,10 +424,10 @@
 		border: 2px solid color-mix(in oklab, currentColor 25%, transparent);
 		border-top-color: currentColor;
 		border-radius: 9999px;
-		animation: cline-chat-spin 800ms linear infinite;
+		animation: nexus-chat-spin 800ms linear infinite;
 	}
 
-	.cline-chat-tool-content {
+	.nexus-chat-tool-content {
 		max-width: 100%;
 		min-width: 0;
 		margin-top: 0.375rem;
@@ -440,7 +440,7 @@
 	/* Expanded reasoning and tool panels can share a lightweight disclosure
 	 * rail instead of their default panel chrome. The rail sits beneath a 1rem
 	 * trigger icon, while the inset aligns its content with the trigger label. */
-	.cline-chat-panel-rail {
+	.nexus-chat-panel-rail {
 		max-width: 100%;
 		margin-top: 0;
 		margin-left: 0.45rem;
@@ -452,13 +452,13 @@
 		font-size: var(--text-sm);
 	}
 
-	.cline-chat-tool-details {
+	.nexus-chat-tool-details {
 		display: grid;
 		gap: 0.25rem;
 		overflow-wrap: anywhere;
 	}
 
-	.cline-chat-tool-code {
+	.nexus-chat-tool-code {
 		max-width: 100%;
 		margin: 0.5rem 0 0;
 		padding: 0.5rem;
@@ -475,14 +475,14 @@
 		box-sizing: border-box;
 	}
 
-	.cline-chat-work {
+	.nexus-chat-work {
 		width: 100%;
 		min-width: 0;
 	}
 
 	/* Expanded work re-shows the run's normal chat rows at transcript level,
 	 * with the tight working-row rhythm the live run uses. */
-	.cline-chat-work-content {
+	.nexus-chat-work-content {
 		display: flex;
 		max-width: 100%;
 		min-width: 0;
@@ -494,66 +494,66 @@
 
 	/* The flex gap owns row spacing inside expanded work; the rows' own
 	 * transcript margins would double it. */
-	.cline-chat-work-content > .cline-chat-tool,
-	.cline-chat-work-content > .cline-chat-reasoning {
+	.nexus-chat-work-content > .nexus-chat-tool,
+	.nexus-chat-work-content > .nexus-chat-reasoning {
 		margin: 0;
 	}
 
-	.cline-chat-conversation-viewport:focus-visible {
+	.nexus-chat-conversation-viewport:focus-visible {
 		outline: 2px solid var(--ring);
 		outline-offset: -2px;
 	}
 
-	.cline-chat-scroll-button:focus-visible,
-	.cline-chat-message-action:focus-visible,
-	.cline-chat-reasoning-trigger:focus-visible,
-	.cline-chat-tool-trigger:focus-visible,
-	.cline-chat-work-trigger:focus-visible {
+	.nexus-chat-scroll-button:focus-visible,
+	.nexus-chat-message-action:focus-visible,
+	.nexus-chat-reasoning-trigger:focus-visible,
+	.nexus-chat-tool-trigger:focus-visible,
+	.nexus-chat-work-trigger:focus-visible {
 		outline: 2px solid var(--ring);
 		outline-offset: 2px;
 	}
 
 	@media (min-width: 48rem) {
-		.cline-chat-message[data-role="user"] > .cline-chat-message-content {
+		.nexus-chat-message[data-role="user"] > .nexus-chat-message-content {
 			max-width: 50%;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.cline-chat-disclosure-icon,
-		.cline-chat-work-trigger > .cline-chat-disclosure-icon {
+		.nexus-chat-disclosure-icon,
+		.nexus-chat-work-trigger > .nexus-chat-disclosure-icon {
 			transition: none;
 		}
 
-		.cline-chat-streaming-title {
+		.nexus-chat-streaming-title {
 			background: none;
 			-webkit-text-fill-color: currentcolor;
 			animation: none;
 		}
 
-		.cline-chat-disclosure-content-motion {
+		.nexus-chat-disclosure-content-motion {
 			transition: none;
 		}
 
-		.cline-chat-tool-progress {
+		.nexus-chat-tool-progress {
 			animation: none;
 		}
 	}
 
 	@media (hover: none), (pointer: coarse) {
-		.cline-chat-message-actions {
+		.nexus-chat-message-actions {
 			pointer-events: auto;
 			opacity: 1;
 		}
 	}
 
-	@keyframes cline-chat-spin {
+	@keyframes nexus-chat-spin {
 		to {
 			transform: rotate(360deg);
 		}
 	}
 
-	@keyframes cline-chat-title-shimmer {
+	@keyframes nexus-chat-title-shimmer {
 		to {
 			background-position: -200% 0;
 		}

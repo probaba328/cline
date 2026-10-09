@@ -1,7 +1,7 @@
 import {
-	CLINE_CONNECTOR_CLI_LAUNCH_ENV,
+	NEXUS_CONNECTOR_CLI_LAUNCH_ENV,
 	readConnectorCliLaunchSpec,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { describe, expect, it } from "vitest";
 import {
 	configureMenubarConnectorCliLaunch,
@@ -30,11 +30,11 @@ describe("menubar connector CLI launch", () => {
 	it("honors an explicit installed CLI path", () => {
 		expect(
 			resolveMenubarConnectorCliLaunchSpec("/workspace", {
-				env: { CLINE_CLI_PATH: "/Applications/Cline/bin/cline" },
+				env: { NEXUS_CLI_PATH: "/Applications/Nexus/bin/nexus" },
 				exists: () => false,
 			}),
 		).toEqual({
-			launcher: "/Applications/Cline/bin/cline",
+			launcher: "/Applications/Nexus/bin/nexus",
 			connectArgsPrefix: ["connect"],
 			cwd: "/workspace",
 		});
@@ -48,9 +48,9 @@ describe("menubar connector CLI launch", () => {
 			env,
 		);
 
-		expect(env[CLINE_CONNECTOR_CLI_LAUNCH_ENV]).toBeDefined();
+		expect(env[NEXUS_CONNECTOR_CLI_LAUNCH_ENV]).toBeDefined();
 		expect(readConnectorCliLaunchSpec(env)).toEqual({
-			launcher: "cline",
+			launcher: "nexus",
 			connectArgsPrefix: ["connect"],
 			cwd: "/workspace",
 		});

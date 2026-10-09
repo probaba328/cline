@@ -3,10 +3,10 @@
  * runtime provider selection:
  *
  * - `modelsDevKey` is the provider's key in the models.dev API payload.
- * - `generatedProviderId` is Cline's canonical ID for the provider spec and
+ * - `generatedProviderId` is Nexus's canonical ID for the provider spec and
  *   model catalog generated from that payload. Generation maps
  *   `modelsDevKey -> generatedProviderId` so upstream names do not leak into
- *   Cline's public provider IDs.
+ *   Nexus's public provider IDs.
  * - `runtimeProviderId` is the ID of a configured provider implementation that
  *   should read models from that generated catalog.
  *
@@ -114,7 +114,7 @@ const PROVIDER_IDS_MAP: ReadonlyArray<{
 	{
 		modelsDevKey: "openrouter",
 		generatedProviderId: "openrouter",
-		runtimeProviderId: "cline",
+		runtimeProviderId: "nexus",
 	},
 	{
 		modelsDevKey: "aihubmix",
@@ -163,7 +163,7 @@ export const MODELS_DEV_PROVIDER_KEY_MAP = Object.fromEntries(
 
 /**
  * Providers that must remain excluded even when their models.dev entry uses a
- * supported AI SDK package. IDs use Cline's generated provider identifiers
+ * supported AI SDK package. IDs use Nexus's generated provider identifiers
  * after applying MODELS_DEV_PROVIDER_KEY_MAP.
  */
 export const MODELS_DEV_BLOCKED_PROVIDER_IDS: ReadonlySet<string> = new Set();

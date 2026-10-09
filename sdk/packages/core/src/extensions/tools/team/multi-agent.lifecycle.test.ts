@@ -1,4 +1,4 @@
-import type { AgentConfig, AgentEvent } from "@cline/shared";
+import type { AgentConfig, AgentEvent } from "@nexus/shared";
 import { describe, expect, it, vi } from "vitest";
 import {
 	AgentTeamsRuntime,
@@ -656,7 +656,7 @@ describe("AgentTeamsRuntime run failure reporting", () => {
 			return {
 				abort: vi.fn(),
 				run: vi.fn(async () => ({
-					text: "Unauthorized: Please re-authenticate your Cline account.",
+					text: "Unauthorized: Please re-authenticate your Nexus account.",
 					iterations: 8,
 					finishReason: "error",
 					durationMs: 100,

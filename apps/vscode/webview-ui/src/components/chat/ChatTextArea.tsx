@@ -1,7 +1,7 @@
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions"
-import { StringRequest } from "@shared/proto/cline/common"
-import { FileSearchRequest, FileSearchType, RelativePathsRequest } from "@shared/proto/cline/file"
-import { PlanActMode, TogglePlanActModeRequest } from "@shared/proto/cline/state"
+import { StringRequest } from "@shared/proto/nexus/common"
+import { FileSearchRequest, FileSearchType, RelativePathsRequest } from "@shared/proto/nexus/file"
+import { PlanActMode, TogglePlanActModeRequest } from "@shared/proto/nexus/state"
 import { type SlashCommand } from "@shared/slashCommands"
 import { Mode } from "@shared/storage/types"
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
@@ -42,7 +42,7 @@ import {
 	slashCommandRegexGlobal,
 	validateSlashCommand,
 } from "@/utils/slash-commands"
-import ClineRulesToggleModal from "../cline-rules/ClineRulesToggleModal"
+import NexusRulesToggleModal from "../nexus-rules/NexusRulesToggleModal"
 import { getModeToggleDraftAction } from "./chat-textarea-mode-toggle"
 import ServersToggleModal from "./ServersToggleModal"
 
@@ -1142,14 +1142,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				return unknownModel
 			}
 			switch (selectedProvider) {
-				case "cline":
+				case "nexus":
 					return `${selectedProvider}:${selectedModelId}`
-				case "cline-pass":
-					// Free models selected on ClinePass go through Cline usage billing,
-					// so label them the same way as the cline provider
-					return selectedModelId.startsWith("cline-pass/")
-						? `${selectedProvider}:${selectedModelId.replace(/^cline-pass\//, "")}`
-						: `cline:${selectedModelId}`
+				case "nexus-pass":
+					// Free models selected on NexusPass go through Nexus usage billing,
+					// so label them the same way as the nexus provider
+					return selectedModelId.startsWith("nexus-pass/")
+						? `${selectedProvider}:${selectedModelId.replace(/^nexus-pass\//, "")}`
+						: `nexus:${selectedModelId}`
 				case "openai":
 					return `openai-compat:${selectedModelId}`
 				case "vscode-lm":
@@ -1636,7 +1636,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 							<ServersToggleModal />
 
-							<ClineRulesToggleModal />
+							<NexusRulesToggleModal />
 
 							<ModelContainer>
 								<ModelButtonWrapper>
@@ -1658,7 +1658,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							className="text-xs px-2 flex flex-col gap-1"
 							hidden={shownTooltipMode === null}
 							side="top">
-							{`In ${shownTooltipMode === "act" ? "Act" : "Plan"}  mode, Cline will ${shownTooltipMode === "act" ? "complete the task immediately" : "gather information to architect a plan"}`}
+							{`In ${shownTooltipMode === "act" ? "Act" : "Plan"}  mode, Nexus will ${shownTooltipMode === "act" ? "complete the task immediately" : "gather information to architect a plan"}`}
 							<p className="text-description/80 text-xs mb-0">
 								Toggle w/ <kbd className="text-muted-foreground mx-1">{togglePlanActKeys}</kbd>
 							</p>

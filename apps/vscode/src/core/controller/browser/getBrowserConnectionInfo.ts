@@ -1,5 +1,5 @@
-import { BrowserConnectionInfo } from "@shared/proto/cline/browser"
-import { EmptyRequest } from "@shared/proto/cline/common"
+import { BrowserConnectionInfo } from "@shared/proto/nexus/browser"
+import { EmptyRequest } from "@shared/proto/nexus/common"
 import { Logger } from "@/shared/services/Logger"
 import { Controller } from "../index"
 

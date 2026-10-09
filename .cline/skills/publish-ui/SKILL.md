@@ -1,11 +1,11 @@
 ---
 name: publish-ui
-description: Prepare, validate, and publish standalone @cline/ui npm releases. Use when bumping the UI package version, publishing latest or next through ui-publish.yml, checking UI release readiness, or completing the one-time npm trusted-publishing bootstrap.
+description: Prepare, validate, and publish standalone @nexus/ui npm releases. Use when bumping the UI package version, publishing latest or next through ui-publish.yml, checking UI release readiness, or completing the one-time npm trusted-publishing bootstrap.
 ---
 
 # Publish UI
 
-Release `@cline/ui` independently from the Cline SDK runtime packages.
+Release `@nexus/ui` independently from the Nexus SDK runtime packages.
 
 ## Release contract
 
@@ -35,7 +35,7 @@ Release `@cline/ui` independently from the Cline SDK runtime packages.
 ```sh
 git status --short --branch
 node -p "require('./sdk/packages/ui/package.json').version"
-npm view @cline/ui dist-tags versions --json
+npm view @nexus/ui dist-tags versions --json
 git log --oneline --no-merges -- \
   sdk/packages/ui apps/examples/desktop-app/webview/components/views/chat \
   .github/workflows/ui-publish.yml
@@ -50,12 +50,12 @@ git log --oneline --no-merges -- \
 3. Validate the release candidate.
 
 ```sh
-bun install --filter @cline/ui --filter @cline/code --frozen-lockfile
-bun -F @cline/ui typecheck
-bun -F @cline/ui test
-bun -F @cline/ui test:package
-bun -F @cline/ui build-storybook
-bun -F @cline/code test:chat-ui
+bun install --filter @nexus/ui --filter @nexus/code --frozen-lockfile
+bun -F @nexus/ui typecheck
+bun -F @nexus/ui test
+bun -F @nexus/ui test:package
+bun -F @nexus/ui build-storybook
+bun -F @nexus/code test:chat-ui
 ```
 
 The packed-package test installs the tarball with Bun/React 19 and with
@@ -87,24 +87,24 @@ Use `npm_tag=next` only for a deliberate preview. Do not report success until
 the workflow succeeds and npm shows the exact version under the selected tag.
 
 ```sh
-npm view @cline/ui dist-tags versions --json
+npm view @nexus/ui dist-tags versions --json
 ```
 
 ## One-time npm bootstrap
 
-Use this only while `npm view @cline/ui` returns `E404`. npm requires the
+Use this only while `npm view @nexus/ui` returns `E404`. npm requires the
 package to exist before its GitHub trusted publisher can be configured.
 
 1. Merge the package and `ui-publish.yml` to `main`. Start from a clean,
    reviewed `main` checkout. Verify authentication, account 2FA, and write
-   access to the `@cline` npm organization. The `npm trust` command in step 4
+   access to the `@nexus` npm organization. The `npm trust` command in step 4
    requires npm CLI 11.15 or newer; the automated trusted-publishing workflow
    itself enforces npm 11.5.1 or newer.
 
 ```sh
 npm --version
 npm whoami
-npm view @cline/ui version
+npm view @nexus/ui version
 ```
 
 If npm is older than 11.15, ask before upgrading with
@@ -115,7 +115,7 @@ If npm is older than 11.15, ask before upgrading with
    printed by the final command.
 
 ```sh
-bun -F @cline/ui build
+bun -F @nexus/ui build
 pack_dir=$(mktemp -d)
 (cd sdk/packages/ui && bun pm pack --ignore-scripts --destination "$pack_dir" --quiet)
 tarball=$(find "$pack_dir" -maxdepth 1 -name '*.tgz' -print -quit)
@@ -136,8 +136,8 @@ npm publish /absolute/path/from-step-2.tgz --access public --tag latest
    publisher:
 
 ```sh
-npm trust github @cline/ui \
-  --repo cline/cline \
+npm trust github @nexus/ui \
+  --repo nexus/nexus \
   --file ui-publish.yml \
   --env Publish \
   --allow-publish
@@ -147,8 +147,8 @@ npm trust github @cline/ui \
    do not add a long-lived npm token.
 
 ```sh
-npm view @cline/ui dist-tags versions --json
-npm trust list @cline/ui
+npm view @nexus/ui dist-tags versions --json
+npm trust list @nexus/ui
 ```
 
 ## Final report

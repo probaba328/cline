@@ -7,7 +7,7 @@ import type {
 	SessionUsageRuntimeService,
 } from "../runtime/host/runtime-host";
 import {
-	type ClineCoreSettingsApi,
+	type NexusCoreSettingsApi,
 	type CoreSettingsListInput,
 	type CoreSettingsMutationResult,
 	type CoreSettingsSnapshot,
@@ -32,9 +32,9 @@ export type RuntimeHostServiceExtensions = RuntimeHost &
 			SessionModelRuntimeService
 	>;
 
-export function createClineCoreSettingsApi(
+export function createNexusCoreSettingsApi(
 	host: RuntimeHost,
-): ClineCoreSettingsApi {
+): NexusCoreSettingsApi {
 	return {
 		async list(input) {
 			const settingsHost = host as RuntimeHostWithSettings;
@@ -53,7 +53,7 @@ export function createClineCoreSettingsApi(
 	};
 }
 
-export function createClineCorePendingPromptsApi(
+export function createNexusCorePendingPromptsApi(
 	host: RuntimeHost,
 ): PendingPromptsServiceApi {
 	function getService(): PendingPromptsServiceApi {

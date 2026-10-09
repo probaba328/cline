@@ -3,7 +3,7 @@ import type {
 	HubCommandEnvelope,
 	HubEventEnvelope,
 	HubReplyEnvelope,
-} from "@cline/shared";
+} from "@nexus/shared";
 
 /** Authority captured once by an authenticated transport connection. */
 export interface HubConnectionAuthority {

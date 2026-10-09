@@ -1,5 +1,5 @@
 import { ApiProvider } from "@shared/api"
-import type { ClineFileStorage } from "@shared/storage/ClineFileStorage"
+import type { NexusFileStorage } from "@shared/storage/NexusFileStorage"
 import {
 	applyTransform,
 	GlobalStateAndSettingKeys,
@@ -13,15 +13,15 @@ import {
 	Secrets,
 } from "@shared/storage/state-keys"
 import { Logger } from "@/shared/services/Logger"
-import { ClineMemento } from "@/shared/storage"
+import { NexusMemento } from "@/shared/storage"
 import { StateManager } from "../StateManager"
 
 // ─── File-backed storage readers (used by StateManager) ────────────────────
 
 /**
- * Read secrets from a ClineFileStorage instance.
+ * Read secrets from a NexusFileStorage instance.
  */
-export function readSecretsFromStorage(store: ClineFileStorage<string>): Secrets {
+export function readSecretsFromStorage(store: NexusFileStorage<string>): Secrets {
 	return SecretKeys.reduce((acc, key) => {
 		acc[key] = store.get(key)
 		return acc
@@ -29,9 +29,9 @@ export function readSecretsFromStorage(store: ClineFileStorage<string>): Secrets
 }
 
 /**
- * Read workspace state from a ClineFileStorage instance.
+ * Read workspace state from a NexusFileStorage instance.
  */
-export function readWorkspaceStateFromStorage(store: ClineFileStorage): LocalState {
+export function readWorkspaceStateFromStorage(store: NexusFileStorage): LocalState {
 	return LocalStateKeys.reduce((acc, key) => {
 		acc[key] = store.get(key) || {}
 		return acc
@@ -39,9 +39,9 @@ export function readWorkspaceStateFromStorage(store: ClineFileStorage): LocalSta
 }
 
 /**
- * Read global state from a ClineFileStorage instance.
+ * Read global state from a NexusFileStorage instance.
  */
-export async function readGlobalStateFromStorage(store: ClineMemento): Promise<GlobalStateAndSettings> {
+export async function readGlobalStateFromStorage(store: NexusMemento): Promise<GlobalStateAndSettings> {
 	try {
 		// Batch read all state values in a single optimized pass
 		const stateValues = new Map<string, any>()

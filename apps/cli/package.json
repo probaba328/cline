@@ -1,6 +1,6 @@
 {
-	"name": "@cline/cli",
-	"displayName": "cline",
+	"name": "@nexus/cli",
+	"displayName": "nexus",
 	"version": "3.0.57",
 	"description": "Autonomous coding agent CLI - capable of creating/editing files, running commands, using the browser, and more",
 	"type": "module",
@@ -9,11 +9,11 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/cline/cline.git",
+		"url": "git+https://github.com/nexus/nexus.git",
 		"directory": "apps/cli"
 	},
 	"keywords": [
-		"cline",
+		"nexus",
 		"claude",
 		"dev",
 		"mcp",
@@ -28,15 +28,15 @@
 		"cli"
 	],
 	"author": {
-		"name": "Cline Bot Inc."
+		"name": "Nexus Bot Inc."
 	},
 	"license": "Apache-2.0",
-	"homepage": "https://cline.bot",
+	"homepage": "https://nexus.bot",
 	"bugs": {
-		"url": "https://github.com/cline/cline/issues"
+		"url": "https://github.com/nexus/nexus/issues"
 	},
 	"bin": {
-		"cline": "src/index.ts"
+		"nexus": "src/index.ts"
 	},
 	"engines": {
 		"node": ">=22"
@@ -56,7 +56,7 @@
 		"prepublishOnly": "bun script/guard-direct-publish.ts",
 		"publish:npm": "bun script/publish-npm.ts",
 		"publish:npm:dry": "bun script/publish-npm.ts --dry-run",
-		"dev": "CLINE_BUILD_ENV=development bun --conditions=development ./src/index.ts",
+		"dev": "NEXUS_BUILD_ENV=development bun --conditions=development ./src/index.ts",
 		"typecheck": "tsc --noEmit",
 		"test": "bun run test:unit",
 		"test:unit": "vitest run --config vitest.config.ts",
@@ -76,7 +76,7 @@
 		"@chat-adapter/telegram": "^4.23.0",
 		"@chat-adapter/whatsapp": "^4.23.0",
 		"@clack/prompts": "^1.2.0",
-		"@cline/cline-hub": "workspace:*",
+		"@nexus/nexus-hub": "workspace:*",
 		"@gramio/format": "^0.7.0",
 		"@opentui-ui/dialog": "^0.1.2",
 		"@opentui/core": "0.4.3",
@@ -97,8 +97,8 @@
 		"zod": "^4.1.11"
 	},
 	"devDependencies": {
-		"@cline/core": "workspace:*",
-		"@cline/shared": "workspace:*",
+		"@nexus/core": "workspace:*",
+		"@nexus/shared": "workspace:*",
 		"@microsoft/tui-test": "^0.0.2",
 		"@types/bun": "^1.3.10",
 		"@types/react": "19.2.14",

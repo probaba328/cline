@@ -6,9 +6,9 @@ import {
 	ToolActivityContent,
 	ToolActivityDetails,
 	ToolActivityTrigger,
-} from "@cline/ui/components/agent-chat";
-import { ToolFileDiff } from "@cline/ui/components/agent-chat/tool-diff";
-import type { ToolLabelPart } from "@cline/ui/components/agent-chat/tool-summary";
+} from "@nexus/ui/components/agent-chat";
+import { ToolFileDiff } from "@nexus/ui/components/agent-chat/tool-diff";
+import type { ToolLabelPart } from "@nexus/ui/components/agent-chat/tool-summary";
 import Ansi from "ansi-to-react";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";

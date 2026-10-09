@@ -90,7 +90,7 @@ const primitivePageDetails = {
 	},
 	skill: {
 		title: "Skills",
-		description: "Install skills globally for Cline.",
+		description: "Install skills globally for Nexus.",
 		emptyInstalled: "No skills installed. Browse the marketplace to add one.",
 		emptyCatalog: "No skills match the current filters.",
 		icon: Zap,
@@ -107,7 +107,7 @@ const primitivePageDetails = {
 const directoryPageDetails: MarketplacePageDetails = {
 	title: "Marketplace",
 	description:
-		"Browse and install plugins, MCP servers, and skills from the Cline marketplace.",
+		"Browse and install plugins, MCP servers, and skills from the Nexus marketplace.",
 	emptyInstalled: "Nothing installed yet.",
 	emptyCatalog: "No marketplace entries match the current filters.",
 	icon: Store,
@@ -126,9 +126,9 @@ const TYPE_FILTER_ORDER: MarketplacePrimitiveType[] = [
 ];
 
 const primitiveCommands = {
-	mcp: "cline mcp install",
-	plugin: "cline plugin install",
-	skill: "cline skill add",
+	mcp: "nexus mcp install",
+	plugin: "nexus plugin install",
+	skill: "nexus skill add",
 } satisfies Record<MarketplacePrimitiveType, string>;
 
 export type MarketplaceLocalInstalledItemRenderContext = {
@@ -221,7 +221,7 @@ function EntrySetupGuidance({ entry }: { entry: MarketplaceEntry }) {
 						Environment setup needed
 					</p>
 					<p className="mt-1 text-xs leading-5 text-amber-800/80 dark:text-amber-100/80">
-						Add these values to your Cline/plugin environment after install.
+						Add these values to your Nexus/plugin environment after install.
 					</p>
 					<div className="mt-3 grid gap-2">
 						{[...requiredEnv, ...optionalEnv].map((env) => (

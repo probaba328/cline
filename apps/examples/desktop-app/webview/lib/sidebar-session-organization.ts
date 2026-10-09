@@ -1,4 +1,4 @@
-import { isChatWorkspacePath } from "@cline/shared/browser";
+import { isChatWorkspacePath } from "@nexus/shared/browser";
 import type { SessionThread } from "@/hooks/use-session-history";
 import { normalizeWorkspacePath } from "@/lib/workspace-paths";
 

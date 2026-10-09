@@ -1,13 +1,13 @@
 import * as os from "node:os";
 import {
 	captureExtensionActivated,
-	createClineTelemetryServiceConfig,
+	createNexusTelemetryServiceConfig,
 	createConfiguredTelemetryHandle,
 	type ITelemetryService,
 	identifyAccount,
 	ProviderSettingsManager,
 	setSdkLogger,
-} from "@cline/core";
+} from "@nexus/core";
 import { version } from "../package.json";
 import { setDesktopFeatureFlagsAccountContext } from "./feature-flags";
 import {
@@ -27,11 +27,11 @@ export function createDesktopObservability(): DesktopObservability {
 	setSdkLogger(logger);
 
 	const telemetryHandle = createConfiguredTelemetryHandle({
-		...createClineTelemetryServiceConfig({
+		...createNexusTelemetryServiceConfig({
 			metadata: {
 				extension_version: version,
-				cline_type: "desktop",
-				platform: "Cline",
+				nexus_type: "desktop",
+				platform: "Nexus",
 				platform_version: process.version,
 				os_type: os.platform(),
 				os_version: os.version(),
@@ -40,11 +40,11 @@ export function createDesktopObservability(): DesktopObservability {
 		logger,
 	});
 	const telemetry = telemetryHandle.telemetry;
-	const auth = new ProviderSettingsManager().getProviderSettings("cline")?.auth;
+	const auth = new ProviderSettingsManager().getProviderSettings("nexus")?.auth;
 	if (auth?.accountId) {
 		identifyAccount(telemetry, {
 			id: auth.accountId,
-			provider: "cline",
+			provider: "nexus",
 		});
 		setDesktopFeatureFlagsAccountContext({ id: auth.accountId });
 	}

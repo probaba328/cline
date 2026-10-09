@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package cline;
+package nexus;
 
-import "cline/common.proto";
+import "nexus/common.proto";
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 // Service for account-related operations
 service AccountService {
@@ -74,7 +74,7 @@ message UserInfo {
   optional string display_name = 2;
   optional string email = 3;
   optional string photo_url = 4;
-  optional string app_base_url = 5; // Cline app base URL
+  optional string app_base_url = 5; // Nexus app base URL
 }
 
 message UserOrganization {

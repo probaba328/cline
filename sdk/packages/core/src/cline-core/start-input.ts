@@ -1,4 +1,4 @@
-import type { ExtensionContext } from "@cline/shared";
+import type { ExtensionContext } from "@nexus/shared";
 import type { RuntimeCapabilities } from "../runtime/capabilities";
 import { normalizeRuntimeCapabilities } from "../runtime/capabilities";
 import type {
@@ -11,13 +11,13 @@ import {
 	withSessionHistoryOriginMetadata,
 } from "../session/history-origin";
 import { SessionSource } from "../types/common";
-import type { ClineCoreStartConfig } from "../types/config";
-import type { ClineCoreStartInput } from "./types";
+import type { NexusCoreStartConfig } from "../types/config";
+import type { NexusCoreStartInput } from "./types";
 
-export function toClineCoreStartInput(
-	input: StartSessionInput | ClineCoreStartInput,
-): ClineCoreStartInput {
-	const config = input.config as ClineCoreStartConfig;
+export function toNexusCoreStartInput(
+	input: StartSessionInput | NexusCoreStartInput,
+): NexusCoreStartInput {
+	const config = input.config as NexusCoreStartConfig;
 	return "providerId" in config
 		? {
 				...input,
@@ -27,19 +27,19 @@ export function toClineCoreStartInput(
 				},
 				localRuntime: input.localRuntime,
 			}
-		: (input as ClineCoreStartInput);
+		: (input as NexusCoreStartInput);
 }
 
-export interface NormalizeClineCoreStartInputOptions {
+export interface NormalizeNexusCoreStartInputOptions {
 	defaultCapabilities?: RuntimeCapabilities;
 	withExtensionContext?: (
 		context?: ExtensionContext,
 	) => ExtensionContext | undefined;
 }
 
-export function normalizeClineCoreStartInput(
-	input: ClineCoreStartInput,
-	options: NormalizeClineCoreStartInputOptions = {},
+export function normalizeNexusCoreStartInput(
+	input: NexusCoreStartInput,
+	options: NormalizeNexusCoreStartInputOptions = {},
 ): StartSessionInput {
 	const split = splitCoreSessionConfig(input.config);
 	const capabilities = normalizeRuntimeCapabilities(
@@ -77,7 +77,7 @@ export function normalizeClineCoreStartInput(
 
 function coreConfigFromLocalRuntime(
 	localRuntime: LocalRuntimeStartOptions | undefined,
-): Partial<ClineCoreStartConfig> {
+): Partial<NexusCoreStartConfig> {
 	if (!localRuntime) {
 		return {};
 	}

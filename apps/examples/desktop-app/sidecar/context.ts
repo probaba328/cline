@@ -5,7 +5,7 @@ import { dirname } from "node:path";
 import {
 	type AgentToolContext,
 	type BasicLogger,
-	ClineCore,
+	NexusCore,
 	type CoreSessionEvent,
 	ensureCompatibleLocalHubUrl,
 	type ITelemetryService,
@@ -14,12 +14,12 @@ import {
 	setHomeDirIfUnset,
 	type ToolApprovalRequest,
 	type ToolApprovalResult,
-} from "@cline/core";
+} from "@nexus/core";
 import {
 	type AgentEvent,
 	HUB_CLIENT_TOOL_APPROVAL_CAPABILITY,
 	isGeneratedMedia,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	discardAllTrackedAttachments,
 	flushConsumedAttachments,
@@ -125,7 +125,7 @@ export function syncSidecarApprovalReadiness(
 						{
 							name: HUB_CLIENT_TOOL_APPROVAL_CAPABILITY,
 							description:
-								"Cline Code has a live user surface for tool review.",
+								"Nexus Code has a live user surface for tool review.",
 						},
 					]
 				: [],
@@ -1023,8 +1023,8 @@ export async function initializeSessionManager(
 	ctx: SidecarContext,
 ): Promise<void> {
 	setHomeDirIfUnset(homedir());
-	const sessionManager = await ClineCore.create({
-		clientName: "cline-code",
+	const sessionManager = await NexusCore.create({
+		clientName: "nexus-code",
 		backendMode: "hub",
 		capabilities: createSidecarRuntimeCapabilities(ctx),
 		logger: ctx.logger,
@@ -1038,7 +1038,7 @@ export async function initializeSessionManager(
 			workspaceRoot: ctx.workspaceRoot,
 			cwd: ctx.workspaceRoot,
 			clientType: "code-sidecar",
-			displayName: "Cline Desktop sidecar",
+			displayName: "Nexus Desktop sidecar",
 		},
 	});
 
@@ -1080,13 +1080,13 @@ export async function ensureSharedHubClient(
 				cwd: ctx.workspaceRoot,
 			}));
 		if (!url) {
-			throw new Error("Unable to start or connect to the shared Cline Hub.");
+			throw new Error("Unable to start or connect to the shared Nexus Hub.");
 		}
 
 		const client = new NodeHubClient({
 			url,
 			clientType: "code-sidecar-observer",
-			displayName: "Cline Desktop observer",
+			displayName: "Nexus Desktop observer",
 			workspaceRoot: ctx.workspaceRoot,
 			cwd: ctx.workspaceRoot,
 		});

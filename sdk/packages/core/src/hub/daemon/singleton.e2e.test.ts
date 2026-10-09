@@ -79,11 +79,11 @@ function spawnFixture(
 			cwd: dataDir,
 			env: {
 				...process.env,
-				CLINE_BUILD_ENV: "development",
-				CLINE_DATA_DIR: dataDir,
-				CLINE_HUB_DISCOVERY_PATH: discoveryPath,
-				CLINE_HUB_TEST_PORT: "0",
-				CLINE_NO_INTERACTIVE: "1",
+				NEXUS_BUILD_ENV: "development",
+				NEXUS_DATA_DIR: dataDir,
+				NEXUS_HUB_DISCOVERY_PATH: discoveryPath,
+				NEXUS_HUB_TEST_PORT: "0",
+				NEXUS_NO_INTERACTIVE: "1",
 				NO_COLOR: "1",
 			},
 			stdio: ["ignore", "ignore", "pipe"],
@@ -152,7 +152,7 @@ async function startDaemon(existing?: {
 }): Promise<ReadyDaemon> {
 	const dataDir =
 		existing?.dataDir ??
-		(await mkdtemp(join(tmpdir(), "cline-hub-singleton-e2e-")));
+		(await mkdtemp(join(tmpdir(), "nexus-hub-singleton-e2e-")));
 	tempDirs.add(dataDir);
 	const discoveryPath =
 		existing?.discoveryPath ?? join(dataDir, "hub-discovery.json");

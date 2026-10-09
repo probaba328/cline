@@ -1,4 +1,4 @@
-import type { GlobalSettings } from "@cline/core";
+import type { GlobalSettings } from "@nexus/core";
 import { describe, expect, it } from "vitest";
 import {
 	resolveStartupCompactionMode,

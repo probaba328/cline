@@ -1,10 +1,10 @@
-import type { ITelemetryService } from "@cline/shared";
+import type { ITelemetryService } from "@nexus/shared";
 import { CORE_TELEMETRY_EVENTS } from "../services/telemetry/core-events";
 import { SessionSource } from "../types/common";
-import type { ClineCoreStartInput } from "./types";
+import type { NexusCoreStartInput } from "./types";
 
 export interface EmitSessionStartedTelemetryInput {
-	input: ClineCoreStartInput;
+	input: NexusCoreStartInput;
 	sessionId: string;
 	telemetry?: ITelemetryService;
 	clientName?: string;
@@ -16,7 +16,7 @@ export function emitSessionStartedTelemetry(
 ): void {
 	// Per-session telemetry override (passed via `CoreSessionConfig.telemetry`)
 	// takes precedence over the instance-wide telemetry service configured on
-	// `ClineCore.create`. Either way we fire a single `session.started` event
+	// `NexusCore.create`. Either way we fire a single `session.started` event
 	// here so the signal is emitted for every backend.
 	const telemetry = input.input.config.telemetry ?? input.telemetry;
 	if (!telemetry) {

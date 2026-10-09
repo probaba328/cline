@@ -12,9 +12,9 @@ const mockProviderSettings = vi.hoisted(() => ({
 	providers: {} as Record<string, { provider?: string; model?: string }>,
 }));
 
-vi.mock("@cline/core", async () => {
+vi.mock("@nexus/core", async () => {
 	const actual =
-		await vi.importActual<typeof import("@cline/core")>("@cline/core");
+		await vi.importActual<typeof import("@nexus/core")>("@nexus/core");
 	return {
 		...actual,
 		NodeHubClient: class {
@@ -222,7 +222,7 @@ describe("runScheduleCommand create", () => {
 
 	it("uses an explicit provider with that provider's configured model", async () => {
 		mockProviderSettings.lastUsed = {
-			provider: "cline",
+			provider: "nexus",
 			model: "openai/gpt-5.3-codex",
 		};
 		mockProviderSettings.providers.anthropic = {
@@ -388,7 +388,7 @@ describe("runScheduleCommand import", () => {
 
 		const sourcePath = join(
 			tmpdir(),
-			`cline-schedule-import-${Date.now()}.json`,
+			`nexus-schedule-import-${Date.now()}.json`,
 		);
 		await writeFile(
 			sourcePath,
@@ -458,7 +458,7 @@ describe("runScheduleCommand export", () => {
 
 		const targetPath = join(
 			tmpdir(),
-			`cline-schedule-export-${Date.now()}-${Math.random()
+			`nexus-schedule-export-${Date.now()}-${Math.random()
 				.toString(36)
 				.slice(2)}.json`,
 		);
@@ -516,7 +516,7 @@ describe("runScheduleCommand export", () => {
 
 		const targetPath = join(
 			tmpdir(),
-			`cline-schedule-export-${Date.now()}-${Math.random()
+			`nexus-schedule-export-${Date.now()}-${Math.random()
 				.toString(36)
 				.slice(2)}.yaml`,
 		);

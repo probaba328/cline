@@ -19,13 +19,13 @@ export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
 	contextHistory: "context_history.json",
 	uiMessages: "ui_messages.json",
-	clineRecommendedModels: "cline_recommended_models.json",
-	mcpSettings: "cline_mcp_settings.json",
-	clineRules: ".clinerules",
-	workflows: ".clinerules/workflows",
-	hooksDir: ".clinerules/hooks",
-	clineruleSkillsDir: ".clinerules/skills",
-	clineSkillsDir: ".cline/skills",
+	nexusRecommendedModels: "nexus_recommended_models.json",
+	mcpSettings: "nexus_mcp_settings.json",
+	nexusRules: ".nexusrules",
+	workflows: ".nexusrules/workflows",
+	hooksDir: ".nexusrules/hooks",
+	clineruleSkillsDir: ".nexusrules/skills",
+	nexusSkillsDir: ".nexus/skills",
 	claudeSkillsDir: ".claude/skills",
 	agentsSkillsDir: ".agents/skills",
 	cursorRulesDir: ".cursor/rules",
@@ -37,16 +37,16 @@ export const GlobalFileNames = {
 }
 
 /**
- * Returns the cross-platform path to the Cline home directory (~/.cline).
+ * Returns the cross-platform path to the Nexus home directory (~/.nexus).
  * This works on macOS, Linux, and Windows:
- * - macOS: /Users/username/.cline
- * - Linux: /home/username/.cline
- * - Windows: C:\Users\username\.cline
+ * - macOS: /Users/username/.nexus
+ * - Linux: /home/username/.nexus
+ * - Windows: C:\Users\username\.nexus
  *
- * This is intended to eventually replace ~/Documents/Cline as the global config location.
+ * This is intended to eventually replace ~/Documents/Nexus as the global config location.
  */
-function getClineHomePath(): string {
-	return path.join(os.homedir(), ".cline")
+function getNexusHomePath(): string {
+	return path.join(os.homedir(), ".nexus")
 }
 
 export async function ensureTaskDirectoryExists(taskId: string): Promise<string> {
@@ -55,53 +55,53 @@ export async function ensureTaskDirectoryExists(taskId: string): Promise<string>
 
 export async function ensureRulesDirectoryExists(): Promise<string> {
 	const userDocumentsPath = await getDocumentsPath()
-	const clineRulesDir = path.join(userDocumentsPath, "Cline", "Rules")
+	const nexusRulesDir = path.join(userDocumentsPath, "Nexus", "Rules")
 	try {
-		await fs.mkdir(clineRulesDir, { recursive: true })
+		await fs.mkdir(nexusRulesDir, { recursive: true })
 	} catch (_error) {
-		return path.join(os.homedir(), "Documents", "Cline", "Rules") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
+		return path.join(os.homedir(), "Documents", "Nexus", "Rules") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
 	}
-	return clineRulesDir
+	return nexusRulesDir
 }
 
 export async function ensureWorkflowsDirectoryExists(): Promise<string> {
 	const userDocumentsPath = await getDocumentsPath()
-	const clineWorkflowsDir = path.join(userDocumentsPath, "Cline", "Workflows")
+	const nexusWorkflowsDir = path.join(userDocumentsPath, "Nexus", "Workflows")
 	try {
-		await fs.mkdir(clineWorkflowsDir, { recursive: true })
+		await fs.mkdir(nexusWorkflowsDir, { recursive: true })
 	} catch (_error) {
-		return path.join(os.homedir(), "Documents", "Cline", "Workflows") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
+		return path.join(os.homedir(), "Documents", "Nexus", "Workflows") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
 	}
-	return clineWorkflowsDir
+	return nexusWorkflowsDir
 }
 
 export async function ensureMcpServersDirectoryExists(): Promise<string> {
 	const userDocumentsPath = await getDocumentsPath()
-	const mcpServersDir = path.join(userDocumentsPath, "Cline", "MCP")
+	const mcpServersDir = path.join(userDocumentsPath, "Nexus", "MCP")
 	try {
 		await fs.mkdir(mcpServersDir, { recursive: true })
 	} catch (_error) {
-		return path.join(os.homedir(), "Documents", "Cline", "MCP") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine since this path is only ever used in the system prompt
+		return path.join(os.homedir(), "Documents", "Nexus", "MCP") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine since this path is only ever used in the system prompt
 	}
 	return mcpServersDir
 }
 
 export async function ensureHooksDirectoryExists(): Promise<string> {
 	const userDocumentsPath = await getDocumentsPath()
-	const clineHooksDir = path.join(userDocumentsPath, "Cline", "Hooks")
+	const nexusHooksDir = path.join(userDocumentsPath, "Nexus", "Hooks")
 	try {
-		await fs.mkdir(clineHooksDir, { recursive: true })
+		await fs.mkdir(nexusHooksDir, { recursive: true })
 	} catch (_error) {
-		return path.join(os.homedir(), "Documents", "Cline", "Hooks") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
+		return path.join(os.homedir(), "Documents", "Nexus", "Hooks") // in case creating a directory in documents fails for whatever reason (e.g. permissions) - this is fine because we will fail gracefully with a path that does not exist
 	}
-	return clineHooksDir
+	return nexusHooksDir
 }
 
 /**
- * Returns the global skills directory path (~/.cline/skills) without creating it.
+ * Returns the global skills directory path (~/.nexus/skills) without creating it.
  */
-function getClineSkillsDirectoryPath(): string {
-	return path.join(getClineHomePath(), "skills")
+function getNexusSkillsDirectoryPath(): string {
+	return path.join(getNexusHomePath(), "skills")
 }
 
 function getAgentSkillsDirectoryPath(): string {
@@ -291,7 +291,7 @@ export function setRuntimeHooksDir(dir: string | undefined): void {
  * Gets the paths to all hooks directories to search for hooks, including:
  * 1. The runtime hooks directory (if set via --hooks-dir CLI flag)
  * 2. The global hooks directory (if it exists)
- * 3. Each workspace root's .clinerules/hooks directory (if they exist)
+ * 3. Each workspace root's .nexusrules/hooks directory (if they exist)
  *
  * Note: Hooks from different directories may be executed concurrently.
  * No execution order is guaranteed between hooks from different directories.
@@ -320,7 +320,7 @@ export async function getAllHooksDirs(): Promise<string[]> {
 }
 
 /**
- * Gets the paths to the workspace's .clinerules/hooks directories to search for
+ * Gets the paths to the workspace's .nexusrules/hooks directories to search for
  * hooks. A workspace may not use hooks, and the resulting array will be empty. A
  * multi-root workspace may have multiple hooks directories.
  */
@@ -333,7 +333,7 @@ export async function getWorkspaceHooksDirs(): Promise<string[]> {
 	return (
 		await Promise.all(
 			workspaceRootPaths.map(async (workspaceRootPath) => {
-				// Look for a .clinerules/hooks folder in this workspace root.
+				// Look for a .nexusrules/hooks folder in this workspace root.
 				const candidate = path.join(workspaceRootPath, GlobalFileNames.hooksDir)
 				return (await isDirectory(candidate)) ? candidate : undefined
 			}),

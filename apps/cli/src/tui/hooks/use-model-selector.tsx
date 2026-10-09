@@ -1,12 +1,12 @@
 import {
-	fetchClineRecommendedModels,
+	fetchNexusRecommendedModels,
 	getProviderConfigFields,
 	Llms,
 	ProviderSettingsManager,
 	refreshProviderModelsFromSource,
 	resolveProviderConfig,
-} from "@cline/core";
-import { isClineProvider } from "@cline/shared";
+} from "@nexus/core";
+import { isNexusProvider } from "@nexus/shared";
 import type { ChoiceContext } from "@opentui-ui/dialog";
 import type { DialogActions } from "@opentui-ui/dialog/react";
 import { useCallback } from "react";
@@ -19,7 +19,7 @@ import {
 import type { Config } from "../../utils/types";
 import { withLoadingDialog } from "../components/dialogs/loading-dialog";
 import {
-	ClinePassSubscriptionContent,
+	NexusPassSubscriptionContent,
 	CodexCliStatusContent,
 	type ExistingProviderOption,
 	OAuthApiKeyInputContent,
@@ -29,11 +29,11 @@ import {
 	ProviderPickerContent,
 	UseExistingOrReconfigureContent,
 } from "../components/dialogs/provider-picker";
-import { buildFeaturedModelEntries } from "../components/model-selector/cline-model-picker";
+import { buildFeaturedModelEntries } from "../components/model-selector/nexus-model-picker";
 import {
 	BROWSE_ALL_ACTION,
-	ClineModelSelectorDialogContent,
-} from "../components/model-selector/cline-model-selector";
+	NexusModelSelectorDialogContent,
+} from "../components/model-selector/nexus-model-selector";
 import {
 	buildModelOptions,
 	CHANGE_PROVIDER_ACTION,
@@ -133,7 +133,7 @@ function providerToExistingProviderOptions(input: {
 	dialog: DialogActions;
 	termHeight: number;
 }): ExistingProviderOption[] {
-	if (input.providerId !== "cline-pass") {
+	if (input.providerId !== "nexus-pass") {
 		return [];
 	}
 
@@ -146,7 +146,7 @@ function providerToExistingProviderOptions(input: {
 					style: { maxHeight: input.termHeight - 2 },
 					closeOnEscape: false,
 					content: (ctx: ChoiceContext<boolean>) => (
-						<ClinePassSubscriptionContent
+						<NexusPassSubscriptionContent
 							{...ctx}
 							providerName={input.providerName}
 						/>
@@ -180,8 +180,8 @@ async function runProviderChange(
 	const existingSettings = manager.getProviderSettings(newProviderId);
 
 	// Manual API key entry is the escape hatch for when OAuth login isn't
-	// working; only the Cline providers accept a dashboard API key.
-	const supportsManualApiKey = isClineProvider(newProviderId);
+	// working; only the Nexus providers accept a dashboard API key.
+	const supportsManualApiKey = isNexusProvider(newProviderId);
 	const openManualApiKeyDialog = async (): Promise<boolean | undefined> =>
 		await dialog.choice<boolean>({
 			style: { maxHeight: termHeight - 2 },
@@ -431,37 +431,37 @@ export function useModelSelector(opts: {
 				}
 
 				if (
-					config.providerId === "cline" ||
-					config.providerId === "cline-pass"
+					config.providerId === "nexus" ||
+					config.providerId === "nexus-pass"
 				) {
-					// ClinePass gets the same sectioned picker with Subscribed/Free
-					// sections — free models are selectable while staying on ClinePass
+					// NexusPass gets the same sectioned picker with Subscribed/Free
+					// sections — free models are selectable while staying on NexusPass
 					const featuredProviderId = config.providerId;
-					const clineResult = await dialog.choice<string>({
+					const nexusResult = await dialog.choice<string>({
 						style: { maxHeight: termHeight - 2 },
 						content: (ctx: ChoiceContext<string>) => (
-							<ClineModelSelectorDialogContent
+							<NexusModelSelectorDialogContent
 								{...ctx}
 								currentModel={config.modelId}
 								currentProviderName={providerDisplayName}
 								loadEntries={async () =>
 									buildFeaturedModelEntries(
 										featuredProviderId,
-										await fetchClineRecommendedModels(),
+										await fetchNexusRecommendedModels(),
 									)
 								}
 							/>
 						),
 					});
-					if (!clineResult) {
+					if (!nexusResult) {
 						await handleCancel();
 						return;
 					}
-					if (clineResult === CHANGE_PROVIDER_ACTION) {
+					if (nexusResult === CHANGE_PROVIDER_ACTION) {
 						await changeProvider();
 						continue;
 					}
-					if (clineResult === BROWSE_ALL_ACTION) {
+					if (nexusResult === BROWSE_ALL_ACTION) {
 						const browseResult = await dialog.choice<string>({
 							style: { maxHeight: termHeight - 2 },
 							content: (ctx: ChoiceContext<string>) => (
@@ -470,7 +470,7 @@ export function useModelSelector(opts: {
 									currentModel={config.modelId}
 									currentProviderName={providerDisplayName}
 									models={modelOptions}
-									showCustomModelId={config.providerId !== "cline-pass"}
+									showCustomModelId={config.providerId !== "nexus-pass"}
 								/>
 							),
 						});
@@ -516,9 +516,9 @@ export function useModelSelector(opts: {
 						continue;
 					}
 
-					config.modelId = clineResult;
+					config.modelId = nexusResult;
 					const selectedModel = modelOptions.find(
-						(m: ModelOption) => m.key === clineResult,
+						(m: ModelOption) => m.key === nexusResult,
 					);
 					if (selectedModel?.supportsReasoning) {
 						const currentLevel: ThinkingLevel = config.reasoningEffort
@@ -561,7 +561,7 @@ export function useModelSelector(opts: {
 							currentModel={config.modelId}
 							currentProviderName={providerDisplayName}
 							models={modelOptions}
-							showCustomModelId={config.providerId !== "cline-pass"}
+							showCustomModelId={config.providerId !== "nexus-pass"}
 						/>
 					),
 				});

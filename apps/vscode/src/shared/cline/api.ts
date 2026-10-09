@@ -1,9 +1,9 @@
-enum CLINE_API_AUTH_ENDPOINTS {
+enum NEXUS_API_AUTH_ENDPOINTS {
 	AUTH = "/api/v1/auth/authorize",
 	REFRESH_TOKEN = "/api/v1/auth/refresh",
 }
 
-enum CLINE_API_ENDPOINT_V1 {
+enum NEXUS_API_ENDPOINT_V1 {
 	TOKEN_EXCHANGE = "/api/v1/auth/token",
 	USER_INFO = "/api/v1/users/me",
 	FEATUREBASE_TOKEN = "/api/v1/users/me/featurebase-token",
@@ -13,7 +13,7 @@ enum CLINE_API_ENDPOINT_V1 {
 	API_KEYS = "/api/v1/organizations/{id}/api-keys",
 }
 
-export const CLINE_API_ENDPOINT = {
-	...CLINE_API_AUTH_ENDPOINTS,
-	...CLINE_API_ENDPOINT_V1,
+export const NEXUS_API_ENDPOINT = {
+	...NEXUS_API_AUTH_ENDPOINTS,
+	...NEXUS_API_ENDPOINT_V1,
 }

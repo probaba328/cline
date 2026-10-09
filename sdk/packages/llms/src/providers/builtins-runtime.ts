@@ -1,7 +1,7 @@
 import type {
 	GatewayProviderFactory,
 	GatewayProviderRegistration,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	BUILTIN_PROVIDER_MANIFESTS_BY_ID,
 	BUILTIN_SPECS,
@@ -23,9 +23,9 @@ async function loadFamilyFactory(
 
 	const promise = (async () => {
 		switch (family) {
-			case "cline": {
+			case "nexus": {
 				const module = await import("./ai-sdk");
-				return module.createClineProvider;
+				return module.createNexusProvider;
 			}
 			case "openai": {
 				const module = await import("./ai-sdk");

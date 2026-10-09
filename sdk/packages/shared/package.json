@@ -1,10 +1,10 @@
 {
-	"name": "@cline/shared",
+	"name": "@nexus/shared",
 	"version": "0.0.78",
-	"description": "Shared utilities, types, and schemas for Cline packages",
+	"description": "Shared utilities, types, and schemas for Nexus packages",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cline/cline",
+		"url": "https://github.com/nexus/nexus",
 		"directory": "sdk/packages/shared"
 	},
 	"type": "module",

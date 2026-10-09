@@ -1,13 +1,13 @@
 # Events
 
-The Cline SDK has three event layers. Which one you use depends on whether you're working with the standalone `Agent` class or `ClineCore`.
+The Nexus SDK has three event layers. Which one you use depends on whether you're working with the standalone `Agent` class or `NexusCore`.
 
 ## Which Events Do I Get?
 
 | If you use... | You subscribe with... | You receive... | Text streaming event |
 |---|---|---|---|
 | Standalone `Agent` | `agent.subscribe()` | `AgentRuntimeEvent` | `assistant-text-delta` |
-| `ClineCore` | `cline.subscribe()` | `CoreSessionEvent` | `chunk` (with `payload.type === "text"`) |
+| `NexusCore` | `nexus.subscribe()` | `CoreSessionEvent` | `chunk` (with `payload.type === "text"`) |
 
 These are different event types with different shapes. Do not mix them up.
 
@@ -126,9 +126,9 @@ const agent = new Agent({
 })
 ```
 
-## Layer 2: AgentEvent (ClineCore Internal)
+## Layer 2: AgentEvent (NexusCore Internal)
 
-When using `ClineCore`, a `RuntimeEventAdapter` translates Layer 1 events into a legacy format called `AgentEvent`. You do not interact with this layer directly -- it is projected into `CoreSessionEvent` for subscribers. The key mappings:
+When using `NexusCore`, a `RuntimeEventAdapter` translates Layer 1 events into a legacy format called `AgentEvent`. You do not interact with this layer directly -- it is projected into `CoreSessionEvent` for subscribers. The key mappings:
 
 | AgentRuntimeEvent (Layer 1) | AgentEvent (Layer 2) |
 |---|---|
@@ -146,9 +146,9 @@ When using `ClineCore`, a `RuntimeEventAdapter` translates Layer 1 events into a
 
 This layer exists for backwards compatibility. If you see event types like `content_update` or `iteration_start` in other documentation, they refer to this layer, not to what `agent.subscribe()` emits.
 
-## Layer 3: CoreSessionEvent (ClineCore Subscriber)
+## Layer 3: CoreSessionEvent (NexusCore Subscriber)
 
-Emitted by `ClineCore` via `cline.subscribe()`. These are higher-level session events.
+Emitted by `NexusCore` via `nexus.subscribe()`. These are higher-level session events.
 
 ```typescript
 type CoreSessionEvent =
@@ -183,7 +183,7 @@ interface SessionEndedEvent {
 ### Subscribing
 
 ```typescript
-cline.subscribe((event) => {
+nexus.subscribe((event) => {
   switch (event.type) {
     case "chunk":
       if (event.payload.type === "text") {
@@ -200,21 +200,21 @@ cline.subscribe((event) => {
 Filter by session:
 
 ```typescript
-cline.subscribe(handler, { sessionId: "specific-session-id" })
+nexus.subscribe(handler, { sessionId: "specific-session-id" })
 ```
 
 ## Hub Events (Layer 3b)
 
-When ClineCore runs in hub mode (via `backendMode: "hub"` or `"auto"` when a hub is available), events are projected over WebSocket using `HubEventName` types like `assistant.delta`, `iteration.started`, `tool.started`, etc. You do not interact with these directly -- `cline.subscribe()` still gives you `CoreSessionEvent` regardless of backend mode.
+When NexusCore runs in hub mode (via `backendMode: "hub"` or `"auto"` when a hub is available), events are projected over WebSocket using `HubEventName` types like `assistant.delta`, `iteration.started`, `tool.started`, etc. You do not interact with these directly -- `nexus.subscribe()` still gives you `CoreSessionEvent` regardless of backend mode.
 
 ## Result Type Differences
 
-The standalone Agent and ClineCore return different result types:
+The standalone Agent and NexusCore return different result types:
 
 | API | Result type | Text property |
 |---|---|---|
 | `agent.run()` | `AgentRunResult` | `result.outputText` |
-| `cline.start()` / `cline.send()` | `AgentResult` | `result.text` |
+| `nexus.start()` / `nexus.send()` | `AgentResult` | `result.text` |
 
 ## Common Patterns
 
@@ -228,10 +228,10 @@ agent.subscribe((event) => {
 })
 ```
 
-### Streaming Text (ClineCore)
+### Streaming Text (NexusCore)
 
 ```typescript
-cline.subscribe((event) => {
+nexus.subscribe((event) => {
   if (event.type === "chunk" && event.payload.type === "text") {
     process.stdout.write(event.payload.text)
   }
@@ -264,6 +264,6 @@ agent.subscribe((event) => {
 ## See Also
 
 - `../agent/REFERENCE.md` - Agent runtime overview
-- `../clinecore/REFERENCE.md` - ClineCore session management
+- `../clinecore/REFERENCE.md` - NexusCore session management
 - `../plugins/REFERENCE.md` - Plugin hooks for lifecycle events
 - `../production/REFERENCE.md` - Observability in production

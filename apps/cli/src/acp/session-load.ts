@@ -2,13 +2,13 @@ import type {
 	AgentSideConnection,
 	SessionUpdate,
 } from "@agentclientprotocol/sdk";
-import { projectSessionMessagesForDisplay } from "@cline/core";
+import { projectSessionMessagesForDisplay } from "@nexus/core";
 import {
 	type ContentBlock,
 	formatDisplayUserInput,
 	type MessageWithMetadata,
 	type ToolResultContent,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { ACT_MODE_CONTINUATION_PROMPT } from "../runtime/interactive/mode";
 import { buildToolTitle, mapToolKind } from "./tool-utils";
 

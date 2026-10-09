@@ -28,28 +28,28 @@
 		"noUnusedParameters": false,
 		"noPropertyAccessFromIndexSignature": false,
 		"paths": {
-			"@cline/agents": ["../packages/agents/src/index.ts"],
-			"@cline/agents/*": [
+			"@nexus/agents": ["../packages/agents/src/index.ts"],
+			"@nexus/agents/*": [
 				"../packages/agents/src/*",
 				"../packages/agents/src/*/index.ts"
 			],
-			"@cline/cline-hub": ["./cline-hub/src/server.ts"],
-			"@cline/core": ["../packages/core/src/index.ts"],
-			"@cline/core/hub/daemon-entry": [
+			"@nexus/nexus-hub": ["./nexus-hub/src/server.ts"],
+			"@nexus/core": ["../packages/core/src/index.ts"],
+			"@nexus/core/hub/daemon-entry": [
 				"../packages/core/src/hub/daemon/entry.ts"
 			],
-			"@cline/core/*": [
+			"@nexus/core/*": [
 				"../packages/core/src/*",
 				"../packages/core/src/*/index.ts"
 			],
-			"@cline/core/telemetry": [
+			"@nexus/core/telemetry": [
 				"../packages/core/src/services/telemetry/index.ts"
 			],
-			"@cline/llms": ["../packages/llms/src/index.ts"],
-			"@cline/shared": ["../packages/shared/src/index.ts"],
-			"@cline/shared/storage": ["../packages/shared/src/storage/index.ts"],
-			"@cline/shared/db": ["../packages/shared/src/db/index.ts"],
-			"@cline/shared/*": [
+			"@nexus/llms": ["../packages/llms/src/index.ts"],
+			"@nexus/shared": ["../packages/shared/src/index.ts"],
+			"@nexus/shared/storage": ["../packages/shared/src/storage/index.ts"],
+			"@nexus/shared/db": ["../packages/shared/src/db/index.ts"],
+			"@nexus/shared/*": [
 				"../packages/shared/src/*",
 				"../packages/shared/src/*/index.ts"
 			]

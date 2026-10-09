@@ -40,7 +40,7 @@ describe("AccountView usage table", () => {
 					case "fetchMe":
 						return {
 							id: "user-1",
-							email: "beatrix@cline.bot",
+							email: "beatrix@nexus.bot",
 							displayName: "Beatrix",
 							createdAt: "2024-01-01T00:00:00Z",
 							updatedAt: "2024-01-01T00:00:00Z",
@@ -81,7 +81,7 @@ describe("AccountView usage table", () => {
 		await act(async () => seeMoreButton?.click());
 
 		expect(openExternalUrl).toHaveBeenCalledWith(
-			"https://app.cline.bot/dashboard/usage",
+			"https://app.nexus.bot/dashboard/usage",
 		);
 	});
 });
@@ -98,18 +98,18 @@ describe("AccountView signed-out state", () => {
 		});
 
 		await vi.waitFor(() => {
-			expect(container.textContent).toContain("Sign in to Cline");
+			expect(container.textContent).toContain("Sign in to Nexus");
 		});
 		expect(container.textContent).not.toContain(
-			"No Cline account auth token found",
+			"No Nexus account auth token found",
 		);
 		// The auth state gates the rest of the overview: signed out means the
 		// balance/organization commands are never fired.
 		const accountCalls = invoke.mock.calls.filter(
-			([command]) => command === "cline_account",
+			([command]) => command === "nexus_account",
 		);
 		expect(accountCalls).toEqual([
-			["cline_account", { action: "clineAccount", operation: "fetchMe" }],
+			["nexus_account", { action: "nexusAccount", operation: "fetchMe" }],
 		]);
 	});
 
@@ -123,7 +123,7 @@ describe("AccountView signed-out state", () => {
 					case "fetchMe":
 						return {
 							id: "user-1",
-							email: "beatrix@cline.bot",
+							email: "beatrix@nexus.bot",
 							displayName: "Beatrix",
 							createdAt: "2024-01-01T00:00:00Z",
 							updatedAt: "2024-01-01T00:00:00Z",
@@ -135,7 +135,7 @@ describe("AccountView signed-out state", () => {
 						return [
 							{
 								organizationId: "org-1",
-								name: "Cline",
+								name: "Nexus",
 								active: true,
 								roles: ["member"],
 							},
@@ -153,7 +153,7 @@ describe("AccountView signed-out state", () => {
 		});
 
 		await vi.waitFor(() => {
-			expect(container.textContent).toContain("Sign in to Cline");
+			expect(container.textContent).toContain("Sign in to Nexus");
 		});
 		expect(container.textContent).not.toContain("Beatrix");
 	});
@@ -165,7 +165,7 @@ describe("AccountView signed-out state", () => {
 					case "fetchMe":
 						return {
 							id: "user-1",
-							email: "beatrix@cline.bot",
+							email: "beatrix@nexus.bot",
 							displayName: "Beatrix",
 							createdAt: "2024-01-01T00:00:00Z",
 							updatedAt: "2024-01-01T00:00:00Z",
@@ -188,6 +188,6 @@ describe("AccountView signed-out state", () => {
 		await vi.waitFor(() => {
 			expect(container.textContent).toContain("Beatrix");
 		});
-		expect(container.textContent).not.toContain("Sign in to Cline");
+		expect(container.textContent).not.toContain("Sign in to Nexus");
 	});
 });

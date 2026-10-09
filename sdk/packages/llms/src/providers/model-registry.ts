@@ -1,4 +1,4 @@
-import { isChatCompatibleModel } from "@cline/shared";
+import { isChatCompatibleModel } from "@nexus/shared";
 import type {
 	ModelCollection,
 	ModelInfo,

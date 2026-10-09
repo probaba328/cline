@@ -20,12 +20,12 @@ import {
 	syncPluginMcpServersToSettings,
 	uninstallMarketplaceEntry as uninstallCoreMarketplaceEntry,
 	uninstallPlugin,
-} from "@cline/core"
+} from "@nexus/core"
 import { deleteSkillFile } from "@core/controller/file/deleteSkillFile"
 import { refreshSkills } from "@core/controller/file/refreshSkills"
 import { toggleSkill } from "@core/controller/file/toggleSkill"
 import { resolveActiveModelIdFromApiConfiguration } from "@core/controller/models/taskApiModel"
-import { DeleteSkillRequest, ToggleSkillRequest } from "@shared/proto/cline/file"
+import { DeleteSkillRequest, ToggleSkillRequest } from "@shared/proto/nexus/file"
 import {
 	MarketplaceCatalog,
 	MarketplaceEntry,
@@ -35,7 +35,7 @@ import {
 	MarketplaceLocalInstalledEntry,
 	MarketplaceLocalInstalledEntryRequest,
 	ToggleMarketplaceLocalInstalledEntryRequest,
-} from "@shared/proto/cline/marketplace"
+} from "@shared/proto/nexus/marketplace"
 import { HostProvider } from "@/hosts/host-provider"
 import type { Controller } from "../index"
 
@@ -47,8 +47,8 @@ type SpawnResult = {
 	stderr: string
 }
 
-const MARKETPLACE_CATALOG_URL = "https://cline.github.io/marketplace/catalog.json"
-const OFFICIAL_PLUGINS_REPO = "https://github.com/cline/plugins.git"
+const MARKETPLACE_CATALOG_URL = "https://nexus.github.io/marketplace/catalog.json"
+const OFFICIAL_PLUGINS_REPO = "https://github.com/nexus/plugins.git"
 const INSTALL_COMMAND_TIMEOUT_MS = 120_000
 const MAX_OUTPUT_CHARS = 12_000
 const SECRET_PATTERN =
@@ -184,8 +184,8 @@ function hashSource(source: string): string {
 	return createHash("sha256").update(source).digest("hex").slice(0, 12)
 }
 
-function resolveClineHome(): string {
-	return process.env.CLINE_DIR?.trim() || join(homedir(), ".cline")
+function resolveNexusHome(): string {
+	return process.env.NEXUS_DIR?.trim() || join(homedir(), ".nexus")
 }
 
 function sanitizeSegment(value: string): string {
@@ -203,7 +203,7 @@ function isOfficialPluginInstalled(entry: MarketplaceEntry): boolean {
 	if (!source || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(source.trim())) return false
 	const sourceKey = `official:${OFFICIAL_PLUGINS_REPO}#plugins/${source.trim()}`
 	const installPath = join(
-		resolveClineHome(),
+		resolveNexusHome(),
 		"plugins",
 		"_installed",
 		"official",
@@ -366,7 +366,7 @@ async function installPluginMarketplaceEntry(entry: MarketplaceEntry, args: stri
 
 async function installSkillMarketplaceEntry(entry: MarketplaceEntry, args: string[]): Promise<MarketplaceInstallResult> {
 	const command = "npx"
-	const commandArgs = ["-y", "skills@latest", "add", ...args, "-g", "-a", "cline", "-y"]
+	const commandArgs = ["-y", "skills@latest", "add", ...args, "-g", "-a", "nexus", "-y"]
 	const displayCommand = formatCommand(command, commandArgs)
 	let result: SpawnResult
 	try {
@@ -446,9 +446,9 @@ function isPathWithin(parentPath: string, childPath: string): boolean {
 	return relativePath === "" || (!relativePath.startsWith("..") && !isAbsolute(relativePath))
 }
 
-function isGlobalClinePath(filePath: string | undefined): boolean {
+function isGlobalNexusPath(filePath: string | undefined): boolean {
 	if (!filePath || filePath.startsWith("remote:")) return false
-	return [resolveClineHome(), join(homedir(), ".agents", "skills")].some((root) => isPathWithin(root, filePath))
+	return [resolveNexusHome(), join(homedir(), ".agents", "skills")].some((root) => isPathWithin(root, filePath))
 }
 
 async function listPluginLocalEntries(): Promise<MarketplaceLocalInstalledEntry[]> {
@@ -464,7 +464,7 @@ async function listPluginLocalEntries(): Promise<MarketplaceLocalInstalledEntry[
 					type: "plugin",
 					name: getPluginDisplayName(pluginPath, root),
 					path: pluginPath,
-					source: isGlobalClinePath(pluginPath) ? "global" : "workspace",
+					source: isGlobalNexusPath(pluginPath) ? "global" : "workspace",
 					enabled: !disabledPlugins.has(pluginPath),
 				}),
 			)
@@ -503,7 +503,7 @@ export async function listLocalMarketplaceInstalledEntries(controller: Controlle
 				name: skill.name,
 				description: skill.description,
 				path: skill.path,
-				source: isGlobalClinePath(skill.path) ? "global" : "workspace",
+				source: isGlobalNexusPath(skill.path) ? "global" : "workspace",
 				enabled: skill.enabled,
 			}),
 		),

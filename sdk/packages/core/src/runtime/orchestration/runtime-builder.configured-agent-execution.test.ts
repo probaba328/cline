@@ -8,8 +8,8 @@ import {
 	type AgentTool,
 	createContributionRegistry,
 	type Message,
-} from "@cline/shared";
-import { setHomeDir } from "@cline/shared/storage";
+} from "@nexus/shared";
+import { setHomeDir } from "@nexus/shared/storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { UserInstructionConfigService } from "../../extensions/config";
 import type { CoreSessionConfig } from "../../types/config";
@@ -109,16 +109,16 @@ describe("DefaultRuntimeBuilder configured agent execution", () => {
 
 	it("invokes configured agents with host callbacks, scoped tools, skills, overrides, and parent context", async () => {
 		const { DefaultRuntimeBuilder } = await import("./runtime-builder");
-		const tempHome = mkdtempSync(join(tmpdir(), "cline-agent-home-"));
-		const workspaceRoot = mkdtempSync(join(tmpdir(), "cline-agent-root-"));
+		const tempHome = mkdtempSync(join(tmpdir(), "nexus-agent-home-"));
+		const workspaceRoot = mkdtempSync(join(tmpdir(), "nexus-agent-root-"));
 		const cwd = join(workspaceRoot, "packages", "app");
 		tempDirs.push(tempHome, workspaceRoot);
 		process.env.HOME = tempHome;
 		setHomeDir(tempHome);
 		mkdirSync(cwd, { recursive: true });
 
-		const agentsDir = join(workspaceRoot, ".cline", "agents");
-		const skillDir = join(workspaceRoot, ".cline", "skills", "commit");
+		const agentsDir = join(workspaceRoot, ".nexus", "agents");
+		const skillDir = join(workspaceRoot, ".nexus", "skills", "commit");
 		mkdirSync(agentsDir, { recursive: true });
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
@@ -260,9 +260,9 @@ Write a concise commit message.`,
 
 	it("does not require custom user instruction services to implement createSkillsExecutor", async () => {
 		const { DefaultRuntimeBuilder } = await import("./runtime-builder");
-		const workspaceRoot = mkdtempSync(join(tmpdir(), "cline-agent-compat-"));
+		const workspaceRoot = mkdtempSync(join(tmpdir(), "nexus-agent-compat-"));
 		tempDirs.push(workspaceRoot);
-		const agentsDir = join(workspaceRoot, ".cline", "agents");
+		const agentsDir = join(workspaceRoot, ".nexus", "agents");
 		mkdirSync(agentsDir, { recursive: true });
 		writeFileSync(
 			join(agentsDir, "reviewer.yml"),

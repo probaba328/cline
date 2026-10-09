@@ -1,19 +1,19 @@
-interface ClineRecommendedModel {
+interface NexusRecommendedModel {
 	id: string
 	name: string
 	description: string
 	tags: string[]
 }
 
-export interface ClineRecommendedModelsData {
-	recommended: ClineRecommendedModel[]
-	free: ClineRecommendedModel[]
+export interface NexusRecommendedModelsData {
+	recommended: NexusRecommendedModel[]
+	free: NexusRecommendedModel[]
 }
 
 /**
  * Hardcoded fallback shown when upstream recommended models are not enabled or unavailable.
  */
-export const CLINE_RECOMMENDED_MODELS_FALLBACK: ClineRecommendedModelsData = {
+export const NEXUS_RECOMMENDED_MODELS_FALLBACK: NexusRecommendedModelsData = {
 	recommended: [
 		{
 			id: "google/gemini-3.1-pro-preview",

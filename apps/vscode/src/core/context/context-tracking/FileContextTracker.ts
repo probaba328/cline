@@ -1,5 +1,5 @@
 import { getTaskMetadata, saveTaskMetadata } from "@core/storage/disk"
-import type { ClineMessage } from "@shared/ExtensionMessage"
+import type { NexusMessage } from "@shared/ExtensionMessage"
 import chokidar, { FSWatcher } from "chokidar"
 import * as path from "path"
 import { Controller } from "@/core/controller"
@@ -8,17 +8,17 @@ import { getCwd } from "@/utils/path"
 import type { FileMetadataEntry } from "./ContextTrackerTypes"
 
 // This class is responsible for tracking file operations that may result in stale context.
-// If a user modifies a file outside of Cline, the context may become stale and need to be updated.
-// We do not want Cline to reload the context every time a file is modified, so we use this class merely
-// to inform Cline that the change has occurred, and tell Cline to reload the file before making
-// any changes to it. This fixes an issue with diff editing, where Cline was unable to complete a diff edit.
-// a diff edit because the file was modified since Cline last read it.
+// If a user modifies a file outside of Nexus, the context may become stale and need to be updated.
+// We do not want Nexus to reload the context every time a file is modified, so we use this class merely
+// to inform Nexus that the change has occurred, and tell Nexus to reload the file before making
+// any changes to it. This fixes an issue with diff editing, where Nexus was unable to complete a diff edit.
+// a diff edit because the file was modified since Nexus last read it.
 
 // FileContextTracker
 /**
 This class is responsible for tracking file operations.
-If the full contents of a file are passed to Cline via a tool, mention, or edit, the file is marked as active.
-If a file is modified outside of Cline, we detect and track this change to prevent stale context.
+If the full contents of a file are passed to Nexus via a tool, mention, or edit, the file is marked as active.
+If a file is modified outside of Nexus, we detect and track this change to prevent stale context.
 This is used when restoring a task (non-git "checkpoint" restore), and mid-task.
 */
 export class FileContextTracker {
@@ -28,7 +28,7 @@ export class FileContextTracker {
 	// File tracking and watching
 	private fileWatchers = new Map<string, FSWatcher>()
 	private recentlyModifiedFiles = new Set<string>()
-	private recentlyEditedByCline = new Set<string>()
+	private recentlyEditedByNexus = new Set<string>()
 
 	constructor(controller: Controller, taskId: string) {
 		this.controller = controller
@@ -65,10 +65,10 @@ export class FileContextTracker {
 
 		// Track file changes
 		watcher.on("change", () => {
-			if (this.recentlyEditedByCline.has(filePath)) {
-				this.recentlyEditedByCline.delete(filePath) // This was an edit by Cline, no need to inform Cline
+			if (this.recentlyEditedByNexus.has(filePath)) {
+				this.recentlyEditedByNexus.delete(filePath) // This was an edit by Nexus, no need to inform Nexus
 			} else {
-				this.recentlyModifiedFiles.add(filePath) // This was a user edit, we will inform Cline
+				this.recentlyModifiedFiles.add(filePath) // This was a user edit, we will inform Nexus
 				this.trackFileContext(filePath, "user_edited") // Update the task metadata with file tracking
 			}
 		})
@@ -79,9 +79,9 @@ export class FileContextTracker {
 
 	/**
 	 * Tracks a file operation in metadata and sets up a watcher for the file
-	 * This is the main entry point for FileContextTracker and is called when a file is passed to Cline via a tool, mention, or edit.
+	 * This is the main entry point for FileContextTracker and is called when a file is passed to Nexus via a tool, mention, or edit.
 	 */
-	async trackFileContext(filePath: string, operation: "read_tool" | "user_edited" | "cline_edited" | "file_mentioned") {
+	async trackFileContext(filePath: string, operation: "read_tool" | "user_edited" | "nexus_edited" | "file_mentioned") {
 		try {
 			const cwd = await getCwd()
 			if (!cwd) {
@@ -129,8 +129,8 @@ export class FileContextTracker {
 				path: filePath,
 				record_state: "active",
 				record_source: source,
-				cline_read_date: getLatestDateForField(filePath, "cline_read_date"),
-				cline_edit_date: getLatestDateForField(filePath, "cline_edit_date"),
+				nexus_read_date: getLatestDateForField(filePath, "nexus_read_date"),
+				nexus_edit_date: getLatestDateForField(filePath, "nexus_edit_date"),
 				user_edit_date: getLatestDateForField(filePath, "user_edit_date"),
 			}
 
@@ -141,16 +141,16 @@ export class FileContextTracker {
 					this.recentlyModifiedFiles.add(filePath)
 					break
 
-				// cline_edited: Cline has edited the file
-				case "cline_edited":
-					newEntry.cline_read_date = now
-					newEntry.cline_edit_date = now
+				// nexus_edited: Nexus has edited the file
+				case "nexus_edited":
+					newEntry.nexus_read_date = now
+					newEntry.nexus_edit_date = now
 					break
 
-				// read_tool/file_mentioned: Cline has read the file via a tool or file mention
+				// read_tool/file_mentioned: Nexus has read the file via a tool or file mention
 				case "read_tool":
 				case "file_mentioned":
-					newEntry.cline_read_date = now
+					newEntry.nexus_read_date = now
 					break
 			}
 
@@ -171,10 +171,10 @@ export class FileContextTracker {
 	}
 
 	/**
-	 * Marks a file as edited by Cline to prevent false positives in file watchers
+	 * Marks a file as edited by Nexus to prevent false positives in file watchers
 	 */
-	markFileAsEditedByCline(filePath: string): void {
-		this.recentlyEditedByCline.add(filePath)
+	markFileAsEditedByNexus(filePath: string): void {
+		this.recentlyEditedByNexus.add(filePath)
 	}
 
 	/**
@@ -187,22 +187,22 @@ export class FileContextTracker {
 	}
 
 	/**
-	 * Detects files that were edited by Cline or users after a specific message timestamp
+	 * Detects files that were edited by Nexus or users after a specific message timestamp
 	 * This is used when restoring checkpoints to warn about potential file content mismatches
 	 */
-	async detectFilesEditedAfterMessage(messageTs: number, deletedMessages: ClineMessage[]): Promise<string[]> {
+	async detectFilesEditedAfterMessage(messageTs: number, deletedMessages: NexusMessage[]): Promise<string[]> {
 		const editedFiles: string[] = []
 
 		try {
-			// Check task metadata for files that were edited by Cline or users after the message timestamp
+			// Check task metadata for files that were edited by Nexus or users after the message timestamp
 			const taskMetadata = await getTaskMetadata(this.taskId)
 
 			if (taskMetadata?.files_in_context) {
 				for (const fileEntry of taskMetadata.files_in_context) {
-					const clineEditedAfter = fileEntry.cline_edit_date && fileEntry.cline_edit_date > messageTs
+					const nexusEditedAfter = fileEntry.nexus_edit_date && fileEntry.nexus_edit_date > messageTs
 					const userEditedAfter = fileEntry.user_edit_date && fileEntry.user_edit_date > messageTs
 
-					if (clineEditedAfter || userEditedAfter) {
+					if (nexusEditedAfter || userEditedAfter) {
 						editedFiles.push(fileEntry.path)
 					}
 				}

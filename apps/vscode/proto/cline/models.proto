@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-package cline;
+package nexus;
 
-import "cline/common.proto";
+import "nexus/common.proto";
 import "google/protobuf/field_mask.proto";
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 // Service for model-related operations
 service ModelsService {
@@ -19,8 +19,8 @@ service ModelsService {
   rpc getVsCodeLmModels(EmptyRequest) returns (VsCodeLmModelsArray);
   // Refreshes and returns OpenRouter models
   rpc refreshOpenRouterModelsRpc(EmptyRequest) returns (OpenRouterCompatibleModelInfo);
-  // Refreshes and returns recommended and free Cline models
-  rpc refreshClineRecommendedModelsRpc(EmptyRequest) returns (ClineRecommendedModelsResponse);
+  // Refreshes and returns recommended and free Nexus models
+  rpc refreshNexusRecommendedModelsRpc(EmptyRequest) returns (NexusRecommendedModelsResponse);
   // Refreshes and returns Hugging Face models
   rpc refreshHuggingFaceModels(EmptyRequest) returns (OpenRouterCompatibleModelInfo);
   // Refreshes and returns OpenAI models
@@ -172,7 +172,7 @@ message ProviderListing {
 
   // SDK-driven hint for cost display. Values: "show" (default) or "hide".
   // Sourced from `resolveProviderUsageCostDisplay(provider.metadata)` in
-  // `@cline/llms`. When "hide", consumers must suppress per-token pricing
+  // `@nexus/llms`. When "hide", consumers must suppress per-token pricing
   // and total cost displays (matches the CLI's `shouldShowCliUsageCost`).
   string usage_cost_display = 11;
 }
@@ -308,17 +308,17 @@ message CommitModelSelectionRequest {
   optional ModelOverrides overrides = 5;
 }
 
-message ClineRecommendedModel {
+message NexusRecommendedModel {
   string id = 1;
   string name = 2;
   string description = 3;
   repeated string tags = 4;
 }
 
-message ClineRecommendedModelsResponse {
-  repeated ClineRecommendedModel recommended = 1;
-  repeated ClineRecommendedModel free = 2;
-  repeated ClineRecommendedModel cline_pass = 3;
+message NexusRecommendedModelsResponse {
+  repeated NexusRecommendedModel recommended = 1;
+  repeated NexusRecommendedModel free = 2;
+  repeated NexusRecommendedModel cline_pass = 3;
 }
 
 // Request for fetching OpenAI models

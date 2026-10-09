@@ -1,13 +1,13 @@
 syntax = "proto3";
-package cline;
+package nexus;
 
-import "cline/browser.proto";
-import "cline/common.proto";
-import "cline/models.proto";
+import "nexus/browser.proto";
+import "nexus/common.proto";
+import "nexus/models.proto";
 
-option go_package = "github.com/cline/grpc-go/cline";
+option go_package = "github.com/nexus/grpc-go/nexus";
 option java_multiple_files = true;
-option java_package = "bot.cline.proto";
+option java_package = "bot.nexus.proto";
 
 service StateService {
   rpc getLatestState(EmptyRequest) returns (State);
@@ -30,7 +30,7 @@ service StateService {
   rpc updateCliBannerVersion(Int64Request) returns (Empty);
   rpc dismissBanner(StringRequest) returns (Empty);
   rpc trackBannerEvent(TrackBannerEventRequest) returns (Empty);
-  rpc installClineCli(EmptyRequest) returns (Empty);
+  rpc installNexusCli(EmptyRequest) returns (Empty);
   rpc checkCliInstallation(EmptyRequest) returns (Boolean);
   rpc getProcessInfo(EmptyRequest) returns (ProcessInfo);
   rpc flushPendingState(EmptyRequest) returns (Empty);

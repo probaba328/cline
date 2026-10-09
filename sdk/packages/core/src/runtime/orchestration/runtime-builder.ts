@@ -1,4 +1,4 @@
-import { supportsModelTool } from "@cline/llms";
+import { supportsModelTool } from "@nexus/llms";
 import type {
 	AgentTool,
 	BasicLogger,
@@ -6,11 +6,11 @@ import type {
 	ModelTool,
 	RuntimeConfigExtensionKind,
 	TeamTeammateSpec,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	hasRuntimeConfigExtension,
 	resolveMcpTimeoutSeconds,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { nanoid } from "nanoid";
 import { createUserInstructionConfigService } from "../../extensions/config";
 import {

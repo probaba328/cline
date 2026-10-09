@@ -9,8 +9,8 @@ import type {
 	ITelemetryService,
 	JsonValue,
 	SessionParticipant,
-} from "@cline/shared";
-import { createSessionId } from "@cline/shared";
+} from "@nexus/shared";
+import { createSessionId } from "@nexus/shared";
 import type {
 	CommandExecutionRuntimeService,
 	PendingPromptsRuntimeService,

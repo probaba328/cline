@@ -2,7 +2,7 @@ import {
 	getProviderConfigFields,
 	type ProviderConfig,
 	type ProviderSettings,
-} from "@cline/core";
+} from "@nexus/core";
 import {
 	getPersistedProviderApiKey,
 	isOAuthProvider,

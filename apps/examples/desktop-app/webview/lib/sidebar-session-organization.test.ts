@@ -16,7 +16,7 @@ function thread(
 		codebase: workspaceDisplayName(workspacePath),
 		workspacePath,
 		time: "now",
-		provider: "cline",
+		provider: "nexus",
 		model: "test-model",
 		status: "completed",
 		isScheduled: false,
@@ -44,14 +44,14 @@ describe("sidebar session organization", () => {
 	});
 
 	it("uses the repository directory instead of the full workspace path", () => {
-		expect(workspaceDisplayName("/Users/saoud/code/cline/")).toBe("cline");
-		expect(workspaceDisplayName("C:\\Users\\saoud\\code\\cline\\")).toBe(
-			"cline",
+		expect(workspaceDisplayName("/Users/saoud/code/nexus/")).toBe("nexus");
+		expect(workspaceDisplayName("C:\\Users\\saoud\\code\\nexus\\")).toBe(
+			"nexus",
 		);
 	});
 
 	it("labels chat workspace groups as Chat", () => {
-		const path = "/home/host/.cline/data/workspaces/chat";
+		const path = "/home/host/.nexus/data/workspaces/chat";
 		expect(workspaceDisplayName(path)).toBe("Chat");
 		expect(groupThreadsByProject([thread("temp", path)])[0]?.label).toBe(
 			"Chat",

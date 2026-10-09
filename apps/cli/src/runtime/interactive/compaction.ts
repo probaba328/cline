@@ -7,8 +7,8 @@ import {
 	type ReasoningSettings,
 	type SessionCompactionState,
 	toProviderConfig,
-} from "@cline/core";
-import type { Message } from "@cline/shared";
+} from "@nexus/core";
+import type { Message } from "@nexus/shared";
 import type { Config } from "../../utils/types";
 
 const FALLBACK_MANUAL_COMPACTION_MAX_INPUT_TOKENS = 64_000;

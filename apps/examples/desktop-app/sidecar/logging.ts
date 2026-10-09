@@ -9,8 +9,8 @@ import { dirname, join } from "node:path";
 import {
 	type BasicLogger,
 	type RuntimeLoggerConfig,
-	resolveClineDataDir,
-} from "@cline/core";
+	resolveNexusDataDir,
+} from "@nexus/core";
 import pino, {
 	type DestinationStream,
 	type LevelWithSilent,
@@ -42,14 +42,14 @@ function resolveLogLevel(value: string | undefined): LevelWithSilent {
 }
 
 function resolveRuntimeConfig(): Required<RuntimeLoggerConfig> {
-	const enabledValue = process.env.CLINE_LOG_ENABLED?.trim().toLowerCase();
+	const enabledValue = process.env.NEXUS_LOG_ENABLED?.trim().toLowerCase();
 	return {
 		enabled: enabledValue !== "0" && enabledValue !== "false",
-		level: resolveLogLevel(process.env.CLINE_LOG_LEVEL),
+		level: resolveLogLevel(process.env.NEXUS_LOG_LEVEL),
 		destination:
-			process.env.CLINE_LOG_PATH?.trim() ||
-			join(resolveClineDataDir(), "logs", "code.log"),
-		name: process.env.CLINE_LOG_NAME?.trim() || "cline-code.sidecar",
+			process.env.NEXUS_LOG_PATH?.trim() ||
+			join(resolveNexusDataDir(), "logs", "code.log"),
+		name: process.env.NEXUS_LOG_NAME?.trim() || "nexus-code.sidecar",
 		bindings: {},
 	};
 }
@@ -118,7 +118,7 @@ function writeDestinationFallbackWarning(path: string, error: unknown): void {
 	try {
 		const message = error instanceof Error ? error.message : String(error);
 		process.stderr.write(
-			`[cline-code] Unable to open log file ${path}; falling back to stderr (${message})\n`,
+			`[nexus-code] Unable to open log file ${path}; falling back to stderr (${message})\n`,
 		);
 	} catch {
 		// The fallback warning must never prevent sidecar startup.

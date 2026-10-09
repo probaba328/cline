@@ -1,4 +1,4 @@
-import type { GatewayResolvedProviderConfig } from "@cline/shared";
+import type { GatewayResolvedProviderConfig } from "@nexus/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createBedrockProviderModule, resolveBedrockModelId } from "./bedrock";
 

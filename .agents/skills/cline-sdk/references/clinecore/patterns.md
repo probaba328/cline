@@ -1,13 +1,13 @@
-# ClineCore Patterns
+# NexusCore Patterns
 
 ## Basic Session with Built-in Tools
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-const session = await cline.start({
+const session = await nexus.start({
   prompt: "Read package.json and summarize the dependencies",
   config: {
     providerId: "anthropic",
@@ -19,15 +19,15 @@ const session = await cline.start({
 })
 
 console.log(session.result?.text)
-await cline.dispose()
+await nexus.dispose()
 ```
 
 ## Streaming Session with UI Updates
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-cline.subscribe((event) => {
+nexus.subscribe((event) => {
   switch (event.type) {
     case "chunk":
       if (event.payload.type === "text") {
@@ -40,7 +40,7 @@ cline.subscribe((event) => {
   }
 })
 
-await cline.start({
+await nexus.start({
   prompt: "Refactor the auth module",
   config: {
     providerId: "anthropic",
@@ -54,9 +54,9 @@ await cline.start({
 ## Multi-Turn Session
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-const session = await cline.start({
+const session = await nexus.start({
   prompt: "Create a new Express server",
   config: {
     providerId: "anthropic",
@@ -67,13 +67,13 @@ const session = await cline.start({
 })
 
 // Follow-up
-const result = await cline.send({
+const result = await nexus.send({
   sessionId: session.sessionId,
   prompt: "Now add a health check endpoint",
 })
 
 console.log(result?.text)
-await cline.dispose()
+await nexus.dispose()
 ```
 
 ## Tiered Permission Model
@@ -81,7 +81,7 @@ await cline.dispose()
 Auto-approve reads, require approval for writes:
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   toolPolicies: {
     read_files: { autoApprove: true },
@@ -105,7 +105,7 @@ const cline = await ClineCore.create({
 ## Custom Tools Alongside Built-ins
 
 ```typescript
-import { ClineCore, createTool } from "@cline/sdk"
+import { NexusCore, createTool } from "@nexus/sdk"
 import { z } from "zod"
 
 const deployTool = createTool({
@@ -120,9 +120,9 @@ const deployTool = createTool({
   },
 })
 
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-await cline.start({
+await nexus.start({
   prompt: "Deploy the app to staging",
   config: {
     providerId: "anthropic",
@@ -139,15 +139,15 @@ await cline.start({
 Load plugins inline with `extensions` and provide workspace context so plugins can access `ctx.workspaceInfo`:
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 import myPlugin from "./my-plugin"
 
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   backendMode: "local",
 })
 
-await cline.start({
+await nexus.start({
   prompt: "Do the thing my plugin enables",
   config: {
     providerId: "anthropic",
@@ -161,14 +161,14 @@ await cline.start({
   },
 })
 
-await cline.dispose()
+await nexus.dispose()
 ```
 
 For directory-based plugin packages, use `pluginPaths` instead:
 
 ```typescript
 config: {
-  pluginPaths: ["./my-cline-plugin"],
+  pluginPaths: ["./my-nexus-plugin"],
   extensionContext: {
     workspace: { rootPath: process.cwd(), cwd: process.cwd() },
   },
@@ -180,32 +180,32 @@ See `../plugins/REFERENCE.md` for the full plugin authoring guide.
 ## Session Listing and Replay
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
 // List recent sessions
-const sessions = await cline.list(10)
+const sessions = await nexus.list(10)
 for (const session of sessions) {
   console.log(`${session.id}: ${session.title}`)
 }
 
 // Read messages from a past session
-const messages = await cline.readMessages(sessions[0].id)
+const messages = await nexus.readMessages(sessions[0].id)
 for (const msg of messages) {
   console.log(`[${msg.role}] ${msg.content}`)
 }
 
 // Check usage
-const usage = await cline.getAccumulatedUsage(sessions[0].id)
+const usage = await nexus.getAccumulatedUsage(sessions[0].id)
 console.log(`Total tokens: ${usage.aggregateUsage.totalInputTokens + usage.aggregateUsage.totalOutputTokens}`)
 ```
 
 ## Graceful Shutdown
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
 process.on("SIGTERM", async () => {
-  await cline.dispose("SIGTERM received")
+  await nexus.dispose("SIGTERM received")
   process.exit(0)
 })
 
@@ -217,15 +217,15 @@ process.on("SIGTERM", async () => {
 For request/response workloads (API endpoints, queue consumers):
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "worker",
   backendMode: "local",
 })
 
 async function handleRequest(prompt: string, workspace: string) {
-  const session = await cline.start({
+  const session = await nexus.start({
     prompt,
     config: {
       providerId: "anthropic",
@@ -249,18 +249,18 @@ Multiple clients can attach to the same session:
 
 ```typescript
 // Process 1: start session
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "backend",
   backendMode: "hub",
 })
 
-const session = await cline.start({
+const session = await nexus.start({
   prompt: "Long running refactor task",
   config: { ... },
 })
 
 // Process 2: attach and stream events
-const viewer = await ClineCore.create({
+const viewer = await NexusCore.create({
   clientName: "dashboard",
   backendMode: "hub",
 })

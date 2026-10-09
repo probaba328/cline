@@ -8,18 +8,18 @@
 import fs from "node:fs";
 import path from "node:path";
 
-function resolveClineBin(): string {
+function resolveNexusBin(): string {
 	const localBin = path.resolve(process.cwd(), "..", "..", "dist", "index.js");
 	if (fs.existsSync(localBin)) {
 		return localBin;
 	}
 
 	throw new Error(
-		"Unable to resolve cline binary. Run bun -F @cline/cli build",
+		"Unable to resolve nexus binary. Run bun -F @nexus/cli build",
 	);
 }
 
-export const CLINE_BIN = resolveClineBin();
+export const NEXUS_BIN = resolveNexusBin();
 
 // Standard terminal dimensions used across test suites
 export const TERMINAL_WIDE = { columns: 120, rows: 50 } as const;

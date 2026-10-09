@@ -305,14 +305,14 @@ export {
 } from "./parse/string";
 export { formatHumanReadableDate, formatUptime } from "./parse/time";
 export { validateWithZod, zodToJsonSchema } from "./parse/zod";
-export type { ClineSystemPromptOptions } from "./prompt/cline";
+export type { NexusSystemPromptOptions } from "./prompt/nexus";
 export {
-	buildClineSystemPrompt,
+	buildNexusSystemPrompt,
 	MODE_TAG_INSTRUCTIONS,
 	PLAN_MODE_INSTRUCTIONS,
 	PLAN_MODE_INSTRUCTIONS_MANUAL_SWITCH,
 	processWorkspaceInfo,
-} from "./prompt/cline";
+} from "./prompt/nexus";
 export type {
 	ModeSwitchNotice,
 	ModeSwitchNoticeTracker,
@@ -330,8 +330,8 @@ export {
 	stripModeNotices,
 	xmlTagsRemoval,
 } from "./prompt/format";
-export { CLINE_DEFAULT_MODEL_ID } from "./providers/defaults";
-export { isClineProvider } from "./providers/utils";
+export { NEXUS_DEFAULT_MODEL_ID } from "./providers/defaults";
+export { isNexusProvider } from "./providers/utils";
 export {
 	buildRemoteConfigSessionBlobUploadMetadata,
 	clearMaterializedRemoteConfigRuntime,
@@ -379,8 +379,8 @@ export {
 	AwsBedrockCustomModelSchema,
 	AwsBedrockModelSchema,
 	AwsBedrockSettingsSchema,
-	ClineModelSchema,
-	ClineSettingsSchema,
+	NexusModelSchema,
+	NexusSettingsSchema,
 	EnterpriseTelemetrySchema,
 	GlobalInstructionsFileSchema,
 	LiteLLMModelSchema,
@@ -395,10 +395,10 @@ export {
 	VertexSettingsSchema,
 } from "./remote-config/schema";
 export {
-	CLINE_DEFAULT_RPC_ADDRESS,
-	CLINE_DEFAULT_RPC_PORT,
-	CLINE_HUB_DEV_PORT,
-	CLINE_HUB_PORT,
+	NEXUS_DEFAULT_RPC_ADDRESS,
+	NEXUS_DEFAULT_RPC_PORT,
+	NEXUS_HUB_DEV_PORT,
+	NEXUS_HUB_PORT,
 } from "./rpc";
 export type {
 	AddProviderActionRequest,
@@ -411,7 +411,7 @@ export type {
 	ChatStartSessionResponse,
 	ChatToolCallResult,
 	ChatTurnResult,
-	ClineAccountActionRequest,
+	NexusAccountActionRequest,
 	EnterpriseAuthenticateRequest,
 	EnterpriseAuthenticateResponse,
 	EnterpriseStatusRequest,
@@ -462,40 +462,40 @@ export {
 	TEAM_PROGRESS_EVENT_TYPE,
 } from "./rpc/team-progress";
 export type {
-	ClineBuildEnv,
-	ClineDebugRole,
-	ResolveClineBuildEnvOptions,
+	NexusBuildEnv,
+	NexusDebugRole,
+	ResolveNexusBuildEnvOptions,
 } from "./runtime/build-env";
 export {
 	augmentNodeCommandForDebug,
-	CLINE_BUILD_ENV_ENV,
-	CLINE_DEBUG_HOST_ENV,
-	CLINE_DEBUG_PORT_BASE_ENV,
-	resolveClineBuildEnv,
-	withResolvedClineBuildEnv,
+	NEXUS_BUILD_ENV_ENV,
+	NEXUS_DEBUG_HOST_ENV,
+	NEXUS_DEBUG_PORT_BASE_ENV,
+	resolveNexusBuildEnv,
+	withResolvedNexusBuildEnv,
 } from "./runtime/build-env";
 export type {
-	ClineEnvironment,
-	ClineEnvironmentConfig,
-	ResolveClineEnvironmentOptions,
-} from "./runtime/cline-environment";
+	NexusEnvironment,
+	NexusEnvironmentConfig,
+	ResolveNexusEnvironmentOptions,
+} from "./runtime/nexus-environment";
 export {
-	CLINE_ENVIRONMENT_ENV,
-	CLINE_ENVIRONMENT_OVERRIDE_ENV,
-	CLINE_ENVIRONMENTS,
-	DEFAULT_CLINE_ENVIRONMENT,
-	getClineEnvironmentConfig,
-	resolveClineEnvironment,
-} from "./runtime/cline-environment";
+	NEXUS_ENVIRONMENT_ENV,
+	NEXUS_ENVIRONMENT_OVERRIDE_ENV,
+	NEXUS_ENVIRONMENTS,
+	DEFAULT_NEXUS_ENVIRONMENT,
+	getNexusEnvironmentConfig,
+	resolveNexusEnvironment,
+} from "./runtime/nexus-environment";
 export type {
 	ConnectorCliLaunchSpec,
 	ConnectorInstanceRef,
 } from "./runtime/hub-daemon-env";
 export {
-	CLINE_CONNECTOR_CLI_LAUNCH_ENV,
-	CLINE_CONNECTOR_STARTING_INSTANCE_ENV,
-	CLINE_CONNECTOR_SUPERVISED_ENV,
-	CLINE_RUN_AS_HUB_DAEMON_ENV,
+	NEXUS_CONNECTOR_CLI_LAUNCH_ENV,
+	NEXUS_CONNECTOR_STARTING_INSTANCE_ENV,
+	NEXUS_CONNECTOR_SUPERVISED_ENV,
+	NEXUS_RUN_AS_HUB_DAEMON_ENV,
 	claimHubDaemonProcess,
 	claimSupervisedConnectorProcess,
 	isHubDaemonProcess,
@@ -535,10 +535,10 @@ export {
 	TASK_PROVIDER_STREAM_FAILED_EVENT,
 	TASK_PROVIDER_STREAM_STARTED_EVENT,
 } from "./services/telemetry";
-export type { ClineTelemetryServiceConfig } from "./services/telemetry-config";
+export type { NexusTelemetryServiceConfig } from "./services/telemetry-config";
 export {
-	createClineTelemetryServiceConfig,
-	createClineTelemetryServiceMetadata,
+	createNexusTelemetryServiceConfig,
+	createNexusTelemetryServiceMetadata,
 } from "./services/telemetry-config";
 export type {
 	HookSessionContext,
@@ -573,8 +573,8 @@ export {
 export type { RuntimeEnv } from "./session/runtime-env";
 export * from "./session/workspace";
 export {
-	CLINE_CHAT_WORKSPACE_DIRECTORY_NAME,
-	CLINE_WORKSPACES_DIRECTORY_NAME,
+	NEXUS_CHAT_WORKSPACE_DIRECTORY_NAME,
+	NEXUS_WORKSPACES_DIRECTORY_NAME,
 	isChatWorkspacePath,
 } from "./storage/chat-workspace-paths";
 export * from "./tasks";

@@ -8,14 +8,14 @@ import {
 	refreshProviderModelsFromSource,
 	resolveProviderConfig,
 	saveLocalProviderSettings,
-} from "@cline/core";
-import { isClineProvider } from "@cline/shared";
+} from "@nexus/core";
+import { isNexusProvider } from "@nexus/shared";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isChatProviderModel } from "../../../utils/chat-models";
 import {
 	getCliSubscriptionUrl,
 	getIndividualPlanFeatures,
-} from "../../../utils/cline-pass-errors";
+} from "../../../utils/nexus-pass-errors";
 import {
 	type CodexCliStatus,
 	checkCodexCliInstalled,
@@ -28,12 +28,12 @@ import { getCliTelemetryService } from "../../../utils/telemetry";
 import {
 	loadCurrentUserPlanFromProviderSettings,
 	loadIndividualSubscriptionPlansFromProviderSettings,
-} from "../../cline-account";
+} from "../../nexus-account";
 import {
 	buildFeaturedModelEntries,
-	type ClineModelPickerEntry,
-	useClineRecommendedModels,
-} from "../../components/model-selector/cline-model-picker";
+	type NexusModelPickerEntry,
+	useNexusRecommendedModels,
+} from "../../components/model-selector/nexus-model-picker";
 import {
 	type SearchableItem,
 	useSearchableList,
@@ -57,8 +57,8 @@ import {
 import { FIELD_ORDER } from "./fields";
 import { useOnboardingKeyboard } from "./keyboard";
 import {
-	CLINE_PASS_SUBSCRIPTION_OPTIONS,
-	type ClinePassSubscriptionStatus,
+	NEXUS_PASS_SUBSCRIPTION_OPTIONS,
+	type NexusPassSubscriptionStatus,
 	DEFAULT_THINKING_LEVEL_INDEX,
 	getMainMenuOptions,
 	type ModelEntry,
@@ -66,7 +66,7 @@ import {
 	type OnboardingStep,
 	type ProviderEntry,
 	type ReasoningEffort,
-	shouldUseFeaturedClineModelPicker,
+	shouldUseFeaturedNexusModelPicker,
 	type ThinkingLevel,
 	toModelEntriesFromKnownModels,
 	toModelEntry,
@@ -91,7 +91,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 	const menuOptions = useMemo(
 		() =>
 			getMainMenuOptions({
-				isClinePassEnabled: true,
+				isNexusPassEnabled: true,
 			}),
 		[],
 	);
@@ -162,19 +162,19 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 	const [modelsDefaultId, setModelsDefaultId] = useState("");
 	const [customModelId, setCustomModelId] = useState("");
 	const [customModelError, setCustomModelError] = useState("");
-	const [clinePassSubscriptionStatus, setClinePassSubscriptionStatus] =
-		useState<ClinePassSubscriptionStatus>("loading");
-	const [clinePassSubscriptionError, setClinePassSubscriptionError] =
+	const [nexusPassSubscriptionStatus, setNexusPassSubscriptionStatus] =
+		useState<NexusPassSubscriptionStatus>("loading");
+	const [nexusPassSubscriptionError, setNexusPassSubscriptionError] =
 		useState("");
-	const [clinePassCurrentPlanName, setClinePassCurrentPlanName] = useState("");
-	const [clinePassPlanFeatures, setClinePassPlanFeatures] = useState<string[]>(
+	const [nexusPassCurrentPlanName, setNexusPassCurrentPlanName] = useState("");
+	const [nexusPassPlanFeatures, setNexusPassPlanFeatures] = useState<string[]>(
 		[],
 	);
-	const [clinePassSubscriptionSelected, setClinePassSubscriptionSelected] =
+	const [nexusPassSubscriptionSelected, setNexusPassSubscriptionSelected] =
 		useState(0);
-	const [clinePassSubscriptionOpenStatus, setClinePassSubscriptionOpenStatus] =
+	const [nexusPassSubscriptionOpenStatus, setNexusPassSubscriptionOpenStatus] =
 		useState("");
-	const clinePassSubscriptionUrl = useMemo(() => getCliSubscriptionUrl(), []);
+	const nexusPassSubscriptionUrl = useMemo(() => getCliSubscriptionUrl(), []);
 
 	const modelItems: SearchableItem[] = useMemo(
 		() =>
@@ -190,7 +190,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 
 	const createCustomModelItem = useCallback(
 		(_search: string, filteredItems: SearchableItem[]) => {
-			if (activeProviderId === "cline-pass") {
+			if (activeProviderId === "nexus-pass") {
 				return undefined;
 			}
 			if (filteredItems.some((item) => item.key === CUSTOM_MODEL_ID_ACTION)) {
@@ -208,26 +208,26 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 
 	const modelList = useSearchableList(modelItems, createCustomModelItem);
 
-	// Cline featured model picker (ClinePass gets Subscribed/Free sections)
-	const recommended = useClineRecommendedModels();
-	const clineEntries: ClineModelPickerEntry[] = useMemo(
+	// Nexus featured model picker (NexusPass gets Subscribed/Free sections)
+	const recommended = useNexusRecommendedModels();
+	const nexusEntries: NexusModelPickerEntry[] = useMemo(
 		() =>
 			recommended.data
 				? buildFeaturedModelEntries(activeProviderId, recommended.data)
 				: [],
 		[recommended.data, activeProviderId],
 	);
-	const [clineModelSelected, setClineModelSelected] = useState(0);
-	const [clineModelReasoningIds, setClineModelReasoningIds] = useState<
+	const [nexusModelSelected, setNexusModelSelected] = useState(0);
+	const [nexusModelReasoningIds, setNexusModelReasoningIds] = useState<
 		Set<string>
 	>(new Set());
 
 	useEffect(() => {
-		// The featured picker serves both cline and cline-pass, so pool
+		// The featured picker serves both nexus and nexus-pass, so pool
 		// reasoning support from both catalogs. Display names need no catalog
-		// here: fetchClineRecommendedModels resolves them.
+		// here: fetchNexusRecommendedModels resolves them.
 		void Promise.allSettled(
-			["cline", "cline-pass"].map((providerId) =>
+			["nexus", "nexus-pass"].map((providerId) =>
 				getLocalProviderModels(providerId),
 			),
 		).then((results) => {
@@ -238,7 +238,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 					if (m.supportsReasoning) ids.add(m.id);
 				}
 			}
-			setClineModelReasoningIds(ids);
+			setNexusModelReasoningIds(ids);
 		});
 	}, []);
 
@@ -295,11 +295,11 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		[providerSettingsManager],
 	);
 
-	const refreshClinePassSubscriptionStatus = useCallback(() => {
-		setClinePassSubscriptionStatus("loading");
-		setClinePassSubscriptionError("");
-		setClinePassCurrentPlanName("");
-		setClinePassSubscriptionOpenStatus("");
+	const refreshNexusPassSubscriptionStatus = useCallback(() => {
+		setNexusPassSubscriptionStatus("loading");
+		setNexusPassSubscriptionError("");
+		setNexusPassCurrentPlanName("");
+		setNexusPassSubscriptionOpenStatus("");
 
 		loadCurrentUserPlanFromProviderSettings({ providerSettingsManager })
 			.then(
@@ -321,7 +321,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 			)
 			.then(({ currentPlanResult, availablePlansResult }) => {
 				if (availablePlansResult.status === "fulfilled") {
-					setClinePassPlanFeatures(
+					setNexusPassPlanFeatures(
 						getIndividualPlanFeatures(availablePlansResult.value),
 					);
 				}
@@ -331,22 +331,22 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 					const message =
 						error instanceof Error ? error.message : String(error);
 					if (message.trim().toLowerCase() === "no plan found for user") {
-						setClinePassSubscriptionStatus("unsubscribed");
+						setNexusPassSubscriptionStatus("unsubscribed");
 						return;
 					}
-					setClinePassSubscriptionError(message);
-					setClinePassSubscriptionStatus("error");
+					setNexusPassSubscriptionError(message);
+					setNexusPassSubscriptionStatus("error");
 					return;
 				}
 
 				const plan = currentPlanResult.value?.plan;
 				if (plan) {
-					setClinePassCurrentPlanName(
-						plan.displayName || plan.name || plan.id || "ClinePass",
+					setNexusPassCurrentPlanName(
+						plan.displayName || plan.name || plan.id || "NexusPass",
 					);
-					setClinePassSubscriptionStatus("subscribed");
+					setNexusPassSubscriptionStatus("subscribed");
 				} else {
-					setClinePassSubscriptionStatus("unsubscribed");
+					setNexusPassSubscriptionStatus("unsubscribed");
 				}
 			});
 	}, [providerSettingsManager]);
@@ -357,9 +357,9 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 			const provider = providers.find((p) => p.id === providerId);
 			setActiveProviderName(provider?.name ?? providerId);
 			setModelsDefaultId(provider?.defaultModelId ?? "");
-			if (shouldUseFeaturedClineModelPicker(providerId)) {
-				setClineModelSelected(0);
-				setStep("cline_model");
+			if (shouldUseFeaturedNexusModelPicker(providerId)) {
+				setNexusModelSelected(0);
+				setStep("nexus_model");
 			} else if (providerId === "openai-compatible") {
 				const existing =
 					providerSettingsManager.getProviderSettings(providerId);
@@ -374,25 +374,25 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		[providers, loadModelsForProvider, providerSettingsManager],
 	);
 
-	const transitionToClinePassSubscription = useCallback(() => {
-		setActiveProviderId("cline-pass");
-		const provider = providers.find((p) => p.id === "cline-pass");
-		setActiveProviderName(provider?.name ?? "ClinePass");
+	const transitionToNexusPassSubscription = useCallback(() => {
+		setActiveProviderId("nexus-pass");
+		const provider = providers.find((p) => p.id === "nexus-pass");
+		setActiveProviderName(provider?.name ?? "NexusPass");
 		setModelsDefaultId(provider?.defaultModelId ?? "");
-		setClinePassSubscriptionSelected(0);
-		setStep("cline_pass_subscription");
-		refreshClinePassSubscriptionStatus();
-	}, [providers, refreshClinePassSubscriptionStatus]);
+		setNexusPassSubscriptionSelected(0);
+		setStep("nexus_pass_subscription");
+		refreshNexusPassSubscriptionStatus();
+	}, [providers, refreshNexusPassSubscriptionStatus]);
 
 	const handleAuthComplete = useCallback(
 		(providerId: OnboardingOAuthProviderId) => {
-			if (providerId === "cline-pass") {
-				transitionToClinePassSubscription();
+			if (providerId === "nexus-pass") {
+				transitionToNexusPassSubscription();
 				return;
 			}
 			transitionToModelPicker(providerId);
 		},
-		[transitionToClinePassSubscription, transitionToModelPicker],
+		[transitionToNexusPassSubscription, transitionToModelPicker],
 	);
 
 	const resetAuth = useCallback(() => {
@@ -429,7 +429,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 
 	const startOAuthFlow = useCallback(
 		(providerId: OnboardingOAuthProviderId) => {
-			if (isClineProvider(providerId)) {
+			if (isNexusProvider(providerId)) {
 				startDeviceCodeFlow(providerId);
 				return;
 			}
@@ -458,33 +458,33 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		],
 	);
 
-	const continueFromClinePassSubscription = useCallback(() => {
-		transitionToModelPicker("cline-pass");
+	const continueFromNexusPassSubscription = useCallback(() => {
+		transitionToModelPicker("nexus-pass");
 	}, [transitionToModelPicker]);
 
-	const openClinePassSubscriptionPage = useCallback(() => {
-		setClinePassSubscriptionOpenStatus("Opening subscription page...");
-		void open(clinePassSubscriptionUrl, { wait: false })
+	const openNexusPassSubscriptionPage = useCallback(() => {
+		setNexusPassSubscriptionOpenStatus("Opening subscription page...");
+		void open(nexusPassSubscriptionUrl, { wait: false })
 			.then(() => {
-				setClinePassSubscriptionOpenStatus(
+				setNexusPassSubscriptionOpenStatus(
 					"Opened subscription page in your browser.",
 				);
 			})
 			.catch(() => {
-				setClinePassSubscriptionOpenStatus(
-					`Could not open browser automatically. Open ${clinePassSubscriptionUrl}`,
+				setNexusPassSubscriptionOpenStatus(
+					`Could not open browser automatically. Open ${nexusPassSubscriptionUrl}`,
 				);
 			});
-	}, [clinePassSubscriptionUrl]);
+	}, [nexusPassSubscriptionUrl]);
 
 	useEffect(() => {
 		if (
-			step === "cline_pass_subscription" &&
-			clinePassSubscriptionStatus === "subscribed"
+			step === "nexus_pass_subscription" &&
+			nexusPassSubscriptionStatus === "subscribed"
 		) {
-			transitionToModelPicker("cline-pass");
+			transitionToModelPicker("nexus-pass");
 		}
-	}, [step, clinePassSubscriptionStatus, transitionToModelPicker]);
+	}, [step, nexusPassSubscriptionStatus, transitionToModelPicker]);
 
 	const refreshCodexCliStatus = useCallback(() => {
 		setCodexCliStatus(undefined);
@@ -685,7 +685,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		completeModelSelection(modelId);
 	}, [customModelId, completeModelSelection]);
 
-	const saveClineModelSelection = useCallback(
+	const saveNexusModelSelection = useCallback(
 		(modelId: string, modelName: string) => {
 			const existing =
 				providerSettingsManager.getProviderSettings(activeProviderId);
@@ -697,7 +697,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 				{ setLastUsed: true },
 			);
 			setSelectedModelId(modelId);
-			if (clineModelReasoningIds.has(modelId)) {
+			if (nexusModelReasoningIds.has(modelId)) {
 				setSelectedModelName(modelName);
 				setThinkingSelected(DEFAULT_THINKING_LEVEL_INDEX);
 				setStep("thinking_level");
@@ -705,7 +705,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 				setStep("done");
 			}
 		},
-		[activeProviderId, clineModelReasoningIds, providerSettingsManager],
+		[activeProviderId, nexusModelReasoningIds, providerSettingsManager],
 	);
 
 	const saveThinkingLevel = useCallback(
@@ -765,11 +765,11 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		menuSelected,
 		providerList,
 		modelList,
-		clineEntries,
-		clineModelSelected,
-		clinePassSubscriptionStatus,
-		clinePassSubscriptionOptions: CLINE_PASS_SUBSCRIPTION_OPTIONS,
-		clinePassSubscriptionSelected,
+		nexusEntries,
+		nexusModelSelected,
+		nexusPassSubscriptionStatus,
+		nexusPassSubscriptionOptions: NEXUS_PASS_SUBSCRIPTION_OPTIONS,
+		nexusPassSubscriptionSelected,
 		thinkingSelected,
 		setStep,
 		setMenuSelected,
@@ -785,12 +785,12 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		setDeviceVerifyUrl,
 		setDeviceError,
 		setDeviceStatus,
-		setClineModelSelected,
-		setClinePassSubscriptionSelected,
+		setNexusModelSelected,
+		setNexusPassSubscriptionSelected,
 		setThinkingSelected,
-		continueFromClinePassSubscription,
-		refreshClinePassSubscriptionStatus,
-		openClinePassSubscriptionPage,
+		continueFromNexusPassSubscription,
+		refreshNexusPassSubscriptionStatus,
+		openNexusPassSubscriptionPage,
 		abortOAuth: () => {
 			authAbortRef.current = true;
 		},
@@ -803,7 +803,7 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		startDeviceCodeFlow,
 		selectProvider,
 		loadModelsForProvider,
-		saveClineModelSelection,
+		saveNexusModelSelection,
 		saveCodexCliConfig,
 		saveByoConfig,
 		saveModelSelection,
@@ -822,16 +822,16 @@ export function useOnboardingController(props: OnboardingControllerProps) {
 		byoValues,
 		codexCliChecking,
 		codexCliStatus,
-		clineEntries,
-		clineModelSelected,
-		clinePassCurrentPlanName,
-		clinePassPlanFeatures,
-		clinePassSubscriptionError,
-		clinePassSubscriptionOpenStatus,
-		clinePassSubscriptionOptions: CLINE_PASS_SUBSCRIPTION_OPTIONS,
-		clinePassSubscriptionSelected,
-		clinePassSubscriptionStatus,
-		clinePassSubscriptionUrl,
+		nexusEntries,
+		nexusModelSelected,
+		nexusPassCurrentPlanName,
+		nexusPassPlanFeatures,
+		nexusPassSubscriptionError,
+		nexusPassSubscriptionOpenStatus,
+		nexusPassSubscriptionOptions: NEXUS_PASS_SUBSCRIPTION_OPTIONS,
+		nexusPassSubscriptionSelected,
+		nexusPassSubscriptionStatus,
+		nexusPassSubscriptionUrl,
 		deviceError,
 		deviceStatus,
 		deviceUserCode,

@@ -22,7 +22,7 @@ const {
 	writeln: vi.fn(),
 }));
 
-vi.mock("@cline/core", () => ({
+vi.mock("@nexus/core", () => ({
 	HubSessionClient: class {
 		connect = connect;
 		close = close;
@@ -50,7 +50,7 @@ import { runZen } from "./run-zen";
 
 describe("runZen", () => {
 	afterEach(() => {
-		delete process.env.CLINE_SESSION_BACKEND_MODE;
+		delete process.env.NEXUS_SESSION_BACKEND_MODE;
 		vi.clearAllMocks();
 	});
 
@@ -78,7 +78,7 @@ describe("runZen", () => {
 			sandbox: false,
 			workspaceRoot: "/workspace",
 			cwd: "/workspace",
-			providerId: "cline",
+			providerId: "nexus",
 			modelId: "test-model",
 			apiKey: "",
 			systemPrompt: "",

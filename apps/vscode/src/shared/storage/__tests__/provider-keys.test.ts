@@ -1,5 +1,5 @@
 import { describe, it } from "bun:test"
-import { getProviderCollectionSync } from "@cline/llms"
+import { getProviderCollectionSync } from "@nexus/llms"
 import { expect } from "chai"
 import { getProviderDefaultModelId, getProviderModelIdKey } from "../provider-keys"
 
@@ -15,7 +15,7 @@ describe("Provider key mapping", () => {
 		// Dynamic providers that route through openrouter share its default.
 		const openrouterDefault = getProviderDefaultModelId("openrouter")
 		expect(openrouterDefault).to.be.a("string")
-		expect(getProviderDefaultModelId("cline")).to.equal(openrouterDefault)
+		expect(getProviderDefaultModelId("nexus")).to.equal(openrouterDefault)
 		expect(getProviderDefaultModelId("together")).to.equal(openrouterDefault)
 	})
 
@@ -35,14 +35,14 @@ describe("Provider key mapping", () => {
 		expect(getProviderModelIdKey("openrouter", "plan")).to.equal("planModeOpenRouterModelId")
 	})
 
-	it("uses provider-specific model key behavior for Cline", () => {
-		expect(getProviderModelIdKey("cline", "act")).to.equal("actModeClineModelId")
-		expect(getProviderModelIdKey("cline", "plan")).to.equal("planModeClineModelId")
+	it("uses provider-specific model key behavior for Nexus", () => {
+		expect(getProviderModelIdKey("nexus", "act")).to.equal("actModeNexusModelId")
+		expect(getProviderModelIdKey("nexus", "plan")).to.equal("planModeNexusModelId")
 	})
 
-	it("uses separate model keys for ClinePass", () => {
-		expect(getProviderModelIdKey("cline-pass", "act")).to.equal("actModeClinePassModelId")
-		expect(getProviderModelIdKey("cline-pass", "plan")).to.equal("planModeClinePassModelId")
+	it("uses separate model keys for NexusPass", () => {
+		expect(getProviderModelIdKey("nexus-pass", "act")).to.equal("actModeNexusPassModelId")
+		expect(getProviderModelIdKey("nexus-pass", "plan")).to.equal("planModeNexusPassModelId")
 	})
 
 	it("uses the SDK-declared default for Nous Research through SDK-boundary casing", () => {

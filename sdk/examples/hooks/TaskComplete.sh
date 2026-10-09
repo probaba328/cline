@@ -4,9 +4,9 @@ set -euo pipefail
 # File hook example: runs when the agent session ends successfully.
 #
 # Install:
-#   mkdir -p .cline/hooks
-#   cp examples/hooks/agent_end.sh .cline/hooks/agent_end.sh
-#   chmod +x .cline/hooks/agent_end.sh
+#   mkdir -p .nexus/hooks
+#   cp examples/hooks/agent_end.sh .nexus/hooks/agent_end.sh
+#   chmod +x .nexus/hooks/agent_end.sh
 
 payload="$(cat)"
 

@@ -4,12 +4,12 @@ import {
 	getUserRunSpan,
 	projectSessionMessagesForDisplay,
 	resolveMessageDisplayRole,
-} from "@cline/core";
+} from "@nexus/core";
 import {
 	isGeneratedMedia,
 	type MessageWithMetadata,
 	validateImageMedia,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	readSessionManifest,
 	sharedSessionMessagesPath,

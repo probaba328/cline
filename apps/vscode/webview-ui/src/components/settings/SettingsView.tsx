@@ -1,7 +1,7 @@
 import type { ExtensionMessage } from "@shared/ExtensionMessage"
-import { isClineInternalTester } from "@shared/internal/account"
-import { ResetStateRequest } from "@shared/proto/cline/state"
-import type { UserOrganization } from "@shared/proto/index.cline"
+import { isNexusInternalTester } from "@shared/internal/account"
+import { ResetStateRequest } from "@shared/proto/nexus/state"
+import type { UserOrganization } from "@shared/proto/index.nexus"
 import {
 	CheckCheck,
 	FlaskConical,
@@ -15,7 +15,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useEvent } from "react-use"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { type ClineUser, useClineAuth } from "@/context/ClineAuthContext"
+import { type NexusUser, useNexusAuth } from "@/context/NexusAuthContext"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { cn } from "@/lib/utils"
 import { StateServiceClient } from "@/services/grpc-client"
@@ -41,7 +41,7 @@ interface SettingsTab {
 	tooltipText: string
 	headerText: string
 	icon: LucideIcon
-	hidden?: (params?: { user: ClineUser | null; activeOrganization: UserOrganization | null }) => boolean
+	hidden?: (params?: { user: NexusUser | null; activeOrganization: UserOrganization | null }) => boolean
 }
 
 const SETTINGS_TABS: SettingsTab[] = [
@@ -85,7 +85,7 @@ const SETTINGS_TABS: SettingsTab[] = [
 	{
 		id: "about",
 		name: "About",
-		tooltipText: "About Cline",
+		tooltipText: "About Nexus",
 		headerText: "About",
 		icon: Info,
 	},
@@ -96,7 +96,7 @@ const SETTINGS_TABS: SettingsTab[] = [
 		tooltipText: "Debug Tools",
 		headerText: "Debug",
 		icon: FlaskConical,
-		hidden: ({ user } = { user: null, activeOrganization: null }) => !IS_DEV && !isClineInternalTester(user?.email || ""),
+		hidden: ({ user } = { user: null, activeOrganization: null }) => !IS_DEV && !isNexusInternalTester(user?.email || ""),
 	},
 ]
 
@@ -138,7 +138,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 	) // Empty deps - these imports never change
 
 	const { version, extensionVariant, environment, settingsInitialModelTab } = useExtensionState()
-	const { activeOrganization, clineUser } = useClineAuth()
+	const { activeOrganization, nexusUser } = useNexusAuth()
 
 	const [activeTab, setActiveTab] = useState<string>(targetSection || SETTINGS_TABS[0].id)
 
@@ -257,7 +257,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 					className="shrink-0 flex flex-col overflow-y-auto border-r border-sidebar-background"
 					onValueChange={setActiveTab}
 					value={activeTab}>
-					{SETTINGS_TABS.filter((tab) => !tab.hidden?.({ user: clineUser, activeOrganization })).map(renderTabItem)}
+					{SETTINGS_TABS.filter((tab) => !tab.hidden?.({ user: nexusUser, activeOrganization })).map(renderTabItem)}
 				</TabList>
 
 				<TabContent className="flex-1 overflow-auto">{ActiveContent}</TabContent>

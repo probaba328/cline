@@ -1,13 +1,13 @@
 "use client";
 
-import { GeneratedMediaContent } from "@cline/ui";
+import { GeneratedMediaContent } from "@nexus/ui";
 import {
 	Message as AgentMessage,
 	type AgentMessageRole,
 	MessageAction,
 	MessageActions,
 	MessageContent,
-} from "@cline/ui/components/agent-chat";
+} from "@nexus/ui/components/agent-chat";
 import {
 	Check,
 	ChevronLeft,

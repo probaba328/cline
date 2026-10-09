@@ -1,48 +1,48 @@
 import type {
-	ClineAccountActionRequest,
+	NexusAccountActionRequest,
 	ProviderActionRequest,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type {
-	ClineAccountBalance,
-	ClineAccountOrganization,
-	ClineAccountOrganizationBalance,
-	ClineAccountOrganizationUsageTransaction,
-	ClineAccountPaymentTransaction,
-	ClineAccountUsageTransaction,
-	ClineAccountUser,
+	NexusAccountBalance,
+	NexusAccountOrganization,
+	NexusAccountOrganizationBalance,
+	NexusAccountOrganizationUsageTransaction,
+	NexusAccountPaymentTransaction,
+	NexusAccountUsageTransaction,
+	NexusAccountUser,
 	FeaturebaseTokenResponse,
 } from "./types";
 
-export interface ClineAccountOperations {
-	fetchMe(): Promise<ClineAccountUser>;
-	fetchBalance(userId?: string): Promise<ClineAccountBalance>;
+export interface NexusAccountOperations {
+	fetchMe(): Promise<NexusAccountUser>;
+	fetchBalance(userId?: string): Promise<NexusAccountBalance>;
 	fetchUsageTransactions(
 		userId?: string,
-	): Promise<ClineAccountUsageTransaction[]>;
+	): Promise<NexusAccountUsageTransaction[]>;
 	fetchPaymentTransactions(
 		userId?: string,
-	): Promise<ClineAccountPaymentTransaction[]>;
-	fetchUserOrganizations(): Promise<ClineAccountOrganization[]>;
+	): Promise<NexusAccountPaymentTransaction[]>;
+	fetchUserOrganizations(): Promise<NexusAccountOrganization[]>;
 	fetchOrganizationBalance(
 		organizationId: string,
-	): Promise<ClineAccountOrganizationBalance>;
+	): Promise<NexusAccountOrganizationBalance>;
 	fetchOrganizationUsageTransactions(input: {
 		organizationId: string;
 		memberId?: string;
-	}): Promise<ClineAccountOrganizationUsageTransaction[]>;
+	}): Promise<NexusAccountOrganizationUsageTransaction[]>;
 	switchAccount(organizationId?: string | null): Promise<void>;
 	fetchFeaturebaseToken?(): Promise<FeaturebaseTokenResponse | undefined>;
 }
 
-export function isClineAccountActionRequest(
+export function isNexusAccountActionRequest(
 	request: ProviderActionRequest,
-): request is ClineAccountActionRequest {
-	return request.action === "clineAccount";
+): request is NexusAccountActionRequest {
+	return request.action === "nexusAccount";
 }
 
-export async function executeClineAccountAction(
-	request: ClineAccountActionRequest,
-	service: ClineAccountOperations,
+export async function executeNexusAccountAction(
+	request: NexusAccountActionRequest,
+	service: NexusAccountOperations,
 ): Promise<unknown> {
 	switch (request.operation) {
 		case "fetchMe":
@@ -70,7 +70,7 @@ export async function executeClineAccountAction(
 		default: {
 			const exhaustive: never = request;
 			throw new Error(
-				`Unsupported Cline account operation: ${String(exhaustive)}`,
+				`Unsupported Nexus account operation: ${String(exhaustive)}`,
 			);
 		}
 	}
@@ -82,23 +82,23 @@ export interface ProviderActionExecutor {
 	}>;
 }
 
-export class RpcClineAccountService implements ClineAccountOperations {
+export class RpcNexusAccountService implements NexusAccountOperations {
 	private readonly executor: ProviderActionExecutor;
 
 	constructor(executor: ProviderActionExecutor) {
 		this.executor = executor;
 	}
 
-	public async fetchMe(): Promise<ClineAccountUser> {
-		return this.request<ClineAccountUser>({
-			action: "clineAccount",
+	public async fetchMe(): Promise<NexusAccountUser> {
+		return this.request<NexusAccountUser>({
+			action: "nexusAccount",
 			operation: "fetchMe",
 		});
 	}
 
-	public async fetchBalance(userId?: string): Promise<ClineAccountBalance> {
-		return this.request<ClineAccountBalance>({
-			action: "clineAccount",
+	public async fetchBalance(userId?: string): Promise<NexusAccountBalance> {
+		return this.request<NexusAccountBalance>({
+			action: "nexusAccount",
 			operation: "fetchBalance",
 			...(userId?.trim() ? { userId: userId.trim() } : {}),
 		});
@@ -106,9 +106,9 @@ export class RpcClineAccountService implements ClineAccountOperations {
 
 	public async fetchUsageTransactions(
 		userId?: string,
-	): Promise<ClineAccountUsageTransaction[]> {
-		return this.request<ClineAccountUsageTransaction[]>({
-			action: "clineAccount",
+	): Promise<NexusAccountUsageTransaction[]> {
+		return this.request<NexusAccountUsageTransaction[]>({
+			action: "nexusAccount",
 			operation: "fetchUsageTransactions",
 			...(userId?.trim() ? { userId: userId.trim() } : {}),
 		});
@@ -116,30 +116,30 @@ export class RpcClineAccountService implements ClineAccountOperations {
 
 	public async fetchPaymentTransactions(
 		userId?: string,
-	): Promise<ClineAccountPaymentTransaction[]> {
-		return this.request<ClineAccountPaymentTransaction[]>({
-			action: "clineAccount",
+	): Promise<NexusAccountPaymentTransaction[]> {
+		return this.request<NexusAccountPaymentTransaction[]>({
+			action: "nexusAccount",
 			operation: "fetchPaymentTransactions",
 			...(userId?.trim() ? { userId: userId.trim() } : {}),
 		});
 	}
 
-	public async fetchUserOrganizations(): Promise<ClineAccountOrganization[]> {
-		return this.request<ClineAccountOrganization[]>({
-			action: "clineAccount",
+	public async fetchUserOrganizations(): Promise<NexusAccountOrganization[]> {
+		return this.request<NexusAccountOrganization[]>({
+			action: "nexusAccount",
 			operation: "fetchUserOrganizations",
 		});
 	}
 
 	public async fetchOrganizationBalance(
 		organizationId: string,
-	): Promise<ClineAccountOrganizationBalance> {
+	): Promise<NexusAccountOrganizationBalance> {
 		const orgId = organizationId.trim();
 		if (!orgId) {
 			throw new Error("organizationId is required");
 		}
-		return this.request<ClineAccountOrganizationBalance>({
-			action: "clineAccount",
+		return this.request<NexusAccountOrganizationBalance>({
+			action: "nexusAccount",
 			operation: "fetchOrganizationBalance",
 			organizationId: orgId,
 		});
@@ -148,13 +148,13 @@ export class RpcClineAccountService implements ClineAccountOperations {
 	public async fetchOrganizationUsageTransactions(input: {
 		organizationId: string;
 		memberId?: string;
-	}): Promise<ClineAccountOrganizationUsageTransaction[]> {
+	}): Promise<NexusAccountOrganizationUsageTransaction[]> {
 		const orgId = input.organizationId.trim();
 		if (!orgId) {
 			throw new Error("organizationId is required");
 		}
-		return this.request<ClineAccountOrganizationUsageTransaction[]>({
-			action: "clineAccount",
+		return this.request<NexusAccountOrganizationUsageTransaction[]>({
+			action: "nexusAccount",
 			operation: "fetchOrganizationUsageTransactions",
 			organizationId: orgId,
 			...(input.memberId?.trim() ? { memberId: input.memberId.trim() } : {}),
@@ -163,7 +163,7 @@ export class RpcClineAccountService implements ClineAccountOperations {
 
 	public async switchAccount(organizationId?: string | null): Promise<void> {
 		await this.request<{ updated: boolean }>({
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "switchAccount",
 			organizationId: organizationId?.trim() || null,
 		});
@@ -173,12 +173,12 @@ export class RpcClineAccountService implements ClineAccountOperations {
 		FeaturebaseTokenResponse | undefined
 	> {
 		return this.request<FeaturebaseTokenResponse | undefined>({
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchFeaturebaseToken",
 		});
 	}
 
-	private async request<T>(request: ClineAccountActionRequest): Promise<T> {
+	private async request<T>(request: NexusAccountActionRequest): Promise<T> {
 		const response = await this.executor.runProviderAction(request);
 		return response.result as T;
 	}

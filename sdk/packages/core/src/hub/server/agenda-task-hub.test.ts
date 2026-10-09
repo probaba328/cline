@@ -5,7 +5,7 @@ import type {
 	HubEventEnvelope,
 	ToolApprovalRequest,
 	ToolApprovalResult,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@ai-sdk/provider-utils", () => ({
@@ -20,7 +20,7 @@ import { HubServerTransport } from "./hub-server-transport";
 
 describe("Hub agenda task vertical slice", () => {
 	it("creates an approved user task, starts it, and completes it", async () => {
-		const root = mkdtempSync(join(tmpdir(), "cline-hub-agenda-"));
+		const root = mkdtempSync(join(tmpdir(), "nexus-hub-agenda-"));
 		const chatWorkspace = join(root, "chat-workspace");
 		mkdirSync(chatWorkspace);
 		const canonicalChatWorkspace = realpathSync.native(chatWorkspace);

@@ -233,7 +233,7 @@ export const Conversation = forwardRef<HTMLDivElement, ConversationProps>(
 		return (
 			<ConversationContext.Provider value={value}>
 				<div
-					className={classNames("cline-chat-conversation", className)}
+					className={classNames("nexus-chat-conversation", className)}
 					ref={ref}
 					{...props}
 				>
@@ -279,7 +279,7 @@ export const ConversationViewport = forwardRef<
 				{...props}
 				aria-label={ariaLabel}
 				aria-live={ariaLive}
-				className={classNames("cline-chat-conversation-viewport", className)}
+				className={classNames("nexus-chat-conversation-viewport", className)}
 				ref={ref}
 				role="log"
 				tabIndex={tabIndex}
@@ -307,7 +307,7 @@ export const ConversationContent = forwardRef<
 
 	return (
 		<div
-			className={classNames("cline-chat-conversation-content", className)}
+			className={classNames("nexus-chat-conversation-content", className)}
 			ref={ref}
 			{...props}
 		/>
@@ -330,11 +330,11 @@ export const ConversationEmptyState = ({
 	title = "No messages yet",
 	...props
 }: ConversationEmptyStateProps) => (
-	<div className={classNames("cline-chat-empty-state", className)} {...props}>
+	<div className={classNames("nexus-chat-empty-state", className)} {...props}>
 		{children ?? (
 			<>
 				{icon ? (
-					<div className="cline-chat-empty-state-icon">{icon}</div>
+					<div className="nexus-chat-empty-state-icon">{icon}</div>
 				) : null}
 				<div>
 					<h3>{title}</h3>
@@ -364,7 +364,7 @@ export const ConversationScrollButton = ({
 		<button
 			{...props}
 			aria-label={ariaLabel}
-			className={classNames("cline-chat-scroll-button", className)}
+			className={classNames("nexus-chat-scroll-button", className)}
 			onClick={(event) => {
 				onClick?.(event);
 				if (!event.defaultPrevented) scrollToBottom();
@@ -390,7 +390,7 @@ export type MessageProps = HTMLAttributes<HTMLDivElement> & {
 export const Message = ({ className, from, ...props }: MessageProps) => (
 	<div
 		{...props}
-		className={classNames("cline-chat-message", className)}
+		className={classNames("nexus-chat-message", className)}
 		data-role={from}
 	/>
 );
@@ -402,7 +402,7 @@ export const MessageContent = ({
 	...props
 }: MessageContentProps) => (
 	<div
-		className={classNames("cline-chat-message-content", className)}
+		className={classNames("nexus-chat-message-content", className)}
 		{...props}
 	/>
 );
@@ -420,7 +420,7 @@ export const MessageActions = ({
 }: MessageActionsProps) => (
 	<div
 		{...props}
-		className={classNames("cline-chat-message-actions", className)}
+		className={classNames("nexus-chat-message-actions", className)}
 		data-side={side}
 		data-visible={visible || undefined}
 	/>
@@ -442,7 +442,7 @@ export const MessageAction = ({
 	<IconButton
 		{...props}
 		aria-label={ariaLabel ?? label}
-		className={classNames("cline-chat-message-action", className)}
+		className={classNames("nexus-chat-message-action", className)}
 		variant="ghost"
 		tone="neutral"
 		size="xs"
@@ -495,7 +495,7 @@ export const Reasoning = ({
 		<ReasoningContext.Provider value={value}>
 			<div
 				{...props}
-				className={classNames("cline-chat-reasoning", className)}
+				className={classNames("nexus-chat-reasoning", className)}
 				data-streaming={isStreaming || undefined}
 			/>
 		</ReasoningContext.Provider>
@@ -524,7 +524,7 @@ export const ReasoningTrigger = ({
 			{...props}
 			aria-controls={panelId}
 			aria-expanded={isOpen}
-			className={classNames("cline-chat-reasoning-trigger", className)}
+			className={classNames("nexus-chat-reasoning-trigger", className)}
 			onClick={(event) => {
 				onClick?.(event);
 				if (!event.defaultPrevented) setIsOpen(!isOpen);
@@ -534,7 +534,7 @@ export const ReasoningTrigger = ({
 			{children ?? (
 				<>
 					<span>{isStreaming ? streamingLabel : completeLabel}</span>
-					<ChevronDownIcon className="cline-chat-disclosure-icon" />
+					<ChevronDownIcon className="nexus-chat-disclosure-icon" />
 				</>
 			)}
 		</button>
@@ -556,7 +556,7 @@ export const ReasoningContent = ({
 	return (
 		<DisclosureContent
 			{...props}
-			contentClassName="cline-chat-reasoning-content"
+			contentClassName="nexus-chat-reasoning-content"
 			isOpen={isOpen}
 			lazyContent
 			panelId={panelId}
@@ -626,15 +626,15 @@ export const ThinkingBlock = ({
 			open={open}
 		>
 			<ReasoningTrigger aria-label={resolvedLabel}>
-				<BrainIcon className="cline-chat-thinking-icon" />
+				<BrainIcon className="nexus-chat-thinking-icon" />
 				<span
-					className={isStreaming ? "cline-chat-streaming-title" : undefined}
+					className={isStreaming ? "nexus-chat-streaming-title" : undefined}
 				>
 					{resolvedLabel}
 				</span>
 			</ReasoningTrigger>
 			<ReasoningContent
-				className="cline-chat-thinking-content"
+				className="nexus-chat-thinking-content"
 				presentation="rail"
 			>
 				{children ?? (redacted ? "[redacted]" : null)}
@@ -696,7 +696,7 @@ export const ToolActivity = ({
 		<ToolActivityContext.Provider value={value}>
 			<div
 				{...props}
-				className={classNames("cline-chat-tool", className)}
+				className={classNames("nexus-chat-tool", className)}
 				data-expandable={expandable || undefined}
 			/>
 		</ToolActivityContext.Provider>
@@ -737,13 +737,13 @@ export const ToolActivityTrigger = ({
 	const content = children ?? (
 		<>
 			{inFlight ? (
-				<output aria-label={status} className="cline-chat-tool-progress" />
+				<output aria-label={status} className="nexus-chat-tool-progress" />
 			) : icon ? (
-				<span className="cline-chat-tool-icon">{icon}</span>
+				<span className="nexus-chat-tool-icon">{icon}</span>
 			) : null}
-			<span className="cline-chat-tool-label">{label}</span>
+			<span className="nexus-chat-tool-label">{label}</span>
 			{additions !== undefined || deletions !== undefined ? (
-				<span className="cline-chat-tool-diff">
+				<span className="nexus-chat-tool-diff">
 					{additions !== undefined ? (
 						<span data-diff="additions">+{additions}</span>
 					) : null}{" "}
@@ -753,7 +753,7 @@ export const ToolActivityTrigger = ({
 				</span>
 			) : null}
 			{expandable && showDisclosureIcon ? (
-				<ChevronDownIcon className="cline-chat-disclosure-icon" />
+				<ChevronDownIcon className="nexus-chat-disclosure-icon" />
 			) : null}
 		</>
 	);
@@ -761,7 +761,7 @@ export const ToolActivityTrigger = ({
 		onClick?.(event);
 		if (expandable && !event.defaultPrevented) setIsOpen(!isOpen);
 	};
-	const triggerClassName = classNames("cline-chat-tool-trigger", className);
+	const triggerClassName = classNames("nexus-chat-tool-trigger", className);
 
 	if (expandable) {
 		return (
@@ -807,7 +807,7 @@ export const ToolActivityContent = ({
 	return (
 		<DisclosureContent
 			{...props}
-			contentClassName="cline-chat-tool-content"
+			contentClassName="nexus-chat-tool-content"
 			isOpen={isOpen}
 			lazyContent
 			panelId={panelId}
@@ -891,7 +891,7 @@ export const WorkActivity = ({
 
 	return (
 		<WorkActivityContext.Provider value={value}>
-			<div {...props} className={classNames("cline-chat-work", className)} />
+			<div {...props} className={classNames("nexus-chat-work", className)} />
 		</WorkActivityContext.Provider>
 	);
 };
@@ -916,7 +916,7 @@ export const WorkActivityTrigger = ({
 			{...props}
 			aria-controls={panelId}
 			aria-expanded={isOpen}
-			className={classNames("cline-chat-work-trigger", className)}
+			className={classNames("nexus-chat-work-trigger", className)}
 			onClick={(event) => {
 				onClick?.(event);
 				if (!event.defaultPrevented) setIsOpen(!isOpen);
@@ -925,10 +925,10 @@ export const WorkActivityTrigger = ({
 		>
 			{children ?? (
 				<>
-					<span className="cline-chat-tool-label">
+					<span className="nexus-chat-tool-label">
 						{formatWorkActivityLabel({ durationMilliseconds, toolCallCount })}
 					</span>
-					<ChevronDownIcon className="cline-chat-disclosure-icon" />
+					<ChevronDownIcon className="nexus-chat-disclosure-icon" />
 				</>
 			)}
 		</button>
@@ -955,7 +955,7 @@ export const WorkActivityContent = ({
 	return (
 		<DisclosureContent
 			{...props}
-			contentClassName="cline-chat-work-content"
+			contentClassName="nexus-chat-work-content"
 			isOpen={isOpen}
 			lazyContent
 			panelId={panelId}
@@ -971,7 +971,7 @@ export const ToolActivityDetails = ({
 	...props
 }: ToolActivityDetailsProps) => (
 	<div
-		className={classNames("cline-chat-tool-details", className)}
+		className={classNames("nexus-chat-tool-details", className)}
 		{...props}
 	/>
 );
@@ -982,7 +982,7 @@ export const ToolActivityCode = ({
 	className,
 	...props
 }: ToolActivityCodeProps) => (
-	<pre className={classNames("cline-chat-tool-code", className)} {...props} />
+	<pre className={classNames("nexus-chat-tool-code", className)} {...props} />
 );
 
 function BrainIcon({ className }: { className?: string }) {

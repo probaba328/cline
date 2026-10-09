@@ -4,9 +4,9 @@ import {
 	resolveDisabledToolNames,
 	resolveModelToolSettings,
 	type ToolCatalogEntry,
-} from "@cline/core";
+} from "@nexus/core";
 
-export type { ToolCatalogEntry } from "@cline/core";
+export type { ToolCatalogEntry } from "@nexus/core";
 
 export function getToolCatalog(
 	availabilityContext?: BuiltinToolAvailabilityContext,

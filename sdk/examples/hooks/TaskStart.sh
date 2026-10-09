@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Cline Hook: TaskStart
+# Nexus Hook: TaskStart
 # Logs when an agent task starts
-# Copy to ~/.cline/hooks/TaskStart.sh and chmod +x
+# Copy to ~/.nexus/hooks/TaskStart.sh and chmod +x
 
 input=$(cat)
 timestamp=$(echo "$input" | jq -r '.timestamp // "unknown"')

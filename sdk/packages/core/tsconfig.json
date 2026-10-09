@@ -4,17 +4,17 @@
 		"rootDir": "..",
 		"noEmit": true,
 		"paths": {
-			"@cline/agents": ["../agents/src/index.ts"],
-			"@cline/agents/*": ["../agents/src/*", "../agents/src/*/index.ts"],
-			"@cline/llms": ["../llms/src/index.ts"],
-			"@cline/llms/browser": ["../llms/src/index.browser.ts"],
-			"@cline/shared": ["../shared/src/index.ts"],
-			"@cline/shared/automation": ["../shared/src/automation/index.ts"],
-			"@cline/shared/browser": ["../shared/src/index.browser.ts"],
-			"@cline/shared/db": ["../shared/src/db/index.ts"],
-			"@cline/shared/storage": ["../shared/src/storage/index.ts"],
-			"@cline/shared/types": ["../shared/src/types/index.ts"],
-			"@cline/shared/*": ["../shared/src/*", "../shared/src/*/index.ts"]
+			"@nexus/agents": ["../agents/src/index.ts"],
+			"@nexus/agents/*": ["../agents/src/*", "../agents/src/*/index.ts"],
+			"@nexus/llms": ["../llms/src/index.ts"],
+			"@nexus/llms/browser": ["../llms/src/index.browser.ts"],
+			"@nexus/shared": ["../shared/src/index.ts"],
+			"@nexus/shared/automation": ["../shared/src/automation/index.ts"],
+			"@nexus/shared/browser": ["../shared/src/index.browser.ts"],
+			"@nexus/shared/db": ["../shared/src/db/index.ts"],
+			"@nexus/shared/storage": ["../shared/src/storage/index.ts"],
+			"@nexus/shared/types": ["../shared/src/types/index.ts"],
+			"@nexus/shared/*": ["../shared/src/*", "../shared/src/*/index.ts"]
 		}
 	},
 	"include": ["src/**/*"],

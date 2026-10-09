@@ -14,29 +14,29 @@ import {
 } from "./helpers";
 
 type EnvSnapshot = {
-	CLINE_DATA_DIR: string | undefined;
-	CLINE_DB_DATA_DIR: string | undefined;
-	CLINE_HOOKS_LOG_PATH: string | undefined;
-	CLINE_SESSION_ID: string | undefined;
-	CLINE_SESSION_DATA_DIR: string | undefined;
+	NEXUS_DATA_DIR: string | undefined;
+	NEXUS_DB_DATA_DIR: string | undefined;
+	NEXUS_HOOKS_LOG_PATH: string | undefined;
+	NEXUS_SESSION_ID: string | undefined;
+	NEXUS_SESSION_DATA_DIR: string | undefined;
 };
 
 function captureEnv(): EnvSnapshot {
 	return {
-		CLINE_DATA_DIR: process.env.CLINE_DATA_DIR,
-		CLINE_DB_DATA_DIR: process.env.CLINE_DB_DATA_DIR,
-		CLINE_HOOKS_LOG_PATH: process.env.CLINE_HOOKS_LOG_PATH,
-		CLINE_SESSION_ID: process.env.CLINE_SESSION_ID,
-		CLINE_SESSION_DATA_DIR: process.env.CLINE_SESSION_DATA_DIR,
+		NEXUS_DATA_DIR: process.env.NEXUS_DATA_DIR,
+		NEXUS_DB_DATA_DIR: process.env.NEXUS_DB_DATA_DIR,
+		NEXUS_HOOKS_LOG_PATH: process.env.NEXUS_HOOKS_LOG_PATH,
+		NEXUS_SESSION_ID: process.env.NEXUS_SESSION_ID,
+		NEXUS_SESSION_DATA_DIR: process.env.NEXUS_SESSION_DATA_DIR,
 	};
 }
 
 function restoreEnv(snapshot: EnvSnapshot): void {
-	process.env.CLINE_DATA_DIR = snapshot.CLINE_DATA_DIR;
-	process.env.CLINE_DB_DATA_DIR = snapshot.CLINE_DB_DATA_DIR;
-	process.env.CLINE_HOOKS_LOG_PATH = snapshot.CLINE_HOOKS_LOG_PATH;
-	process.env.CLINE_SESSION_ID = snapshot.CLINE_SESSION_ID;
-	process.env.CLINE_SESSION_DATA_DIR = snapshot.CLINE_SESSION_DATA_DIR;
+	process.env.NEXUS_DATA_DIR = snapshot.NEXUS_DATA_DIR;
+	process.env.NEXUS_DB_DATA_DIR = snapshot.NEXUS_DB_DATA_DIR;
+	process.env.NEXUS_HOOKS_LOG_PATH = snapshot.NEXUS_HOOKS_LOG_PATH;
+	process.env.NEXUS_SESSION_ID = snapshot.NEXUS_SESSION_ID;
+	process.env.NEXUS_SESSION_DATA_DIR = snapshot.NEXUS_SESSION_DATA_DIR;
 }
 
 describe("parseArgs", () => {
@@ -96,14 +96,14 @@ describe("parseArgs", () => {
 	});
 
 	it("parses provider via -P shorthand", () => {
-		const parsed = parseArgs(["-P", "cline"]);
-		expect(parsed.provider).toBe("cline");
+		const parsed = parseArgs(["-P", "nexus"]);
+		expect(parsed.provider).toBe("nexus");
 	});
 
 	it("enables sandbox automatically when --data-dir is set", () => {
-		const parsed = parseArgs(["--data-dir", "./.tmp-cline"]);
+		const parsed = parseArgs(["--data-dir", "./.tmp-nexus"]);
 		expect(parsed.sandbox).toBe(true);
-		expect(parsed.dataDir).toBe("./.tmp-cline");
+		expect(parsed.dataDir).toBe("./.tmp-nexus");
 	});
 
 	it("does not enable sandbox when --data-dir is omitted", () => {
@@ -376,7 +376,7 @@ describe("format helpers", () => {
 		expect(formatToolOutput(null)).toBe("");
 	});
 
-	// Regression tests for https://github.com/cline/cline/issues/13036:
+	// Regression tests for https://github.com/nexus/nexus/issues/13036:
 	// malformed tool inputs crossing the model/tool boundary must never
 	// throw from display-only formatters.
 	it("does not crash on run_commands with a null command", () => {
@@ -457,7 +457,7 @@ describe("hook payload validation and audit logging", () => {
 	it("validates hook payload structure", async () => {
 		expect(
 			await isCliHookPayload({
-				clineVersion: "",
+				nexusVersion: "",
 				hookName: "tool_call",
 				timestamp: new Date().toISOString(),
 				taskId: "conv_1",
@@ -481,13 +481,13 @@ describe("hook payload validation and audit logging", () => {
 		tempDir = mkdtempSync(path.join(os.tmpdir(), "cli-helper-audit-"));
 		const expectedPath = path.join(tempDir, "logs", "hooks.jsonl");
 		const env = captureEnv();
-		process.env.CLINE_DATA_DIR = tempDir;
-		delete process.env.CLINE_HOOKS_LOG_PATH;
-		delete process.env.CLINE_SESSION_ID;
-		delete process.env.CLINE_SESSION_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = tempDir;
+		delete process.env.NEXUS_HOOKS_LOG_PATH;
+		delete process.env.NEXUS_SESSION_ID;
+		delete process.env.NEXUS_SESSION_DATA_DIR;
 
 		await appendHookAudit({
-			clineVersion: "",
+			nexusVersion: "",
 			hookName: "tool_call",
 			timestamp: new Date().toISOString(),
 			taskId: "conv_1",
@@ -511,17 +511,17 @@ describe("hook payload validation and audit logging", () => {
 		expect(content).toContain('"agent_id":"agent_1"');
 	});
 
-	it("writes hook audits to CLINE_HOOKS_LOG_PATH when set", async () => {
+	it("writes hook audits to NEXUS_HOOKS_LOG_PATH when set", async () => {
 		tempDir = mkdtempSync(path.join(os.tmpdir(), "cli-helper-env-audit-"));
 		const expectedPath = path.join(tempDir, "hooks", "from-env.jsonl");
 		const env = captureEnv();
-		process.env.CLINE_HOOKS_LOG_PATH = expectedPath;
-		delete process.env.CLINE_DATA_DIR;
-		delete process.env.CLINE_SESSION_ID;
-		delete process.env.CLINE_SESSION_DATA_DIR;
+		process.env.NEXUS_HOOKS_LOG_PATH = expectedPath;
+		delete process.env.NEXUS_DATA_DIR;
+		delete process.env.NEXUS_SESSION_ID;
+		delete process.env.NEXUS_SESSION_DATA_DIR;
 
 		await appendHookAudit({
-			clineVersion: "",
+			nexusVersion: "",
 			hookName: "tool_result",
 			timestamp: new Date().toISOString(),
 			taskId: "conv_3",
@@ -552,14 +552,14 @@ describe("sandbox environment", () => {
 	it("sets sandbox-specific storage paths", () => {
 		const root = mkdtempSync(path.join(os.tmpdir(), "cli-helper-sandbox-"));
 		const previous = {
-			CLINE_SANDBOX: process.env.CLINE_SANDBOX,
-			CLINE_SANDBOX_DATA_DIR: process.env.CLINE_SANDBOX_DATA_DIR,
-			CLINE_DATA_DIR: process.env.CLINE_DATA_DIR,
-			CLINE_DB_DATA_DIR: process.env.CLINE_DB_DATA_DIR,
-			CLINE_SESSION_DATA_DIR: process.env.CLINE_SESSION_DATA_DIR,
-			CLINE_TEAM_DATA_DIR: process.env.CLINE_TEAM_DATA_DIR,
-			CLINE_PROVIDER_SETTINGS_PATH: process.env.CLINE_PROVIDER_SETTINGS_PATH,
-			CLINE_HOOKS_LOG_PATH: process.env.CLINE_HOOKS_LOG_PATH,
+			NEXUS_SANDBOX: process.env.NEXUS_SANDBOX,
+			NEXUS_SANDBOX_DATA_DIR: process.env.NEXUS_SANDBOX_DATA_DIR,
+			NEXUS_DATA_DIR: process.env.NEXUS_DATA_DIR,
+			NEXUS_DB_DATA_DIR: process.env.NEXUS_DB_DATA_DIR,
+			NEXUS_SESSION_DATA_DIR: process.env.NEXUS_SESSION_DATA_DIR,
+			NEXUS_TEAM_DATA_DIR: process.env.NEXUS_TEAM_DATA_DIR,
+			NEXUS_PROVIDER_SETTINGS_PATH: process.env.NEXUS_PROVIDER_SETTINGS_PATH,
+			NEXUS_HOOKS_LOG_PATH: process.env.NEXUS_HOOKS_LOG_PATH,
 		};
 		try {
 			const resolved = configureSandboxEnvironment({
@@ -568,36 +568,36 @@ describe("sandbox environment", () => {
 				explicitDir: "./sandbox-state",
 			});
 			expect(resolved).toBe(path.join(root, "sandbox-state"));
-			expect(process.env.CLINE_SANDBOX).toBe("1");
-			expect(process.env.CLINE_SANDBOX_DATA_DIR).toBe(
+			expect(process.env.NEXUS_SANDBOX).toBe("1");
+			expect(process.env.NEXUS_SANDBOX_DATA_DIR).toBe(
 				path.join(root, "sandbox-state"),
 			);
-			expect(process.env.CLINE_DATA_DIR).toBe(path.join(root, "sandbox-state"));
-			expect(process.env.CLINE_DB_DATA_DIR).toBe(
+			expect(process.env.NEXUS_DATA_DIR).toBe(path.join(root, "sandbox-state"));
+			expect(process.env.NEXUS_DB_DATA_DIR).toBe(
 				path.join(root, "sandbox-state", "db"),
 			);
-			expect(process.env.CLINE_SESSION_DATA_DIR).toBe(
+			expect(process.env.NEXUS_SESSION_DATA_DIR).toBe(
 				path.join(root, "sandbox-state", "sessions"),
 			);
-			expect(process.env.CLINE_TEAM_DATA_DIR).toBe(
+			expect(process.env.NEXUS_TEAM_DATA_DIR).toBe(
 				path.join(root, "sandbox-state", "teams"),
 			);
-			expect(process.env.CLINE_PROVIDER_SETTINGS_PATH).toBe(
+			expect(process.env.NEXUS_PROVIDER_SETTINGS_PATH).toBe(
 				path.join(root, "sandbox-state", "settings", "providers.json"),
 			);
-			expect(process.env.CLINE_HOOKS_LOG_PATH).toBe(
+			expect(process.env.NEXUS_HOOKS_LOG_PATH).toBe(
 				path.join(root, "sandbox-state", "logs", "hooks.jsonl"),
 			);
 		} finally {
-			process.env.CLINE_SANDBOX = previous.CLINE_SANDBOX;
-			process.env.CLINE_SANDBOX_DATA_DIR = previous.CLINE_SANDBOX_DATA_DIR;
-			process.env.CLINE_DATA_DIR = previous.CLINE_DATA_DIR;
-			process.env.CLINE_DB_DATA_DIR = previous.CLINE_DB_DATA_DIR;
-			process.env.CLINE_SESSION_DATA_DIR = previous.CLINE_SESSION_DATA_DIR;
-			process.env.CLINE_TEAM_DATA_DIR = previous.CLINE_TEAM_DATA_DIR;
-			process.env.CLINE_PROVIDER_SETTINGS_PATH =
-				previous.CLINE_PROVIDER_SETTINGS_PATH;
-			process.env.CLINE_HOOKS_LOG_PATH = previous.CLINE_HOOKS_LOG_PATH;
+			process.env.NEXUS_SANDBOX = previous.NEXUS_SANDBOX;
+			process.env.NEXUS_SANDBOX_DATA_DIR = previous.NEXUS_SANDBOX_DATA_DIR;
+			process.env.NEXUS_DATA_DIR = previous.NEXUS_DATA_DIR;
+			process.env.NEXUS_DB_DATA_DIR = previous.NEXUS_DB_DATA_DIR;
+			process.env.NEXUS_SESSION_DATA_DIR = previous.NEXUS_SESSION_DATA_DIR;
+			process.env.NEXUS_TEAM_DATA_DIR = previous.NEXUS_TEAM_DATA_DIR;
+			process.env.NEXUS_PROVIDER_SETTINGS_PATH =
+				previous.NEXUS_PROVIDER_SETTINGS_PATH;
+			process.env.NEXUS_HOOKS_LOG_PATH = previous.NEXUS_HOOKS_LOG_PATH;
 			rmSync(root, { recursive: true, force: true });
 		}
 	});

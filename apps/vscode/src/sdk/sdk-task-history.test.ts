@@ -1,11 +1,11 @@
-import type { SessionHistoryRecord } from "@cline/core"
+import type { SessionHistoryRecord } from "@nexus/core"
 import type { HistoryItem } from "@shared/HistoryItem"
 import getFolderSize from "get-folder-size"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import type { McpHub } from "@/services/mcp/McpHub"
 import type { TelemetryService } from "@/services/telemetry/TelemetryService"
 import { deleteLegacyTask, readApiConversationHistory, readTaskHistory, readUiMessages } from "./legacy-state-reader"
-import { sdkMessagesToClineMessages } from "./message-translator"
+import { sdkMessagesToNexusMessages } from "./message-translator"
 import type { SdkSessionLifecycle } from "./sdk-session-lifecycle"
 import { SdkTaskHistory, sessionHistoryRecordToHistoryItem } from "./sdk-task-history"
 import type { VscodeSessionHost } from "./vscode-session-host"
@@ -21,7 +21,7 @@ vi.mock("@/core/storage/disk", () => ({
 
 vi.mock("@/hosts/host-provider", () => ({
 	HostProvider: {
-		get: vi.fn(() => ({ globalStorageFsPath: "/tmp/cline" })),
+		get: vi.fn(() => ({ globalStorageFsPath: "/tmp/nexus" })),
 	},
 }))
 
@@ -121,8 +121,8 @@ describe("SdkTaskHistory", () => {
 		expect(result.ts).toBeGreaterThan(0)
 	})
 
-	it("converts SDK persisted conversation messages to Cline messages", () => {
-		const result = sdkMessagesToClineMessages([
+	it("converts SDK persisted conversation messages to Nexus messages", () => {
+		const result = sdkMessagesToNexusMessages([
 			{ role: "user", content: "Build the feature" },
 			{ role: "assistant", content: [{ type: "text", text: "Done" }] },
 			{ role: "user", content: "Follow up" },
@@ -141,7 +141,7 @@ describe("SdkTaskHistory", () => {
 	})
 
 	it("includes persisted SDK message metrics for task header pricing", () => {
-		const result = sdkMessagesToClineMessages([
+		const result = sdkMessagesToNexusMessages([
 			{ role: "user", content: "Build the feature" },
 			{
 				role: "assistant",
@@ -174,7 +174,7 @@ describe("SdkTaskHistory", () => {
 			success: true,
 		})
 
-		const result = sdkMessagesToClineMessages([
+		const result = sdkMessagesToNexusMessages([
 			{ role: "user", content: "add a joke" },
 			{
 				role: "assistant",
@@ -186,7 +186,7 @@ describe("SdkTaskHistory", () => {
 						input: {
 							path: "/Users/maxpaulus/c/c2/README.md",
 							old_text: "## License",
-							new_text: "## A Note from Cline\n\n> Why do programmers prefer dark mode?",
+							new_text: "## A Note from Nexus\n\n> Why do programmers prefer dark mode?",
 						},
 					},
 				],
@@ -228,7 +228,7 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Implemented." }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-1")
+		const result = await history.getNexusMessages("task-1")
 
 		expect(result).toMatchObject([
 			// The <user_input mode="..."> wrapper is stripped for display but its mode
@@ -251,7 +251,7 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Phase two plan." }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-1")
+		const result = await history.getNexusMessages("task-1")
 
 		expect(result).toContainEqual(
 			expect.objectContaining({ type: "say", say: "plan_completion_result", text: "Phase two plan." }),
@@ -274,7 +274,7 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Implemented." }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-1")
+		const result = await history.getNexusMessages("task-1")
 
 		expect(result.filter((m) => m.say === "user_feedback")).toHaveLength(0)
 		expect(result.map((m) => m.text).join("\n")).not.toContain("The user approved switching to act mode")
@@ -295,7 +295,7 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Finished." }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-1")
+		const result = await history.getNexusMessages("task-1")
 
 		expect(result.filter((m) => m.say === "user_feedback")).toHaveLength(0)
 		expect(result.map((m) => m.text).join("\n")).not.toContain("[TASK RESUMPTION]")
@@ -311,7 +311,7 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Final answer." }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-1")
+		const result = await history.getNexusMessages("task-1")
 
 		expect(result).toContainEqual(expect.objectContaining({ type: "say", say: "completion_result", text: "Final answer." }))
 	})
@@ -330,7 +330,7 @@ describe("SdkTaskHistory", () => {
 				{ role: "assistant", content: [{ type: "text", text: "Dangling partial answer" }] },
 			] as never)
 
-			const result = await history.getClineMessages("task-1")
+			const result = await history.getNexusMessages("task-1")
 
 			expect(result).toContainEqual(expect.objectContaining({ type: "say", say: "text", text: "Dangling partial answer" }))
 			expect(result.filter((m) => m.say === "completion_result" || m.say === "plan_completion_result")).toHaveLength(0)
@@ -344,14 +344,14 @@ describe("SdkTaskHistory", () => {
 			{ role: "assistant", content: [{ type: "text", text: "Answer of unknown outcome" }] },
 		] as never)
 
-		const result = await history.getClineMessages("task-without-record")
+		const result = await history.getNexusMessages("task-without-record")
 
 		expect(result).toContainEqual(expect.objectContaining({ type: "say", say: "text", text: "Answer of unknown outcome" }))
 		expect(result.filter((m) => m.say === "completion_result" || m.say === "plan_completion_result")).toHaveLength(0)
 	})
 
 	it("does not retag a transcript that ends on a dangling tool call", () => {
-		const result = sdkMessagesToClineMessages([
+		const result = sdkMessagesToNexusMessages([
 			{ role: "user", content: "do the thing" },
 			{
 				role: "assistant",
@@ -396,7 +396,7 @@ describe("SdkTaskHistory", () => {
 		const { history, updateSession } = makeHistory([
 			makeSessionRecord("task-1", {
 				metadata: { title: "Build feature" },
-				messagesPath: "/tmp/cline/sessions/task-1/task-1.messages.json",
+				messagesPath: "/tmp/nexus/sessions/task-1/task-1.messages.json",
 			}),
 		])
 
@@ -405,7 +405,7 @@ describe("SdkTaskHistory", () => {
 			size: 4096,
 		})
 
-		expect(getFolderSize.loose).toHaveBeenCalledWith("/tmp/cline/sessions/task-1", { bigint: false })
+		expect(getFolderSize.loose).toHaveBeenCalledWith("/tmp/nexus/sessions/task-1", { bigint: false })
 		expect(updateSession).toHaveBeenCalledWith(
 			"task-1",
 			expect.objectContaining({
@@ -421,7 +421,7 @@ describe("SdkTaskHistory", () => {
 		vi.mocked(getFolderSize.loose).mockResolvedValue(0 as never)
 		const { history, updateSession } = makeHistory([
 			makeSessionRecord("task-1", {
-				messagesPath: "/tmp/cline/sessions/task-1/task-1.messages.json",
+				messagesPath: "/tmp/nexus/sessions/task-1/task-1.messages.json",
 			}),
 		])
 
@@ -496,7 +496,7 @@ describe("SdkTaskHistory", () => {
 		vi.mocked(getFolderSize.loose).mockResolvedValue(8192 as never)
 		const existing = makeSessionRecord("task-1", {
 			metadata: { size: 1024 },
-			messagesPath: "/tmp/cline/sessions/task-1/task-1.messages.json",
+			messagesPath: "/tmp/nexus/sessions/task-1/task-1.messages.json",
 		})
 		const { history, updateSession } = makeHistory([existing])
 
@@ -514,7 +514,7 @@ describe("SdkTaskHistory", () => {
 	it("does not cache unavailable artifact size as zero", async () => {
 		vi.mocked(getFolderSize.loose).mockRejectedValue(new Error("unreadable"))
 		const existing = makeSessionRecord("task-1", {
-			messagesPath: "/tmp/cline/sessions/task-1/task-1.messages.json",
+			messagesPath: "/tmp/nexus/sessions/task-1/task-1.messages.json",
 		})
 		const { history, updateSession } = makeHistory([existing])
 
@@ -579,7 +579,7 @@ describe("SdkTaskHistory", () => {
 		legacyStateReaderMock.uiMessages = [{ ts: 1, type: "say", say: "task", text: "legacy prompt" }]
 		const { history, startSession } = makeHistory([])
 
-		const messages = await history.getClineMessages("legacy-task")
+		const messages = await history.getNexusMessages("legacy-task")
 
 		expect(readUiMessages).toHaveBeenCalledWith("legacy-task", undefined)
 		expect(messages).toEqual(legacyStateReaderMock.uiMessages)
@@ -633,13 +633,13 @@ describe("SdkTaskHistory", () => {
 			},
 		]
 
-		const clineMessages = await history.getClineMessages("legacy-task")
+		const nexusMessages = await history.getNexusMessages("legacy-task")
 		const resumeMessages = await history.getLegacyResumeInitialMessages("legacy-task", fallbackMessages)
 
 		expect(readUiMessages).toHaveBeenCalledWith("legacy-task", undefined)
 		expect(readApiConversationHistory).not.toHaveBeenCalled()
 		expect(readMessages).toHaveBeenCalledWith("legacy-task")
-		expect(clineMessages).toEqual([
+		expect(nexusMessages).toEqual([
 			{ ts: 1, type: "say", say: "task", text: "old legacy UI" },
 			expect.objectContaining({ text: "new SDK answer" }),
 			expect.objectContaining({ type: "ask", ask: "completion_result" }),
@@ -676,7 +676,7 @@ describe("SdkTaskHistory", () => {
 	})
 
 	it("includes legacy tasks from VS Code extension storage", async () => {
-		legacyStateReaderMock.taskHistory = [makeHistoryItem("cline-dir-task", { task: "~/.cline task" })]
+		legacyStateReaderMock.taskHistory = [makeHistoryItem("nexus-dir-task", { task: "~/.nexus task" })]
 		legacyStateReaderMock.taskHistoryByDataDir.set("/legacy/globalStorage", [
 			makeHistoryItem("extension-storage-task", {
 				task: "extension storage task",
@@ -688,7 +688,7 @@ describe("SdkTaskHistory", () => {
 
 		expect(readTaskHistory).toHaveBeenCalledWith(undefined)
 		expect(readTaskHistory).toHaveBeenCalledWith("/legacy/globalStorage")
-		expect(result.map((item) => item.sessionId)).toEqual(["cline-dir-task", "extension-storage-task"])
+		expect(result.map((item) => item.sessionId)).toEqual(["nexus-dir-task", "extension-storage-task"])
 	})
 
 	it("identifies legacy tasks from VS Code extension storage without migrating them", async () => {

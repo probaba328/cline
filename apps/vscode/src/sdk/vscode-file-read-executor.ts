@@ -1,4 +1,4 @@
-import { createDefaultExecutors, type ToolExecutors } from "@cline/core"
+import { createDefaultExecutors, type ToolExecutors } from "@nexus/core"
 import * as path from "path"
 
 type FileReadExecutor = NonNullable<ToolExecutors["readFile"]>

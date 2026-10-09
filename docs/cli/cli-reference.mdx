@@ -1,25 +1,25 @@
 ---
 title: "CLI Reference"
-description: "Complete command reference for Cline CLI including all commands, flags, and configuration options."
+description: "Complete command reference for Nexus CLI including all commands, flags, and configuration options."
 ---
 
 ```bash
-cline --help           # Show all commands
-cline <command> --help # Show help for a specific command
+nexus --help           # Show all commands
+nexus <command> --help # Show help for a specific command
 ```
 
 ## Synopsis
 
 ```bash
-cline [options] [command] [prompt]
+nexus [options] [command] [prompt]
 ```
 
 ## Help Menu (Source of Truth)
 
 ```text
-Usage: cline [options] [command] [prompt]
+Usage: nexus [options] [command] [prompt]
 
-Cline CLI - AI coding assistant in your terminal
+Nexus CLI - AI coding assistant in your terminal
 
 Arguments:
   prompt                       Your prompt. Default to start in act mode with auto-approve enabled.
@@ -33,16 +33,16 @@ Options:
   -m, --model <model-id>       Model to use for the session with the selected provider
   -v, --verbose                Show verbose output
   -c, --cwd <path>             Working directory
-  --config <path>              Configuration directory (default: ~/.cline/data/settings)
-  --data-dir <path>            Use isolated local state at this directory path (default: ~/.cline)
+  --config <path>              Configuration directory (default: ~/.nexus/data/settings)
+  --data-dir <path>            Use isolated local state at this directory path (default: ~/.nexus)
   --thinking <level>           Set reasoning effort level between none|low|medium|high|xhigh (default: medium)
   --retries <count>            Maximum consecutive mistakes (retries) before halting
-  --hooks-dir <path>           Directory path to additional hooks for runtime hook injection (default: ~/.cline/hooks)
+  --hooks-dir <path>           Directory path to additional hooks for runtime hook injection (default: ~/.nexus/hooks)
   --acp                        Run in Agent Client Protocol (ACP) mode for editor integration
   -i, --tui                    Open the terminal user interface (TUI) for interactive sessions
   --id <session-id>            Resume an existing session by ID
   -k, --key <api-key>          API key override for this run
-  -P, --provider <id>          Provider id (default: cline)
+  -P, --provider <id>          Provider id (default: nexus)
   -s, --system <system-prompt> Override the default system prompt
   -z, --zen                    Start a session that runs in the background hub
   -h, --help                   display help for command
@@ -56,11 +56,11 @@ Commands:
   doctor                       Diagnose and fix configuration issues
   history|h [options]          List session history or manage saved sessions
   hook                         Handle a hook payload from stdin
-  plugin                       Manage Cline Plugins
+  plugin                       Manage Nexus Plugins
   schedule                     Manage scheduled tasks
   hub                          Manage the local hub daemon
   update [options]             Check for updates and install if available
-  version                      Show Cline CLI version number
+  version                      Show Nexus CLI version number
   kanban                       Launch the kanban app and exit
 ```
 
@@ -76,31 +76,31 @@ Commands:
 | `-m, --model <model-id>` | Model to use for the session with the selected provider |
 | `-v, --verbose` | Show verbose output |
 | `-c, --cwd <path>` | Working directory |
-| `--config <path>` | Configuration directory (default: `~/.cline/data/settings`) |
-| `--data-dir <path>` | Use isolated local state at this directory path (default: `~/.cline`) |
+| `--config <path>` | Configuration directory (default: `~/.nexus/data/settings`) |
+| `--data-dir <path>` | Use isolated local state at this directory path (default: `~/.nexus`) |
 | `--thinking <level>` | Set reasoning effort: `none\|low\|medium\|high\|xhigh` (default `medium`) |
 | `--retries <count>` | Maximum consecutive mistakes (retries) before halting |
-| `--hooks-dir <path>` | Directory path to additional hooks for runtime hook injection (default: `~/.cline/hooks`) |
+| `--hooks-dir <path>` | Directory path to additional hooks for runtime hook injection (default: `~/.nexus/hooks`) |
 | `--acp` | Run in Agent Client Protocol (ACP) mode for [editor integration](/usage/acp) |
 | `-i, --tui` | Open the terminal user interface (TUI) for interactive sessions |
 | `--id <session-id>` | Resume an existing session by ID |
 | `-k, --key <api-key>` | API key override for this run |
-| `-P, --provider <id>` | Provider id (default: `cline`) |
+| `-P, --provider <id>` | Provider id (default: `nexus`) |
 | `-s, --system <system-prompt>` | Override the default system prompt |
 | `-z, --zen` | Start a session that runs in the background hub |
 | `-h, --help` | Display help for command |
 
 ## Commands
 
-### `cline` (default)
+### `nexus` (default)
 
 Start a task or enter interactive mode.
 
 ```bash
-cline
-cline "your prompt here"
-cline "Run tests and fix failures"
-echo "prompt" | cline
+nexus
+nexus "your prompt here"
+nexus "Run tests and fix failures"
+echo "prompt" | nexus
 ```
 
 ### `auth [options] [provider]`
@@ -108,7 +108,7 @@ echo "prompt" | cline
 Configure authentication with an AI provider.
 
 ```bash
-cline auth
+nexus auth
 ```
 
 ### `config [options]`
@@ -116,7 +116,7 @@ cline auth
 Show current configuration.
 
 ```bash
-cline config
+nexus config
 ```
 
 ### `connect [options] [adapter]`
@@ -124,8 +124,8 @@ cline config
 Connect to messaging platforms. See [Connectors](/cli/connectors).
 
 ```bash
-cline connect
-cline connect [adapter]
+nexus connect
+nexus connect [adapter]
 ```
 
 ### `mcp`
@@ -133,7 +133,7 @@ cline connect [adapter]
 Manage MCP servers. See [MCP](/mcp/mcp-overview).
 
 ```bash
-cline mcp
+nexus mcp
 ```
 
 ### `dev`
@@ -141,7 +141,7 @@ cline mcp
 Developer tools and utilities.
 
 ```bash
-cline dev
+nexus dev
 ```
 
 ### `doctor`
@@ -149,7 +149,7 @@ cline dev
 Diagnose and fix configuration issues.
 
 ```bash
-cline doctor
+nexus doctor
 ```
 
 ### `history|h [options]`
@@ -157,8 +157,8 @@ cline doctor
 List session history or manage saved sessions.
 
 ```bash
-cline history
-cline h
+nexus history
+nexus h
 ```
 
 ### `hook`
@@ -166,16 +166,16 @@ cline h
 Handle a hook payload from stdin.
 
 ```bash
-cat payload.json | cline hook
+cat payload.json | nexus hook
 ```
 
 ### `plugin`
 
-Manage Cline plugins. Install plugins from file URLs, npm, git repositories, or local paths. See [Plugins](/customization/plugins) for full details and the plugin manifest format.
+Manage Nexus plugins. Install plugins from file URLs, npm, git repositories, or local paths. See [Plugins](/customization/plugins) for full details and the plugin manifest format.
 
 ```bash
-cline plugin install <source>  # Install a plugin
-cline plugin i <source>        # Shorthand alias
+nexus plugin install <source>  # Install a plugin
+nexus plugin i <source>        # Shorthand alias
 ```
 
 | Option | Description |
@@ -184,12 +184,12 @@ cline plugin i <source>        # Shorthand alias
 | `--git` | Treat source as a git repository |
 | `--force` | Replace an existing install for the same source |
 | `--json` | Output result as JSON |
-| `--cwd <path>` | Install to `<path>/.cline/plugins` instead of the global directory |
+| `--cwd <path>` | Install to `<path>/.nexus/plugins` instead of the global directory |
 
-Try it with the [TypeScript Navigation Plugin](https://github.com/cline/typescript-lsp-plugin):
+Try it with the [TypeScript Navigation Plugin](https://github.com/nexus/typescript-lsp-plugin):
 
 ```bash
-cline plugin install https://github.com/cline/typescript-lsp-plugin.git
+nexus plugin install https://github.com/nexus/typescript-lsp-plugin.git
 ```
 
 ### `schedule`
@@ -197,7 +197,7 @@ cline plugin install https://github.com/cline/typescript-lsp-plugin.git
 Manage scheduled agents. See [Scheduling](/cli/scheduling).
 
 ```bash
-cline schedule
+nexus schedule
 ```
 
 ### `hub`
@@ -205,7 +205,7 @@ cline schedule
 Manage the local hub daemon.
 
 ```bash
-cline hub
+nexus hub
 ```
 
 ### `update [options]`
@@ -213,16 +213,16 @@ cline hub
 Check for updates and install if available.
 
 ```bash
-cline update
+nexus update
 ```
 
 ### `version`
 
-Show Cline CLI version number.
+Show Nexus CLI version number.
 
 ```bash
-cline version
-cline -V
+nexus version
+nexus -V
 ```
 
 ### `kanban`
@@ -230,14 +230,14 @@ cline -V
 Launch the kanban app and exit.
 
 ```bash
-cline kanban
+nexus kanban
 ```
 
 ## Environment Variables
 
 | Variable | Description |
 |----------|-------------|
-| `CLINE_DATA_DIR` | Custom configuration directory (replaces `~/.cline/data/`) |
+| `CLINE_DATA_DIR` | Custom configuration directory (replaces `~/.nexus/data/`) |
 | `CLINE_HUB_ADDRESS` | Override hub address (default: `127.0.0.1:25463`) |
 | `CLINE_SESSION_BACKEND_MODE` | Force backend mode (`local`, `hub`, `remote`, `auto`) |
 | `CLINE_SANDBOX_DATA_DIR` | Sandbox session storage directory |
@@ -282,7 +282,7 @@ When using `--json`, each message is a JSON object on its own line:
 ## Configuration Files
 
 ```
-~/.cline/
+~/.nexus/
   data/
     settings/
       providers.json             # API keys and provider config
@@ -293,9 +293,9 @@ When using `--json`, each message is a JSON object on its own line:
     logs/
       hub-daemon.log             # Hub logs
   plugins/                       # Global plugins
-    _installed/                  # Managed by `cline plugin install`
+    _installed/                  # Managed by `nexus plugin install`
 
-.cline/                          # Project root
+.nexus/                          # Project root
   rules/                         # Project rules
   skills/                        # Project skills
   hooks/                         # Lifecycle hooks

@@ -1,7 +1,7 @@
-import type { ChatStartSessionRequest } from "@cline/shared";
+import type { ChatStartSessionRequest } from "@nexus/shared";
 import { describe, expect, it, vi } from "vitest";
 import type { RuntimeHost } from "../runtime/host/runtime-host";
-import { createClineCoreAutomationRuntimeHandlers } from "./automation";
+import { createNexusCoreAutomationRuntimeHandlers } from "./automation";
 
 function createRequest(): ChatStartSessionRequest {
 	return {
@@ -15,14 +15,14 @@ function createRequest(): ChatStartSessionRequest {
 	};
 }
 
-describe("createClineCoreAutomationRuntimeHandlers", () => {
+describe("createNexusCoreAutomationRuntimeHandlers", () => {
 	it("starts every scheduled run with automation provenance", async () => {
 		const startSession = vi.fn().mockResolvedValue({
 			sessionId: "scheduled-session",
 			manifestPath: "/tmp/scheduled-session.manifest.json",
 			messagesPath: "/tmp/scheduled-session.messages.json",
 		});
-		const handlers = createClineCoreAutomationRuntimeHandlers({
+		const handlers = createNexusCoreAutomationRuntimeHandlers({
 			host: { startSession } as unknown as RuntimeHost,
 			getExtensionContext: () => ({
 				client: { name: "VSCode Extension", version: "3.99.0" },

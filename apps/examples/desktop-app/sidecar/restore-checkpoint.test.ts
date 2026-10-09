@@ -9,19 +9,19 @@ import {
 } from "./session-data/messages";
 import type { SidecarContext } from "./types";
 
-const originalDataDir = process.env.CLINE_SESSION_DATA_DIR;
+const originalDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 let dataDir: string;
 
 beforeEach(() => {
-	dataDir = mkdtempSync(join(tmpdir(), "cline-restore-"));
-	process.env.CLINE_SESSION_DATA_DIR = dataDir;
+	dataDir = mkdtempSync(join(tmpdir(), "nexus-restore-"));
+	process.env.NEXUS_SESSION_DATA_DIR = dataDir;
 });
 
 afterEach(() => {
 	if (originalDataDir === undefined) {
-		delete process.env.CLINE_SESSION_DATA_DIR;
+		delete process.env.NEXUS_SESSION_DATA_DIR;
 	} else {
-		process.env.CLINE_SESSION_DATA_DIR = originalDataDir;
+		process.env.NEXUS_SESSION_DATA_DIR = originalDataDir;
 	}
 	rmSync(dataDir, { force: true, recursive: true });
 });
@@ -81,7 +81,7 @@ describe("restore_checkpoint", () => {
 			action: "restore_checkpoint",
 			sessionId,
 			checkpointRunCount: 1,
-			config: { cwd: "/tmp/project", provider: "cline", model: "test-model" },
+			config: { cwd: "/tmp/project", provider: "nexus", model: "test-model" },
 		});
 
 		expect(ctx.liveSessions.get(sessionId)?.messages).toEqual(restoredMessages);
