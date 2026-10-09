@@ -1,0 +1,51 @@
+{
+	"common": {
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"save": "Save",
+		"close": "Close",
+		"done": "Done",
+		"back": "Back",
+		"next": "Next",
+		"loading": "Loading...",
+		"error": "Error",
+		"success": "Success",
+		"settings": "Settings",
+		"submit": "Submit",
+		"delete": "Delete",
+		"edit": "Edit",
+		"copy": "Copy",
+		"copied": "Copied!"
+	},
+	"chat": {
+		"placeholder": "Ask Nexus something...",
+		"send": "Send",
+		"newTask": "New Task",
+		"thinking": "Thinking...",
+		"approve": "Approve",
+		"reject": "Reject",
+		"approveAll": "Approve All"
+	},
+	"settings": {
+		"title": "Settings",
+		"provider": "Provider",
+		"model": "Model",
+		"apiKey": "API Key",
+		"language": "Language",
+		"telemetry": "Usage & Error Reporting",
+		"telemetryDescription": "Help improve Nexus by sending anonymous usage data. No personal data or code is collected.",
+		"telemetryEnable": "Enable",
+		"telemetryDisable": "Disable"
+	},
+	"onboarding": {
+		"welcome": "Welcome to Nexus",
+		"subtitle": "The coding agent that speaks your language",
+		"getStarted": "Get Started",
+		"selectProvider": "Select a provider to get started"
+	},
+	"errors": {
+		"unauthorized": "Unauthorized — check your API key",
+		"networkError": "Network error. Please check your connection.",
+		"unknown": "An unexpected error occurred."
+	}
+}

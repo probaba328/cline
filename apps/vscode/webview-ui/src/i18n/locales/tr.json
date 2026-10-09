@@ -1,0 +1,51 @@
+{
+	"common": {
+		"cancel": "İptal",
+		"confirm": "Onayla",
+		"save": "Kaydet",
+		"close": "Kapat",
+		"done": "Tamam",
+		"back": "Geri",
+		"next": "İleri",
+		"loading": "Yükleniyor...",
+		"error": "Hata",
+		"success": "Başarılı",
+		"settings": "Ayarlar",
+		"submit": "Gönder",
+		"delete": "Sil",
+		"edit": "Düzenle",
+		"copy": "Kopyala",
+		"copied": "Kopyalandı!"
+	},
+	"chat": {
+		"placeholder": "Nexus'a bir şey sor...",
+		"send": "Gönder",
+		"newTask": "Yeni Görev",
+		"thinking": "Düşünüyor...",
+		"approve": "Onayla",
+		"reject": "Reddet",
+		"approveAll": "Hepsini Onayla"
+	},
+	"settings": {
+		"title": "Ayarlar",
+		"provider": "Sağlayıcı",
+		"model": "Model",
+		"apiKey": "API Anahtarı",
+		"language": "Dil",
+		"telemetry": "Kullanım ve Hata Raporlama",
+		"telemetryDescription": "Nexus'u geliştirmemize yardımcı olmak için anonim kullanım verisi gönderin. Kişisel veri veya kod toplanmaz.",
+		"telemetryEnable": "Etkinleştir",
+		"telemetryDisable": "Devre Dışı Bırak"
+	},
+	"onboarding": {
+		"welcome": "Nexus'a Hoş Geldiniz",
+		"subtitle": "Dilinizi konuşan kodlama asistanı",
+		"getStarted": "Başla",
+		"selectProvider": "Başlamak için bir sağlayıcı seçin"
+	},
+	"errors": {
+		"unauthorized": "Yetkisiz — API anahtarınızı kontrol edin",
+		"networkError": "Ağ hatası. Bağlantınızı kontrol edin.",
+		"unknown": "Beklenmedik bir hata oluştu."
+	}
+}
