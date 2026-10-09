@@ -170,7 +170,7 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
 						planModeApiProvider: "nexus",
 						actModeApiProvider: "nexus",
 					})
-					navigateToSettingsModelPicker({ targetSection: "api-config", initialModelTab })
+					navigateToSettingsModelPicker({ targetSection: "ai-model", initialModelTab })
 					break
 				}
 
@@ -186,7 +186,7 @@ export const WelcomeSection: React.FC<WelcomeSectionProps> = ({
 							actModeApiProvider: action.arg as any,
 						})
 					}
-					navigateToSettings("api-config")
+					navigateToSettings("ai-model")
 					break
 
 				case BannerActionType.ShowFeatureSettings:

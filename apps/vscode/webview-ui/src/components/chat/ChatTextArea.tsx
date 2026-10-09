@@ -1122,7 +1122,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 		}, [inputValue, handleInputChange, updateHighlights])
 
 		const handleModelButtonClick = () => {
-			navigateToSettingsModelPicker({ targetSection: "api-config" })
+			navigateToSettingsModelPicker({ targetSection: "ai-model" })
 		}
 
 		// Get model display name

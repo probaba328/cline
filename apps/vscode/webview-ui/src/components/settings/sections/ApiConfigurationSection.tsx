@@ -21,7 +21,7 @@ const ApiConfigurationSection = ({ renderSectionHeader, initialModelTab }: ApiCo
 	const { handleFieldsChange } = useApiConfigurationHandlers()
 	return (
 		<div>
-			{renderSectionHeader?.("api-config")}
+			{renderSectionHeader?.("ai-model")}
 			<Section>
 				{/* Tabs container */}
 				{planActSeparateModelsSetting ? (

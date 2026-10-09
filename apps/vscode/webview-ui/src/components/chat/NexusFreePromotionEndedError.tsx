@@ -20,7 +20,7 @@ const NexusFreePromotionEndedError = () => {
 			<VSCodeButton
 				appearance="primary"
 				className="w-full mt-3"
-				onClick={() => navigateToSettingsModelPicker({ targetSection: "api-config" })}>
+				onClick={() => navigateToSettingsModelPicker({ targetSection: "ai-model" })}>
 				Select a Model
 			</VSCodeButton>
 		</div>

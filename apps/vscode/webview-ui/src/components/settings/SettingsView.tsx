@@ -3,12 +3,15 @@ import { isNexusInternalTester } from "@shared/internal/account"
 import { ResetStateRequest } from "@shared/proto/nexus/state"
 import type { UserOrganization } from "@shared/proto/index.nexus"
 import {
+	Bot,
 	CheckCheck,
+	EyeOff,
 	FlaskConical,
+	Globe,
 	HardDriveDownload,
 	Info,
 	type LucideIcon,
-	SlidersHorizontal,
+	Lock,
 	SquareTerminal,
 	Wrench,
 } from "lucide-react"
@@ -28,75 +31,105 @@ import ApiConfigurationSection from "./sections/ApiConfigurationSection"
 import DebugSection from "./sections/DebugSection"
 import FeatureSettingsSection from "./sections/FeatureSettingsSection"
 import GeneralSettingsSection from "./sections/GeneralSettingsSection"
+import PrivacySection from "./sections/PrivacySection"
+import SecuritySection from "./sections/SecuritySection"
 import { RemoteConfigSection } from "./sections/RemoteConfigSection"
 import TerminalSettingsSection from "./sections/TerminalSettingsSection"
 
 const IS_DEV = process.env.IS_DEV
 
 // Tab definitions
-type SettingsTabID = "api-config" | "features" | "terminal" | "general" | "about" | "debug" | "remote-config"
+type SettingsTabID =
+	| "general"
+	| "ai-model"
+	| "privacy"
+	| "security"
+	| "about"
+	| "features"
+	| "terminal"
+	| "remote-config"
+	| "debug"
+
 interface SettingsTab {
 	id: SettingsTabID
 	name: string
 	tooltipText: string
 	headerText: string
 	icon: LucideIcon
+	dividerBefore?: boolean // render a thin divider above this tab
 	hidden?: (params?: { user: NexusUser | null; activeOrganization: UserOrganization | null }) => boolean
 }
 
 const SETTINGS_TABS: SettingsTab[] = [
+	// ── Primary 5 sections ──────────────────────────────────────
 	{
-		id: "api-config",
-		name: "API Configuration",
-		tooltipText: "API Configuration",
-		headerText: "API Configuration",
-		icon: SlidersHorizontal,
+		id: "general",
+		name: "Genel",
+		tooltipText: "Genel Ayarlar",
+		headerText: "Genel",
+		icon: Globe,
 	},
 	{
+		id: "ai-model",
+		name: "AI Modeli",
+		tooltipText: "AI Sağlayıcı ve Model Yapılandırması",
+		headerText: "AI Modeli",
+		icon: Bot,
+	},
+	{
+		id: "privacy",
+		name: "Gizlilik",
+		tooltipText: "Gizlilik ve Telemetry",
+		headerText: "Gizlilik",
+		icon: EyeOff,
+	},
+	{
+		id: "security",
+		name: "Güvenlik",
+		tooltipText: "Anahtar Şifreleme ve SecretStorage",
+		headerText: "Güvenlik",
+		icon: Lock,
+	},
+	{
+		id: "about",
+		name: "Hakkında",
+		tooltipText: "Nexus Hakkında",
+		headerText: "Hakkında",
+		icon: Info,
+	},
+	// ── Advanced sections (divider above) ───────────────────────
+	{
 		id: "features",
-		name: "Features",
-		tooltipText: "Feature Settings",
-		headerText: "Feature Settings",
+		name: "Özellikler",
+		tooltipText: "Özellik Ayarları",
+		headerText: "Özellikler",
 		icon: CheckCheck,
+		dividerBefore: true,
 	},
 	{
 		id: "terminal",
 		name: "Terminal",
-		tooltipText: "Terminal Settings",
-		headerText: "Terminal Settings",
+		tooltipText: "Terminal Ayarları",
+		headerText: "Terminal",
 		icon: SquareTerminal,
 	},
 	{
-		id: "general",
-		name: "General",
-		tooltipText: "General Settings",
-		headerText: "General Settings",
-		icon: Wrench,
-	},
-	{
 		id: "remote-config",
-		name: "Remote Config",
-		tooltipText: "Remotely configured fields",
-		headerText: "Remote Config",
+		name: "Uzak Yapılandırma",
+		tooltipText: "Uzaktan Yapılandırılmış Alanlar",
+		headerText: "Uzak Yapılandırma",
 		icon: HardDriveDownload,
 		hidden: ({ activeOrganization } = { user: null, activeOrganization: null }) =>
 			!activeOrganization || !isAdminOrOwner(activeOrganization),
 	},
 	{
-		id: "about",
-		name: "About",
-		tooltipText: "About Nexus",
-		headerText: "About",
-		icon: Info,
-	},
-	// Only show in dev mode
-	{
 		id: "debug",
-		name: "Debug",
-		tooltipText: "Debug Tools",
-		headerText: "Debug",
+		name: "Hata Ayıklama",
+		tooltipText: "Geliştirici Araçları",
+		headerText: "Hata Ayıklama",
 		icon: FlaskConical,
-		hidden: ({ user } = { user: null, activeOrganization: null }) => !IS_DEV && !isNexusInternalTester(user?.email || ""),
+		hidden: ({ user } = { user: null, activeOrganization: null }) =>
+			!IS_DEV && !isNexusInternalTester(user?.email || ""),
 	},
 ]
 
@@ -126,12 +159,14 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 	// Memoize to avoid recreation
 	const TAB_CONTENT_MAP: Record<SettingsTabID, React.FC<any>> = useMemo(
 		() => ({
-			"api-config": ApiConfigurationSection,
 			general: GeneralSettingsSection,
+			"ai-model": ApiConfigurationSection,
+			privacy: PrivacySection,
+			security: SecuritySection,
+			about: AboutSection,
 			features: FeatureSettingsSection,
 			terminal: TerminalSettingsSection,
 			"remote-config": RemoteConfigSection,
-			about: AboutSection,
 			debug: DebugSection,
 		}),
 		[],
@@ -204,24 +239,33 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 	const renderTabItem = useCallback(
 		(tab: (typeof SETTINGS_TABS)[0]) => {
 			return (
-				<TabTrigger className="flex justify-baseline" data-testid={`tab-${tab.id}`} key={tab.id} value={tab.id}>
-					<Tooltip key={tab.id}>
-						<TooltipTrigger>
-							<div
-								className={cn(
-									"whitespace-nowrap overflow-hidden h-12 sm:py-3 box-border flex items-center border-l-2 border-transparent text-foreground opacity-70 bg-transparent hover:bg-list-hover p-4 cursor-pointer gap-2",
-									{
-										"opacity-100 border-l-2 border-l-foreground border-t-0 border-r-0 border-b-0 bg-selection":
-											activeTab === tab.id,
-									},
-								)}>
-								<tab.icon className="w-4 h-4" />
-								<span className="hidden sm:block">{tab.name}</span>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent side="right">{tab.tooltipText}</TooltipContent>
-					</Tooltip>
-				</TabTrigger>
+				<>
+					{tab.dividerBefore && (
+						<div
+							key={`divider-${tab.id}`}
+							className="mx-3 my-1"
+							style={{ height: 1, background: "var(--vscode-panel-border)" }}
+						/>
+					)}
+					<TabTrigger className="flex justify-baseline" data-testid={`tab-${tab.id}`} key={tab.id} value={tab.id}>
+						<Tooltip key={tab.id}>
+							<TooltipTrigger>
+								<div
+									className={cn(
+										"whitespace-nowrap overflow-hidden h-12 sm:py-3 box-border flex items-center border-l-2 border-transparent text-foreground opacity-70 bg-transparent hover:bg-list-hover p-4 cursor-pointer gap-2",
+										{
+											"opacity-100 border-l-2 border-l-foreground border-t-0 border-r-0 border-b-0 bg-selection":
+												activeTab === tab.id,
+										},
+									)}>
+									<tab.icon className="w-4 h-4" />
+									<span className="hidden sm:block">{tab.name}</span>
+								</div>
+							</TooltipTrigger>
+							<TooltipContent side="right">{tab.tooltipText}</TooltipContent>
+						</Tooltip>
+					</TabTrigger>
+				</>
 			)
 		},
 		[activeTab],
@@ -241,7 +285,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 		} else if (activeTab === "about") {
 			props.version = version
 			props.extensionVariant = extensionVariant
-		} else if (activeTab === "api-config") {
+		} else if (activeTab === "ai-model") {
 			props.initialModelTab = settingsInitialModelTab
 		}
 
