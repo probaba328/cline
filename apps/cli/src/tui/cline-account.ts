@@ -108,7 +108,7 @@ async function resolveValidClineAccountAuthToken(input: {
 		});
 		if (!nextCredentials) {
 			throw new Error(
-				"Cline account requires re-authentication. Run cline auth cline.",
+				"Nexus account requires re-authentication. Run nexus auth nexus.",
 			);
 		}
 		const nextAccessToken = formatProviderOAuthApiKey("cline", nextCredentials);

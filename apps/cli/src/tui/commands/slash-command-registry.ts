@@ -69,7 +69,7 @@ const TUI_LOCAL_COMMANDS: Array<{
 	},
 	{
 		name: "account",
-		description: "View Cline account",
+		description: "View Nexus account",
 	},
 	{
 		name: "mcp",

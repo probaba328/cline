@@ -157,15 +157,15 @@ export const THEMES: readonly ThemeDefinition[] = [
 	},
 	{
 		id: "dark",
-		label: "Cline Dark",
-		description: "Cline's accents on deep charcoal",
+		label: "Nexus Dark",
+		description: "Nexus's accents on deep charcoal",
 		variant: "dark",
 		background: "#14161b",
 		foreground: "#e8eaed",
 	},
 	{
 		id: "light",
-		label: "Cline Light",
+		label: "Nexus Light",
 		description: "Crisp white, high-contrast accents",
 		variant: "light",
 		background: "#ffffff",

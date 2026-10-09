@@ -216,7 +216,7 @@ export function getOAuthProviderLabel(providerId: string): string {
 		return "ClinePass";
 	}
 	if (providerId === "cline") {
-		return "Cline";
+		return "Nexus";
 	}
 	if (providerId === "openai-codex") {
 		return "ChatGPT";

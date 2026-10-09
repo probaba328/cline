@@ -83,7 +83,7 @@ const ACTION_ITEMS: Array<{
 		action: "account",
 		label: "Open Account",
 		shortcut: "Opt+A",
-		description: "View or switch your Cline account",
+		description: "View or switch your Nexus account",
 		keywords: ["account", "login", "auth", "cline"],
 	},
 	{

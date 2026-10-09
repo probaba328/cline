@@ -809,7 +809,7 @@ export async function runInteractive(
 			}).catch((error) => {
 				logCliError(
 					config.logger,
-					"Cline account refresh after account change failed",
+					"Nexus account refresh after account change failed",
 					{ error },
 				);
 			});
@@ -889,7 +889,7 @@ export async function runInteractive(
 			prepareTerminalForPostTuiOutput();
 		}
 		writeln(
-			"The shared Cline Hub was updated by another Cline installation. Updating this CLI…",
+			"The shared Nexus Hub was updated by another Nexus installation. Updating this CLI…",
 		);
 		const { checkForUpdates } = await import("../commands/update");
 		const exitCode = await checkForUpdates({ includeKanban: false });

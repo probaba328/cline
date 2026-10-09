@@ -20,7 +20,7 @@ const FEATURE_TIPS: FeatureTipItem[] = [
 		text: "Set up MCP Servers to give Cline access to external tools and APIs.",
 	},
 	{
-		text: "Cline creates checkpoints after changes — you can always restore to a previous state.",
+		text: "Nexus creates checkpoints after changes — you can always restore to a previous state.",
 	},
 	{
 		text: "Use /compact to condense long conversations and free up context window space.",

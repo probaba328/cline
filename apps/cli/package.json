@@ -1,6 +1,6 @@
 {
 	"name": "@cline/cli",
-	"displayName": "cline",
+	"displayName": "nexus",
 	"version": "3.0.57",
 	"description": "Autonomous coding agent CLI - capable of creating/editing files, running commands, using the browser, and more",
 	"type": "module",
@@ -28,7 +28,7 @@
 		"cli"
 	],
 	"author": {
-		"name": "Cline Bot Inc."
+		"name": "Nexus"
 	},
 	"license": "Apache-2.0",
 	"homepage": "https://cline.bot",
@@ -36,7 +36,7 @@
 		"url": "https://github.com/cline/cline/issues"
 	},
 	"bin": {
-		"cline": "src/index.ts"
+		"nexus": "src/index.ts"
 	},
 	"engines": {
 		"node": ">=22"

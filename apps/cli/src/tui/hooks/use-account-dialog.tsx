@@ -67,7 +67,7 @@ export function useAccountDialog(opts: {
 				style: { maxHeight: termHeight - 2 },
 				closeOnEscape: false,
 				content: (ctx: ChoiceContext<OAuthLoginResult>) => (
-					<OAuthLoginContent {...ctx} providerId="cline" providerName="Cline" />
+					<OAuthLoginContent {...ctx} providerId="cline" providerName="Nexus" />
 				),
 			});
 			if (saved === true) {

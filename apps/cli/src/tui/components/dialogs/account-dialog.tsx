@@ -501,7 +501,7 @@ export function AccountDialogContent(
 	const displayName =
 		loaded.user.displayName?.trim() ||
 		loaded.user.email?.trim() ||
-		"Cline user";
+		"Nexus user";
 	const activeAccount = loaded.activeOrganization?.name ?? "Personal account";
 
 	return (
