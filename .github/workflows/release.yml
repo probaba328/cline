@@ -114,7 +114,7 @@ jobs:
               run: |
                   VERSION="${{ steps.etiket_coz.outputs.surum }}"
                   CONTENT=$(awk -v v="$VERSION" '
-                    $0 == "## [" v "]" { found=1; next }
+                    $0 ~ "^## \\[" v "\\]" { found=1; next }
                     found && /^## \[/ { exit }
                     found { print }
                     END { if (!found) exit 1 }
