@@ -1,0 +1,56 @@
+{
+	"_meta": {
+		"language": "Japanese",
+		"status": "needs-translation",
+		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
+	},
+	"common": {
+		"cancel": "",
+		"confirm": "",
+		"save": "",
+		"close": "",
+		"done": "",
+		"back": "",
+		"next": "",
+		"loading": "",
+		"error": "",
+		"success": "",
+		"settings": "",
+		"submit": "",
+		"delete": "",
+		"edit": "",
+		"copy": "",
+		"copied": ""
+	},
+	"chat": {
+		"placeholder": "",
+		"send": "",
+		"newTask": "",
+		"thinking": "",
+		"approve": "",
+		"reject": "",
+		"approveAll": ""
+	},
+	"settings": {
+		"title": "",
+		"provider": "",
+		"model": "",
+		"apiKey": "",
+		"language": "",
+		"telemetry": "",
+		"telemetryDescription": "",
+		"telemetryEnable": "",
+		"telemetryDisable": ""
+	},
+	"onboarding": {
+		"welcome": "",
+		"subtitle": "",
+		"getStarted": "",
+		"selectProvider": ""
+	},
+	"errors": {
+		"unauthorized": "",
+		"networkError": "",
+		"unknown": ""
+	}
+}
