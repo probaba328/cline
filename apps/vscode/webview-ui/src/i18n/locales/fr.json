@@ -1,8 +1,11 @@
 {
-	"_meta": {
+	"_info": {
 		"language": "French",
-		"status": "complete",
-		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
+		"nativeName": "Français",
+		"code": "fr",
+		"contributors": [],
+		"completion": "100%",
+		"lastUpdated": "2026-10"
 	},
 	"common": {
 		"cancel": "Annuler",

@@ -103,45 +103,49 @@ bun run cli -i
 
 ---
 
-## Supported Languages
+## Desteklenen Diller / Supported Languages
+
+Nexus 13 dili destekler. Arayüz dili, VS Code yerel ayarından (`vscode.env.language`) otomatik algılanır; İngilizce varsayılan olarak kullanılır.
 
 Nexus ships with translations for 13 languages. The interface language is detected automatically from your VS Code locale (`vscode.env.language`), with English as the fallback.
 
-| Language | Locale code | Status |
-|----------|-------------|--------|
-| English | `en` | ✅ Complete (source) |
-| Turkish | `tr` | ✅ Complete |
-| German | `de` | ✅ Complete |
-| French | `fr` | ✅ Complete |
-| Spanish | `es` | ✅ Complete |
-| Portuguese (Brazil) | `pt-BR` | ✅ Complete |
-| Japanese | `ja` | ✅ Complete |
-| Korean | `ko` | ✅ Complete |
-| Chinese (Simplified) | `zh-CN` | ✅ Complete |
-| Chinese (Traditional) | `zh-TW` | ✅ Complete |
-| Arabic | `ar` | ✅ Complete |
-| Russian | `ru` | ✅ Complete |
-| Hindi | `hi` | ✅ Complete |
+| Dil | Kod | Durum | Katkıcı |
+|-----|-----|-------|---------|
+| English | `en` | ✅ Tamamlandı (kaynak) | @nexus |
+| Türkçe | `tr` | ✅ Tamamlandı | @nexus |
+| Deutsch | `de` | ✅ Tamamlandı | @nexus |
+| Français | `fr` | ✅ Tamamlandı | @nexus |
+| Español | `es` | ✅ Tamamlandı | @nexus |
+| Português (Brasil) | `pt-BR` | ✅ Tamamlandı | @nexus |
+| 日本語 | `ja` | ✅ Tamamlandı | @nexus |
+| 한국어 | `ko` | ✅ Tamamlandı | @nexus |
+| 中文 (简体) | `zh-CN` | ✅ Tamamlandı | @nexus |
+| 中文 (繁體) | `zh-TW` | ✅ Tamamlandı | @nexus |
+| العربية | `ar` | ✅ Tamamlandı | @nexus |
+| Русский | `ru` | ✅ Tamamlandı | @nexus |
+| हिन्दी | `hi` | ✅ Tamamlandı | @nexus |
+
+Eksik bir dil mi var? → [Yeni dil talebi aç](https://github.com/probaba328/cline/issues/new?template=translation.yml) · [Çeviri Katkı Rehberi](./CONTRIBUTING_TRANSLATION.md)
 
 ---
 
-## Contributing Translations
+## Çeviri Katkısı / Contributing Translations
 
-Translation files live in `apps/vscode/webview-ui/src/i18n/locales/`. Each file uses the same JSON key structure.
+Çeviri dosyaları `apps/vscode/webview-ui/src/i18n/locales/` dizininde bulunur.
 
-**To improve an existing translation:**
+**Mevcut çeviriyi iyileştirmek için:**
 
-1. Fork the repo and open the file for your language (e.g. `fr.json`)
-2. Fill in or correct string values — keys must stay unchanged
-3. Open a pull request titled `i18n: improve [Language] translation`
+1. Repo'yu fork edin ve dilinizin dosyasını açın (örn. `fr.json`)
+2. String değerlerini doldurun veya düzeltin — anahtarlar değiştirilmemelidir
+3. `i18n: improve [Language] translation` başlıklı bir pull request açın
 
-**To add a new language:**
+**Yeni dil eklemek için:**
 
-1. Copy `en.json` and name it with the [BCP 47 tag](https://www.iana.org/assignments/language-subtag-registry) for your language
-2. Register it in `apps/vscode/webview-ui/src/i18n/index.ts`
-3. Open a pull request titled `i18n: add [Language] translation`
+1. `en.json` dosyasını kopyalayın, [BCP 47 etiketi](https://www.iana.org/assignments/language-subtag-registry) ile adlandırın (örn. `vi.json`)
+2. `apps/vscode/webview-ui/src/i18n/index.ts` dosyasına kaydedin
+3. `i18n: add [Language] translation` başlıklı bir pull request açın
 
-Full guide: [CONTRIBUTING_TRANSLATION.md](./CONTRIBUTING_TRANSLATION.md)
+Tam rehber: [CONTRIBUTING_TRANSLATION.md](./CONTRIBUTING_TRANSLATION.md)
 
 ---
 

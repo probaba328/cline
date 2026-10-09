@@ -1,8 +1,11 @@
 {
-	"_meta": {
+	"_info": {
 		"language": "German",
-		"status": "complete",
-		"contribute": "https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md"
+		"nativeName": "Deutsch",
+		"code": "de",
+		"contributors": [],
+		"completion": "100%",
+		"lastUpdated": "2026-10"
 	},
 	"common": {
 		"cancel": "Abbrechen",

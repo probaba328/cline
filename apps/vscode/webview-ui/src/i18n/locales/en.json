@@ -1,4 +1,12 @@
 {
+	"_info": {
+		"language": "English",
+		"nativeName": "English",
+		"code": "en",
+		"contributors": [],
+		"completion": "100%",
+		"lastUpdated": "2026-10"
+	},
 	"common": {
 		"cancel": "Cancel",
 		"confirm": "Confirm",

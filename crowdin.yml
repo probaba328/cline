@@ -16,4 +16,4 @@ files:
     excluded_target_languages:
       - en
     ignore:
-      - /_meta/
+      - /_info/

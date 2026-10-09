@@ -34,7 +34,7 @@ Crowdin is a web-based translation editor. You do not need to know Git, JSON, or
 | **Translate values, not keys** | JSON keys are identifiers used in code — never change them |
 | **Natural phrasing** | Use idiomatic expressions, not word-for-word literal translations |
 | **Keep technical terms** | Do not translate: API, JSON, URL, VS Code, MCP, OAuth |
-| **Keep the `_meta` block unchanged** | It is internal metadata, not user-visible text |
+| **Keep the `_info` block unchanged** | It is internal metadata, not user-visible text |
 | **Placeholders** | Strings with `{{variable}}` must keep the placeholder exactly as-is |
 | **Punctuation** | Match the source string's punctuation style (e.g. ellipsis `...`, exclamation mark) |
 
@@ -45,7 +45,7 @@ Crowdin is a web-based translation editor. You do not need to know Git, JSON, or
 If your language is not listed yet:
 
 1. Copy `apps/vscode/webview-ui/src/i18n/locales/en.json` to a new file using the [BCP 47 language tag](https://www.iana.org/assignments/language-subtag-registry) (e.g. `vi.json` for Vietnamese, `id.json` for Indonesian)
-2. Update `_meta.language` to the language name in English
+2. Update `_info.language` to the language name in English and `_info.nativeName` to the name in the target language
 3. Register the new locale in `apps/vscode/webview-ui/src/i18n/index.ts`
 4. Open a pull request titled: `i18n: add [Language] translation`
 

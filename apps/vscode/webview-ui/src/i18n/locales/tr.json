@@ -1,4 +1,12 @@
 {
+	"_info": {
+		"language": "Turkish",
+		"nativeName": "Türkçe",
+		"code": "tr",
+		"contributors": [],
+		"completion": "100%",
+		"lastUpdated": "2026-10"
+	},
 	"common": {
 		"cancel": "İptal",
 		"confirm": "Onayla",
