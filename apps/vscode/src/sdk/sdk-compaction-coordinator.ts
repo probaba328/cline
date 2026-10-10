@@ -185,7 +185,7 @@ export class SdkCompactionCoordinator {
 				// Starting may persist legacy conversion. Once it succeeds, complete
 				// compaction even if navigation changes the displayed/active task. The
 				// isolated host owns this session, while UI emitters fence stale rows.
-				await this.runCompaction(sdkHost, sessionId)
+				await this.runCompaction(sdkHost, sessionId!)
 			} finally {
 				try {
 					if (sessionId) {

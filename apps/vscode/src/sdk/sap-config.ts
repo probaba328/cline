@@ -46,5 +46,5 @@ export function buildSapProviderConfig(config: ApiConfiguration, mode: Mode): Sa
 	return {
 		...(baseUrl !== undefined ? { baseUrl } : {}),
 		...(Object.keys(sap).length > 0 ? { sap } : {}),
-	}
+	} as SapProviderConfig
 }

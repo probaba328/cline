@@ -65,7 +65,7 @@ export function migrateProviders(dataDir?: string): ProviderMigrationResult {
 		const lastUsed = manager.getLastUsedProviderSettings()
 
 		const result: ProviderMigrationResult = {
-			migrated: Object.values(state.providers).some((p) => p.tokenSource === "migration"),
+			migrated: Object.values(state.providers).some((p) => (p as { tokenSource?: string }).tokenSource === "migration"),
 			providerCount: Object.keys(state.providers).length,
 			lastUsedProvider: state.lastUsedProvider ?? lastUsed?.provider,
 		}

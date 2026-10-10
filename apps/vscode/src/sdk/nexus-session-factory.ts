@@ -164,7 +164,7 @@ function resolveWorkspaceName(workspacePath: string): string {
 
 type ReasoningEffort = NonNullable<CoreSessionConfig["reasoningEffort"]>
 type ProviderReasoningSettings = NonNullable<ProviderSettings["reasoning"]>
-type SessionReasoningConfig = Pick<CoreSessionConfig, "thinking" | "reasoningEffort">
+type SessionReasoningConfig = Partial<Pick<CoreSessionConfig, "thinking" | "reasoningEffort">>
 
 function isReasoningEffort(value: unknown): value is ReasoningEffort {
 	return value === "low" || value === "medium" || value === "high" || value === "xhigh"

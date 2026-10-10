@@ -88,13 +88,14 @@ function readFirstBytes(filePath: string, byteLimit: number): Promise<Buffer> {
 		const chunks: Buffer[] = []
 		let bytesRead = 0
 		const stream = fsSync.createReadStream(filePath, { highWaterMark: 64 * 1024 })
-		stream.on("data", (chunk: Buffer) => {
+		stream.on("data", (chunk: Buffer | string) => {
+			const buf = typeof chunk === "string" ? Buffer.from(chunk) : chunk
 			const remaining = byteLimit - bytesRead
-			if (chunk.length <= remaining) {
-				chunks.push(chunk)
-				bytesRead += chunk.length
+			if (buf.length <= remaining) {
+				chunks.push(buf)
+				bytesRead += buf.length
 			} else {
-				chunks.push(chunk.subarray(0, remaining))
+				chunks.push(buf.subarray(0, remaining))
 				bytesRead += remaining
 				stream.destroy()
 			}

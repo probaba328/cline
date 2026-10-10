@@ -580,7 +580,7 @@ export class AuthService {
 							resolveAuthMessage(url)
 							await openExternal(url)
 						},
-						onOpenUrlError: ({ url, error }) => {
+						onOpenUrlError: ({ url, error }: { url: string; error: unknown }) => {
 							Logger.error(`[SdkAuthService] Failed to open browser for ${url}:`, error)
 						},
 					}),
@@ -702,7 +702,7 @@ export class AuthService {
 				openUrl: async (url: string) => {
 					await openExternal(url)
 				},
-				onOpenUrlError: ({ url, error }) => {
+				onOpenUrlError: ({ url, error }: { url: string; error: unknown }) => {
 					Logger.error(`[SdkAuthService] Failed to open browser for OCA: ${url}:`, error)
 				},
 			})
@@ -742,7 +742,7 @@ export class AuthService {
 				openUrl: async (url: string) => {
 					await openExternal(url)
 				},
-				onOpenUrlError: ({ url, error }) => {
+				onOpenUrlError: ({ url, error }: { url: string; error: unknown }) => {
 					Logger.error(`[SdkAuthService] Failed to open browser for Codex: ${url}:`, error)
 				},
 			})

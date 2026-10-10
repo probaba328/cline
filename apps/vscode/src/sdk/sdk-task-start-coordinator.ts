@@ -120,8 +120,8 @@ export class SdkTaskStartCoordinator {
 				mode,
 			})
 
-			const task = this.createAndSetTask(taskSessionId)
-			this.emitInitialTaskMessage(taskSessionId, prompt ?? "", images, files)
+			const task = this.createAndSetTask(taskSessionId!)
+			this.emitInitialTaskMessage(taskSessionId!, prompt ?? "", images, files)
 
 			// The turn phase was already set to "streaming" (in SdkController.initTask), but the
 			// webview only learns the phase through a full state post. Ship one now, in parallel
@@ -141,7 +141,7 @@ export class SdkTaskStartCoordinator {
 			}
 
 			const newHistoryItem = this.options.createHistoryItemFromSession(
-				taskSessionId,
+				taskSessionId!,
 				prompt ?? "",
 				configWithSessionId.modelId,
 				cwd,
@@ -152,7 +152,7 @@ export class SdkTaskStartCoordinator {
 			if (prompt?.trim() || images?.length || files?.length) {
 				Logger.log(`[SdkController] Sending prompt to session: ${taskSessionId}`)
 				const resolvedTask = await this.options.resolveContextMentions(prompt || "")
-				this.options.sessions.fireAndForgetSend(sdkHost, taskSessionId, resolvedTask, images, files)
+				this.options.sessions.fireAndForgetSend(sdkHost, taskSessionId!, resolvedTask, images, files)
 			}
 
 			Logger.log(`[SdkController] Task initialized: ${taskSessionId}`)

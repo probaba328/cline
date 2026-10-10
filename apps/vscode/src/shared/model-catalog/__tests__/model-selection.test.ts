@@ -82,7 +82,7 @@ describe("Model selection — provider ID normalization", () => {
 		})
 
 		it("preserves casing for unknown provider IDs", () => {
-			expect(toLegacyApiProvider("myCustomProvider")).toBe("myCustomProvider")
+			expect(toLegacyApiProvider("myCustomProvider") as string).toBe("myCustomProvider")
 		})
 	})
 })

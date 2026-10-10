@@ -19,7 +19,7 @@ import {
 	setTelemetryOptOutGlobally,
 	type UserInstructionConfigService,
 } from "@nexus/core"
-import { formatDisplayUserInput, type RemoteConfig, type RemoteConfigBundle } from "@nexus/shared"
+import { formatDisplayUserInput, type ConsecutiveMistakeLimitContext, type RemoteConfig, type RemoteConfigBundle } from "@nexus/shared"
 import type { ApiConfiguration } from "@shared/api"
 import type { ChatContent } from "@shared/ChatContent"
 import { NEXUS_ACCOUNT_AUTH_ERROR_MESSAGE } from "@shared/NexusAccount"
@@ -342,7 +342,7 @@ export class Controller {
 		this.sessionConfigBuilder = new SdkSessionConfigBuilder({
 			stateManager: this.stateManager,
 			emitHookMessage: (msg) => this.messages.emitHookMessage(msg),
-			onConsecutiveMistakeLimitReached: (context: string) => this.interactions.handleConsecutiveMistakeLimitReached(context),
+			onConsecutiveMistakeLimitReached: (context: ConsecutiveMistakeLimitContext) => this.interactions.handleConsecutiveMistakeLimitReached(context),
 		})
 		this.diffEdits = new SdkDiffEditCoordinator({
 			getCwd: () => this.getWorkspaceRoot(),

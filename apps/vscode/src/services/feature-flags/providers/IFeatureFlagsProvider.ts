@@ -3,6 +3,7 @@
  * Allows switching between different feature flag providers (PostHog, etc.)
  */
 
+import type { FeatureFlagPayload } from "@/shared/services/feature-flags/feature-flags"
 export type { FeatureFlagPayload } from "@/shared/services/feature-flags/feature-flags"
 
 /**

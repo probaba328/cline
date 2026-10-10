@@ -61,7 +61,7 @@ function convertProtoEnumToNexusAsk(ask: NexusAsk): AppNexusAsk | undefined {
 		[NexusAsk.USE_SUBAGENTS]: "use_subagents",
 	}
 
-	return mapping[ask]
+	return mapping[ask as Exclude<NexusAsk, NexusAsk.UNRECOGNIZED>]
 }
 
 // Helper function to convert NexusSay string to enum
@@ -160,7 +160,7 @@ function convertProtoEnumToNexusSay(say: NexusSay): AppNexusSay | undefined {
 		[NexusSay.COMPACTION]: "compaction",
 	}
 
-	return mapping[say]
+	return mapping[say as Exclude<NexusSay, NexusSay.UNRECOGNIZED>]
 }
 
 /**

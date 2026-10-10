@@ -75,12 +75,12 @@ describe("NexusError — API error type classification", () => {
 	describe("isType helper", () => {
 		it("returns true when error matches the given type", () => {
 			const err = new NexusError("rate limit exceeded")
-			err.isType(NexusErrorType.RateLimit).should.be.true()
+			err.isErrorType(NexusErrorType.RateLimit).should.be.true()
 		})
 
 		it("returns false when error does not match the given type", () => {
 			const err = new NexusError("rate limit exceeded")
-			err.isType(NexusErrorType.Auth).should.be.false()
+			err.isErrorType(NexusErrorType.Auth).should.be.false()
 		})
 	})
 

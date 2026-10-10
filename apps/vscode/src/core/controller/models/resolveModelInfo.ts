@@ -52,6 +52,9 @@ export async function resolveModelInfo(
 			if (selection?.modelId !== requestedModelId) {
 				continue
 			}
+			if (!selection) {
+				continue
+			}
 			if (selection.modelInfoSource === "fallback" && !selection.overrides) {
 				fallbackSelection ??= selection
 				continue

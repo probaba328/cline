@@ -86,7 +86,7 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 			// Process entries that are in the mask
 			for (const [key, value] of Object.entries(protoSecrets)) {
 				if (maskSecretsFields.has(key)) {
-					secrets[key as keyof Secrets] = value
+					secrets[key as keyof Secrets] = value as string | undefined
 				}
 			}
 		}
@@ -109,11 +109,11 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 				if (maskOptionsFields.has(key)) {
 					// Handle enum conversions
 					if (key === "planModeApiProvider") {
-						options.planModeApiProvider = convertProtoToApiProvider(value)
+						options.planModeApiProvider = convertProtoToApiProvider(value as string)
 					} else if (key === "actModeApiProvider") {
-						options.actModeApiProvider = convertProtoToApiProvider(value)
+						options.actModeApiProvider = convertProtoToApiProvider(value as string)
 					} else {
-						options[key as keyof ApiHandlerOptions] = value
+						options[key as keyof ApiHandlerOptions] = value as never
 					}
 
 					// If mode configs should be synced, also update the alternate mode field
@@ -121,11 +121,11 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 						const alternateField = getAlternateModeField(key)
 						if (alternateField) {
 							if (alternateField === "planModeApiProvider") {
-								options.planModeApiProvider = convertProtoToApiProvider(value)
+								options.planModeApiProvider = convertProtoToApiProvider(value as string)
 							} else if (alternateField === "actModeApiProvider") {
-								options.actModeApiProvider = convertProtoToApiProvider(value)
+								options.actModeApiProvider = convertProtoToApiProvider(value as string)
 							} else {
-								options[alternateField as keyof ApiHandlerOptions] = value
+								options[alternateField as keyof ApiHandlerOptions] = value as never
 							}
 						}
 					}

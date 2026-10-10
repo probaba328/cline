@@ -722,7 +722,7 @@ describe("AuthService", () => {
 			// the adapter (on the app telemetry service).
 			const sdkLogoutEvents = vi
 				.mocked(mockSdkTelemetry.capture)
-				.mock.calls.filter(([input]) => input.event === "user.auth_logged_out")
+				.mock.calls.filter(([input]: [any, ...unknown[]]) => input.event === "user.auth_logged_out")
 			expect(sdkLogoutEvents).toHaveLength(1)
 			expect(sdkLogoutEvents[0][0].properties).toMatchObject({ reason: LogoutReason.TOKEN_INVALID })
 			expect(mockCaptureAuthLoggedOut).not.toHaveBeenCalled()

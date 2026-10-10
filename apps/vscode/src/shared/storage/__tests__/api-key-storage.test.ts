@@ -22,17 +22,17 @@ describe("API key storage (NexusFileStorage secrets)", () => {
 	describe("set and get", () => {
 		it("stores and retrieves an API key", () => {
 			storage.set("anthropicApiKey", "sk-ant-api03-test-key")
-			expect(storage.get("anthropicApiKey")).toBe("sk-ant-api03-test-key")
+			expect(storage.get("anthropicApiKey") as string).toBe("sk-ant-api03-test-key")
 		})
 
 		it("stores and retrieves an OpenAI key", () => {
 			storage.set("openAiApiKey", "sk-proj-test-key")
-			expect(storage.get("openAiApiKey")).toBe("sk-proj-test-key")
+			expect(storage.get("openAiApiKey") as string).toBe("sk-proj-test-key")
 		})
 
 		it("stores and retrieves an OpenRouter key", () => {
 			storage.set("openRouterApiKey", "sk-or-v1-test-key")
-			expect(storage.get("openRouterApiKey")).toBe("sk-or-v1-test-key")
+			expect(storage.get("openRouterApiKey") as string).toBe("sk-or-v1-test-key")
 		})
 
 		it("returns undefined for a key that was never set", () => {
@@ -42,14 +42,14 @@ describe("API key storage (NexusFileStorage secrets)", () => {
 		it("overwrites an existing key with a new value", () => {
 			storage.set("anthropicApiKey", "sk-ant-old")
 			storage.set("anthropicApiKey", "sk-ant-new")
-			expect(storage.get("anthropicApiKey")).toBe("sk-ant-new")
+			expect(storage.get("anthropicApiKey") as string).toBe("sk-ant-new")
 		})
 
 		it("stores multiple keys independently", () => {
 			storage.set("anthropicApiKey", "sk-ant-value")
 			storage.set("openAiApiKey", "sk-openai-value")
-			expect(storage.get("anthropicApiKey")).toBe("sk-ant-value")
-			expect(storage.get("openAiApiKey")).toBe("sk-openai-value")
+			expect(storage.get("anthropicApiKey") as string).toBe("sk-ant-value")
+			expect(storage.get("openAiApiKey") as string).toBe("sk-openai-value")
 		})
 	})
 
@@ -68,7 +68,7 @@ describe("API key storage (NexusFileStorage secrets)", () => {
 			storage.set("anthropicApiKey", "sk-ant-keep")
 			storage.set("openAiApiKey", "sk-openai-keep")
 			storage.delete("anthropicApiKey")
-			expect(storage.get("openAiApiKey")).toBe("sk-openai-keep")
+			expect(storage.get("openAiApiKey") as string).toBe("sk-openai-keep")
 		})
 	})
 
@@ -77,7 +77,7 @@ describe("API key storage (NexusFileStorage secrets)", () => {
 			storage.set("anthropicApiKey", "sk-ant-persist")
 			// Create a new instance reading the same file
 			const storage2 = new NexusFileStorage<string>(secretsPath, "secrets2")
-			expect(storage2.get("anthropicApiKey")).toBe("sk-ant-persist")
+			expect(storage2.get("anthropicApiKey") as string).toBe("sk-ant-persist")
 		})
 
 		it("starts empty when file does not exist", () => {
@@ -103,7 +103,7 @@ describe("API key storage (NexusFileStorage secrets)", () => {
 			const key = "sk-ant-api03-supersecret123"
 			storage.set("anthropicApiKey", key)
 			// Reading back must return the exact value, not a transformed/encoded form
-			expect(storage.get("anthropicApiKey")).toBe(key)
+			expect(storage.get("anthropicApiKey") as string).toBe(key)
 		})
 
 		it("keys() does not expose secret values, only key names", () => {

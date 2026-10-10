@@ -278,7 +278,9 @@ export class SdkDiffEditCoordinator {
 		const { changes } = await computePatchChanges(input.input, cwd)
 		// Preview the first file the patch creates or updates. Multi-file patches are
 		// uncommon; any remaining files apply without a preview.
-		const first = Object.entries(changes).find(
+		type PatchChange = { type: PatchActionType; newContent?: string; oldContent?: string; movePath?: string }
+		const typedChanges = changes as Record<string, PatchChange>
+		const first = Object.entries(typedChanges).find(
 			([, change]) =>
 				(change.type === PatchActionType.ADD || change.type === PatchActionType.UPDATE) &&
 				change.newContent !== undefined,
