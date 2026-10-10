@@ -665,14 +665,14 @@ class CombinedHookRunner<Name extends HookName> extends HookRunner<Name> {
 		// - Combine context contributions from all hooks
 		// - Collect any error messages
 
-		const cancel = results.some((result) => result.cancel === true)
+		const cancel = results.some((result: HookOutput) => result.cancel === true)
 		const contextModification = results
-			.map((result) => result.contextModification?.trim())
-			.filter((mod) => mod)
+			.map((result: HookOutput) => result.contextModification?.trim())
+			.filter((mod: string | undefined) => mod)
 			.join("\n\n")
 		const errorMessage = results
-			.map((result) => result.errorMessage?.trim())
-			.filter((msg) => msg)
+			.map((result: HookOutput) => result.errorMessage?.trim())
+			.filter((msg: string | undefined) => msg)
 			.join("\n")
 
 		return HookOutput.create({

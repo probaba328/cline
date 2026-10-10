@@ -25,10 +25,10 @@ export async function refreshSkills(controller: Controller): Promise<RefreshedSk
 		workspaceRoot: primaryWorkspace,
 	})
 	const globalSkills = settingsSnapshot.skills
-		.filter((skill) => skill.source === "global" || skill.source === "global-plugin")
+		.filter((skill: CoreSettingsItem) => skill.source === "global" || skill.source === "global-plugin")
 		.map(coreSkillToSkillInfo)
 	const localSkills = settingsSnapshot.skills
-		.filter((skill) => skill.source === "workspace" || skill.source === "workspace-plugin")
+		.filter((skill: CoreSettingsItem) => skill.source === "workspace" || skill.source === "workspace-plugin")
 		.map(coreSkillToSkillInfo)
 
 	// Add remote skills from remote config.

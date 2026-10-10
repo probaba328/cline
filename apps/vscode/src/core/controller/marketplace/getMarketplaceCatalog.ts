@@ -1,5 +1,5 @@
 import type { EmptyRequest } from "@shared/proto/nexus/common"
-import type { MarketplaceCatalog } from "@shared/proto/nexus/marketplace"
+import type { MarketplaceCatalog, MarketplaceEntry } from "@shared/proto/nexus/marketplace"
 import type { Controller } from "../index"
 import { fetchMarketplaceCatalog, isMcpEntryAllowedByPolicy } from "./marketplace-helpers"
 
@@ -7,5 +7,5 @@ export async function getMarketplaceCatalog(controller: Controller, _request: Em
 	const catalog = await fetchMarketplaceCatalog()
 	// Filter out MCP entries blocked by enterprise remote config so they never reach the webview.
 	const policy = controller.stateManager.getRemoteConfigSettings()
-	return { ...catalog, entries: catalog.entries.filter((entry) => isMcpEntryAllowedByPolicy(entry, policy)) }
+	return { ...catalog, entries: catalog.entries.filter((entry: MarketplaceEntry) => isMcpEntryAllowedByPolicy(entry, policy)) }
 }

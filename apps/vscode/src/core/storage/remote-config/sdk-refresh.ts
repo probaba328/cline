@@ -160,7 +160,7 @@ export async function refreshSdkRemoteConfig(
 			})
 		} catch (error) {
 			if (candidateIntegration) {
-				await candidateIntegration.dispose().catch((disposeError) => {
+				await candidateIntegration.dispose().catch((disposeError: unknown) => {
 					Logger.error("[RemoteConfig] Failed to dispose unpublished SDK remote config integration:", disposeError)
 				})
 			}
