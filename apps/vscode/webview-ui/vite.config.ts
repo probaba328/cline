@@ -55,7 +55,7 @@ export default defineConfig({
 		coverage: {
 			provider: "v8",
 			reportOnFailure: true,
-			reporter: ["html", "lcov", "text"],
+			reporter: ["html", "lcov", "text", "json-summary"],
 			reportsDirectory: "./coverage",
 			exclude: [
 				"**/*.{spec,test}.{js,jsx,ts,tsx,mjs,cjs}",
@@ -78,6 +78,21 @@ export default defineConfig({
 
 				"src/services/grpc-client.ts",
 			],
+			// Global minimum: %70. Critical paths (i18n, storage): %90.
+			thresholds: {
+				global: {
+					lines: 70,
+					functions: 70,
+					branches: 70,
+					statements: 70,
+				},
+				"src/i18n/index.ts": {
+					lines: 90,
+					functions: 90,
+					branches: 90,
+					statements: 90,
+				},
+			},
 		},
 	},
 	build: {

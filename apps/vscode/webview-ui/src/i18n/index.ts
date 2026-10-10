@@ -39,7 +39,7 @@ const REGION_LOCALE_MAP: Record<string, string> = {
 	"pt-br": "pt-BR",
 }
 
-function detectLocale(): string {
+export function detectLocale(): string {
 	// navigator.language in VS Code's Electron webview reflects vscode.env.language
 	const raw = (typeof navigator !== "undefined" ? navigator.language : "en").toLowerCase()
 

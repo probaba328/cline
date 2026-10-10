@@ -12,7 +12,7 @@ on:
 
 permissions:
     contents: read
-    pull-requests: read
+    pull-requests: write
 
 # Aynı branch/PR için eski çalıştırmayı iptal et
 concurrency:
@@ -151,3 +151,35 @@ jobs:
 
             - name: Bun Birim Testleri
               run: bun run test:unit
+
+            - name: Webview Testleri (Vitest + coverage)
+              run: |
+                  cd webview-ui
+                  bun run test -- --coverage --reporter=verbose 2>&1 | tee coverage-output.txt
+                  echo "### Webview Test Coverage" >> $GITHUB_STEP_SUMMARY
+                  # coverage-summary.json varsa parse et
+                  if [ -f coverage/coverage-summary.json ]; then
+                    python3 - <<'PY'
+import json, os
+data = json.load(open("coverage/coverage-summary.json"))
+total = data.get("total", {})
+lines = [
+  "| Metrik | Toplam |",
+  "|--------|--------|",
+  f"| Satırlar | {total.get('lines', {}).get('pct', 'N/A')}% |",
+  f"| Fonksiyonlar | {total.get('functions', {}).get('pct', 'N/A')}% |",
+  f"| Dallar | {total.get('branches', {}).get('pct', 'N/A')}% |",
+  f"| İfadeler | {total.get('statements', {}).get('pct', 'N/A')}% |",
+]
+with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+    f.write("\n".join(lines) + "\n")
+PY
+                  fi
+
+            - name: Coverage Raporu Yükle (PR Artifact)
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: webview-coverage-${{ github.run_id }}
+                  path: apps/vscode/webview-ui/coverage/
+                  retention-days: 14
