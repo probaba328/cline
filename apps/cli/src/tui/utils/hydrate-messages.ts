@@ -1,10 +1,10 @@
-import { type AgentMode, projectSessionMessagesForDisplay } from "@cline/core";
+import { type AgentMode, projectSessionMessagesForDisplay } from "@nexus/core";
 import {
 	formatDisplayUserInput,
 	type GeneratedMedia,
 	type MessageWithMetadata,
 	parseUserInputMode,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { ACT_MODE_CONTINUATION_PROMPT } from "../../runtime/interactive/mode";
 import { materializeGeneratedMedia } from "../../utils/generated-media";
 import { formatToolInput } from "../../utils/helpers";

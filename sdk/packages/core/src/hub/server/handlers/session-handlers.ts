@@ -3,12 +3,12 @@ import type {
 	HubReplyEnvelope,
 	JsonValue,
 	ToolApprovalRequest,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	createSessionId,
 	parseRuntimeConfigExtensions,
 	ReasoningEffortSchema,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	isCoreBuiltinToolAvailable,
 	resolveToolClientType,

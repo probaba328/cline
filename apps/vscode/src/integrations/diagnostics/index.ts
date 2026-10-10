@@ -1,6 +1,6 @@
 import deepEqual from "fast-deep-equal"
 import * as path from "path"
-import { Diagnostic, DiagnosticSeverity, FileDiagnostics } from "@/shared/proto/index.cline"
+import { Diagnostic, DiagnosticSeverity, FileDiagnostics } from "@/shared/proto/index.nexus"
 import { Logger } from "@/shared/services/Logger"
 import { getCwd } from "@/utils/path"
 
@@ -14,7 +14,7 @@ export function getNewDiagnostics(oldDiagnostics: FileDiagnostics[], newDiagnost
 	for (const newDiags of newDiagnostics) {
 		const oldDiags = oldMap.get(newDiags.filePath) || []
 		const newProblemsForFile = newDiags.diagnostics.filter(
-			(newDiag) => !oldDiags.some((oldDiag) => deepEqual(oldDiag, newDiag)),
+			(newDiag: Diagnostic) => !oldDiags.some((oldDiag) => deepEqual(oldDiag, newDiag)),
 		)
 
 		if (newProblemsForFile.length > 0) {
@@ -32,7 +32,7 @@ export async function diagnosticsToProblemsString(
 ): Promise<string> {
 	const results = []
 	for (const fileDiagnostics of diagnostics) {
-		const problems = fileDiagnostics.diagnostics.filter((d) => !severities || severities.includes(d.severity))
+		const problems = fileDiagnostics.diagnostics.filter((d: Diagnostic) => !severities || severities.includes(d.severity))
 		const problemString = await singleFileDiagnosticsToProblemsString(fileDiagnostics.filePath, problems)
 		if (problemString) {
 			results.push(problemString)

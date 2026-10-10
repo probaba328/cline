@@ -13,13 +13,13 @@ import type {
 	Message,
 	PluginSetupContext,
 	WorkspaceInfo,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { SubprocessSandbox } from "../../runtime/tools/subprocess-sandbox";
 import { MAX_NODE_TIMER_DELAY_MS } from "../../runtime/tools/subprocess-sandbox-lifecycle";
 import type { PluginLoadDiagnostics } from "./plugin-load-report";
 import type { PluginTargeting } from "./plugin-targeting";
 
-export const CLINE_PLUGIN_IDLE_TIMEOUT_MS_ENV = "CLINE_PLUGIN_IDLE_TIMEOUT_MS";
+export const NEXUS_PLUGIN_IDLE_TIMEOUT_MS_ENV = "NEXUS_PLUGIN_IDLE_TIMEOUT_MS";
 export const DEFAULT_PLUGIN_SANDBOX_IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 
 export type SandboxedPluginSetupContext = Pick<
@@ -32,7 +32,7 @@ export interface PluginSandboxOptions extends PluginTargeting {
 	exportName?: string;
 	/**
 	 * Max wall time for plugin module imports. Defaults to 4000 ms; falls back
-	 * to the `CLINE_PLUGIN_IMPORT_TIMEOUT_MS` env var when this option is not
+	 * to the `NEXUS_PLUGIN_IMPORT_TIMEOUT_MS` env var when this option is not
 	 * set, allowing slower hosts (Windows cold-start, CI without warm caches)
 	 * to raise the ceiling without touching code.
 	 */
@@ -42,7 +42,7 @@ export interface PluginSandboxOptions extends PluginTargeting {
 	/**
 	 * Reclaim the plugin subprocess after this much time with no calls in
 	 * flight. Defaults to 30 minutes and can be overridden with
-	 * `CLINE_PLUGIN_IDLE_TIMEOUT_MS`.
+	 * `NEXUS_PLUGIN_IDLE_TIMEOUT_MS`.
 	 */
 	idleTimeoutMs?: number;
 	onEvent?: (event: { name: string; payload?: unknown }) => void;
@@ -151,11 +151,11 @@ function isUnknownPluginIdError(error: unknown): boolean {
 
 function getPlatformPackageName(): string {
 	const platform = process.platform === "win32" ? "windows" : process.platform;
-	return `@cline/cli-${platform}-${process.arch}`;
+	return `@nexus/cli-${platform}-${process.arch}`;
 }
 
 function resolveBootstrapFromWrapper(): string | undefined {
-	const wrapperPath = process.env.CLINE_WRAPPER_PATH?.trim();
+	const wrapperPath = process.env.NEXUS_WRAPPER_PATH?.trim();
 	if (!wrapperPath) {
 		return undefined;
 	}
@@ -317,7 +317,7 @@ export async function loadSandboxedPlugins(
 	const idleTimeoutMs = withTimeoutFallback(
 		options.idleTimeoutMs,
 		DEFAULT_PLUGIN_SANDBOX_IDLE_TIMEOUT_MS,
-		CLINE_PLUGIN_IDLE_TIMEOUT_MS_ENV,
+		NEXUS_PLUGIN_IDLE_TIMEOUT_MS_ENV,
 	);
 	const sandbox = new SubprocessSandbox({
 		name: "plugin-sandbox",
@@ -330,7 +330,7 @@ export async function loadSandboxedPlugins(
 	const importTimeoutMs = withTimeoutFallback(
 		options.importTimeoutMs,
 		4000,
-		"CLINE_PLUGIN_IMPORT_TIMEOUT_MS",
+		"NEXUS_PLUGIN_IMPORT_TIMEOUT_MS",
 	);
 	const hookTimeoutMs = withTimeoutFallback(options.hookTimeoutMs, 3000);
 	const contributionTimeoutMs = withTimeoutFallback(

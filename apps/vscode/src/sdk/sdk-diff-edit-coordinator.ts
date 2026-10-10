@@ -7,8 +7,8 @@ import {
 	type EditFileInput,
 	type EditorExecutor,
 	PatchActionType,
-} from "@cline/core"
-import type { AgentToolContext } from "@cline/shared"
+} from "@nexus/core"
+import type { AgentToolContext } from "@nexus/shared"
 import * as fs from "fs/promises"
 import * as path from "path"
 import { HostProvider } from "@/hosts/host-provider"
@@ -278,7 +278,9 @@ export class SdkDiffEditCoordinator {
 		const { changes } = await computePatchChanges(input.input, cwd)
 		// Preview the first file the patch creates or updates. Multi-file patches are
 		// uncommon; any remaining files apply without a preview.
-		const first = Object.entries(changes).find(
+		type PatchChange = { type: PatchActionType; newContent?: string; oldContent?: string; movePath?: string }
+		const typedChanges = changes as Record<string, PatchChange>
+		const first = Object.entries(typedChanges).find(
 			([, change]) =>
 				(change.type === PatchActionType.ADD || change.type === PatchActionType.UPDATE) &&
 				change.newContent !== undefined,
@@ -328,7 +330,7 @@ export class SdkDiffEditCoordinator {
 		const title =
 			content.editType === "create"
 				? `${fileName}: New File (Preview)`
-				: `${fileName}: Original ↔ Cline's Changes (Preview)`
+				: `${fileName}: Original ↔ Nexus's Changes (Preview)`
 		// The preview is cosmetic, so a vscode.diff call that rejects or stalls must never
 		// block the approval ask or fail the edit: race the open against a timer and let
 		// callers catch the failure and proceed without a preview.
@@ -386,7 +388,7 @@ function normalizeLineEndings(text: string, eol: "\r\n" | "\n"): string {
  * before matching: reads strip "\r", so models emit LF-only text even for CRLF
  * files, and an exact match would fail on every multi-line old_text in a CRLF
  * file — silently skipping the preview while the executor applies the edit
- * (github.com/cline/cline/issues/13296).
+ * (github.com/nexus/nexus/issues/13296).
  */
 export function computeNewEditorContent(
 	originalContent: string,

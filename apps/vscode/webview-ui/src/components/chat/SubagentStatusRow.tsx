@@ -1,7 +1,7 @@
 import {
-	ClineAskUseSubagents,
-	ClineMessage,
-	ClineSaySubagentStatus,
+	NexusAskUseSubagents,
+	NexusMessage,
+	NexusSaySubagentStatus,
 	SubagentExecutionStatus,
 	SubagentStatusItem,
 } from "@shared/ExtensionMessage"
@@ -19,9 +19,9 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import MarkdownBlock from "../common/MarkdownBlock"
 
 interface SubagentStatusRowProps {
-	message: ClineMessage
+	message: NexusMessage
 	isLast: boolean
-	lastModifiedMessage?: ClineMessage
+	lastModifiedMessage?: NexusMessage
 }
 
 type DisplayStatus = SubagentExecutionStatus | "cancelled"
@@ -72,14 +72,14 @@ const formatCost = (value: number | undefined): string => {
 	}).format(normalized)
 }
 
-function parseSubagentRowData(message: ClineMessage): SubagentRowData | null {
+function parseSubagentRowData(message: NexusMessage): SubagentRowData | null {
 	if (!message.text) {
 		return null
 	}
 
 	try {
 		if (message.ask === "use_subagents" || message.say === "use_subagents") {
-			const parsed = JSON.parse(message.text) as ClineAskUseSubagents
+			const parsed = JSON.parse(message.text) as NexusAskUseSubagents
 			if (!Array.isArray(parsed.prompts)) {
 				return null
 			}
@@ -105,7 +105,7 @@ function parseSubagentRowData(message: ClineMessage): SubagentRowData | null {
 			}
 		}
 
-		const parsed = JSON.parse(message.text) as ClineSaySubagentStatus
+		const parsed = JSON.parse(message.text) as NexusSaySubagentStatus
 		if (!Array.isArray(parsed.items)) {
 			return null
 		}
@@ -197,7 +197,7 @@ export default function SubagentStatusRow({ message, isLast, lastModifiedMessage
 			resumedBeforeNextVisibleMessage)
 
 	const singular = data.items.length === 1
-	const title = singular ? "Cline wants to use a subagent:" : "Cline wants to use subagents:"
+	const title = singular ? "Nexus wants to use a subagent:" : "Nexus wants to use subagents:"
 	const isPromptConstructionRow = message.ask === "use_subagents" || message.say === "use_subagents"
 	const toggleItem = (index: number) => {
 		setExpandedItems((prev) => ({

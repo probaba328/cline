@@ -1,5 +1,5 @@
 import "opentui-spinner/react";
-import type { AgentMode, ClineSubscriptionPlan } from "@cline/core";
+import type { AgentMode, NexusSubscriptionPlan } from "@nexus/core";
 import type { ScrollBoxRenderable } from "@opentui/core";
 import {
 	forwardRef,
@@ -21,7 +21,7 @@ export interface TranscriptScrollHandle {
 interface ChatMessageListProps {
 	entries: ChatEntry[];
 	isStreaming?: boolean;
-	loadIndividualSubscriptionPlans?: () => Promise<ClineSubscriptionPlan[]>;
+	loadIndividualSubscriptionPlans?: () => Promise<NexusSubscriptionPlan[]>;
 	uiMode?: AgentMode;
 }
 

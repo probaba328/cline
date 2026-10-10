@@ -4,8 +4,8 @@ import { isDeepStrictEqual } from "node:util";
 import {
 	buildConnectionUpdate,
 	buildWorkspaceMetadata,
-	type ClineCore,
-	type ClineCoreStartConfig,
+	type NexusCore,
+	type NexusCoreStartConfig,
 	createSessionCompactionState,
 	createUserInstructionConfigService,
 	getCoreBuiltinToolCatalog,
@@ -18,9 +18,9 @@ import {
 	SessionSource,
 	splitCoreSessionConfig,
 	trimMessagesBeforeUserRun,
-} from "@cline/core";
-import type { MessageWithMetadata } from "@cline/llms";
-import { buildClineSystemPrompt, formatUserCommandBlock } from "@cline/shared";
+} from "@nexus/core";
+import type { MessageWithMetadata } from "@nexus/llms";
+import { buildNexusSystemPrompt, formatUserCommandBlock } from "@nexus/shared";
 import {
 	deleteMaterializedAttachments,
 	discardAllTrackedAttachments,
@@ -39,7 +39,7 @@ import type {
 } from "./types";
 
 type SessionConnectionUpdate = Parameters<
-	ClineCore["updateSessionConnection"]
+	NexusCore["updateSessionConnection"]
 >[1];
 
 type WorkspaceMetadataLoader = (cwd: string) => Promise<string>;
@@ -461,7 +461,7 @@ export function buildSessionConnectionUpdate(
 ): SessionConnectionUpdate {
 	// Coerce the untrusted webview JSON (snake_case aliases, blank strings)
 	// into typed fields; the thinking/reasoning transition rules live in the
-	// shared @cline/core builder.
+	// shared @nexus/core builder.
 	const providerId = String(config.provider ?? config.providerId ?? "").trim();
 	const modelId = String(config.model ?? config.modelId ?? "").trim();
 	const rawApiKey =
@@ -570,7 +570,7 @@ async function resolveSystemPrompt(config: JsonRecord): Promise<string> {
 		typeof config.rules === "string" && config.rules.trim().length > 0
 			? config.rules
 			: undefined;
-	return buildClineSystemPrompt({
+	return buildNexusSystemPrompt({
 		ide: "Terminal Shell",
 		workspaceRoot: cwd,
 		workspaceName: basename(cwd),
@@ -646,7 +646,7 @@ function applyPendingPrompts(
 	}));
 }
 
-function getSessionManager(ctx: SidecarContext): ClineCore {
+function getSessionManager(ctx: SidecarContext): NexusCore {
 	if (!ctx.sessionManager) throw new Error("Session manager not initialized");
 	return ctx.sessionManager;
 }
@@ -688,7 +688,7 @@ async function handleStart(
 		modelId: String(coreConfig.modelId ?? ""),
 	});
 	const startResult = await manager.start({
-		...splitCoreSessionConfig(coreConfig as unknown as ClineCoreStartConfig),
+		...splitCoreSessionConfig(coreConfig as unknown as NexusCoreStartConfig),
 		source: SessionSource.DESKTOP,
 		interactive: true,
 		...(initialMessages ? { initialMessages } : {}),
@@ -791,7 +791,7 @@ async function handleAttach(
 }
 
 async function startRebuiltSession(
-	manager: ClineCore,
+	manager: NexusCore,
 	sessionId: string,
 	config: JsonRecord,
 	systemPrompt: string,
@@ -807,7 +807,7 @@ async function startRebuiltSession(
 				...config,
 				sessionId,
 				systemPrompt,
-			}) as unknown as ClineCoreStartConfig,
+			}) as unknown as NexusCoreStartConfig,
 		),
 		source: SessionSource.DESKTOP,
 		interactive: true,
@@ -832,7 +832,7 @@ async function startRebuiltSession(
 
 async function rebuildSessionForProviderChange(
 	ctx: SidecarContext,
-	manager: ClineCore,
+	manager: NexusCore,
 	sessionId: string,
 	previousConfig: JsonRecord,
 	nextConfig: JsonRecord,
@@ -994,7 +994,7 @@ async function handleSend(
 			request.attachments?.userFiles,
 		);
 		if (session?.attachedViaHub) {
-			// Once ClineCore sends a turn, its HubRuntimeHost owns the session
+			// Once NexusCore sends a turn, its HubRuntimeHost owns the session
 			// subscription. Stop projecting the observer stream as well or every
 			// assistant/tool update (including command chunks) is emitted twice.
 			session.attachedViaHub = false;
@@ -1041,7 +1041,7 @@ async function handleSend(
 			promptLength: prompt.length,
 			delivery,
 		});
-		let result: Awaited<ReturnType<ClineCore["send"]>>;
+		let result: Awaited<ReturnType<NexusCore["send"]>>;
 		try {
 			result = await manager.send({
 				sessionId,
@@ -1292,7 +1292,7 @@ async function handleForkUnlocked(
 			buildCoreSessionConfig({
 				...forkConfig,
 				systemPrompt,
-			}) as unknown as ClineCoreStartConfig,
+			}) as unknown as NexusCoreStartConfig,
 		),
 		source: SessionSource.DESKTOP,
 		interactive: true,
@@ -1414,7 +1414,7 @@ async function handleRestoreCheckpoint(
 					buildCoreSessionConfig({
 						...config,
 						systemPrompt: await resolveSystemPrompt(config),
-					}) as unknown as ClineCoreStartConfig,
+					}) as unknown as NexusCoreStartConfig,
 				),
 				source: SessionSource.DESKTOP,
 				interactive: true,

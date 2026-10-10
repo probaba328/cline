@@ -2,7 +2,7 @@ import { combineApiRequests } from "@shared/combineApiRequests"
 import { combineCommandSequences } from "@shared/combineCommandSequences"
 import { combineHookSequences } from "@shared/combineHookSequences"
 import { getApiMetrics, getLastApiReqTotalTokens } from "@shared/getApiMetrics"
-import { BooleanRequest, StringRequest } from "@shared/proto/cline/common"
+import { BooleanRequest, StringRequest } from "@shared/proto/nexus/common"
 import { useCallback, useEffect, useMemo, useRef } from "react"
 import { useMount } from "react-use"
 import { useExtensionState } from "@/context/ExtensionStateContext"
@@ -50,7 +50,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const showNavbar = useShowNavbar()
 	const {
 		version,
-		clineMessages: messages,
+		nexusMessages: messages,
 		taskHistory,
 		telemetrySetting,
 		mode,
@@ -60,7 +60,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		queuedPrompts,
 		turnState,
 	} = useExtensionState()
-	const isProdHostedApp = userInfo?.apiBaseUrl === "https://app.cline.bot"
+	const isProdHostedApp = userInfo?.apiBaseUrl === "https://app.nexus.bot"
 	const shouldShowQuickWins = isProdHostedApp && (!taskHistory || taskHistory.length < QUICK_WINS_HISTORY_THRESHOLD)
 
 	// Use custom hooks for state management
@@ -98,7 +98,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	}, [messages.length, pendingResponse, setPendingResponse, turnState])
 
 	//const task = messages.length > 0 ? (messages[0].say === "task" ? messages[0] : undefined) : undefined) : undefined
-	const task = useMemo(() => displayMessages.at(0), [displayMessages]) // leaving this less safe version here since if the first message is not a task, then the extension is in a bad state and needs to be debugged (see Cline.abort)
+	const task = useMemo(() => displayMessages.at(0), [displayMessages]) // leaving this less safe version here since if the first message is not a task, then the extension is in a bad state and needs to be debugged (see Nexus.abort)
 	const modifiedMessages = useMemo(() => {
 		const slicedMessages = displayMessages.slice(1)
 		// Only combine hook sequences if hooks are enabled

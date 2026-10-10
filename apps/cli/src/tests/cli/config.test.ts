@@ -1,21 +1,21 @@
 // ---------------------------------------------------------------------------
-// cline config - CLI tests
+// nexus config - CLI tests
 //
 // Covers:
-//   - `cline config --config <dir>` - shows config for specific directory
-//   - `cline config --help`         - help page
+//   - `nexus config --config <dir>` - shows config for specific directory
+//   - `nexus config --help`         - help page
 // ---------------------------------------------------------------------------
 
 import { test } from "@microsoft/tui-test";
-import { CLINE_BIN, TERMINAL_WIDE } from "../helpers/constants.js";
-import { clineEnv } from "../helpers/env.js";
+import { NEXUS_BIN, TERMINAL_WIDE } from "../helpers/constants.js";
+import { nexusEnv } from "../helpers/env.js";
 import { expectVisible } from "../helpers/terminal.js";
 
-test.describe("cline config --help", () => {
+test.describe("nexus config --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["config", "--help"] },
+		program: { file: NEXUS_BIN, args: ["config", "--help"] },
 		...TERMINAL_WIDE,
-		env: clineEnv("default"),
+		env: nexusEnv("default"),
 	});
 
 	test("shows config help page", async ({ terminal }) => {

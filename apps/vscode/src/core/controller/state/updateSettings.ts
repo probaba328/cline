@@ -1,10 +1,10 @@
-import { setCompactionStrategyGlobally, setModelToolEnabledGlobally } from "@cline/core"
-import { Empty } from "@shared/proto/cline/common"
-import { PlanActMode, McpDisplayMode as ProtoMcpDisplayMode, UpdateSettingsRequest } from "@shared/proto/cline/state"
+import { setCompactionStrategyGlobally, setModelToolEnabledGlobally } from "@nexus/core"
+import { Empty } from "@shared/proto/nexus/common"
+import { PlanActMode, McpDisplayMode as ProtoMcpDisplayMode, UpdateSettingsRequest } from "@shared/proto/nexus/state"
 import { convertProtoToApiProvider } from "@shared/proto-conversions/models/api-configuration-conversion"
 import { OpenaiReasoningEffort } from "@shared/storage/types"
 import { TelemetrySetting } from "@shared/TelemetrySetting"
-import { ClineEnv } from "@/config"
+import { NexusEnv } from "@/config"
 import { McpDisplayMode } from "@/shared/McpDisplayMode"
 import { Logger } from "@/shared/services/Logger"
 import { telemetryService } from "../../../services/telemetry"
@@ -22,8 +22,8 @@ import { createTaskApiModelShim, resolveActiveModelIdFromApiConfiguration } from
  */
 export async function updateSettings(controller: Controller, request: UpdateSettingsRequest): Promise<Empty> {
 	try {
-		if (request.clineEnv !== undefined && request.clineEnv !== "") {
-			ClineEnv.setEnvironment(request.clineEnv)
+		if (request.nexusEnv !== undefined && request.nexusEnv !== "") {
+			NexusEnv.setEnvironment(request.nexusEnv)
 			await accountLogoutClicked(controller, Empty.create())
 		}
 

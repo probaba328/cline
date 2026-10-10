@@ -99,7 +99,7 @@ describe("MemoizedMarkdown interactions", () => {
 	});
 
 	test("opens honest external links directly in the default browser", async () => {
-		const url = "https://example.com/review?source=cline";
+		const url = "https://example.com/review?source=nexus";
 		await renderMarkdown({ content: `[Review docs](${url})` });
 		const link = await vi.waitFor(() => {
 			const renderedLink = container.querySelector<HTMLAnchorElement>(
@@ -122,8 +122,8 @@ describe("MemoizedMarkdown interactions", () => {
 	});
 
 	test("requires confirmation before opening a deceptive external link", async () => {
-		const url = "https://example.com/review?source=cline";
-		await renderMarkdown({ content: `[github.com/cline](${url})` });
+		const url = "https://example.com/review?source=nexus";
+		await renderMarkdown({ content: `[github.com/nexus](${url})` });
 		const link = await vi.waitFor(() => {
 			const renderedLink = container.querySelector<HTMLElement>(
 				'[data-streamdown="link"]',
@@ -188,7 +188,7 @@ describe("MemoizedMarkdown interactions", () => {
 	});
 
 	test("opens mailto links directly through the external opener", async () => {
-		await renderMarkdown({ content: "[Email us](mailto:hi@cline.bot)" });
+		await renderMarkdown({ content: "[Email us](mailto:hi@nexus.bot)" });
 		const link = await vi.waitFor(() => {
 			const renderedLink = container.querySelector<HTMLElement>(
 				'[data-streamdown="link"]',
@@ -201,7 +201,7 @@ describe("MemoizedMarkdown interactions", () => {
 		await click(link);
 		expect(document.querySelector('[role="alertdialog"]')).toBeNull();
 		expect(openWindow).toHaveBeenCalledWith(
-			"mailto:hi@cline.bot",
+			"mailto:hi@nexus.bot",
 			"_blank",
 			"noopener,noreferrer",
 		);
@@ -240,7 +240,7 @@ describe("MemoizedMarkdown interactions", () => {
 
 	// With lineNumbers off, Streamdown emits one bare inline <span> per Shiki
 	// token line with no newline text between non-empty lines; the shared
-	// @cline/ui markdown.css turns those direct line spans into blocks. This
+	// @nexus/ui markdown.css turns those direct line spans into blocks. This
 	// asserts the one-span-per-line structure that CSS contract depends on,
 	// after the async Shiki highlight replaces the raw fallback render (the
 	// SSR tests never exercise that client-side path).

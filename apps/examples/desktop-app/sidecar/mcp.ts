@@ -3,8 +3,8 @@ import {
 	getMcpServerOAuthStatus,
 	parseMcpServerRegistration,
 	updateMcpSettingsFileSync,
-} from "@cline/core";
-import { resolveMcpSettingsPath } from "@cline/shared/storage";
+} from "@nexus/core";
+import { resolveMcpSettingsPath } from "@nexus/shared/storage";
 import type { JsonRecord } from "./types";
 
 export function shouldProbeMcpServerAfterUpsert(options: {

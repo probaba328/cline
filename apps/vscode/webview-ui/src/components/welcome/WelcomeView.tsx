@@ -1,13 +1,15 @@
-import { BooleanRequest, EmptyRequest } from "@shared/proto/cline/common"
+import { BooleanRequest, EmptyRequest } from "@shared/proto/nexus/common"
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import { memo, useEffect, useState } from "react"
-import ClineLogoWhite from "@/assets/ClineLogoWhite"
+import { useTranslation } from "react-i18next"
+import NexusLogoWhite from "@/assets/NexusLogoWhite"
 import ApiOptions from "@/components/settings/ApiOptions"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { AccountServiceClient, StateServiceClient } from "@/services/grpc-client"
 import { validateApiConfiguration } from "@/utils/validate"
 
 const WelcomeView = memo(() => {
+	const { t } = useTranslation()
 	const { apiConfiguration, mode } = useExtensionState()
 	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
 	const [showApiOptions, setShowApiOptions] = useState(false)
@@ -39,9 +41,9 @@ const WelcomeView = memo(() => {
 	return (
 		<div className="fixed inset-0 p-0 flex flex-col">
 			<div className="h-full px-5 overflow-auto flex flex-col gap-2.5">
-				<h2 className="text-lg font-semibold">Hi, I'm Cline</h2>
+				<h2 className="text-lg font-semibold">{t("onboarding.greeting")}</h2>
 				<div className="flex justify-center my-5">
-					<ClineLogoWhite className="size-16" />
+					<NexusLogoWhite className="size-16" />
 				</div>
 				<p>
 					I can do all kinds of tasks thanks to breakthroughs in{" "}
@@ -59,7 +61,7 @@ const WelcomeView = memo(() => {
 				</p>
 
 				<VSCodeButton appearance="primary" className="w-full mt-1" disabled={isLoading} onClick={handleLogin}>
-					Get Started for Free
+					{t("onboarding.getStartedFree")}
 					{isLoading && (
 						<span className="ml-1 animate-spin">
 							<span className="codicon codicon-refresh" />
@@ -72,7 +74,7 @@ const WelcomeView = memo(() => {
 						appearance="secondary"
 						className="mt-2.5 w-full"
 						onClick={() => setShowApiOptions(!showApiOptions)}>
-						Use your own API key
+						{t("onboarding.useApiKey")}
 					</VSCodeButton>
 				)}
 
@@ -81,7 +83,7 @@ const WelcomeView = memo(() => {
 						<div>
 							<ApiOptions currentMode={mode} showModelOptions={false} />
 							<VSCodeButton className="mt-0.75" disabled={disableLetsGoButton} onClick={handleSubmit}>
-								Let's go!
+								{t("onboarding.letsGo")}
 							</VSCodeButton>
 						</div>
 					)}

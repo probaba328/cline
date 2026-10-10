@@ -126,7 +126,7 @@ export async function openUrlInBrowser(url: string): Promise<void> {
 						items: ["Copy URL Again"],
 					},
 				})
-				.then((response) => {
+				.then((response: { selectedOption?: string }) => {
 					if (response.selectedOption === "Copy URL Again") {
 						writeTextToClipboard(url)
 					}

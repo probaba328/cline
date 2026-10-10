@@ -147,7 +147,7 @@ export interface EnterpriseStatusRequest {
 
 export type EnterpriseStatusResponse = EnterpriseSyncResponse;
 
-/** Which tier of the Cline recommended-models feed featured a model. */
+/** Which tier of the Nexus recommended-models feed featured a model. */
 export type ProviderModelFeaturedTier = "recommended" | "free" | "subscribed";
 
 export interface ProviderModelFeatured {
@@ -163,8 +163,8 @@ export interface ProviderModel {
 	name: string;
 	description?: string;
 	/**
-	 * Present when the Cline recommended-models feed features this model
-	 * (cline / cline-pass providers only), so pickers can lead with the
+	 * Present when the Nexus recommended-models feed features this model
+	 * (nexus / nexus-pass providers only), so pickers can lead with the
 	 * feed's tiers without fetching and joining the feed themselves.
 	 */
 	featured?: ProviderModelFeatured;
@@ -407,54 +407,54 @@ export type ProviderSettingsActionRequest =
 	| SaveProviderSettingsActionRequest
 	| AddProviderActionRequest;
 
-export type ClineAccountActionRequest =
+export type NexusAccountActionRequest =
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchMe";
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchBalance";
 			userId?: string;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchUsageTransactions";
 			userId?: string;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchPaymentTransactions";
 			userId?: string;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchUserOrganizations";
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchOrganizationBalance";
 			organizationId: string;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchOrganizationUsageTransactions";
 			organizationId: string;
 			memberId?: string;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "switchAccount";
 			organizationId?: string | null;
 	  }
 	| {
-			action: "clineAccount";
+			action: "nexusAccount";
 			operation: "fetchFeaturebaseToken";
 	  };
 
 export type ProviderActionRequest =
 	| ProviderSettingsActionRequest
-	| ClineAccountActionRequest;
+	| NexusAccountActionRequest;
 
 export interface ProviderOAuthLoginResponse {
 	provider: string;

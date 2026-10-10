@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AgendaTaskRecord } from "@cline/shared";
+import type { AgendaTaskRecord } from "@nexus/shared";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
 	AgendaTaskManager,
@@ -31,7 +31,7 @@ function createHarness(
 	result: "completed" | "failed" = "completed",
 	options: { interactiveClientAvailable?: boolean } = {},
 ) {
-	const root = mkdtempSync(join(tmpdir(), "cline-agenda-manager-"));
+	const root = mkdtempSync(join(tmpdir(), "nexus-agenda-manager-"));
 	const events: string[] = [];
 	let interactiveClientAvailable = options.interactiveClientAvailable ?? true;
 	const runtime: AgendaTaskRuntime = {
@@ -236,7 +236,7 @@ describe("AgendaTaskManager", () => {
 	});
 
 	it("rehydrates known workspaces and watches their task specs after restart", async () => {
-		const root = mkdtempSync(join(tmpdir(), "cline-agenda-workspace-"));
+		const root = mkdtempSync(join(tmpdir(), "nexus-agenda-workspace-"));
 		const workspaceRoot = join(root, "workspace");
 		const dbPath = join(root, "tasks.db");
 		const globalSpecsDir = join(root, "global-specs");
@@ -327,7 +327,7 @@ describe("AgendaTaskManager", () => {
 	});
 
 	it("does not recreate a missing historical workspace during startup", async () => {
-		const root = mkdtempSync(join(tmpdir(), "cline-agenda-missing-root-"));
+		const root = mkdtempSync(join(tmpdir(), "nexus-agenda-missing-root-"));
 		const workspaceRoot = join(root, "workspace");
 		const movedWorkspaceRoot = join(root, "workspace-moved");
 		const dbPath = join(root, "tasks.db");
@@ -377,7 +377,7 @@ describe("AgendaTaskManager", () => {
 		"isolates an unsafe task source while starting other Hub task scopes",
 		async () => {
 			const root = mkdtempSync(
-				join(tmpdir(), "cline-agenda-source-isolation-"),
+				join(tmpdir(), "nexus-agenda-source-isolation-"),
 			);
 			const badWorkspace = join(root, "bad-workspace");
 			const goodWorkspace = join(root, "good-workspace");
@@ -439,8 +439,8 @@ describe("AgendaTaskManager", () => {
 					expectedContentHash: goodSource.contentHash,
 				},
 			);
-			const badSpecsDir = join(badWorkspace, ".cline", "tasks");
-			const badSpecsBackup = join(badWorkspace, ".cline", "tasks-real");
+			const badSpecsDir = join(badWorkspace, ".nexus", "tasks");
+			const badSpecsBackup = join(badWorkspace, ".nexus", "tasks-real");
 			renameSync(badSpecsDir, badSpecsBackup);
 			symlinkSync(badSpecsBackup, badSpecsDir, "dir");
 
@@ -831,7 +831,7 @@ describe("AgendaTaskManager", () => {
 	});
 
 	it("recovers a crash during session startup back to approved", async () => {
-		const root = mkdtempSync(join(tmpdir(), "cline-agenda-recovery-"));
+		const root = mkdtempSync(join(tmpdir(), "nexus-agenda-recovery-"));
 		const store = new SqliteAgendaTaskStore({ dbPath: join(root, "tasks.db") });
 		const files = new AgendaTaskSpecFileStore({
 			scope: "global",

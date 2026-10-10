@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 import * as vscode from "vscode"
-import { readGlobalState, readSecrets } from "@/sdk/legacy-state-reader"
+import { readGlobalState, readSecrets, readTaskHistory, resolveDataDir } from "@/sdk/legacy-state-reader"
 import { Logger } from "@/shared/services/Logger"
 import { ensureRulesDirectoryExists } from "./disk"
 
@@ -67,8 +67,51 @@ export async function migrateWorkspaceToGlobalStorage(context: vscode.ExtensionC
 	}
 }
 
-export async function migrateTaskHistoryToFile(_context: vscode.ExtensionContext) {
-	// TODO migrate to sdk location
+export async function migrateTaskHistoryToFile(context: vscode.ExtensionContext) {
+	try {
+		// VS Code stores task history in its own managed globalStorageUri.
+		// The SDK now shares task history across clients via ~/.nexus/data/state/.
+		// This migration copies tasks from the VS Code path to the shared path
+		// so existing tasks appear in the CLI and JetBrains.
+
+		const vscodeHistoryPath = path.join(context.globalStorageUri.fsPath, "state", "taskHistory.json")
+		const sharedHistoryPath = path.join(resolveDataDir(), "state", "taskHistory.json")
+
+		// Nothing to migrate if VS Code history file doesn't exist
+		let vscodeHistory: { id: string }[] = []
+		try {
+			const raw = await fs.readFile(vscodeHistoryPath, "utf8")
+			vscodeHistory = JSON.parse(raw)
+		} catch {
+			return // No VS Code history or same path as shared — nothing to do
+		}
+
+		if (!Array.isArray(vscodeHistory) || vscodeHistory.length === 0) {
+			return
+		}
+
+		// Skip migration when the paths resolve to the same file
+		if (vscodeHistoryPath === sharedHistoryPath) {
+			return
+		}
+
+		const sharedHistory = readTaskHistory()
+		const sharedIds = new Set(sharedHistory.map((item) => item.id))
+
+		// Merge VS Code tasks not already present in the shared store
+		const newItems = vscodeHistory.filter((item) => item.id && !sharedIds.has(item.id))
+		if (newItems.length === 0) {
+			return
+		}
+
+		const merged = [...sharedHistory, ...newItems]
+		await fs.mkdir(path.dirname(sharedHistoryPath), { recursive: true })
+		await fs.writeFile(sharedHistoryPath, JSON.stringify(merged, null, 2), "utf8")
+
+		Logger.log(`[Storage Migration] migrateTaskHistoryToFile: ${newItems.length} görev taşındı`)
+	} catch (error) {
+		Logger.warn(`[Storage Migration] migrateTaskHistoryToFile başarısız: ${error instanceof Error ? error.message : String(error)}`)
+	}
 }
 
 export async function migrateCustomInstructionsToGlobalRules(context: vscode.ExtensionContext) {
@@ -76,9 +119,9 @@ export async function migrateCustomInstructionsToGlobalRules(context: vscode.Ext
 		const customInstructions = (await context.globalState.get("customInstructions")) as string | undefined
 
 		if (customInstructions?.trim()) {
-			Logger.log("Migrating custom instructions to global Cline rules...")
+			Logger.log("Migrating custom instructions to global Nexus rules...")
 
-			// Create global .clinerules directory if it doesn't exist
+			// Create global .nexusrules directory if it doesn't exist
 			const globalRulesDir = await ensureRulesDirectoryExists()
 
 			// Use a fixed filename for custom instructions
@@ -108,7 +151,7 @@ export async function migrateCustomInstructionsToGlobalRules(context: vscode.Ext
 
 			// Remove customInstructions from global state only after successful file creation
 			await context.globalState.update("customInstructions", undefined)
-			Logger.log("Successfully migrated custom instructions to global Cline rules")
+			Logger.log("Successfully migrated custom instructions to global Nexus rules")
 		}
 	} catch (error) {
 		Logger.error("Failed to migrate custom instructions to global rules:", error)
@@ -127,7 +170,7 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 			// Fetch API keys directly from secrets
 			const apiKey = await context.secrets.get("apiKey")
 			const openRouterApiKey = await context.secrets.get("openRouterApiKey")
-			const clineAccountId = await context.secrets.get("clineAccountId")
+			const nexusAccountId = await context.secrets.get("nexusAccountId")
 			const openAiApiKey = await context.secrets.get("openAiApiKey")
 			const ollamaApiKey = await context.secrets.get("ollamaApiKey")
 			const liteLlmApiKey = await context.secrets.get("liteLlmApiKey")
@@ -159,7 +202,7 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 			const actModeVsCodeLmModelSelector = context.globalState.get("actModeVsCodeLmModelSelector")
 
 			// ENG-2346: The live 4.x extension persists provider config in the shared
-			// file-backed stores (~/.cline/data/globalState.json + secrets.json), not in
+			// file-backed stores (~/.nexus/data/globalState.json + secrets.json), not in
 			// VS Code storage — so for users upgrading from it, every value above is
 			// undefined. Also consider the file-backed stores (same signals: the
 			// completed flag itself, any provider secret, or the keyless provider
@@ -204,7 +247,7 @@ export async function migrateWelcomeViewCompleted(context: vscode.ExtensionConte
 				mistralApiKey,
 				planModeVsCodeLmModelSelector,
 				actModeVsCodeLmModelSelector,
-				clineAccountId,
+				nexusAccountId,
 				asksageApiKey,
 				xaiApiKey,
 				sambanovaApiKey,
@@ -251,8 +294,8 @@ export async function cleanupOldApiKey(context: vscode.ExtensionContext) {
 		// Old API Keys were introduced in March 2025 and later replaced with tokens
 		// Now that we have new API keys that are prefixed with `sk_`,
 		// we need to clean up the old ones to free the secret storage
-		await context.secrets.delete("clineApiKey")
+		await context.secrets.delete("nexusApiKey")
 	} catch (error) {
-		Logger.error("Failed to cleanup old clineApiKey", error)
+		Logger.error("Failed to cleanup old nexusApiKey", error)
 	}
 }

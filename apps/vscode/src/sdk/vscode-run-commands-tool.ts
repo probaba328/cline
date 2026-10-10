@@ -19,10 +19,10 @@ import {
 	type ShellExecutor,
 	type StructuredCommandInput,
 	truncateCommandOutput,
-} from "@cline/core"
-import type { AgentTool } from "@cline/shared"
+} from "@nexus/core"
+import type { AgentTool, AgentToolContext } from "@nexus/shared"
 import { TerminalUserInterventionAction, telemetryService } from "@services/telemetry"
-import { ClineTempManager } from "@services/temp"
+import { NexusTempManager } from "@services/temp"
 import * as fs from "fs"
 import { StateManager } from "@/core/storage/StateManager"
 import type { VscodeTerminalManager } from "@/hosts/vscode/terminal/VscodeTerminalManager"
@@ -52,7 +52,7 @@ export const FOREGROUND_COMMAND_AUTO_PROCEED_MS = 300 * 1000
 /**
  * Cap on the "Proceed While Running" log file. A detached devserver can log
  * for days; once the cap is hit we stop appending and note the truncation.
- * ClineTempManager's periodic cleanup (age + total-size caps) is the backstop
+ * NexusTempManager's periodic cleanup (age + total-size caps) is the backstop
  * for the files themselves.
  */
 export const PROCEED_LOG_MAX_BYTES = 10 * 1024 * 1024
@@ -117,7 +117,7 @@ interface DetachedCommandLog {
 }
 
 function createDetachedCommandLog(terminalCommand: string, existingLines: string[]): DetachedCommandLog {
-	const logFilePath = ClineTempManager.createTempFilePath("proceed-while-running")
+	const logFilePath = NexusTempManager.createTempFilePath("proceed-while-running")
 	const stream = fs.createWriteStream(logFilePath, { flags: "a" })
 	const sizeCapMessage = `[Log size cap of ${PROCEED_LOG_MAX_BYTES} bytes reached; further output is not logged.]`
 	stream.on("error", (error) => {
@@ -208,7 +208,7 @@ function formatDetachedResult(logFilePath: string, output: string, reason: Detac
 	return [
 		reason === "user"
 			? "The user chose to proceed while the command is starting or still running in their terminal."
-			: `The command was still starting or running after ${FOREGROUND_COMMAND_AUTO_PROCEED_MS / 1000} seconds, so Cline automatically proceeded while leaving it running in the terminal.`,
+			: `The command was still starting or running after ${FOREGROUND_COMMAND_AUTO_PROCEED_MS / 1000} seconds, so Nexus automatically proceeded while leaving it running in the terminal.`,
 		`This is partial output; further output is being redirected to this file, which you can read to check progress: ${logFilePath}`,
 		output.length > 0 ? `Output so far:\n${output}` : "No output so far.",
 	].join("\n")
@@ -549,7 +549,7 @@ function createVscodeShellExecutor(options: VscodeRunCommandsToolOptions, state:
 	// Lazy-init terminal manager reference
 	let terminalManager: VscodeTerminalManager | undefined
 
-	return async (command, commandCwd, context): Promise<string> => {
+	return async (command: string | StructuredCommandInput, commandCwd: string, context: AgentToolContext): Promise<string> => {
 		Logger.log(`[VscodeRunCommands] Executing command in ${executionMode} mode`)
 
 		// Execute with the shell named in the model request that produced this

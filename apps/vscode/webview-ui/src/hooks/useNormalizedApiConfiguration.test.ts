@@ -1,4 +1,4 @@
-import { ApiFormat, ResolveModelInfoResponse } from "@shared/proto/cline/models"
+import { ApiFormat, ResolveModelInfoResponse } from "@shared/proto/nexus/models"
 import { act, renderHook, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useExtensionState } from "@/context/ExtensionStateContext"
@@ -85,33 +85,33 @@ describe("useNormalizedApiConfiguration", () => {
 		expect(mockResolveProviderModels).not.toHaveBeenCalled()
 	})
 
-	it("uses Cline-specific model fields instead of stale generic or OpenRouter fields", async () => {
+	it("uses Nexus-specific model fields instead of stale generic or OpenRouter fields", async () => {
 		setApiConfiguration({
-			actModeApiProvider: "cline",
+			actModeApiProvider: "nexus",
 			actModeApiModelId: "openai/gpt-5.4",
 			actModeOpenRouterModelId: "anthropic/claude-sonnet-4.5",
-			actModeClineModelId: "anthropic/claude-sonnet-4.6",
+			actModeNexusModelId: "anthropic/claude-sonnet-4.6",
 		})
-		mockResolveModelInfo.mockResolvedValue(modelInfoResponse("cline", "anthropic/claude-sonnet-4.6"))
+		mockResolveModelInfo.mockResolvedValue(modelInfoResponse("nexus", "anthropic/claude-sonnet-4.6"))
 
 		const { result } = renderHook(() => useNormalizedApiConfiguration("act"))
 
 		await waitFor(() => expect(result.current.selectedModelId).toBe("anthropic/claude-sonnet-4.6"))
-		expect(mockResolveModelInfo).toHaveBeenCalledWith({ providerId: "cline", modelId: "anthropic/claude-sonnet-4.6" })
+		expect(mockResolveModelInfo).toHaveBeenCalledWith({ providerId: "nexus", modelId: "anthropic/claude-sonnet-4.6" })
 	})
 
-	it("asks the backend for the Cline default when no Cline-specific model is selected", async () => {
+	it("asks the backend for the Nexus default when no Nexus-specific model is selected", async () => {
 		setApiConfiguration({
-			actModeApiProvider: "cline",
+			actModeApiProvider: "nexus",
 			actModeApiModelId: "openai/gpt-5.4",
 			actModeOpenRouterModelId: "anthropic/claude-sonnet-4.5",
 		})
-		mockResolveModelInfo.mockResolvedValue(modelInfoResponse("cline", "anthropic/claude-sonnet-4.6"))
+		mockResolveModelInfo.mockResolvedValue(modelInfoResponse("nexus", "anthropic/claude-sonnet-4.6"))
 
 		const { result } = renderHook(() => useNormalizedApiConfiguration("act"))
 
 		await waitFor(() => expect(result.current.selectedModelId).toBe("anthropic/claude-sonnet-4.6"))
-		expect(mockResolveModelInfo).toHaveBeenCalledWith({ providerId: "cline", modelId: undefined })
+		expect(mockResolveModelInfo).toHaveBeenCalledWith({ providerId: "nexus", modelId: undefined })
 	})
 
 	it("resolves static SDK-backed providers through the model-info RPC", async () => {

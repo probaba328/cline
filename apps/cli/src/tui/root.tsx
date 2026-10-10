@@ -3,8 +3,8 @@ import {
 	type ManagedHubBuildMismatchEvent,
 	summarizeUsageFromMessages,
 	watchManagedHubBuildMismatch,
-} from "@cline/core";
-import { formatDisplayUserInput } from "@cline/shared";
+} from "@nexus/core";
+import { formatDisplayUserInput } from "@nexus/shared";
 import type { KeyEvent } from "@opentui/core";
 import { useRenderer, useTerminalDimensions } from "@opentui/react";
 import type { ChoiceContext } from "@opentui-ui/dialog";
@@ -14,7 +14,7 @@ import {
 	useDialogState,
 } from "@opentui-ui/dialog/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { shouldSuppressClineCliMigrationNoticeForActiveProvider } from "../kanban-migration/notice";
+import { shouldSuppressNexusCliMigrationNoticeForActiveProvider } from "../kanban-migration/notice";
 import { MigrationNoticeContent } from "../kanban-migration/notice-dialog";
 import {
 	isSameRepoStatus,
@@ -101,7 +101,7 @@ function App(props: TuiProps) {
 		string | null
 	>(null);
 	const [appView, setAppView] = useState<AppView>(() => {
-		if (process.env.CLINE_FORCE_ONBOARDING === "1") return "onboarding";
+		if (process.env.NEXUS_FORCE_ONBOARDING === "1") return "onboarding";
 		if (!isProviderConfigured(props.config)) return "onboarding";
 		return isChatBackedStartupTarget(props.startupTarget) ||
 			session.entries.length > 0
@@ -299,8 +299,8 @@ function App(props: TuiProps) {
 	const openAccount = useAccountDialog({
 		dialog,
 		termHeight,
-		loadAccount: props.loadClineAccount,
-		switchAccount: props.switchClineAccount,
+		loadAccount: props.loadNexusAccount,
+		switchAccount: props.switchNexusAccount,
 		onAccountChange: props.onAccountChange,
 		openModelSelector,
 		refocusTextarea: () => refocusTextareaRef.current(),
@@ -432,7 +432,7 @@ function App(props: TuiProps) {
 		}
 	}, [dialog, props, session, showToast, termHeight]);
 
-	const exitCline = useCallback(() => {
+	const exitNexus = useCallback(() => {
 		session.requestExit();
 	}, [session]);
 
@@ -548,7 +548,7 @@ function App(props: TuiProps) {
 		if (initialNoticeShownRef.current) return;
 		if (appView !== "home") return;
 		if (
-			shouldSuppressClineCliMigrationNoticeForActiveProvider(currentProviderId)
+			shouldSuppressNexusCliMigrationNoticeForActiveProvider(currentProviderId)
 		) {
 			initialNoticeShownRef.current = true;
 			return;
@@ -605,11 +605,11 @@ function App(props: TuiProps) {
 			})
 			.then((update) => {
 				if (update) {
-					(onHubUpdateRestart ?? exitCline)();
+					(onHubUpdateRestart ?? exitNexus)();
 					return;
 				}
 				showToast(
-					"Hub still differs from this CLI. Run 'cline update' and restart when convenient.",
+					"Hub still differs from this CLI. Run 'nexus update' and restart when convenient.",
 					"info",
 				);
 				refocusTextareaRef.current();
@@ -617,7 +617,7 @@ function App(props: TuiProps) {
 			.catch(() => {
 				refocusTextareaRef.current();
 			});
-	}, [dialog, exitCline, hubBuildMismatch, onHubUpdateRestart, showToast]);
+	}, [dialog, exitNexus, hubBuildMismatch, onHubUpdateRestart, showToast]);
 
 	const {
 		appendEntry: appendSessionEntry,
@@ -700,7 +700,7 @@ function App(props: TuiProps) {
 		onCompact: props.onCompact,
 		onFork: props.onFork,
 		onUndo: openCheckpointRestore,
-		onExit: exitCline,
+		onExit: exitNexus,
 	});
 
 	const startupActionsRef = useRef({ openConfig, openHistory });
@@ -912,7 +912,7 @@ function App(props: TuiProps) {
 		setInputKey: promptInput.setInputKey,
 		setInputValue: promptInput.setInputValue,
 		onAbort: props.onAbort,
-		onExit: exitCline,
+		onExit: exitNexus,
 		onToggleMode: toggleMode,
 		onClearConversation: clearConversation,
 		onRestoreCheckpoint: openCheckpointRestore,
@@ -991,7 +991,7 @@ function App(props: TuiProps) {
 					handleModelChange().then(() => setAppView("home"));
 				}}
 				onExit={() => {
-					exitCline();
+					exitNexus();
 				}}
 			/>
 		);

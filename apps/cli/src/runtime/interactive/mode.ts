@@ -1,4 +1,4 @@
-import { createTool } from "@cline/shared";
+import { createTool } from "@nexus/shared";
 import type { Config } from "../../utils/types";
 import { resolveSystemPrompt } from "../prompt";
 
@@ -107,13 +107,13 @@ export async function sendTurnWithActModeContinuation<
 	};
 }
 
-// The tracker moved to @cline/shared so the VSCode extension can share the
+// The tracker moved to @nexus/shared so the VSCode extension can share the
 // exact round-trip-cancelling semantics; re-exported here to keep the CLI's
 // import surface stable.
 export {
 	createModeSwitchNoticeTracker,
 	type ModeSwitchNotice,
-} from "@cline/shared";
+} from "@nexus/shared";
 
 export async function applyInteractiveModeConfig(input: {
 	config: Config;

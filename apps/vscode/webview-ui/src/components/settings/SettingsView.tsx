@@ -1,21 +1,25 @@
 import type { ExtensionMessage } from "@shared/ExtensionMessage"
-import { isClineInternalTester } from "@shared/internal/account"
-import { ResetStateRequest } from "@shared/proto/cline/state"
-import type { UserOrganization } from "@shared/proto/index.cline"
+import { isNexusInternalTester } from "@shared/internal/account"
+import { ResetStateRequest } from "@shared/proto/nexus/state"
+import type { UserOrganization } from "@shared/proto/index.nexus"
 import {
+	Bot,
 	CheckCheck,
+	EyeOff,
 	FlaskConical,
+	Globe,
 	HardDriveDownload,
 	Info,
 	type LucideIcon,
-	SlidersHorizontal,
+	Lock,
 	SquareTerminal,
 	Wrench,
 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useEvent } from "react-use"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { type ClineUser, useClineAuth } from "@/context/ClineAuthContext"
+import { type NexusUser, useNexusAuth } from "@/context/NexusAuthContext"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { cn } from "@/lib/utils"
 import { StateServiceClient } from "@/services/grpc-client"
@@ -28,86 +32,115 @@ import ApiConfigurationSection from "./sections/ApiConfigurationSection"
 import DebugSection from "./sections/DebugSection"
 import FeatureSettingsSection from "./sections/FeatureSettingsSection"
 import GeneralSettingsSection from "./sections/GeneralSettingsSection"
+import PrivacySection from "./sections/PrivacySection"
+import SecuritySection from "./sections/SecuritySection"
 import { RemoteConfigSection } from "./sections/RemoteConfigSection"
 import TerminalSettingsSection from "./sections/TerminalSettingsSection"
 
 const IS_DEV = process.env.IS_DEV
 
 // Tab definitions
-type SettingsTabID = "api-config" | "features" | "terminal" | "general" | "about" | "debug" | "remote-config"
+type SettingsTabID =
+	| "general"
+	| "ai-model"
+	| "privacy"
+	| "security"
+	| "about"
+	| "features"
+	| "terminal"
+	| "remote-config"
+	| "debug"
+
 interface SettingsTab {
 	id: SettingsTabID
 	name: string
 	tooltipText: string
 	headerText: string
 	icon: LucideIcon
-	hidden?: (params?: { user: ClineUser | null; activeOrganization: UserOrganization | null }) => boolean
+	dividerBefore?: boolean // render a thin divider above this tab
+	hidden?: (params?: { user: NexusUser | null; activeOrganization: UserOrganization | null }) => boolean
 }
 
-const SETTINGS_TABS: SettingsTab[] = [
-	{
-		id: "api-config",
-		name: "API Configuration",
-		tooltipText: "API Configuration",
-		headerText: "API Configuration",
-		icon: SlidersHorizontal,
-	},
-	{
-		id: "features",
-		name: "Features",
-		tooltipText: "Feature Settings",
-		headerText: "Feature Settings",
-		icon: CheckCheck,
-	},
-	{
-		id: "terminal",
-		name: "Terminal",
-		tooltipText: "Terminal Settings",
-		headerText: "Terminal Settings",
-		icon: SquareTerminal,
-	},
-	{
-		id: "general",
-		name: "General",
-		tooltipText: "General Settings",
-		headerText: "General Settings",
-		icon: Wrench,
-	},
-	{
-		id: "remote-config",
-		name: "Remote Config",
-		tooltipText: "Remotely configured fields",
-		headerText: "Remote Config",
-		icon: HardDriveDownload,
-		hidden: ({ activeOrganization } = { user: null, activeOrganization: null }) =>
-			!activeOrganization || !isAdminOrOwner(activeOrganization),
-	},
-	{
-		id: "about",
-		name: "About",
-		tooltipText: "About Cline",
-		headerText: "About",
-		icon: Info,
-	},
-	// Only show in dev mode
-	{
-		id: "debug",
-		name: "Debug",
-		tooltipText: "Debug Tools",
-		headerText: "Debug",
-		icon: FlaskConical,
-		hidden: ({ user } = { user: null, activeOrganization: null }) => !IS_DEV && !isClineInternalTester(user?.email || ""),
-	},
-]
+function buildSettingsTabs(t: (key: string) => string): SettingsTab[] {
+	return [
+		{
+			id: "general",
+			name: t("settings.general"),
+			tooltipText: t("settings.generalSettings"),
+			headerText: t("settings.general"),
+			icon: Globe,
+		},
+		{
+			id: "ai-model",
+			name: t("settings.aiModel"),
+			tooltipText: t("settings.aiModelTooltip"),
+			headerText: t("settings.aiModel"),
+			icon: Bot,
+		},
+		{
+			id: "privacy",
+			name: t("settings.privacy"),
+			tooltipText: t("settings.privacyTooltip"),
+			headerText: t("settings.privacy"),
+			icon: EyeOff,
+		},
+		{
+			id: "security",
+			name: t("settings.security"),
+			tooltipText: t("settings.securityTooltip"),
+			headerText: t("settings.security"),
+			icon: Lock,
+		},
+		{
+			id: "about",
+			name: t("settings.about"),
+			tooltipText: t("settings.aboutTooltip"),
+			headerText: t("settings.about"),
+			icon: Info,
+		},
+		{
+			id: "features",
+			name: t("settings.features"),
+			tooltipText: t("settings.featuresTooltip"),
+			headerText: t("settings.features"),
+			icon: CheckCheck,
+			dividerBefore: true,
+		},
+		{
+			id: "terminal",
+			name: t("settings.terminal"),
+			tooltipText: t("settings.terminalTooltip"),
+			headerText: t("settings.terminal"),
+			icon: SquareTerminal,
+		},
+		{
+			id: "remote-config",
+			name: t("settings.remoteConfig"),
+			tooltipText: t("settings.remoteConfigTooltip"),
+			headerText: t("settings.remoteConfig"),
+			icon: HardDriveDownload,
+			hidden: ({ activeOrganization } = { user: null, activeOrganization: null }) =>
+				!activeOrganization || !isAdminOrOwner(activeOrganization),
+		},
+		{
+			id: "debug",
+			name: t("settings.debug"),
+			tooltipText: t("settings.debugTooltip"),
+			headerText: t("settings.debug"),
+			icon: FlaskConical,
+			hidden: ({ user } = { user: null, activeOrganization: null }) =>
+				!IS_DEV && !isNexusInternalTester(user?.email || ""),
+		},
+	]
+}
 
 type SettingsViewProps = {
 	onDone: () => void
 	targetSection?: string
 }
 
-// Helper to render section header - moved outside component for better performance
-const renderSectionHeader = (tabId: string) => {
-	const tab = SETTINGS_TABS.find((t) => t.id === tabId)
+const buildRenderSectionHeader = (tabs: SettingsTab[]) => (tabId: string) => {
+	const tab = tabs.find((t) => t.id === tabId)
 	if (!tab) {
 		return null
 	}
@@ -123,24 +156,31 @@ const renderSectionHeader = (tabId: string) => {
 }
 
 const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
+	const { t } = useTranslation()
+	const settingsTabs = useMemo(() => buildSettingsTabs(t), [t])
+
 	// Memoize to avoid recreation
 	const TAB_CONTENT_MAP: Record<SettingsTabID, React.FC<any>> = useMemo(
 		() => ({
-			"api-config": ApiConfigurationSection,
 			general: GeneralSettingsSection,
+			"ai-model": ApiConfigurationSection,
+			privacy: PrivacySection,
+			security: SecuritySection,
+			about: AboutSection,
 			features: FeatureSettingsSection,
 			terminal: TerminalSettingsSection,
 			"remote-config": RemoteConfigSection,
-			about: AboutSection,
 			debug: DebugSection,
 		}),
 		[],
 	) // Empty deps - these imports never change
 
 	const { version, extensionVariant, environment, settingsInitialModelTab } = useExtensionState()
-	const { activeOrganization, clineUser } = useClineAuth()
+	const { activeOrganization, nexusUser } = useNexusAuth()
 
-	const [activeTab, setActiveTab] = useState<string>(targetSection || SETTINGS_TABS[0].id)
+	const renderSectionHeader = useMemo(() => buildRenderSectionHeader(settingsTabs), [settingsTabs])
+
+	const [activeTab, setActiveTab] = useState<string>(targetSection || settingsTabs[0].id)
 
 	// Optimized message handler with early returns
 	const handleMessage = useCallback((event: MessageEvent) => {
@@ -160,7 +200,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 		}
 
 		// Check if valid tab ID
-		if (SETTINGS_TABS.some((tab) => tab.id === tabId)) {
+		if (settingsTabs.some((tab) => tab.id === tabId)) {
 			setActiveTab(tabId)
 			return
 		}
@@ -180,7 +220,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 				element.style.backgroundColor = "transparent"
 			}, 1200)
 		})
-	}, [])
+	}, [settingsTabs])
 
 	useEvent("message", handleMessage)
 
@@ -202,26 +242,35 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 
 	// Memoized tab item renderer
 	const renderTabItem = useCallback(
-		(tab: (typeof SETTINGS_TABS)[0]) => {
+		(tab: SettingsTab) => {
 			return (
-				<TabTrigger className="flex justify-baseline" data-testid={`tab-${tab.id}`} key={tab.id} value={tab.id}>
-					<Tooltip key={tab.id}>
-						<TooltipTrigger>
-							<div
-								className={cn(
-									"whitespace-nowrap overflow-hidden h-12 sm:py-3 box-border flex items-center border-l-2 border-transparent text-foreground opacity-70 bg-transparent hover:bg-list-hover p-4 cursor-pointer gap-2",
-									{
-										"opacity-100 border-l-2 border-l-foreground border-t-0 border-r-0 border-b-0 bg-selection":
-											activeTab === tab.id,
-									},
-								)}>
-								<tab.icon className="w-4 h-4" />
-								<span className="hidden sm:block">{tab.name}</span>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent side="right">{tab.tooltipText}</TooltipContent>
-					</Tooltip>
-				</TabTrigger>
+				<>
+					{tab.dividerBefore && (
+						<div
+							key={`divider-${tab.id}`}
+							className="mx-3 my-1"
+							style={{ height: 1, background: "var(--vscode-panel-border)" }}
+						/>
+					)}
+					<TabTrigger className="flex justify-baseline" data-testid={`tab-${tab.id}`} key={tab.id} value={tab.id}>
+						<Tooltip key={tab.id}>
+							<TooltipTrigger>
+								<div
+									className={cn(
+										"whitespace-nowrap overflow-hidden h-12 sm:py-3 box-border flex items-center border-l-2 border-transparent text-foreground opacity-70 bg-transparent hover:bg-list-hover p-4 cursor-pointer gap-2",
+										{
+											"opacity-100 border-l-2 border-l-foreground border-t-0 border-r-0 border-b-0 bg-selection":
+												activeTab === tab.id,
+										},
+									)}>
+									<tab.icon className="w-4 h-4" />
+									<span className="hidden sm:block">{tab.name}</span>
+								</div>
+							</TooltipTrigger>
+							<TooltipContent side="right">{tab.tooltipText}</TooltipContent>
+						</Tooltip>
+					</TabTrigger>
+				</>
 			)
 		},
 		[activeTab],
@@ -241,7 +290,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 		} else if (activeTab === "about") {
 			props.version = version
 			props.extensionVariant = extensionVariant
-		} else if (activeTab === "api-config") {
+		} else if (activeTab === "ai-model") {
 			props.initialModelTab = settingsInitialModelTab
 		}
 
@@ -250,14 +299,14 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 
 	return (
 		<Tab>
-			<ViewHeader environment={environment} onDone={onDone} title="Settings" />
+			<ViewHeader environment={environment} onDone={onDone} title={t("settings.title")} />
 
 			<div className="flex flex-1 overflow-hidden">
 				<TabList
 					className="shrink-0 flex flex-col overflow-y-auto border-r border-sidebar-background"
 					onValueChange={setActiveTab}
 					value={activeTab}>
-					{SETTINGS_TABS.filter((tab) => !tab.hidden?.({ user: clineUser, activeOrganization })).map(renderTabItem)}
+					{settingsTabs.filter((tab) => !tab.hidden?.({ user: nexusUser, activeOrganization })).map(renderTabItem)}
 				</TabList>
 
 				<TabContent className="flex-1 overflow-auto">{ActiveContent}</TabContent>

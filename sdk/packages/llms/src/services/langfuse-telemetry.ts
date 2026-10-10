@@ -37,7 +37,7 @@ export async function withLangfuseTraceAttributes<T>(
 	return await propagateAttributes(attributes, callback);
 }
 
-const LANGFUSE_DEBUG_ENV = "CLINE_DEBUG_LANGFUSE";
+const LANGFUSE_DEBUG_ENV = "NEXUS_DEBUG_LANGFUSE";
 
 let langfuseTelemetryReady: boolean | undefined;
 let langfuseTelemetryInitPromise: Promise<boolean> | undefined;
@@ -86,7 +86,7 @@ export async function ensureLangfuseTelemetry(
 
 async function initializeLangfuseTelemetry(): Promise<boolean> {
 	// Register for cleanup once, when initialization begins.
-	const { registerDisposable } = await import("@cline/shared");
+	const { registerDisposable } = await import("@nexus/shared");
 	registerDisposable(disposeLangfuseTelemetry);
 	const config = readLangfuseTelemetryConfig();
 	if (!config) {
@@ -97,7 +97,7 @@ async function initializeLangfuseTelemetry(): Promise<boolean> {
 		// Give Langfuse and any other OTEL exporter a stable resource identity.
 		// Respect an explicitly configured service name from the host.
 		if (!process.env.OTEL_SERVICE_NAME?.trim()) {
-			process.env.OTEL_SERVICE_NAME = "cline-sdk";
+			process.env.OTEL_SERVICE_NAME = "nexus-sdk";
 		}
 		const [
 			{ LangfuseSpanProcessor },

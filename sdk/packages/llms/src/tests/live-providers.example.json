@@ -23,9 +23,9 @@
 				"requireCacheReadTokens": true
 			}
 		},
-		"cline": {
+		"nexus": {
 			"settings": {
-				"provider": "cline",
+				"provider": "nexus",
 				"model": "anthropic/claude-sonnet-4.6"
 			},
 			"runs": 3,
@@ -34,9 +34,9 @@
 				"requireCacheReadTokens": true
 			}
 		},
-		"cline-opus": {
+		"nexus-opus": {
 			"settings": {
-				"provider": "cline",
+				"provider": "nexus",
 				"model": "anthropic/claude-opus-4.7"
 			},
 			"runs": 3,
@@ -45,9 +45,9 @@
 				"requireCacheReadTokens": true
 			}
 		},
-		"cline-gpt-5.3-codex": {
+		"nexus-gpt-5.3-codex": {
 			"settings": {
-				"provider": "cline",
+				"provider": "nexus",
 				"model": "openai/gpt-5.3-codex"
 			},
 			"expectations": {
@@ -189,9 +189,9 @@
 				"requireCacheReadTokens": true
 			}
 		},
-		"cline-qwen": {
+		"nexus-qwen": {
 			"settings": {
-				"provider": "cline",
+				"provider": "nexus",
 				"model": "qwen/qwen3.6-plus"
 			},
 			"runs": 3,

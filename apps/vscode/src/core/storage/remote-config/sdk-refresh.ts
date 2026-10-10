@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises"
 import * as os from "node:os"
 import * as path from "node:path"
-import { prepareRemoteConfigCoreIntegration } from "@cline/core"
-import { clearMaterializedRemoteConfigRuntime } from "@cline/shared"
+import { prepareRemoteConfigCoreIntegration } from "@nexus/core"
+import { clearMaterializedRemoteConfigRuntime } from "@nexus/shared"
 import { Controller } from "@/sdk/SdkController"
 import { telemetryService } from "@/services/telemetry"
 import { Logger } from "@/shared/services/Logger"
@@ -71,8 +71,8 @@ export async function clearSdkRemoteConfig(
 }
 
 async function ensureGlobalRemoteConfigWorkspacePath(): Promise<string> {
-	const clineDir = process.env.CLINE_DIR || path.join(os.homedir(), ".cline")
-	const workspacePath = path.join(clineDir, "data", "remote-config-workspace")
+	const nexusDir = process.env.NEXUS_DIR || path.join(os.homedir(), ".nexus")
+	const workspacePath = path.join(nexusDir, "data", "remote-config-workspace")
 	await fs.mkdir(workspacePath, { recursive: true })
 	return workspacePath
 }
@@ -160,7 +160,7 @@ export async function refreshSdkRemoteConfig(
 			})
 		} catch (error) {
 			if (candidateIntegration) {
-				await candidateIntegration.dispose().catch((disposeError) => {
+				await candidateIntegration.dispose().catch((disposeError: unknown) => {
 					Logger.error("[RemoteConfig] Failed to dispose unpublished SDK remote config integration:", disposeError)
 				})
 			}

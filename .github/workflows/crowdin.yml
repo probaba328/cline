@@ -1,0 +1,63 @@
+name: Crowdin Sync
+
+on:
+  # Upload new source strings whenever en.json changes on main
+  push:
+    branches: [main]
+    paths:
+      - apps/vscode/webview-ui/src/i18n/locales/en.json
+
+  # Download completed translations every Monday at 09:00 UTC
+  schedule:
+    - cron: "0 9 * * 1"
+
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  crowdin:
+    name: Sync with Crowdin
+    runs-on: ubuntu-latest
+    # Skip on Crowdin's own translation PRs to prevent loops
+    if: ${{ !contains(github.event.head_commit.message, 'chore(i18n)') }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync with Crowdin
+        uses: crowdin/github-action@v2
+        with:
+          # Push the source file to Crowdin on every trigger
+          upload_sources: true
+          # Never overwrite source — translations come from Crowdin, not the repo
+          upload_translations: false
+          # Pull finished translations back and open a PR
+          download_translations: true
+          download_language: all
+
+          # Pull request settings
+          create_pull_request: true
+          pull_request_title: "chore(i18n): sync translations from Crowdin"
+          pull_request_body: |
+            Automated translation sync from [Crowdin](https://crowdin.com).
+
+            This PR was opened by the weekly Crowdin sync workflow.
+            Review the changes and merge when the translations look correct.
+          pull_request_base_branch_name: main
+          localization_branch_name: chore/crowdin-translations
+          pull_request_labels: "i18n, automated"
+
+          # Commit message for the translation files inside the PR branch
+          commit_message: "chore(i18n): update translations from Crowdin [skip ci]"
+
+          # Only open a PR when there are actual changes
+          skip_untranslated_strings: false
+          export_only_approved: true
+
+          push_sources_branch: main
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

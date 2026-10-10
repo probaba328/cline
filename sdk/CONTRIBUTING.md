@@ -1,4 +1,4 @@
-# Contributing to the Cline SDK
+# Contributing to the Nexus SDK
 
 This document covers onboarding, development workflow, and publishing. For package boundaries and change routing during development, see [AGENTS.md](./AGENTS.md). For architecture and runtime flows, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
@@ -10,10 +10,10 @@ This repo is a WIP framework for building and orchestrating AI agents. Full refa
 
 | Package | Owns |
 |---------|------|
-| `@cline/shared` | Contracts, schemas, path helpers, hook engine, extension registry |
-| `@cline/llms` | Provider settings, model catalogs, manifests, handler creation |
-| `@cline/agents` | Stateless agent loop, tool orchestration, hook/extension runtime |
-| `@cline/core` | Stateful orchestration, session lifecycle, storage, config, telemetry, hub runtime services, hub discovery, detached daemon, and hub client adapters (`@cline/core/hub`, `@cline/core/hub/daemon-entry`) |
+| `@nexus/shared` | Contracts, schemas, path helpers, hook engine, extension registry |
+| `@nexus/llms` | Provider settings, model catalogs, manifests, handler creation |
+| `@nexus/agents` | Stateless agent loop, tool orchestration, hook/extension runtime |
+| `@nexus/core` | Stateful orchestration, session lifecycle, storage, config, telemetry, hub runtime services, hub discovery, detached daemon, and hub client adapters (`@nexus/core/hub`, `@nexus/core/hub/daemon-entry`) |
 
 ### Apps
 
@@ -21,7 +21,7 @@ This repo is a WIP framework for building and orchestrating AI agents. Full refa
 - `apps/examples/desktop-app`: Tauri + Next.js desktop app example
 - `apps/examples/vscode`: VS Code extension example
 - `apps/examples/menubar`: hub notification menubar example
-- `examples`: plugin, hook, and cron automation examples (customizations upon Cline SDK)
+- `examples`: plugin, hook, and cron automation examples (customizations upon Nexus SDK)
 
 ## Development Workflow
 
@@ -41,25 +41,25 @@ This repo is a WIP framework for building and orchestrating AI agents. Full refa
 Package-scoped commands:
 
 ```sh
-bun -F @cline/core build|test|typecheck
-bun -F @cline/agents build|test|typecheck
+bun -F @nexus/core build|test|typecheck
+bun -F @nexus/agents build|test|typecheck
 ```
 
 ### Rebuilding
 
 Changes to published SDK packages require `bun run build:sdk`. Direct CLI runs pick up rebuilt packages immediately. Use `dev:*` scripts for automatic rebuilding during development.
 
-The CLI build (`bun -F @cline/cli build`) bundles packages from their compiled `dist/`, not their TypeScript source. If you edit a package and then build the CLI without rebuilding the package first, the CLI binary will silently include the old package code. Always run `bun run build:sdk` (or the relevant `bun -F @cline/<pkg> build`) before building the CLI when testing changes end-to-end.
+The CLI build (`bun -F @nexus/cli build`) bundles packages from their compiled `dist/`, not their TypeScript source. If you edit a package and then build the CLI without rebuilding the package first, the CLI binary will silently include the old package code. Always run `bun run build:sdk` (or the relevant `bun -F @nexus/<pkg> build`) before building the CLI when testing changes end-to-end.
 
 Hub-backed hosts use shared workspace discovery and owned daemon startup logic. If you touch hub bootstrap, preserve the startup lock and owner-scoped discovery behavior so multiple builds can coexist safely.
 
 ### Debug Builds
 
-- Set `CLINE_BUILD_ENV=development` for debug builds. Spawned Node/Bun subprocesses get an inspector endpoint plus `--enable-source-maps`.
+- Set `NEXUS_BUILD_ENV=development` for debug builds. Spawned Node/Bun subprocesses get an inspector endpoint plus `--enable-source-maps`.
 - By default, child-process inspector ports are ephemeral (`--inspect=127.0.0.1:0`) to avoid collisions across parallel dev runs.
-- Set `CLINE_DEBUG_HOST` and `CLINE_DEBUG_PORT_BASE` to opt into deterministic role-based ports. With `CLINE_DEBUG_PORT_BASE=9230`, the roles map to hub `9230`, hook worker `9231`, plugin sandbox `9232`, connector child `9233`, fallback sandbox `9234`.
-- Fallback chain: `CLINE_BUILD_ENV` → `NODE_ENV` → Bun `--conditions=development`.
-- To debug the CLI process itself: `cd apps/cli && CLINE_BUILD_ENV=development bun --conditions=development --inspect-brk=6499 ./src/index.ts "hey"`.
+- Set `NEXUS_DEBUG_HOST` and `NEXUS_DEBUG_PORT_BASE` to opt into deterministic role-based ports. With `NEXUS_DEBUG_PORT_BASE=9230`, the roles map to hub `9230`, hook worker `9231`, plugin sandbox `9232`, connector child `9233`, fallback sandbox `9234`.
+- Fallback chain: `NEXUS_BUILD_ENV` → `NODE_ENV` → Bun `--conditions=development`.
+- To debug the CLI process itself: `cd apps/cli && NEXUS_BUILD_ENV=development bun --conditions=development --inspect-brk=6499 ./src/index.ts "hey"`.
 - The workspace includes a VS Code launch config (`Launch CLI Debugger`) that uses `"type": "bun"` (requires `oven.bun-vscode`).
 
 ### Testing
@@ -180,7 +180,7 @@ tar -xOf "$tmpdir"/*.tgz package/package.json | jq '.version, .dependencies'
 Check installed versions in a consuming project:
 
 ```sh
-bun pm ls @cline/core @cline/agents @cline/llms
+bun pm ls @nexus/core @nexus/agents @nexus/llms
 ```
 
 ### CI

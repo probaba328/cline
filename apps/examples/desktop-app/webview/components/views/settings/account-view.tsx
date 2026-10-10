@@ -1,14 +1,14 @@
 "use client";
 
 import type {
-	ClineAccountBalance,
-	ClineAccountOrganization,
-	ClineAccountOrganizationBalance,
-	ClineAccountOrganizationUsageTransaction,
-	ClineAccountPaymentTransaction,
-	ClineAccountUsageTransaction,
-	ClineAccountUser,
-} from "@cline/core";
+	NexusAccountBalance,
+	NexusAccountOrganization,
+	NexusAccountOrganizationBalance,
+	NexusAccountOrganizationUsageTransaction,
+	NexusAccountPaymentTransaction,
+	NexusAccountUsageTransaction,
+	NexusAccountUser,
+} from "@nexus/core";
 import {
 	AlertCircle,
 	Building,
@@ -26,23 +26,23 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAccount } from "@/contexts/account-context";
-import { isClineAccountNotAuthenticatedResult } from "@/lib/cline-account-state";
+import { isNexusAccountNotAuthenticatedResult } from "@/lib/nexus-account-state";
 import { desktopClient, openExternalUrl } from "@/lib/desktop-client";
 import { invalidateProviderCatalogCache } from "@/lib/provider-model-catalog";
 import { cn } from "@/lib/utils";
 
-const DASHBOARD_URL = "https://app.cline.bot/dashboard";
-const USAGE_DASHBOARD_URL = "https://app.cline.bot/dashboard/usage";
+const DASHBOARD_URL = "https://app.nexus.bot/dashboard";
+const USAGE_DASHBOARD_URL = "https://app.nexus.bot/dashboard/usage";
 const USER_CREDITS_URL =
-	"https://app.cline.bot/dashboard/account?tab=credits&redirect=true";
+	"https://app.nexus.bot/dashboard/account?tab=credits&redirect=true";
 const ORGANIZATION_CREDITS_URL =
-	"https://app.cline.bot/dashboard/organization?tab=credits&redirect=true";
-const CREATE_ORGANIZATION_URL = "https://app.cline.bot/onboarding?step=1";
-const CREATE_ACCOUNT_URL = "https://app.cline.bot";
+	"https://app.nexus.bot/dashboard/organization?tab=credits&redirect=true";
+const CREATE_ORGANIZATION_URL = "https://app.nexus.bot/onboarding?step=1";
+const CREATE_ACCOUNT_URL = "https://app.nexus.bot";
 
 function normalizeAccountViewError(error: unknown): Error {
 	const message = error instanceof Error ? error.message : String(error);
-	if (message.includes("unsupported desktop command: cline_account")) {
+	if (message.includes("unsupported desktop command: nexus_account")) {
 		return new Error(
 			"The desktop sidecar is running an older build that does not support account commands. Restart the sidecar or reload the app, then try again.",
 		);
@@ -56,7 +56,7 @@ function isAccountAuthError(message: string): boolean {
 	// failures and org-permission errors into a sign-in card with no retry.
 	const normalized = message.toLowerCase();
 	return (
-		normalized.includes("no cline account auth token found") ||
+		normalized.includes("no nexus account auth token found") ||
 		normalized.includes("requires re-authentication") ||
 		normalized.includes("failed with status 401")
 	);
@@ -66,27 +66,27 @@ function isAccountAuthError(message: string): boolean {
 // Data fetching helpers via sidecar command
 // ---------------------------------------------------------------------------
 
-async function fetchAccountUser(): Promise<ClineAccountUser> {
-	return await desktopClient.invoke<ClineAccountUser>("cline_account", {
-		action: "clineAccount",
+async function fetchAccountUser(): Promise<NexusAccountUser> {
+	return await desktopClient.invoke<NexusAccountUser>("nexus_account", {
+		action: "nexusAccount",
 		operation: "fetchMe",
 	});
 }
 
-async function fetchAccountBalance(): Promise<ClineAccountBalance> {
-	return await desktopClient.invoke<ClineAccountBalance>("cline_account", {
-		action: "clineAccount",
+async function fetchAccountBalance(): Promise<NexusAccountBalance> {
+	return await desktopClient.invoke<NexusAccountBalance>("nexus_account", {
+		action: "nexusAccount",
 		operation: "fetchBalance",
 	});
 }
 
 async function fetchAccountOrganizations(): Promise<
-	ClineAccountOrganization[]
+	NexusAccountOrganization[]
 > {
-	return await desktopClient.invoke<ClineAccountOrganization[]>(
-		"cline_account",
+	return await desktopClient.invoke<NexusAccountOrganization[]>(
+		"nexus_account",
 		{
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchUserOrganizations",
 		},
 	);
@@ -94,11 +94,11 @@ async function fetchAccountOrganizations(): Promise<
 
 async function fetchOrganizationBalance(
 	organizationId: string,
-): Promise<ClineAccountOrganizationBalance> {
-	return await desktopClient.invoke<ClineAccountOrganizationBalance>(
-		"cline_account",
+): Promise<NexusAccountOrganizationBalance> {
+	return await desktopClient.invoke<NexusAccountOrganizationBalance>(
+		"nexus_account",
 		{
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchOrganizationBalance",
 			organizationId,
 		},
@@ -106,12 +106,12 @@ async function fetchOrganizationBalance(
 }
 
 async function fetchUsageTransactions(): Promise<
-	ClineAccountUsageTransaction[]
+	NexusAccountUsageTransaction[]
 > {
-	return await desktopClient.invoke<ClineAccountUsageTransaction[]>(
-		"cline_account",
+	return await desktopClient.invoke<NexusAccountUsageTransaction[]>(
+		"nexus_account",
 		{
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchUsageTransactions",
 		},
 	);
@@ -120,11 +120,11 @@ async function fetchUsageTransactions(): Promise<
 async function fetchOrganizationUsageTransactions(
 	organizationId: string,
 	memberId?: string,
-): Promise<ClineAccountOrganizationUsageTransaction[]> {
-	return await desktopClient.invoke<ClineAccountOrganizationUsageTransaction[]>(
-		"cline_account",
+): Promise<NexusAccountOrganizationUsageTransaction[]> {
+	return await desktopClient.invoke<NexusAccountOrganizationUsageTransaction[]>(
+		"nexus_account",
 		{
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchOrganizationUsageTransactions",
 			organizationId,
 			...(memberId?.trim() ? { memberId: memberId.trim() } : {}),
@@ -133,12 +133,12 @@ async function fetchOrganizationUsageTransactions(
 }
 
 async function fetchPaymentTransactions(): Promise<
-	ClineAccountPaymentTransaction[]
+	NexusAccountPaymentTransaction[]
 > {
-	return await desktopClient.invoke<ClineAccountPaymentTransaction[]>(
-		"cline_account",
+	return await desktopClient.invoke<NexusAccountPaymentTransaction[]>(
+		"nexus_account",
 		{
-			action: "clineAccount",
+			action: "nexusAccount",
 			operation: "fetchPaymentTransactions",
 		},
 	);
@@ -147,8 +147,8 @@ async function fetchPaymentTransactions(): Promise<
 async function switchActiveAccount(
 	organizationId: string | null,
 ): Promise<void> {
-	await desktopClient.invoke("cline_account", {
-		action: "clineAccount",
+	await desktopClient.invoke("nexus_account", {
+		action: "nexusAccount",
 		operation: "switchAccount",
 		organizationId,
 	});
@@ -165,12 +165,12 @@ export function AccountView() {
 	const { refreshAccount } = useAccount();
 
 	// Overview data
-	const [user, setUser] = useState<ClineAccountUser | null>(null);
-	const [balance, setBalance] = useState<ClineAccountBalance | null>(null);
+	const [user, setUser] = useState<NexusAccountUser | null>(null);
+	const [balance, setBalance] = useState<NexusAccountBalance | null>(null);
 	const [organizationBalance, setOrganizationBalance] =
-		useState<ClineAccountOrganizationBalance | null>(null);
+		useState<NexusAccountOrganizationBalance | null>(null);
 	const [organizations, setOrganizations] = useState<
-		ClineAccountOrganization[]
+		NexusAccountOrganization[]
 	>([]);
 	const [overviewLoading, setOverviewLoading] = useState(true);
 	const [overviewError, setOverviewError] = useState<string | null>(null);
@@ -187,7 +187,7 @@ export function AccountView() {
 
 	// Usage data
 	const [usageTransactions, setUsageTransactions] = useState<
-		ClineAccountUsageTransaction[]
+		NexusAccountUsageTransaction[]
 	>([]);
 	const [usageLoading, setUsageLoading] = useState(false);
 	const [usageError, setUsageError] = useState<string | null>(null);
@@ -196,7 +196,7 @@ export function AccountView() {
 
 	// Billing data
 	const [paymentTransactions, setPaymentTransactions] = useState<
-		ClineAccountPaymentTransaction[]
+		NexusAccountPaymentTransaction[]
 	>([]);
 	const [billingLoading, setBillingLoading] = useState(false);
 	const [billingError, setBillingError] = useState<string | null>(null);
@@ -225,7 +225,7 @@ export function AccountView() {
 			// remaining account commands would just fail the same way, so they
 			// are never fired.
 			const userData = await fetchAccountUser();
-			if (isClineAccountNotAuthenticatedResult(userData)) {
+			if (isNexusAccountNotAuthenticatedResult(userData)) {
 				resetAccountData();
 				setSignedOut(true);
 				return;
@@ -235,8 +235,8 @@ export function AccountView() {
 				fetchAccountOrganizations(),
 			]);
 			if (
-				isClineAccountNotAuthenticatedResult(balanceData) ||
-				isClineAccountNotAuthenticatedResult(orgsData)
+				isNexusAccountNotAuthenticatedResult(balanceData) ||
+				isNexusAccountNotAuthenticatedResult(orgsData)
 			) {
 				resetAccountData();
 				setSignedOut(true);
@@ -247,7 +247,7 @@ export function AccountView() {
 			const organizationBalanceData = nextActiveOrganization
 				? await fetchOrganizationBalance(nextActiveOrganization.organizationId)
 				: null;
-			if (isClineAccountNotAuthenticatedResult(organizationBalanceData)) {
+			if (isNexusAccountNotAuthenticatedResult(organizationBalanceData)) {
 				resetAccountData();
 				setSignedOut(true);
 				return;
@@ -279,7 +279,7 @@ export function AccountView() {
 		setOverviewError(null);
 		try {
 			await desktopClient.invoke("run_provider_oauth_login", {
-				provider: "cline",
+				provider: "nexus",
 			});
 			await loadOverview();
 			setActiveTab("overview");
@@ -300,7 +300,7 @@ export function AccountView() {
 		setAccountActionPending("sign-out");
 		try {
 			await desktopClient.invoke("save_provider_settings", {
-				provider: "cline",
+				provider: "nexus",
 				api_key: "",
 				settings: {
 					auth: {
@@ -356,7 +356,7 @@ export function AccountView() {
 			if (usageGenerationRef.current !== generation) return;
 			// The token can expire mid-session: render the sign-in state
 			// instead of an error toast.
-			if (isClineAccountNotAuthenticatedResult(data)) {
+			if (isNexusAccountNotAuthenticatedResult(data)) {
 				resetAccountData();
 				setSignedOut(true);
 				setActiveTab("overview");
@@ -395,7 +395,7 @@ export function AccountView() {
 		setBillingError(null);
 		try {
 			const data = await fetchPaymentTransactions();
-			if (isClineAccountNotAuthenticatedResult(data)) {
+			if (isNexusAccountNotAuthenticatedResult(data)) {
 				resetAccountData();
 				setSignedOut(true);
 				setActiveTab("overview");
@@ -472,10 +472,10 @@ export function AccountView() {
 				</div>
 				<div>
 					<h3 className="text-lg font-semibold text-foreground">
-						Sign in to Cline
+						Sign in to Nexus
 					</h3>
 					<p className="mt-2 text-sm text-muted-foreground">
-						Connect your Cline account to review credits, usage, billing, and
+						Connect your Nexus account to review credits, usage, billing, and
 						organization details.
 					</p>
 				</div>

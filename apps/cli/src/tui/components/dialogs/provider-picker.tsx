@@ -1,5 +1,5 @@
 import {
-	completeClineDeviceAuth,
+	completeNexusDeviceAuth,
 	getProviderConfigFields,
 	isOAuthProvider,
 	loginLocalProvider,
@@ -8,9 +8,9 @@ import {
 	ProviderSettingsManager,
 	saveLocalProviderOAuthCredentials,
 	saveLocalProviderSettings,
-	startClineDeviceAuth,
-} from "@cline/core";
-import { getClineEnvironmentConfig } from "@cline/shared";
+	startNexusDeviceAuth,
+} from "@nexus/core";
+import { getNexusEnvironmentConfig } from "@nexus/shared";
 import type { ChoiceContext } from "@opentui-ui/dialog";
 import { useDialogKeyboard } from "@opentui-ui/dialog/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -38,7 +38,7 @@ import {
 	type SearchableItem,
 } from "../searchable-list";
 import {
-	buildClinePassSubscriptionPageUrl,
+	buildNexusPassSubscriptionPageUrl,
 	resolveOAuthWaitKeyAction,
 	saveManualProviderApiKey,
 } from "./provider-picker-helpers";
@@ -336,7 +336,7 @@ export function UseExistingOrReconfigureContent(
 	);
 }
 
-function ClinePassBrowserPageContent(
+function NexusPassBrowserPageContent(
 	props: ChoiceContext<boolean> & {
 		providerName: string;
 		pageLabel: string;
@@ -396,19 +396,19 @@ function ClinePassBrowserPageContent(
 	);
 }
 
-export function ClinePassSubscriptionContent(
+export function NexusPassSubscriptionContent(
 	props: ChoiceContext<boolean> & {
 		providerName: string;
 	},
 ) {
 	const subscriptionUrl = useMemo(
 		() =>
-			buildClinePassSubscriptionPageUrl(getClineEnvironmentConfig().appBaseUrl),
+			buildNexusPassSubscriptionPageUrl(getNexusEnvironmentConfig().appBaseUrl),
 		[],
 	);
 
 	return (
-		<ClinePassBrowserPageContent
+		<NexusPassBrowserPageContent
 			{...props}
 			pageLabel="Subscription page"
 			url={subscriptionUrl}
@@ -756,7 +756,7 @@ export function OAuthLoginContent(
 	} = props;
 	const palette = useDialogPalette();
 	const [mode, setMode] = useState<"browser" | "device">(
-		providerId === "cline" ? "device" : "browser",
+		providerId === "nexus" ? "device" : "browser",
 	);
 	const [status, setStatus] = useState("Opening browser...");
 	const [authUrl, setAuthUrl] = useState("");
@@ -796,9 +796,9 @@ export function OAuthLoginContent(
 		const manager = new ProviderSettingsManager();
 		const existing = manager.getProviderSettings(providerId);
 		const apiBaseUrl =
-			existing?.baseUrl?.trim() || getClineEnvironmentConfig().apiBaseUrl;
+			existing?.baseUrl?.trim() || getNexusEnvironmentConfig().apiBaseUrl;
 
-		startClineDeviceAuth()
+		startNexusDeviceAuth()
 			.then((result) => {
 				if (!isActiveAuthAttempt(attempt)) return;
 				setDeviceUserCode(result.userCode);
@@ -806,7 +806,7 @@ export function OAuthLoginContent(
 					result.verificationUriComplete || result.verificationUri,
 				);
 
-				completeClineDeviceAuth({
+				completeNexusDeviceAuth({
 					deviceCode: result.deviceCode,
 					expiresInSeconds: result.expiresInSeconds,
 					pollIntervalSeconds: result.pollIntervalSeconds,
@@ -842,7 +842,7 @@ export function OAuthLoginContent(
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
-		if (providerId === "cline") {
+		if (providerId === "nexus") {
 			startDeviceAuthCodeFlow();
 			return cancelAuthAttempt;
 		}
@@ -1002,7 +1002,7 @@ export function OAuthApiKeyInputContent(
 			</text>
 
 			<text fg="gray">
-				Use an API key from your Cline dashboard instead of OAuth login. This
+				Use an API key from your Nexus dashboard instead of OAuth login. This
 				replaces any saved login tokens.
 			</text>
 

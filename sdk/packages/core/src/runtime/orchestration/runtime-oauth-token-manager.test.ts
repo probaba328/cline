@@ -6,11 +6,11 @@ import {
 
 const {
 	getValidOpenAICodexCredentials,
-	getValidClineCredentials,
+	getValidNexusCredentials,
 	getValidOcaCredentials,
 } = vi.hoisted(() => ({
 	getValidOpenAICodexCredentials: vi.fn(),
-	getValidClineCredentials: vi.fn(),
+	getValidNexusCredentials: vi.fn(),
 	getValidOcaCredentials: vi.fn(),
 }));
 
@@ -18,8 +18,8 @@ vi.mock("../../auth/codex", () => ({
 	getValidOpenAICodexCredentials,
 }));
 
-vi.mock("../../auth/cline", () => ({
-	getValidClineCredentials,
+vi.mock("../../auth/nexus", () => ({
+	getValidNexusCredentials,
 }));
 
 vi.mock("../../auth/oca", () => ({
@@ -79,10 +79,10 @@ describe("RuntimeOAuthTokenManager", () => {
 		);
 	});
 
-	it("resolves ClinePass OAuth using Cline storage and WorkOS formatting", async () => {
+	it("resolves NexusPass OAuth using Nexus storage and WorkOS formatting", async () => {
 		const getProviderSettings = vi.fn().mockReturnValue({
-			provider: "cline",
-			baseUrl: "https://api.cline.test",
+			provider: "nexus",
+			baseUrl: "https://api.nexus.test",
 			auth: {
 				accessToken: "workos:access-old",
 				refreshToken: "refresh-old",
@@ -92,7 +92,7 @@ describe("RuntimeOAuthTokenManager", () => {
 		});
 		const saveProviderSettings = vi.fn();
 
-		getValidClineCredentials.mockResolvedValueOnce({
+		getValidNexusCredentials.mockResolvedValueOnce({
 			access: "access-new",
 			refresh: "refresh-new",
 			expires: 4_000_000_000_000,
@@ -107,16 +107,16 @@ describe("RuntimeOAuthTokenManager", () => {
 		});
 
 		const result = await manager.resolveProviderApiKey({
-			providerId: "cline-pass",
+			providerId: "nexus-pass",
 		});
 
-		expect(getProviderSettings).toHaveBeenCalledWith("cline");
-		expect(getValidClineCredentials).toHaveBeenCalledWith(
+		expect(getProviderSettings).toHaveBeenCalledWith("nexus");
+		expect(getValidNexusCredentials).toHaveBeenCalledWith(
 			expect.objectContaining({
 				access: "access-old",
 				refresh: "refresh-old",
 			}),
-			expect.objectContaining({ apiBaseUrl: "https://api.cline.test" }),
+			expect.objectContaining({ apiBaseUrl: "https://api.nexus.test" }),
 			{ forceRefresh: false },
 		);
 		expect(result).toMatchObject({
@@ -126,7 +126,7 @@ describe("RuntimeOAuthTokenManager", () => {
 		});
 		expect(saveProviderSettings).toHaveBeenCalledWith(
 			expect.objectContaining({
-				provider: "cline",
+				provider: "nexus",
 				auth: expect.objectContaining({
 					accessToken: "workos:access-new",
 					refreshToken: "refresh-new",

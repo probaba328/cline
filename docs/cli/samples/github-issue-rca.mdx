@@ -1,12 +1,12 @@
 ---
 title: "GitHub Issue RCA Sample"
-description: "Automated GitHub issue analysis using Cline CLI to identify root causes."
+description: "Automated GitHub issue analysis using Nexus CLI to identify root causes."
 ---
 
-Automated GitHub issue analysis using Cline CLI. This script uses Cline's autonomous AI capabilities to fetch, analyze, and identify root causes of GitHub issues, outputting clean, parseable results that can be easily integrated into your development workflows.
+Automated GitHub issue analysis using Nexus CLI. This script uses Nexus's autonomous AI capabilities to fetch, analyze, and identify root causes of GitHub issues, outputting clean, parseable results that can be easily integrated into your development workflows.
 
 <Note>
-**New to Cline CLI?** This sample assumes you have already completed the [Installation Guide](https://docs.cline.bot/getting-started/installing-cline) and authenticated with `cline auth`. If you haven't set up Cline CLI yet, please start there first.
+**New to Nexus CLI?** This sample assumes you have already completed the [Installation Guide](https://docs.nexus.bot/getting-started/installing-nexus) and authenticated with `nexus auth`. If you haven't set up Nexus CLI yet, please start there first.
 </Note>
 
 <Frame>
@@ -17,9 +17,9 @@ Automated GitHub issue analysis using Cline CLI. This script uses Cline's autono
 
 This sample assumes you have already:
 
-- **Cline CLI** installed and authenticated ([Installation Guide](https://docs.cline.bot/getting-started/installing-cline))
+- **Nexus CLI** installed and authenticated ([Installation Guide](https://docs.nexus.bot/getting-started/installing-nexus))
 - **At least one AI model provider** configured (e.g., OpenRouter, Anthropic, OpenAI)
-- **Basic familiarity** with Cline CLI commands
+- **Basic familiarity** with Nexus CLI commands
 
 Additionally, you'll need:
 
@@ -68,7 +68,7 @@ gh auth login
 
 **Option 1: Download directly with curl**
 ```bash
-curl -O https://raw.githubusercontent.com/cline/cline/main/src/samples/cli/github-issue-rca/analyze-issue.sh
+curl -O https://raw.githubusercontent.com/nexus/nexus/main/src/samples/cli/github-issue-rca/analyze-issue.sh
 ```
 
 **Option 2: Copy the full script**
@@ -77,7 +77,7 @@ curl -O https://raw.githubusercontent.com/cline/cline/main/src/samples/cli/githu
 
 ```bash
 #!/bin/bash
-# Analyze a GitHub issue using Cline CLI
+# Analyze a GitHub issue using Nexus CLI
 
 if [ -z "$1" ]; then
     echo "Usage: $0 <github-issue-url> [prompt]"
@@ -89,8 +89,8 @@ fi
 # Gather the args
 ISSUE_URL="$1"
 PROMPT="${2:-What is the root cause of this issue?}"
-# Ask Cline for its analysis, showing only the summary
-cline --auto-approve true --json "$PROMPT: $ISSUE_URL" | \
+# Ask Nexus for its analysis, showing only the summary
+nexus --auto-approve true --json "$PROMPT: $ISSUE_URL" | \
     jq -r 'select(.type == "agent_event" and .event.type == "done") | .event.text' | \
     sed 's/\\n/\n/g'
 ```
@@ -128,7 +128,7 @@ Ask specific questions about the issue:
 ```
 
 <Note>
-The script will automatically handle everything: fetching the issue, analyzing it with Cline, and displaying the results. The analysis typically takes 30-60 seconds depending on the issue complexity.
+The script will automatically handle everything: fetching the issue, analyzing it with Nexus, and displaying the results. The analysis typically takes 30-60 seconds depending on the issue complexity.
 </Note>
 
 ## How It Works
@@ -173,16 +173,16 @@ PROMPT="${2:-What is the root cause of this issue?}"
 This is where the magic happens:
 
 ```bash
-# Ask Cline for its analysis, showing only the summary
-cline --auto-approve true --json "$PROMPT: $ISSUE_URL" | \
+# Ask Nexus for its analysis, showing only the summary
+nexus --auto-approve true --json "$PROMPT: $ISSUE_URL" | \
     jq -r 'select(.type == "agent_event" and .event.type == "done") | .event.text' | \
     sed 's/\\n/\n/g'
 ```
 
 <Accordion title="Pipeline Breakdown: Understanding Each Component">
 
-**1. `cline --auto-approve true --json "$PROMPT: $ISSUE_URL"`**
-   - `cline` is the Cline CLI binary
+**1. `nexus --auto-approve true --json "$PROMPT: $ISSUE_URL"`**
+   - `nexus` is the Nexus CLI binary
    - Act mode is the default for prompt runs
    - `--auto-approve true` allows tool use without interactive prompts
    - `--json` emits newline-delimited JSON for parsing
@@ -323,10 +323,10 @@ Get second opinions on proposed changes:
 
 ## Conclusion
 
-This sample demonstrates how to build an autonomous GitHub issue analysis tool using Cline CLI:
+This sample demonstrates how to build an autonomous GitHub issue analysis tool using Nexus CLI:
 
-1. **Building autonomous CLI tools** using Cline's capabilities
-2. **Parsing structured JSON output** from Cline CLI
+1. **Building autonomous CLI tools** using Nexus's capabilities
+2. **Parsing structured JSON output** from Nexus CLI
 3. **Creating flexible automation scripts** with custom prompting
 4. **Integrating with GitHub** for issue analysis
 5. **Handling command-line arguments** effectively
@@ -335,6 +335,6 @@ This pattern can be adapted for many other automation scenarios, from pull reque
 
 ## Related Resources
 
-- [CLI Installation Guide](https://docs.cline.bot/getting-started/installing-cline)
-- [CLI Reference Documentation](https://docs.cline.bot/cli/cli-reference)
-- [Headless Mode](https://docs.cline.bot/usage/cli-overview#headless-mode)
+- [CLI Installation Guide](https://docs.nexus.bot/getting-started/installing-nexus)
+- [CLI Reference Documentation](https://docs.nexus.bot/cli/cli-reference)
+- [Headless Mode](https://docs.nexus.bot/usage/cli-overview#headless-mode)

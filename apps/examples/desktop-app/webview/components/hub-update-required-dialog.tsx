@@ -31,8 +31,8 @@ function mismatchKeyOf(payload: HubBuildMismatchPayload): string {
 type UpdatePhase = "idle" | "updating" | "restarting";
 
 /**
- * Blocking prompt shown when the sidecar reports that another Cline
- * installation (for example an updated CLI) replaced the shared Cline Hub
+ * Blocking prompt shown when the sidecar reports that another Nexus
+ * installation (for example an updated CLI) replaced the shared Nexus Hub
  * with a different build. Accepting runs an updater check/download right
  * away and, once an update is staged, restarts into it so the app and the
  * Hub run the same version again. If nothing is staged (no release published
@@ -98,13 +98,13 @@ export function HubUpdateRequiredDialog() {
 		>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Cline Hub was updated</AlertDialogTitle>
+					<AlertDialogTitle>Nexus Hub was updated</AlertDialogTitle>
 					<AlertDialogDescription>
-						Another Cline installation updated the shared Cline Hub
+						Another Nexus installation updated the shared Nexus Hub
 						{mismatch?.hubCoreVersion
 							? ` (core ${mismatch.hubCoreVersion})`
 							: ""}
-						, and it no longer matches this app. Update and restart Cline to
+						, and it no longer matches this app. Update and restart Nexus to
 						stay in sync with the running Hub.
 					</AlertDialogDescription>
 					{updateHint ? (

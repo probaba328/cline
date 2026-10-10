@@ -1,11 +1,11 @@
-import { projectSessionMessagesForDisplay } from "@cline/core";
+import { projectSessionMessagesForDisplay } from "@nexus/core";
 import {
 	type ContentBlock,
 	formatDisplayUserInput,
 	type MessageWithMetadata,
 	type ToolResultContent,
 	type ToolUseContent,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { formatStructuredCommand } from "../utils/helpers";
 
 export interface ConversationHistory {

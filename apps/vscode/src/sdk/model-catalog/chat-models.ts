@@ -1,4 +1,4 @@
-import { type ChatModelModalities, isChatCompatibleModel, type ModelOperation } from "@cline/shared"
+import { type ChatModelModalities, isChatCompatibleModel, type ModelOperation } from "@nexus/shared"
 
 type ChatCatalogModel = {
 	readonly operation?: ModelOperation

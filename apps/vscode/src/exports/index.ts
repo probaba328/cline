@@ -1,10 +1,10 @@
 import { Controller } from "@core/controller"
 import { sendChatButtonClickedEvent } from "@core/controller/ui/subscribeToChatButtonClicked"
 import { Logger } from "@/shared/services/Logger"
-import { ClineAPI } from "./cline"
+import { NexusAPI } from "./nexus"
 
-export function createClineAPI(sidebarController: Controller): ClineAPI {
-	const api: ClineAPI = {
+export function createNexusAPI(sidebarController: Controller): NexusAPI {
+	const api: NexusAPI = {
 		startNewTask: async (task?: string, images?: string[]) => {
 			await sidebarController.clearTask()
 			await sidebarController.postStateToWebview()

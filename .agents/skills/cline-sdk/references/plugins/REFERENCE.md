@@ -1,6 +1,6 @@
 # Plugins
 
-A Cline plugin is a TypeScript module that extends any agent built on the Cline SDK. The same plugin runs in the Cline CLI, VS Code and JetBrains extensions, and any custom app built on `@cline/core`.
+A Nexus plugin is a TypeScript module that extends any agent built on the Nexus SDK. The same plugin runs in the Nexus CLI, VS Code and JetBrains extensions, and any custom app built on `@nexus/core`.
 
 A plugin can:
 
@@ -12,7 +12,7 @@ A plugin can:
 A plugin ships in one of two shapes:
 
 1. Single-file plugin -- one `.ts` file that exports a default plugin object. Drop it in a discovery folder and it loads.
-2. Plugin package -- a directory with `package.json`, npm dependencies, and optionally bundled assets. Installable via `cline plugin install`.
+2. Plugin package -- a directory with `package.json`, npm dependencies, and optionally bundled assets. Installable via `nexus plugin install`.
 
 Both shapes use the same plugin API.
 
@@ -35,8 +35,8 @@ After validation, registration is one-shot -- no dynamic register/unregister dur
 ## The Smallest Working Plugin
 
 ```typescript
-import type { AgentPlugin } from "@cline/core"
-import { createTool } from "@cline/core"
+import type { AgentPlugin } from "@nexus/core"
+import { createTool } from "@nexus/core"
 
 const plugin: AgentPlugin = {
   name: "hello-plugin",
@@ -114,7 +114,7 @@ The second argument carries everything the host knows about the current session.
 
 ```typescript
 ctx.session?.sessionId       // string, stable core session id
-ctx.client?.name             // host: "cline-cli", "cline-vscode", etc.
+ctx.client?.name             // host: "nexus-cli", "nexus-vscode", etc.
 ctx.user                     // authenticated user/org info, when available
 ctx.workspaceInfo            // { rootPath, hint, latestGitBranchName,
                              //   latestGitCommitHash, associatedRemoteUrls }
@@ -229,7 +229,7 @@ afterRun({ result }) {
 
 The runtime supports two hook systems:
 
-- File hooks -- external scripts in `.cline/hooks/` invoked with serialized JSON. Right for user/workspace-specific scripts that don't ship with code.
+- File hooks -- external scripts in `.nexus/hooks/` invoked with serialized JSON. Right for user/workspace-specific scripts that don't ship with code.
 - Plugin runtime hooks -- typed in-process callbacks. Right when the behavior belongs to a reusable extension and needs typed access to the runtime.
 
 Core adapts file hooks onto the runtime hook layer, so you don't need both. If you're shipping a plugin, write it as runtime hooks.
@@ -260,7 +260,7 @@ When to use `beforeModel` instead: reach for the `beforeModel` hook only if you 
 
 ## Automation Events
 
-Plugins can declare normalized event types and emit them into Cline automation. Hosts that don't have automation enabled simply ignore both -- feature-detect `ctx.automation`.
+Plugins can declare normalized event types and emit them into Nexus automation. Hosts that don't have automation enabled simply ignore both -- feature-detect `ctx.automation`.
 
 ```typescript
 manifest: { capabilities: ["automationEvents"] },
@@ -293,26 +293,26 @@ There are three ways a plugin gets into a session:
 
 The CLI scans these directories on startup:
 
-- `<workspace>/.cline/plugins/` -- project-scoped plugins.
-- `~/.cline/plugins/` -- user-scoped plugins.
+- `<workspace>/.nexus/plugins/` -- project-scoped plugins.
+- `~/.nexus/plugins/` -- user-scoped plugins.
 
-Drop a `.ts` or `.js` file in, run `cline`, done:
+Drop a `.ts` or `.js` file in, run `nexus`, done:
 
 ```bash
-mkdir -p .cline/plugins
-cp my-plugin.ts .cline/plugins/
-cline -i "do the thing my plugin enables"
+mkdir -p .nexus/plugins
+cp my-plugin.ts .nexus/plugins/
+nexus -i "do the thing my plugin enables"
 ```
 
 ### Explicit extensions in SDK Config
 
-When you build your own host with `ClineCore`, pass the plugin object directly:
+When you build your own host with `NexusCore`, pass the plugin object directly:
 
 ```typescript
 import plugin from "./my-plugin"
-import { ClineCore } from "@cline/core"
+import { NexusCore } from "@nexus/core"
 
-const host = await ClineCore.create({ backendMode: "local" })
+const host = await NexusCore.create({ backendMode: "local" })
 await host.start({
   config: {
     providerId: "anthropic",
@@ -344,17 +344,17 @@ config: {
 Or install with the CLI:
 
 ```bash
-cline plugin install ./path/to/my-plugin-package
-cline plugin install @scope/my-cline-plugin       # from npm
-cline plugin install --git github.com/owner/repo  # from git
+nexus plugin install ./path/to/my-plugin-package
+nexus plugin install @scope/my-nexus-plugin       # from npm
+nexus plugin install --git github.com/owner/repo  # from git
 ```
 
 ## Single-File Plugin Template
 
-Save as `my-plugin.ts`, drop in `.cline/plugins/`:
+Save as `my-plugin.ts`, drop in `.nexus/plugins/`:
 
 ```typescript
-import { type AgentPlugin, ClineCore, createTool } from "@cline/core"
+import { type AgentPlugin, NexusCore, createTool } from "@nexus/core"
 
 let sessionRoot: string | undefined
 
@@ -396,7 +396,7 @@ const plugin: AgentPlugin = {
 }
 
 async function runDemo(): Promise<void> {
-  const host = await ClineCore.create({ backendMode: "local" })
+  const host = await NexusCore.create({ backendMode: "local" })
   try {
     const result = await host.start({
       config: {
@@ -437,7 +437,7 @@ Use a plugin package when you need npm dependencies, multiple entry points, bund
 ### Layout
 
 ```
-my-cline-plugin/
+my-nexus-plugin/
 +-- package.json
 +-- tsconfig.json          (optional, for local typechecking)
 +-- index.ts               (the plugin entry point)
@@ -451,7 +451,7 @@ my-cline-plugin/
 
 ```json
 {
-  "name": "my-cline-plugin",
+  "name": "my-nexus-plugin",
   "version": "0.1.0",
   "private": true,
   "description": "What this plugin does, in one sentence.",
@@ -459,7 +459,7 @@ my-cline-plugin/
   "exports": {
     ".": "./index.ts"
   },
-  "cline": {
+  "nexus": {
     "plugins": [
       {
         "paths": ["./index.ts"],
@@ -468,10 +468,10 @@ my-cline-plugin/
     ]
   },
   "peerDependencies": {
-    "@cline/core": "*"
+    "@nexus/core": "*"
   },
   "peerDependenciesMeta": {
-    "@cline/core": { "optional": true }
+    "@nexus/core": { "optional": true }
   },
   "dependencies": {
     "zod": "^4.1.5"
@@ -481,9 +481,9 @@ my-cline-plugin/
 
 Key fields:
 
-- `type: "module"` -- required. Cline plugins are ES modules.
-- `cline.plugins` -- the discovery contract. Array of entries, each with `paths` (entry files) and `capabilities` (pre-declared, validated before importing).
-- `peerDependencies` for `@cline/core` -- the host already provides it. Marking it optional lets you typecheck in isolation.
+- `type: "module"` -- required. Nexus plugins are ES modules.
+- `nexus.plugins` -- the discovery contract. Array of entries, each with `paths` (entry files) and `capabilities` (pre-declared, validated before importing).
+- `peerDependencies` for `@nexus/core` -- the host already provides it. Marking it optional lets you typecheck in isolation.
 
 ### Bundling Assets
 
@@ -510,15 +510,15 @@ This is the only place `import.meta.url` is appropriate in a plugin -- locating 
 A package can ship default assets and let users override them. The convention is a three-tier lookup, last write wins by `name`:
 
 1. bundled -- files inside the plugin package (defaults shipped with the plugin).
-2. global -- files under `~/.cline/data/settings/<kind>/` (user overrides).
-3. project -- files under `<workspace>/.cline/<kind>/` (project overrides).
+2. global -- files under `~/.nexus/data/settings/<kind>/` (user overrides).
+3. project -- files under `<workspace>/.nexus/<kind>/` (project overrides).
 
 ### Multiple Plugin Entries
 
-If your package exposes more than one plugin, list each in `cline.plugins`:
+If your package exposes more than one plugin, list each in `nexus.plugins`:
 
 ```json
-"cline": {
+"nexus": {
   "plugins": [
     { "paths": ["./tools-plugin.ts"], "capabilities": ["tools"] },
     { "paths": ["./hooks-plugin.ts"], "capabilities": ["hooks"] }
@@ -555,7 +555,7 @@ await plugin.setup?.(api as never, {
 
 ### End-to-End with runDemo()
 
-Add a `runDemo()` in your plugin file (see the single-file template above) that boots a real `ClineCore` session:
+Add a `runDemo()` in your plugin file (see the single-file template above) that boots a real `NexusCore` session:
 
 ```bash
 ANTHROPIC_API_KEY=sk-... bun run my-plugin.ts
@@ -564,16 +564,16 @@ ANTHROPIC_API_KEY=sk-... bun run my-plugin.ts
 ### CLI Smoke Test
 
 ```bash
-mkdir -p .cline/plugins
-cp my-plugin.ts .cline/plugins/
-cline -i "trigger something that exercises the plugin"
+mkdir -p .nexus/plugins
+cp my-plugin.ts .nexus/plugins/
+nexus -i "trigger something that exercises the plugin"
 ```
 
 For packages:
 
 ```bash
-cline plugin install ./my-cline-plugin
-cline -i "..."
+nexus plugin install ./my-nexus-plugin
+nexus -i "..."
 ```
 
 If the plugin fails validation or setup, the CLI prints a clear error and continues without it.
@@ -583,11 +583,11 @@ If the plugin fails validation or setup, the CLI prints a clear error and contin
 - "capabilities must be a non-empty array" -- you forgot `manifest.capabilities`, or it's `[]`.
 - "registerRule requires the 'rules' capability" -- capability/handler drift. Add `"rules"` to capabilities, or stop calling `registerRule`.
 - Tool not visible to the model -- check `enableTools: true` on the session config, and that you're declaring `"tools"` in capabilities.
-- `ctx.workspaceInfo` is undefined in SDK tests -- the host didn't pass `extensionContext.workspace`. In SDK code, set it explicitly (see the ClineCore loading example above).
+- `ctx.workspaceInfo` is undefined in SDK tests -- the host didn't pass `extensionContext.workspace`. In SDK code, set it explicitly (see the NexusCore loading example above).
 - State leaking across sessions -- module-level variables are shared across sessions in the same process. Key by `ctx.session?.sessionId` if your host runs multiple sessions concurrently.
 - `afterRun` firing on aborts -- guard with `if (result.status !== "completed") return`.
 - Heavy work in `setup()` -- `setup()` blocks session start. Defer expensive work into the first tool call or `beforeRun`.
-- Importing host internals -- only import from `@cline/core`. Reaching into host-specific packages (e.g. CLI internals) will break in non-CLI hosts.
+- Importing host internals -- only import from `@nexus/core`. Reaching into host-specific packages (e.g. CLI internals) will break in non-CLI hosts.
 - Sandboxed plugins and `telemetry` -- telemetry is process-local. Feature-detect `ctx.telemetry` and expect it to be undefined in sandboxed plugin processes.
 - Resolving bundled assets -- use `import.meta.url` + `fileURLToPath` to find files inside your package; never `process.cwd()`. For workspace paths, do the opposite: use `ctx.workspaceInfo?.rootPath`, never `import.meta.url`.
 - Plugin name collisions -- `name` must be unique within a session. If two plugins share a name, validation fails. Namespace by package (`my-org-redactor`, not `redactor`).
@@ -621,9 +621,9 @@ If the plugin fails validation or setup, the CLI prints a clear error and contin
 - Tool inputs have JSON Schema with `required` set.
 - `afterRun` handlers gate on `result.status === "completed"` if they only want successes.
 - State that must not leak between concurrent sessions is keyed by `ctx.session?.sessionId`.
-- (Package) `package.json` has `type: "module"`, `cline.plugins`, and `@cline/core` as an optional peer dep.
+- (Package) `package.json` has `type: "module"`, `nexus.plugins`, and `@nexus/core` as an optional peer dep.
 - (Package) Bundled assets resolved via `import.meta.url`, not `process.cwd()`.
-- Smoke test: drop the plugin into `.cline/plugins/` (or `cline plugin install`), run `cline -i "..."`, watch it work.
+- Smoke test: drop the plugin into `.nexus/plugins/` (or `nexus plugin install`), run `nexus -i "..."`, watch it work.
 
 ## Plugin Examples from SDK
 
@@ -646,4 +646,4 @@ The SDK repo includes these example plugins:
 - `../tools/REFERENCE.md` - Tool creation
 - `../events/REFERENCE.md` - Event system
 - `../agent/REFERENCE.md` - Using plugins with Agent
-- `../clinecore/REFERENCE.md` - Using plugins with ClineCore
+- `../clinecore/REFERENCE.md` - Using plugins with NexusCore

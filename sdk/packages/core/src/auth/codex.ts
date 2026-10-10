@@ -5,7 +5,7 @@
  * It is only intended for CLI use, not browser environments.
  */
 
-import { decodeJwtPayload, type ITelemetryService } from "@cline/shared";
+import { decodeJwtPayload, type ITelemetryService } from "@nexus/shared";
 import { nanoid } from "nanoid";
 import {
 	captureAuthFailed,

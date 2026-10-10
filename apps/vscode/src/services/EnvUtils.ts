@@ -1,10 +1,10 @@
 import { HostProvider } from "@/hosts/host-provider"
 import { ExtensionRegistryInfo } from "@/registry"
-import { EmptyRequest } from "@/shared/proto/cline/common"
+import { EmptyRequest } from "@/shared/proto/nexus/common"
 import { Logger } from "@/shared/services/Logger"
 
 // Canonical header names for extra client/host context
-const ClineHeaders = {
+const NexusHeaders = {
 	PLATFORM: "X-PLATFORM",
 	PLATFORM_VERSION: "X-PLATFORM-VERSION",
 	CLIENT_VERSION: "X-CLIENT-VERSION",
@@ -15,26 +15,26 @@ const ClineHeaders = {
 
 export function buildExternalBasicHeaders(): Record<string, string> {
 	return {
-		"User-Agent": `Cline/${ExtensionRegistryInfo.version}`,
+		"User-Agent": `Nexus/${ExtensionRegistryInfo.version}`,
 	}
 }
 
-export async function buildBasicClineHeaders(): Promise<Record<string, string>> {
+export async function buildBasicNexusHeaders(): Promise<Record<string, string>> {
 	const headers: Record<string, string> = buildExternalBasicHeaders()
 	try {
 		const host = await HostProvider.env.getHostVersion(EmptyRequest.create({}))
-		headers[ClineHeaders.PLATFORM] = host.platform || "unknown"
-		headers[ClineHeaders.PLATFORM_VERSION] = host.version || "unknown"
-		headers[ClineHeaders.CLIENT_TYPE] = host.clineType || "unknown"
-		headers[ClineHeaders.CLIENT_VERSION] = host.clineVersion || "unknown"
+		headers[NexusHeaders.PLATFORM] = host.platform || "unknown"
+		headers[NexusHeaders.PLATFORM_VERSION] = host.version || "unknown"
+		headers[NexusHeaders.CLIENT_TYPE] = host.nexusType || "unknown"
+		headers[NexusHeaders.CLIENT_VERSION] = host.nexusVersion || "unknown"
 	} catch (error) {
 		Logger.log("Failed to get IDE/platform info via HostBridge EnvService.getHostVersion", error)
-		headers[ClineHeaders.PLATFORM] = "unknown"
-		headers[ClineHeaders.PLATFORM_VERSION] = "unknown"
-		headers[ClineHeaders.CLIENT_TYPE] = "unknown"
-		headers[ClineHeaders.CLIENT_VERSION] = "unknown"
+		headers[NexusHeaders.PLATFORM] = "unknown"
+		headers[NexusHeaders.PLATFORM_VERSION] = "unknown"
+		headers[NexusHeaders.CLIENT_TYPE] = "unknown"
+		headers[NexusHeaders.CLIENT_VERSION] = "unknown"
 	}
-	headers[ClineHeaders.CORE_VERSION] = ExtensionRegistryInfo.version
+	headers[NexusHeaders.CORE_VERSION] = ExtensionRegistryInfo.version
 
 	return headers
 }

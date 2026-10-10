@@ -1,4 +1,4 @@
-import type { ModelInfo } from "@cline/llms";
+import type { ModelInfo } from "@nexus/llms";
 import type {
 	AgentConfig,
 	AgentHooks,
@@ -14,7 +14,7 @@ import type {
 	SessionExecutionConfig,
 	SessionPromptConfig,
 	SessionWorkspaceConfig,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type { ToolRoutingRule } from "../extensions/tools/model-tool-routing";
 import type { TeamEvent } from "../extensions/tools/team";
 import type { ProviderConfig } from "./provider-settings";
@@ -291,10 +291,10 @@ export interface CoreSessionConfig
 }
 
 /**
- * Public ClineCore start configuration. The execution host resolves `cwd`
+ * Public NexusCore start configuration. The execution host resolves `cwd`
  * before constructing a runtime, assigning the shared chat workspace when both
  * workspace paths are omitted.
  */
-export type ClineCoreStartConfig = Omit<CoreSessionConfig, "cwd"> & {
+export type NexusCoreStartConfig = Omit<CoreSessionConfig, "cwd"> & {
 	cwd?: string;
 };

@@ -6,10 +6,10 @@ import { PostHogClientProvider } from "@/services/telemetry/providers/posthog/Po
 import { fetch } from "@/shared/net"
 import { Setting } from "@/shared/proto/index.host"
 import { Logger } from "@/shared/services/Logger"
-import * as pkg from "../../../../package.json"
-import type { PostHogClientValidConfig } from "../../../shared/services/config/posthog-config"
+import * as pkg from "@/package.json"
+import type { PostHogClientValidConfig } from "@/shared/services/config/posthog-config"
 import { getErrorLevelFromString } from ".."
-import { ClineError } from "../ClineError"
+import { NexusError } from "../NexusError"
 import type { ErrorSettings, IErrorProvider } from "./IErrorProvider"
 
 const isDev = process.env.IS_DEV === "true"
@@ -65,7 +65,7 @@ export class PostHogErrorProvider implements IErrorProvider {
 		return this
 	}
 
-	captureException(error: Error | ClineError, properties?: Record<string, unknown>): Promise<void> {
+	captureException(error: Error | NexusError, properties?: Record<string, unknown>): Promise<void> {
 		if (!this.isEnabled() || this.errorSettings.level === "off") {
 			return Promise.resolve()
 		}
@@ -81,14 +81,13 @@ export class PostHogErrorProvider implements IErrorProvider {
 		return this.client.captureExceptionImmediate(error, this.distinctId, errorDetails)
 	}
 
-	public logException(error: Error | ClineError, properties: Record<string, unknown> = {}): void {
+	public logException(error: Error | NexusError, properties: Record<string, unknown> = {}): void {
 		if (!this.isEnabled() || this.errorSettings.level === "off") {
 			return
 		}
 
 		const errorDetails = {
 			message: error.message,
-			stack: error.stack,
 			name: error.name,
 			extension_version: pkg.version,
 			is_dev: isDev,
@@ -96,7 +95,7 @@ export class PostHogErrorProvider implements IErrorProvider {
 			...properties,
 		}
 
-		if (error instanceof ClineError) {
+		if (error instanceof NexusError) {
 			Object.assign(errorDetails, {
 				modelId: error.modelId,
 				providerId: error.providerId,

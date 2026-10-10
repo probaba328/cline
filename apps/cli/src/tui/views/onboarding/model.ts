@@ -2,7 +2,7 @@ import type {
 	ChatModelModalities,
 	ModelModality,
 	ModelOperation,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { isChatProviderModel } from "../../../utils/chat-models";
 import { isOpenAICodexCliProvider } from "../../../utils/codex-cli";
 import { isOAuthProvider } from "../../../utils/provider-auth";
@@ -14,8 +14,8 @@ export type OnboardingStep =
 	| "byo_provider"
 	| "byo_apikey"
 	| "codex_cli_setup"
-	| "cline_pass_subscription"
-	| "cline_model"
+	| "nexus_pass_subscription"
+	| "nexus_model"
 	| "model_picker"
 	| "custom_model_id"
 	| "thinking_level"
@@ -47,27 +47,27 @@ export interface MenuOption {
 	icon: string;
 }
 
-export type ClinePassSubscriptionAction =
+export type NexusPassSubscriptionAction =
 	| "subscribe"
 	| "refresh"
 	| "skip"
 	| "back";
 
-export interface ClinePassSubscriptionOption {
-	value: ClinePassSubscriptionAction;
+export interface NexusPassSubscriptionOption {
+	value: NexusPassSubscriptionAction;
 	label: string;
 }
 
 export const MAIN_MENU: MenuOption[] = [
 	{
-		label: "Sign in with Cline",
-		value: "cline",
+		label: "Sign in with Nexus",
+		value: "nexus",
 		detail: "Latest models with regular free promos",
 		icon: "\u263a",
 	},
 	{
-		label: "Sign in with ClinePass",
-		value: "cline-pass",
+		label: "Sign in with NexusPass",
+		value: "nexus-pass",
 		detail: "Low cost subscription for everyone",
 		icon: "\u2726",
 	},
@@ -86,17 +86,17 @@ export const MAIN_MENU: MenuOption[] = [
 ];
 
 export function getMainMenuOptions(options?: {
-	isClinePassEnabled?: boolean;
+	isNexusPassEnabled?: boolean;
 }): MenuOption[] {
 	return MAIN_MENU.filter(
-		(option) => option.value !== "cline-pass" || options?.isClinePassEnabled,
+		(option) => option.value !== "nexus-pass" || options?.isNexusPassEnabled,
 	);
 }
 
-export const CLINE_PASS_SUBSCRIPTION_OPTIONS: ClinePassSubscriptionOption[] = [
+export const NEXUS_PASS_SUBSCRIPTION_OPTIONS: NexusPassSubscriptionOption[] = [
 	{
 		value: "subscribe",
-		label: "Subscribe to ClinePass",
+		label: "Subscribe to NexusPass",
 	},
 	{
 		value: "refresh",
@@ -137,7 +137,7 @@ export interface ModelEntry {
 	supportsReasoning: boolean;
 }
 
-export type ClinePassSubscriptionStatus =
+export type NexusPassSubscriptionStatus =
 	| "loading"
 	| "subscribed"
 	| "unsubscribed"
@@ -212,11 +212,11 @@ export function toModelEntriesFromKnownModels(
 }
 
 export function getOAuthProviderLabel(providerId: string): string {
-	if (providerId === "cline-pass") {
-		return "ClinePass";
+	if (providerId === "nexus-pass") {
+		return "NexusPass";
 	}
-	if (providerId === "cline") {
-		return "Cline";
+	if (providerId === "nexus") {
+		return "Nexus";
 	}
 	if (providerId === "openai-codex") {
 		return "ChatGPT";
@@ -224,7 +224,7 @@ export function getOAuthProviderLabel(providerId: string): string {
 	return providerId;
 }
 
-export function shouldUseFeaturedClineModelPicker(providerId: string): boolean {
-	// ClinePass uses the featured picker too, with Subscribed/Free sections
-	return providerId === "cline" || providerId === "cline-pass";
+export function shouldUseFeaturedNexusModelPicker(providerId: string): boolean {
+	// NexusPass uses the featured picker too, with Subscribed/Free sections
+	return providerId === "nexus" || providerId === "nexus-pass";
 }

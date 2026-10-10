@@ -3,7 +3,7 @@ import type {
 	GatewayProviderContext,
 	GatewayProviderMetadata,
 	GatewayStreamRequest,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { modelRouteMatches, resolveModelFamily } from "../model-facts";
 
 /**

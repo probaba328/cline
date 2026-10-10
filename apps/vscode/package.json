@@ -1,22 +1,22 @@
 {
-	"name": "claude-dev",
-	"displayName": "Cline",
-	"description": "Autonomous coding agent right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-	"version": "4.1.14",
+	"name": "nexus",
+	"displayName": "Nexus",
+	"description": "Nexus — The open-source coding agent that speaks your language. Autonomously creates/edits files, runs commands, uses the browser, and more, with your permission every step of the way.",
+	"version": "1.0.0-beta.1",
 	"icon": "assets/icons/icon.png",
 	"engines": {
 		"vscode": "^1.101.0"
 	},
 	"author": {
-		"name": "Cline Bot Inc."
+		"name": "Nexus"
 	},
 	"license": "Apache-2.0",
-	"publisher": "saoudrizwan",
+	"publisher": "nexus",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cline/cline"
+		"url": "https://github.com/probaba328/cline"
 	},
-	"homepage": "https://cline.bot",
+	"homepage": "https://github.com/probaba328/cline",
 	"categories": [
 		"AI",
 		"Chat",
@@ -26,7 +26,7 @@
 		"Testing"
 	],
 	"keywords": [
-		"cline",
+		"nexus",
 		"claude",
 		"dev",
 		"mcp",
@@ -40,39 +40,38 @@
 		"llama"
 	],
 	"activationEvents": [
-		"onLanguage",
 		"onUri",
 		"onStartupFinished"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"icons": {
-			"cline-icon": {
-				"description": "cline",
+			"nexus-icon": {
+				"description": "nexus",
 				"default": {
-					"fontPath": "assets/icons/cline-bot.woff",
+					"fontPath": "assets/icons/nexus-bot.woff",
 					"fontCharacter": "\\e900"
 				}
 			}
 		},
 		"walkthroughs": [
 			{
-				"id": "ClineWalkthrough",
-				"title": "Meet Cline, your new coding partner",
-				"description": "Cline codes like a developer because it thinks like one. Here are 5 ways to put it to work:",
+				"id": "NexusWalkthrough",
+				"title": "Meet Nexus, your new coding partner",
+				"description": "Nexus codes like a developer because it thinks like one. Here are 5 ways to put it to work:",
 				"steps": [
 					{
 						"id": "welcome",
 						"title": "Start with a Goal, Not Just a Prompt",
-						"description": "Tell Cline what you want to achieve. It plans, asks, and then codes, like a true partner.",
+						"description": "Tell Nexus what you want to achieve. It plans, asks, and then codes, like a true partner.",
 						"media": {
 							"markdown": "walkthrough/step1.md"
 						}
 					},
 					{
 						"id": "learn",
-						"title": "Let Cline Learn Your Codebase",
-						"description": "Point Cline to your project. It builds understanding to make smart, context-aware changes.",
+						"title": "Let Nexus Learn Your Codebase",
+						"description": "Point Nexus to your project. It builds understanding to make smart, context-aware changes.",
 						"media": {
 							"markdown": "walkthrough/step2.md"
 						}
@@ -80,7 +79,7 @@
 					{
 						"id": "advanced-features",
 						"title": "Always Use the Best AI Models",
-						"description": "Cline empowers you with State-of-the-Art AI, connecting to top models (Anthropic, Gemini, OpenAI & more).",
+						"description": "Nexus empowers you with State-of-the-Art AI, connecting to top models (Anthropic, Gemini, OpenAI & more).",
 						"media": {
 							"markdown": "walkthrough/step3.md"
 						}
@@ -96,7 +95,7 @@
 					{
 						"id": "getting-started",
 						"title": "You're Always in Control",
-						"description": "Review Cline's plans and diffs. Approve changes before they happen. No surprises.",
+						"description": "Review Nexus's plans and diffs. Approve changes before they happen. No surprises.",
 						"media": {
 							"markdown": "walkthrough/step5.md"
 						},
@@ -111,7 +110,7 @@
 			"activitybar": [
 				{
 					"id": "claude-dev-ActivityBar",
-					"title": "Cline",
+					"title": "Nexus",
 					"icon": "assets/icons/icon.svg"
 				}
 			]
@@ -128,111 +127,116 @@
 		},
 		"commands": [
 			{
-				"command": "cline.plusButtonClicked",
+				"command": "nexus.plusButtonClicked",
 				"title": "New Task",
 				"icon": "$(add)"
 			},
 			{
-				"command": "cline.mcpButtonClicked",
+				"command": "nexus.mcpButtonClicked",
 				"title": "MCP Servers",
 				"icon": "$(server)"
 			},
 			{
-				"command": "cline.marketplaceButtonClicked",
+				"command": "nexus.marketplaceButtonClicked",
 				"title": "Customize",
 				"icon": "$(wrench)"
 			},
 			{
-				"command": "cline.historyButtonClicked",
+				"command": "nexus.historyButtonClicked",
 				"title": "History",
 				"icon": "$(history)"
 			},
 			{
-				"command": "cline.accountButtonClicked",
+				"command": "nexus.accountButtonClicked",
 				"title": "Account",
 				"icon": "$(account)"
 			},
 			{
-				"command": "cline.settingsButtonClicked",
+				"command": "nexus.settingsButtonClicked",
 				"title": "Settings",
 				"icon": "$(settings-gear)"
 			},
 			{
-				"command": "cline.dev.createTestTasks",
+				"command": "nexus.dev.createTestTasks",
 				"title": "Create Test Tasks",
-				"category": "Cline",
-				"when": "cline.isDevMode"
+				"category": "Nexus",
+				"when": "nexus.isDevMode"
 			},
 			{
-				"command": "cline.dev.expireMcpOAuthTokens",
+				"command": "nexus.dev.expireMcpOAuthTokens",
 				"title": "Expire MCP OAuth Tokens (for testing)",
-				"category": "Cline",
-				"when": "cline.isDevMode"
+				"category": "Nexus",
+				"when": "nexus.isDevMode"
 			},
 			{
-				"command": "cline.addToChat",
-				"title": "Add to Cline",
-				"category": "Cline"
+				"command": "nexus.addToChat",
+				"title": "Add to Nexus",
+				"category": "Nexus"
 			},
 			{
-				"command": "cline.addTerminalOutputToChat",
-				"title": "Add to Cline",
-				"category": "Cline"
+				"command": "nexus.addTerminalOutputToChat",
+				"title": "Add to Nexus",
+				"category": "Nexus"
 			},
 			{
-				"command": "cline.focusChatInput",
+				"command": "nexus.focusChatInput",
 				"title": "Jump to Chat Input",
-				"category": "Cline"
+				"category": "Nexus"
 			},
 			{
-				"command": "cline.generateGitCommitMessage",
-				"title": "Generate Commit Message with Cline",
-				"category": "Cline",
-				"icon": "$(cline-icon)"
+				"command": "nexus.generateGitCommitMessage",
+				"title": "Generate Commit Message with Nexus",
+				"category": "Nexus",
+				"icon": "$(nexus-icon)"
 			},
 			{
-				"command": "cline.abortGitCommitMessage",
-				"title": "Generate Commit Message with Cline - Stop",
-				"category": "Cline",
+				"command": "nexus.abortGitCommitMessage",
+				"title": "Generate Commit Message with Nexus - Stop",
+				"category": "Nexus",
 				"icon": "$(debug-stop)"
 			},
 			{
-				"command": "cline.explainCode",
-				"title": "Explain with Cline",
-				"category": "Cline"
+				"command": "nexus.performanceReport",
+				"title": "Show Performance Report",
+				"category": "Nexus"
 			},
 			{
-				"command": "cline.improveCode",
-				"title": "Improve with Cline",
-				"category": "Cline"
+				"command": "nexus.explainCode",
+				"title": "Explain with Nexus",
+				"category": "Nexus"
 			},
 			{
-				"command": "cline.jupyterGenerateCell",
-				"title": "Generate Jupyter Cell with Cline",
-				"category": "Cline",
+				"command": "nexus.improveCode",
+				"title": "Improve with Nexus",
+				"category": "Nexus"
+			},
+			{
+				"command": "nexus.jupyterGenerateCell",
+				"title": "Generate Jupyter Cell with Nexus",
+				"category": "Nexus",
 				"icon": "$(sparkle)"
 			},
 			{
-				"command": "cline.jupyterExplainCell",
-				"title": "Explain Jupyter Cell with Cline",
-				"category": "Cline",
+				"command": "nexus.jupyterExplainCell",
+				"title": "Explain Jupyter Cell with Nexus",
+				"category": "Nexus",
 				"icon": "$(question)"
 			},
 			{
-				"command": "cline.jupyterImproveCell",
-				"title": "Improve Jupyter Cell with Cline",
-				"category": "Cline",
+				"command": "nexus.jupyterImproveCell",
+				"title": "Improve Jupyter Cell with Nexus",
+				"category": "Nexus",
 				"icon": "$(lightbulb)"
 			},
 			{
-				"command": "cline.openWalkthrough",
+				"command": "nexus.openWalkthrough",
 				"title": "Open Walkthrough",
-				"category": "Cline"
+				"category": "Nexus"
 			}
 		],
 		"keybindings": [
 			{
-				"command": "cline.addToChat",
+				"command": "nexus.addToChat",
 				"key": "cmd+'",
 				"mac": "cmd+'",
 				"win": "ctrl+'",
@@ -240,11 +244,11 @@
 				"when": "editorHasSelection"
 			},
 			{
-				"command": "cline.generateGitCommitMessage",
+				"command": "nexus.generateGitCommitMessage",
 				"when": "config.git.enabled && scmProvider == git"
 			},
 			{
-				"command": "cline.focusChatInput",
+				"command": "nexus.focusChatInput",
 				"key": "cmd+'",
 				"mac": "cmd+'",
 				"win": "ctrl+'",
@@ -255,88 +259,88 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "cline.plusButtonClicked",
+					"command": "nexus.plusButtonClicked",
 					"group": "navigation@1",
 					"when": "view == claude-dev.SidebarProvider"
 				},
 				{
-					"command": "cline.marketplaceButtonClicked",
+					"command": "nexus.marketplaceButtonClicked",
 					"group": "navigation@2",
 					"when": "view == claude-dev.SidebarProvider"
 				},
 				{
-					"command": "cline.historyButtonClicked",
+					"command": "nexus.historyButtonClicked",
 					"group": "navigation@3",
 					"when": "view == claude-dev.SidebarProvider"
 				},
 				{
-					"command": "cline.accountButtonClicked",
+					"command": "nexus.accountButtonClicked",
 					"group": "navigation@5",
 					"when": "view == claude-dev.SidebarProvider"
 				},
 				{
-					"command": "cline.settingsButtonClicked",
+					"command": "nexus.settingsButtonClicked",
 					"group": "navigation@6",
 					"when": "view == claude-dev.SidebarProvider"
 				}
 			],
 			"editor/context": [
 				{
-					"command": "cline.addToChat",
+					"command": "nexus.addToChat",
 					"group": "navigation",
 					"when": "editorHasSelection"
 				}
 			],
 			"terminal/context": [
 				{
-					"command": "cline.addTerminalOutputToChat",
+					"command": "nexus.addTerminalOutputToChat",
 					"group": "navigation"
 				}
 			],
 			"scm/title": [
 				{
-					"command": "cline.generateGitCommitMessage",
+					"command": "nexus.generateGitCommitMessage",
 					"group": "navigation",
-					"when": "config.git.enabled && scmProvider == git && !cline.isGeneratingCommit"
+					"when": "config.git.enabled && scmProvider == git && !nexus.isGeneratingCommit"
 				},
 				{
-					"command": "cline.abortGitCommitMessage",
+					"command": "nexus.abortGitCommitMessage",
 					"group": "navigation",
-					"when": "config.git.enabled && scmProvider == git && cline.isGeneratingCommit"
+					"when": "config.git.enabled && scmProvider == git && nexus.isGeneratingCommit"
 				}
 			],
 			"notebook/toolbar": [
 				{
-					"command": "cline.jupyterGenerateCell",
+					"command": "nexus.jupyterGenerateCell",
 					"group": "navigation/add@1",
 					"when": "notebookType == 'jupyter-notebook'"
 				}
 			],
 			"notebook/cell/title": [
 				{
-					"command": "cline.jupyterExplainCell",
+					"command": "nexus.jupyterExplainCell",
 					"group": "inline@1",
 					"when": "notebookType == 'jupyter-notebook'"
 				},
 				{
-					"command": "cline.jupyterImproveCell",
+					"command": "nexus.jupyterImproveCell",
 					"group": "inline@2",
 					"when": "notebookType == 'jupyter-notebook'"
 				}
 			],
 			"commandPalette": [
 				{
-					"command": "cline.generateGitCommitMessage",
-					"when": "config.git.enabled && !cline.isGeneratingCommit"
+					"command": "nexus.generateGitCommitMessage",
+					"when": "config.git.enabled && !nexus.isGeneratingCommit"
 				},
 				{
-					"command": "cline.abortGitCommitMessage",
-					"when": "config.git.enabled && cline.isGeneratingCommit"
+					"command": "nexus.abortGitCommitMessage",
+					"when": "config.git.enabled && nexus.isGeneratingCommit"
 				}
 			]
 		},
 		"configuration": {
-			"title": "Cline",
+			"title": "Nexus",
 			"properties": {}
 		}
 	},
@@ -406,7 +410,7 @@
 	"lint-staged": {
 		"src/shared/storage/state-keys.ts": [
 			"node scripts/generate-state-proto.mjs",
-			"git add apps/vscode/proto/cline/state.proto"
+			"git add apps/vscode/proto/nexus/state.proto"
 		],
 		"*": [
 			"biome check --write --staged --no-errors-on-unmatched --files-ignore-unknown=true --semicolons=as-needed"
@@ -460,10 +464,10 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.37.0",
 		"@bufbuild/protobuf": "^2.2.5",
-		"@cline/agents": "workspace:*",
-		"@cline/core": "workspace:*",
-		"@cline/llms": "workspace:*",
-		"@cline/shared": "workspace:*",
+		"@nexus/agents": "workspace:*",
+		"@nexus/core": "workspace:*",
+		"@nexus/llms": "workspace:*",
+		"@nexus/shared": "workspace:*",
 		"@google/genai": "^1.30.0",
 		"@grpc/grpc-js": "^1.9.15",
 		"@grpc/proto-loader": "^0.7.13",

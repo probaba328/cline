@@ -125,11 +125,11 @@ export const WithLinks: Story = {
 	args: {
 		markdown: `Check out these resources:
 
-- Official documentation: https://github.com/cline/cline
-- API reference: https://api.cline.bot/docs
-- Support forum: https://community.cline.bot
+- Official documentation: https://github.com/nexus/nexus
+- API reference: https://api.nexus.bot/docs
+- Support forum: https://community.nexus.bot
 
-You can also visit our website at https://cline.bot for more information.`,
+You can also visit our website at https://nexus.bot for more information.`,
 		compact: false,
 		showCursor: false,
 	},

@@ -1,11 +1,11 @@
-import type { GlobalSettings } from "@cline/core";
+import type { GlobalSettings } from "@nexus/core";
 import type { CliAgentMode, CliCompactionMode, ParsedArgs } from "./types";
 
 /**
  * Resolves general settings at CLI startup with the precedence
  * explicit CLI flag -> persisted global setting -> built-in default,
  * so choices made in the TUI /settings panel survive restarts (see
- * https://github.com/cline/cline/issues/12158).
+ * https://github.com/nexus/nexus/issues/12158).
  */
 
 export function resolveStartupMode(

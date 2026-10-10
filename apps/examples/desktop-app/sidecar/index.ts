@@ -1,10 +1,10 @@
 import { homedir } from "node:os";
 import {
-	createClineTelemetryServiceConfig,
+	createNexusTelemetryServiceConfig,
 	setHomeDirIfUnset,
 	watchManagedHubBuildMismatch,
-} from "@cline/core";
-import { captureSdkError, claimHubDaemonProcess } from "@cline/shared";
+} from "@nexus/core";
+import { captureSdkError, claimHubDaemonProcess } from "@nexus/shared";
 import { prewarmWorkspaceMetadata } from "./chat-session";
 import { configureConnectorCliLaunch } from "./connectors";
 import {
@@ -134,7 +134,7 @@ async function main() {
 		mode: SIDECAR_MODE,
 	});
 
-	// Another Cline installation (e.g. an updated CLI) can replace the shared
+	// Another Nexus installation (e.g. an updated CLI) can replace the shared
 	// Hub daemon while this app is running. Surface that to the webview so it
 	// can prompt the user to update and restart.
 	watchManagedHubBuildMismatch({
@@ -175,7 +175,7 @@ async function main() {
  */
 function runTelemetrySelfcheck(): void {
 	const report = buildTelemetrySelfcheckReport(
-		createClineTelemetryServiceConfig(),
+		createNexusTelemetryServiceConfig(),
 	);
 	process.stdout.write(`${JSON.stringify(report)}\n`);
 }
@@ -190,7 +190,7 @@ async function runEntrypoint(): Promise<void> {
 	// Claim rather than read: consuming the sentinel keeps daemon-hosted sessions
 	// from handing it to every process they spawn.
 	if (claimHubDaemonProcess()) {
-		await import("@cline/core/hub/daemon-entry");
+		await import("@nexus/core/hub/daemon-entry");
 		return;
 	}
 	await main();

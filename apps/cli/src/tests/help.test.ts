@@ -1,17 +1,17 @@
 import { test } from "@microsoft/tui-test";
-import { CLINE_BIN } from "./helpers/constants.js";
-import { clineEnv } from "./helpers/env.js";
+import { NEXUS_BIN } from "./helpers/constants.js";
+import { nexusEnv } from "./helpers/env.js";
 import { expectVisible } from "./helpers/terminal.js";
 
 const HELP_TERMINAL = { columns: 120, rows: 50 };
 
 // ===========================================================================
-// cline --help  (root help)
+// nexus --help  (root help)
 // ===========================================================================
-test.describe("cline --help", () => {
+test.describe("nexus --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -44,12 +44,12 @@ test.describe("cline --help", () => {
 });
 
 // ===========================================================================
-// cline -h  (short help flag)
+// nexus -h  (short help flag)
 // ===========================================================================
-test.describe("cline -h", () => {
+test.describe("nexus -h", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["-h"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["-h"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -59,12 +59,12 @@ test.describe("cline -h", () => {
 });
 
 // ===========================================================================
-// cline history --help
+// nexus history --help
 // ===========================================================================
-test.describe("cline history --help", () => {
+test.describe("nexus history --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["history", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["history", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -74,12 +74,12 @@ test.describe("cline history --help", () => {
 });
 
 // ===========================================================================
-// cline h --help  (history alias)
+// nexus h --help  (history alias)
 // ===========================================================================
-test.describe("cline h --help (history alias)", () => {
+test.describe("nexus h --help (history alias)", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["h", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["h", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -89,12 +89,12 @@ test.describe("cline h --help (history alias)", () => {
 });
 
 // ===========================================================================
-// cline config --help
+// nexus config --help
 // ===========================================================================
-test.describe("cline config --help", () => {
+test.describe("nexus config --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["config", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["config", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -104,12 +104,12 @@ test.describe("cline config --help", () => {
 });
 
 // ===========================================================================
-// cline auth --help
+// nexus auth --help
 // ===========================================================================
-test.describe("cline auth --help", () => {
+test.describe("nexus auth --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["auth", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["auth", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -126,12 +126,12 @@ test.describe("cline auth --help", () => {
 });
 
 // ===========================================================================
-// cline version --help
+// nexus version --help
 // ===========================================================================
-test.describe("cline version --help", () => {
+test.describe("nexus version --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["version", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["version", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -141,12 +141,12 @@ test.describe("cline version --help", () => {
 });
 
 // ===========================================================================
-// cline update --help
+// nexus update --help
 // ===========================================================================
-test.describe("cline update --help", () => {
+test.describe("nexus update --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["update", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["update", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 
@@ -156,12 +156,12 @@ test.describe("cline update --help", () => {
 });
 
 // ===========================================================================
-// cline doctor --help
+// nexus doctor --help
 // ===========================================================================
-test.describe("cline doctor --help", () => {
+test.describe("nexus doctor --help", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["doctor", "--help"] },
-		env: clineEnv("claude-sonnet-4.6"),
+		program: { file: NEXUS_BIN, args: ["doctor", "--help"] },
+		env: nexusEnv("claude-sonnet-4.6"),
 		...HELP_TERMINAL,
 	});
 

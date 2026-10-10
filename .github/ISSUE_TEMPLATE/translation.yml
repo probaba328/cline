@@ -1,0 +1,90 @@
+name: "🌐 Translation Request"
+description: "Request a new language or report translation issues"
+title: "[i18n] "
+labels: ["i18n", "help wanted"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping make Nexus accessible to more developers around the world! 🌍
+
+  - type: dropdown
+    id: request_type
+    attributes:
+      label: Request Type
+      description: What kind of translation request is this?
+      options:
+        - "New language — add support for a language not yet included"
+        - "Improve existing translation — fix or improve existing strings"
+        - "Report wrong translation — a string is incorrectly translated"
+    validations:
+      required: true
+
+  - type: input
+    id: language_name
+    attributes:
+      label: Language Name
+      description: The full name of the language in English
+      placeholder: "e.g. Vietnamese, Indonesian, Polish"
+    validations:
+      required: true
+
+  - type: input
+    id: language_native
+    attributes:
+      label: Language Name (in that language)
+      description: The language's name written in its own script
+      placeholder: "e.g. Tiếng Việt, Bahasa Indonesia, Polski"
+    validations:
+      required: true
+
+  - type: input
+    id: bcp47_code
+    attributes:
+      label: BCP 47 Language Tag
+      description: |
+        The standard language code. See [BCP 47 reference](https://www.iana.org/assignments/language-subtag-registry).
+      placeholder: "e.g. vi, id, pl, cs, nl"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vs_code_available
+    attributes:
+      label: Is this language available in VS Code's display language?
+      description: Check in VS Code → Configure Display Language
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: contributor_info
+    attributes:
+      label: Are you willing to contribute the translation?
+      description: Let us know if you can help with the translation work
+      placeholder: |
+        I can translate the full file / partial / I just want to request it.
+        My GitHub username: @...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other information that would help us add this language
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and this language hasn't been requested before
+          required: true
+        - label: I understand translations are community-maintained
+          required: true

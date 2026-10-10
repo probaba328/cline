@@ -163,7 +163,7 @@ function expectVariableOnlyRules(source: string): void {
 	}
 }
 
-describe("@cline/ui theme contract", () => {
+describe("@nexus/ui theme contract", () => {
 	it("owns complete Radix 3.0.0 solid and alpha palettes", () => {
 		const palette = read("palette.css");
 		const light = block(palette, ":root");
@@ -198,8 +198,8 @@ describe("@cline/ui theme contract", () => {
 		const root = block(tokens, ":root");
 		const dark = block(tokens, ".dark");
 
-		expect(tokens).toContain('@import "@cline/ui/theme/palette.css";');
-		expect(tokens).not.toContain("--cline-");
+		expect(tokens).toContain('@import "@nexus/ui/theme/palette.css";');
+		expect(tokens).not.toContain("--nexus-");
 		for (const token of [
 			...visualRoleTokens,
 			...statusRoleTokens,
@@ -271,9 +271,9 @@ describe("@cline/ui theme contract", () => {
 		expect(rules).toHaveLength(5);
 		expect(rules.every((rule) => !rule.selector.includes(":root"))).toBe(true);
 		expect(rules.every((rule) => rule.selector !== ".dark")).toBe(true);
-		expect(scoped).toContain(".cline-ui-theme");
-		expect(scoped).toContain(".dark .cline-ui-theme");
-		expect(scoped).toContain(".cline-ui-theme.dark");
+		expect(scoped).toContain(".nexus-ui-theme");
+		expect(scoped).toContain(".dark .nexus-ui-theme");
+		expect(scoped).toContain(".nexus-ui-theme.dark");
 		for (const paletteName of paletteNames) {
 			expect(scoped).toContain(`--${paletteName}-1:`);
 			expect(scoped).toContain(`--${paletteName}-a12:`);
@@ -315,29 +315,29 @@ describe("@cline/ui theme contract", () => {
 			expect(theme).toContain(`--color-${token}: var(--${token});`);
 			expect(componentTheme).toMatch(
 				new RegExp(
-					`--color-cline-ui-${token}:\\s*var\\(\\s*--${token}\\s*\\);`,
+					`--color-nexus-ui-${token}:\\s*var\\(\\s*--${token}\\s*\\);`,
 				),
 			);
 		}
 		expect(theme).not.toMatch(
 			/--color-(?:neutral|accent|error|success|warning|info)-(?:a)?\d+:/,
 		);
-		expect(componentTheme).toContain("@custom-variant cline-ui-dark");
+		expect(componentTheme).toContain("@custom-variant nexus-ui-dark");
 		expect(componentTheme).not.toContain("@custom-variant dark ");
 		expect(componentTheme).toContain(
-			"--font-weight-cline-ui-medium: var(--font-weight-medium);",
+			"--font-weight-nexus-ui-medium: var(--font-weight-medium);",
 		);
-		expect(componentTheme).toContain("--text-cline-ui-xs: var(--text-xs);");
-		expect(componentTheme).toContain("--text-cline-ui-md: var(--text-md);");
-		expect(componentTheme).toContain("--radius-cline-ui-lg: var(--radius-lg);");
+		expect(componentTheme).toContain("--text-nexus-ui-xs: var(--text-xs);");
+		expect(componentTheme).toContain("--text-nexus-ui-md: var(--text-md);");
+		expect(componentTheme).toContain("--radius-nexus-ui-lg: var(--radius-lg);");
 		expect(componentTheme).not.toMatch(
-			/--color-cline-ui-(?:neutral|accent|error|success|warning|info)-(?:a)?\d+:/,
+			/--color-nexus-ui-(?:neutral|accent|error|success|warning|info)-(?:a)?\d+:/,
 		);
 		expect(components).toContain('@import "./theme/component-theme.css";');
 		expect(base).toContain(
-			'@import "@cline/ui/components/markdown.css" layer(components);',
+			'@import "@nexus/ui/components/markdown.css" layer(components);',
 		);
-		expect(markdown).toContain(":is(.markdown, .cline-markdown)");
+		expect(markdown).toContain(":is(.markdown, .nexus-markdown)");
 		expect(markdown).not.toContain("@apply");
 		expect(markdown).not.toContain("@layer");
 		expect(base).toContain("--scrollbar-thumb");
@@ -345,7 +345,7 @@ describe("@cline/ui theme contract", () => {
 		expect(base).not.toContain("#__next");
 		expect(base).not.toContain("@source");
 		expect(index).toBe(
-			'@import "@cline/ui/theme/tokens.css";\n@import "@cline/ui/theme/theme.css";\n@import "@cline/ui/theme/base.css";\n',
+			'@import "@nexus/ui/theme/tokens.css";\n@import "@nexus/ui/theme/theme.css";\n@import "@nexus/ui/theme/base.css";\n',
 		);
 	});
 
@@ -378,8 +378,8 @@ describe("@cline/ui theme contract", () => {
 				new RegExp(`(?<![a-z0-9-])${utility}(?![a-z0-9-])`),
 			);
 		}
-		expect(componentSources).not.toMatch(/(?<!cline-ui-)dark:/);
-		expect(componentSources).toContain("cline-ui-dark:");
+		expect(componentSources).not.toMatch(/(?<!nexus-ui-)dark:/);
+		expect(componentSources).toContain("nexus-ui-dark:");
 	});
 
 	it("uses status roles in shared components", () => {

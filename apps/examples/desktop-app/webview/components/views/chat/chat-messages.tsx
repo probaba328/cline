@@ -1,13 +1,13 @@
 "use client";
 
-import { AgentAskQuestion } from "@cline/ui";
+import { AgentAskQuestion } from "@nexus/ui";
 import {
 	Conversation,
 	ConversationContent,
 	ConversationScrollButton,
 	ConversationViewport,
 	useConversation,
-} from "@cline/ui/components/agent-chat";
+} from "@nexus/ui/components/agent-chat";
 import { Loader2 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -742,7 +742,7 @@ function ChatMessagesImpl({
 							</div>
 						) : null}
 						{shouldShowErrorBanner ? (
-							<div className="cline-chat-selectable mt-4 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+							<div className="nexus-chat-selectable mt-4 rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
 								{error}
 							</div>
 						) : null}

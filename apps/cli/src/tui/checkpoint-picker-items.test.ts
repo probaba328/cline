@@ -1,5 +1,5 @@
-import type { CheckpointEntry } from "@cline/core";
-import type { Message } from "@cline/shared";
+import type { CheckpointEntry } from "@nexus/core";
+import type { Message } from "@nexus/shared";
 import { describe, expect, it } from "vitest";
 import { buildCheckpointPickerItems } from "./checkpoint-picker-items";
 

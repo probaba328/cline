@@ -1,21 +1,21 @@
 # Agent Runtime
 
-The `Agent` class (also exported as `AgentRuntime`) is the lightweight, stateless agent loop from `@cline/agents`. It handles the core iteration cycle: send messages to an LLM, execute tool calls, collect results, and repeat until the task is done.
+The `Agent` class (also exported as `AgentRuntime`) is the lightweight, stateless agent loop from `@nexus/agents`. It handles the core iteration cycle: send messages to an LLM, execute tool calls, collect results, and repeat until the task is done.
 
 ## When to Use Agent
 
-| Use Agent when... | Use ClineCore instead when... |
+| Use Agent when... | Use NexusCore instead when... |
 |---|---|
 | You want a simple agent with custom tools | You need built-in tools (bash, editor, etc.) |
 | You want minimal dependencies | You need session persistence |
-| You need browser compatibility | You need config discovery from `.cline/` |
+| You need browser compatibility | You need config discovery from `.nexus/` |
 | You're building a stateless worker | You need multi-process session sharing |
 | You want full control over the runtime | You want batteries-included setup |
 
 ## Quick Start
 
 ```typescript
-import { Agent } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
 
 const agent = new Agent({
   providerId: "anthropic",

@@ -55,13 +55,13 @@ describe("session history origin", () => {
 
 	it.each([
 		{ name: "VSCode Extension", source: "vscode" },
-		{ name: "Cline for JetBrains", source: "jetbrains" },
-		{ name: "Cline", source: "jetbrains", platform: "WebStorm" },
-		{ name: "cline-cli", source: "cli" },
-		{ name: "cline-acp", source: "cli" },
-		{ name: "cline-sdk", source: "core" },
-		{ name: "cline-kanban", source: "kanban" },
-		{ name: "Cline Desktop", source: "desktop" },
+		{ name: "Nexus for JetBrains", source: "jetbrains" },
+		{ name: "Nexus", source: "jetbrains", platform: "WebStorm" },
+		{ name: "nexus-cli", source: "cli" },
+		{ name: "nexus-acp", source: "cli" },
+		{ name: "nexus-sdk", source: "core" },
+		{ name: "nexus-kanban", source: "kanban" },
+		{ name: "Nexus Desktop", source: "desktop" },
 	])("maps the $name client to the $source session source", (testCase) => {
 		expect(resolveClientSessionSource(testCase)).toBe(testCase.source);
 	});

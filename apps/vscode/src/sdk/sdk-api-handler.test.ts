@@ -26,15 +26,15 @@ describe("buildSdkProviderConfig", () => {
 		vi.clearAllMocks()
 	})
 
-	it("uses shared Cline OAuth credentials for ClinePass direct handlers", () => {
+	it("uses shared Nexus OAuth credentials for NexusPass direct handlers", () => {
 		mocks.providerSettingsManager.getProviderSettings.mockImplementation((providerId: string) => {
-			if (providerId !== "cline") {
+			if (providerId !== "nexus") {
 				return undefined
 			}
 			return {
-				provider: "cline",
+				provider: "nexus",
 				auth: {
-					accessToken: "workos:shared-cline-token",
+					accessToken: "workos:shared-nexus-token",
 					refreshToken: "refresh-token",
 				},
 			}
@@ -42,18 +42,18 @@ describe("buildSdkProviderConfig", () => {
 
 		const providerConfig = buildSdkProviderConfig(
 			{
-				actModeApiProvider: "cline-pass",
-				actModeClinePassModelId: "cline-pass/glm-5.2",
+				actModeApiProvider: "nexus-pass",
+				actModeNexusPassModelId: "nexus-pass/glm-5.2",
 			},
 			"act",
 		)
 
 		expect(providerConfig).toMatchObject({
-			providerId: "cline-pass",
-			modelId: "cline-pass/glm-5.2",
-			apiKey: "workos:shared-cline-token",
+			providerId: "nexus-pass",
+			modelId: "nexus-pass/glm-5.2",
+			apiKey: "workos:shared-nexus-token",
 		})
-		expect(mocks.providerSettingsManager.getProviderSettings).toHaveBeenCalledWith("cline")
+		expect(mocks.providerSettingsManager.getProviderSettings).toHaveBeenCalledWith("nexus")
 	})
 
 	it("uses provider-specific settings for SDK-backed direct handlers", () => {

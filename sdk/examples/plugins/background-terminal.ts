@@ -14,18 +14,18 @@ import {
 	type AgentPlugin,
 	type AgentToolContext,
 	createTool,
-} from "@cline/core";
+} from "@nexus/core";
 
 /**
  * Background Terminal Plugin Example
  *
  * Starts shell commands in detached background processes, stores stdout/stderr
- * under Cline's data directory, and optionally steers a completion summary back
+ * under Nexus's data directory, and optionally steers a completion summary back
  * into the current session when the command exits.
  *
  * CLI usage:
- *   cline plugin install https://github.com/cline/cline/blob/main/sdk/examples/plugins/background-terminal.ts --cwd .
- *   cline -i "Start the dev server in the background and keep working"
+ *   nexus plugin install https://github.com/nexus/nexus/blob/main/sdk/examples/plugins/background-terminal.ts --cwd .
+ *   nexus -i "Start the dev server in the background and keep working"
  */
 
 type JobStatus = "running" | "completed" | "failed";
@@ -48,18 +48,18 @@ type JobRecord = {
 	metaPath: string;
 };
 
-interface ClinePluginHost {
+interface NexusPluginHost {
 	emitEvent?: (name: string, payload?: unknown) => void;
 }
 
 declare global {
-	var __clinePluginHost: ClinePluginHost | undefined;
+	var __clinePluginHost: NexusPluginHost | undefined;
 }
 
 const DEFAULT_SHELL = process.env.SHELL || "/bin/zsh";
-const CLINE_DATA_DIR =
-	process.env.CLINE_DATA_DIR || join(homedir(), ".cline", "data");
-const JOBS_DIR = join(CLINE_DATA_DIR, "plugins", "background-shell", "jobs");
+const NEXUS_DATA_DIR =
+	process.env.NEXUS_DATA_DIR || join(homedir(), ".nexus", "data");
+const JOBS_DIR = join(NEXUS_DATA_DIR, "plugins", "background-shell", "jobs");
 let sessionDefaultCwd = process.cwd();
 let setupSessionId: string | undefined;
 

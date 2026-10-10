@@ -115,20 +115,20 @@ describe("parseRolloutAssignment", () => {
 });
 
 describe("identity prefix", () => {
-	it("maps the nightly manifest name to the cline-nightly namespace", () => {
-		expect(idPrefix("cline-nightly")).toBe("cline-nightly");
+	it("maps the nightly manifest name to the nexus-nightly namespace", () => {
+		expect(idPrefix("nexus-nightly")).toBe("nexus-nightly");
 	});
 
-	it("maps everything else (stable claude-dev, unknown, missing) to cline", () => {
-		expect(idPrefix("claude-dev")).toBe("cline");
-		expect(idPrefix("some-fork")).toBe("cline");
-		expect(idPrefix(undefined)).toBe("cline");
+	it("maps everything else (stable claude-dev, unknown, missing) to nexus", () => {
+		expect(idPrefix("claude-dev")).toBe("nexus");
+		expect(idPrefix("some-fork")).toBe("nexus");
+		expect(idPrefix(undefined)).toBe("nexus");
 	});
 
 	it("derives the setting section and context key from the prefix", () => {
-		expect(settingSection("cline")).toBe("cline.rollout");
-		expect(settingSection("cline-nightly")).toBe("cline-nightly.rollout");
-		expect(bundleContextKey("cline")).toBe("cline.sdkBundle");
-		expect(bundleContextKey("cline-nightly")).toBe("cline-nightly.sdkBundle");
+		expect(settingSection("nexus")).toBe("nexus.rollout");
+		expect(settingSection("nexus-nightly")).toBe("nexus-nightly.rollout");
+		expect(bundleContextKey("nexus")).toBe("nexus.sdkBundle");
+		expect(bundleContextKey("nexus-nightly")).toBe("nexus-nightly.sdkBundle");
 	});
 });

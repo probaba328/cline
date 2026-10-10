@@ -22,10 +22,10 @@ afterEach(async () => {
 });
 
 const options = [
-	{ label: "cline/cline", value: "cline" },
+	{ label: "nexus/nexus", value: "nexus" },
 	{
 		description: "Cloud dashboard",
-		label: "cline/core-platform",
+		label: "nexus/core-platform",
 		value: "core-platform",
 	},
 ];
@@ -39,13 +39,13 @@ describe("SearchCombobox", () => {
 					ariaLabel="Repository"
 					onValueChange={onValueChange}
 					options={options}
-					value="cline"
+					value="nexus"
 				/>,
 			),
 		);
 
 		const trigger = container.querySelector("button");
-		expect(trigger?.getAttribute("aria-label")).toBe("Repository: cline/cline");
+		expect(trigger?.getAttribute("aria-label")).toBe("Repository: nexus/nexus");
 		await act(async () => trigger?.click());
 		const search = container.querySelector("input");
 		await act(async () => {
@@ -58,9 +58,9 @@ describe("SearchCombobox", () => {
 		});
 
 		const panel = container.querySelector('[role="dialog"]');
-		expect(panel?.textContent).not.toContain("cline/cline");
+		expect(panel?.textContent).not.toContain("nexus/nexus");
 		const match = Array.from(panel?.querySelectorAll("button") ?? []).find(
-			(button) => button.textContent === "cline/core-platformCloud dashboard",
+			(button) => button.textContent === "nexus/core-platformCloud dashboard",
 		);
 		await act(async () => match?.click());
 
@@ -78,7 +78,7 @@ describe("SearchCombobox", () => {
 					ariaLabel="Repository"
 					onValueChange={onValueChange}
 					options={options}
-					value="cline"
+					value="nexus"
 				/>,
 			),
 		);
@@ -109,7 +109,7 @@ describe("SearchCombobox", () => {
 					ariaLabel="Repository"
 					onValueChange={onValueChange}
 					options={options}
-					value="cline"
+					value="nexus"
 				/>,
 			),
 		);
@@ -129,7 +129,7 @@ describe("SearchCombobox", () => {
 			"-option-1",
 		);
 		const active = container.querySelector('[data-active="true"]');
-		expect(active?.textContent).toContain("cline/core-platform");
+		expect(active?.textContent).toContain("nexus/core-platform");
 		await act(async () => {
 			search?.dispatchEvent(
 				new KeyboardEvent("keydown", { bubbles: true, key: "Enter" }),
@@ -149,7 +149,7 @@ describe("SearchCombobox", () => {
 					ariaLabel="Repository"
 					onValueChange={onValueChange}
 					options={options}
-					value="cline"
+					value="nexus"
 				/>,
 			),
 		);
@@ -208,7 +208,7 @@ describe("SearchCombobox", () => {
 		expect(panel?.textContent).toContain("No cost");
 		expect(panel?.textContent).toContain("All models");
 		expect(
-			panel?.querySelector(".cline-ui-search-combobox__badge")?.textContent,
+			panel?.querySelector(".nexus-ui-search-combobox__badge")?.textContent,
 		).toBe("NEW");
 
 		const search = container.querySelector("input");
@@ -225,7 +225,7 @@ describe("SearchCombobox", () => {
 		expect(searchedPanel?.textContent).toContain("DeepSeek V4 Flash");
 		// Options remain searchable by id, and label matches are highlighted.
 		expect(
-			searchedPanel?.querySelector(".cline-ui-search-combobox__match")
+			searchedPanel?.querySelector(".nexus-ui-search-combobox__match")
 				?.textContent,
 		).toBe("DeepSeek");
 	});
@@ -290,7 +290,7 @@ describe("SearchCombobox", () => {
 		await act(async () => container.querySelector("button")?.click());
 		await act(async () => render(true));
 		const optionButtons = container.querySelectorAll<HTMLButtonElement>(
-			".cline-ui-search-combobox__option",
+			".nexus-ui-search-combobox__option",
 		);
 		expect(optionButtons[1]?.disabled).toBe(true);
 		await act(async () => optionButtons[1]?.click());

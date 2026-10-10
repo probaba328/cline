@@ -1,9 +1,9 @@
 import {
-	CLINE_DEFAULT_MODEL_ID,
-	CLINE_ENVIRONMENT_ENV,
-	CLINE_ENVIRONMENTS,
+	NEXUS_DEFAULT_MODEL_ID,
+	NEXUS_ENVIRONMENT_ENV,
+	NEXUS_ENVIRONMENTS,
 	type GatewayProviderContext,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
 	BUILTIN_PROVIDER_MANIFESTS_BY_ID,
@@ -14,60 +14,60 @@ import { getModelsForProvider, getProvider } from "./model-registry";
 import { GENERATED_PROVIDER_SPECS } from "./providers.generated";
 import { resolveAnthropicReasoningRequestPolicy } from "./routing/anthropic-compatible";
 
-function findClineSpec() {
-	const spec = BUILTIN_SPECS.find((s) => s.id === "cline");
+function findNexusSpec() {
+	const spec = BUILTIN_SPECS.find((s) => s.id === "nexus");
 	if (!spec) {
-		throw new Error("cline builtin spec not found");
+		throw new Error("nexus builtin spec not found");
 	}
 	return spec;
 }
 
-describe("cline builtin spec defaults.baseUrl", () => {
-	const originalEnvironment = process.env[CLINE_ENVIRONMENT_ENV];
+describe("nexus builtin spec defaults.baseUrl", () => {
+	const originalEnvironment = process.env[NEXUS_ENVIRONMENT_ENV];
 
 	beforeEach(() => {
-		delete process.env[CLINE_ENVIRONMENT_ENV];
+		delete process.env[NEXUS_ENVIRONMENT_ENV];
 	});
 
 	afterEach(() => {
 		if (originalEnvironment === undefined) {
-			delete process.env[CLINE_ENVIRONMENT_ENV];
+			delete process.env[NEXUS_ENVIRONMENT_ENV];
 		} else {
-			process.env[CLINE_ENVIRONMENT_ENV] = originalEnvironment;
+			process.env[NEXUS_ENVIRONMENT_ENV] = originalEnvironment;
 		}
 	});
 
-	it("re-resolves baseUrl when CLINE_ENVIRONMENT changes between reads", () => {
-		const spec = findClineSpec();
+	it("re-resolves baseUrl when NEXUS_ENVIRONMENT changes between reads", () => {
+		const spec = findNexusSpec();
 
 		expect(spec.defaults?.baseUrl).toBe(
-			`${CLINE_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
+			`${NEXUS_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
 		);
 
-		process.env[CLINE_ENVIRONMENT_ENV] = "staging";
+		process.env[NEXUS_ENVIRONMENT_ENV] = "staging";
 		expect(spec.defaults?.baseUrl).toBe(
-			`${CLINE_ENVIRONMENTS.staging.apiBaseUrl}/api/v1`,
+			`${NEXUS_ENVIRONMENTS.staging.apiBaseUrl}/api/v1`,
 		);
 
-		process.env[CLINE_ENVIRONMENT_ENV] = "local";
+		process.env[NEXUS_ENVIRONMENT_ENV] = "local";
 		expect(spec.defaults?.baseUrl).toBe(
-			`${CLINE_ENVIRONMENTS.local.apiBaseUrl}/api/v1`,
+			`${NEXUS_ENVIRONMENTS.local.apiBaseUrl}/api/v1`,
 		);
 
-		delete process.env[CLINE_ENVIRONMENT_ENV];
+		delete process.env[NEXUS_ENVIRONMENT_ENV];
 		expect(spec.defaults?.baseUrl).toBe(
-			`${CLINE_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
+			`${NEXUS_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
 		);
 	});
 });
 
-describe("cline builtin models", () => {
+describe("nexus builtin models", () => {
 	it("exposes its canonical default model ID", () => {
-		expect(findClineSpec().defaultModelId).toBe(CLINE_DEFAULT_MODEL_ID);
+		expect(findNexusSpec().defaultModelId).toBe(NEXUS_DEFAULT_MODEL_ID);
 	});
 
 	it("prefers Vercel-style Z.ai model ids over equivalent OpenRouter ids", async () => {
-		const models = await getModelsForProvider("cline");
+		const models = await getModelsForProvider("nexus");
 
 		expect(models["zai/glm-5.2"]).toMatchObject({
 			id: "zai/glm-5.2",
@@ -82,7 +82,7 @@ describe("cline builtin models", () => {
 	});
 
 	it("includes Vercel-only allowlisted models the OpenRouter catalog lacks", async () => {
-		const models = await getModelsForProvider("cline");
+		const models = await getModelsForProvider("nexus");
 
 		expect(models["meta/muse-spark-1.2-contributor"]).toMatchObject({
 			id: "meta/muse-spark-1.2-contributor",
@@ -93,15 +93,15 @@ describe("cline builtin models", () => {
 
 	it("excludes image-output models without changing upstream catalogs", async () => {
 		const modelId = "google/gemini-3-pro-image";
-		const [clineModels, openRouterModels, vercelModels] = await Promise.all([
-			getModelsForProvider("cline"),
+		const [nexusModels, openRouterModels, vercelModels] = await Promise.all([
+			getModelsForProvider("nexus"),
 			getModelsForProvider("openrouter"),
 			getModelsForProvider("vercel-ai-gateway"),
 		]);
 
-		expect(clineModels[modelId]).toBeUndefined();
+		expect(nexusModels[modelId]).toBeUndefined();
 		expect(
-			Object.values(clineModels).some(
+			Object.values(nexusModels).some(
 				(model) => model.modalities?.output.includes("image") === true,
 			),
 		).toBe(false);
@@ -220,15 +220,15 @@ describe("vertex builtin models", () => {
 	});
 });
 
-describe("cline-pass builtin spec", () => {
-	it("registers a distinct Cline-compatible provider with a custom model list", async () => {
-		const models = await getModelsForProvider("cline-pass");
-		const provider = await getProvider("cline-pass");
+describe("nexus-pass builtin spec", () => {
+	it("registers a distinct Nexus-compatible provider with a custom model list", async () => {
+		const models = await getModelsForProvider("nexus-pass");
+		const provider = await getProvider("nexus-pass");
 
 		expect(provider).toMatchObject({
-			id: "cline-pass",
-			name: "ClinePass",
-			baseUrl: `${CLINE_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
+			id: "nexus-pass",
+			name: "NexusPass",
+			baseUrl: `${NEXUS_ENVIRONMENTS.production.apiBaseUrl}/api/v1`,
 			client: "openai-compatible",
 			capabilities: expect.arrayContaining([
 				"oauth",
@@ -250,14 +250,14 @@ describe("cline-pass builtin spec", () => {
 });
 
 describe("built-in provider metadata", () => {
-	it("declares OpenRouter image transport for Cline-compatible gateways", async () => {
-		await expect(getProvider("cline")).resolves.toMatchObject({
+	it("declares OpenRouter image transport for Nexus-compatible gateways", async () => {
+		await expect(getProvider("nexus")).resolves.toMatchObject({
 			metadata: {
 				imageTransport: "openrouter",
 				responseEnvelope: "success-data",
 			},
 		});
-		await expect(getProvider("cline-pass")).resolves.toMatchObject({
+		await expect(getProvider("nexus-pass")).resolves.toMatchObject({
 			metadata: {
 				imageTransport: "openrouter",
 				responseEnvelope: "success-data",
@@ -346,7 +346,7 @@ describe("built-in provider metadata", () => {
 	});
 
 	it("uses generated specs directly when no runtime override is required", () => {
-		// moonshot is intentionally absent: it carries a Cline-specific
+		// moonshot is intentionally absent: it carries a Nexus-specific
 		// regional routing override (apiLineBaseUrls) on top of its generated
 		// spec.
 		const generatedOnlyProviderIds = [
@@ -369,8 +369,8 @@ describe("built-in provider metadata", () => {
 	});
 
 	it("marks popular providers with a provider capability and rank", async () => {
-		await expect(getProvider("cline")).resolves.toMatchObject({
-			name: "Cline Usage-Billing",
+		await expect(getProvider("nexus")).resolves.toMatchObject({
+			name: "Nexus Usage-Billing",
 			capabilities: expect.arrayContaining(["popular"]),
 			metadata: { popularRank: 1 },
 		});

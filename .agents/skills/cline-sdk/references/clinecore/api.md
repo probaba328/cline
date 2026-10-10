@@ -1,17 +1,17 @@
-# ClineCore API Reference
+# NexusCore API Reference
 
-## Creating ClineCore
+## Creating NexusCore
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create(options: ClineCoreOptions)
+const nexus = await NexusCore.create(options: NexusCoreOptions)
 ```
 
-### ClineCoreOptions
+### NexusCoreOptions
 
 ```typescript
-interface ClineCoreOptions {
+interface NexusCoreOptions {
   clientName: string                     // identifies your app
   distinctId?: string                    // user/instance identifier
   backendMode?: "auto" | "local" | "hub" | "remote"
@@ -19,7 +19,7 @@ interface ClineCoreOptions {
   remote?: RemoteOptions
   capabilities?: RuntimeCapabilities
   toolPolicies?: Record<string, ToolPolicy>
-  automation?: boolean | ClineCoreAutomationOptions
+  automation?: boolean | NexusCoreAutomationOptions
   fetch?: typeof fetch
 }
 ```
@@ -38,7 +38,7 @@ interface RuntimeCapabilities {
 ### start(input)
 
 ```typescript
-const session = await cline.start(input: ClineCoreStartInput)
+const session = await nexus.start(input: NexusCoreStartInput)
 ```
 
 Returns a `StartSessionResult`:
@@ -53,10 +53,10 @@ interface StartSessionResult {
 }
 ```
 
-### ClineCoreStartInput
+### NexusCoreStartInput
 
 ```typescript
-interface ClineCoreStartInput {
+interface NexusCoreStartInput {
   prompt: string
   config: CoreSessionConfig
   source?: string
@@ -96,7 +96,7 @@ interface CoreSessionConfig {
 }
 ```
 
-`extensions` passes plugin objects directly. `pluginPaths` points to directories with `package.json` containing a `cline.plugins` field. Set `extensionContext.workspace` so plugins receive `ctx.workspaceInfo` in their `setup()` call -- without it, `ctx.workspaceInfo` is undefined.
+`extensions` passes plugin objects directly. `pluginPaths` points to directories with `package.json` containing a `nexus.plugins` field. Set `extensionContext.workspace` so plugins receive `ctx.workspaceInfo` in their `setup()` call -- without it, `ctx.workspaceInfo` is undefined.
 
 ## Follow-Up Messages
 
@@ -105,7 +105,7 @@ interface CoreSessionConfig {
 Send a follow-up message to an existing session:
 
 ```typescript
-const result = await cline.send({
+const result = await nexus.send({
   sessionId: session.sessionId,
   prompt: "Now add authentication",
 })
@@ -118,7 +118,7 @@ Returns `AgentResult | undefined`.
 ### subscribe(listener, options?)
 
 ```typescript
-const unsubscribe = cline.subscribe(
+const unsubscribe = nexus.subscribe(
   (event: CoreSessionEvent) => {
     // handle events
   },
@@ -143,25 +143,25 @@ type CoreSessionEvent =
 ### list(limit?, options?)
 
 ```typescript
-const sessions: SessionRecord[] = await cline.list(50)
+const sessions: SessionRecord[] = await nexus.list(50)
 ```
 
 ### get(sessionId)
 
 ```typescript
-const session: SessionRecord = await cline.get(sessionId)
+const session: SessionRecord = await nexus.get(sessionId)
 ```
 
 ### readMessages(sessionId)
 
 ```typescript
-const messages: AgentMessage[] = await cline.readMessages(sessionId)
+const messages: AgentMessage[] = await nexus.readMessages(sessionId)
 ```
 
 ### getAccumulatedUsage(sessionId)
 
 ```typescript
-const usage = await cline.getAccumulatedUsage(sessionId)
+const usage = await nexus.getAccumulatedUsage(sessionId)
 // usage.usage - root agent only
 // usage.aggregateUsage - root + subagents/teammates
 ```
@@ -169,25 +169,25 @@ const usage = await cline.getAccumulatedUsage(sessionId)
 ### update(sessionId, updates)
 
 ```typescript
-await cline.update(sessionId, { title: "New title" })
+await nexus.update(sessionId, { title: "New title" })
 ```
 
 ### abort(sessionId, reason?)
 
 ```typescript
-await cline.abort(sessionId, "User cancelled")
+await nexus.abort(sessionId, "User cancelled")
 ```
 
 ### stop(sessionId)
 
 ```typescript
-await cline.stop(sessionId)
+await nexus.stop(sessionId)
 ```
 
 ### delete(sessionId)
 
 ```typescript
-await cline.delete(sessionId)
+await nexus.delete(sessionId)
 ```
 
 ### restore(input)
@@ -195,7 +195,7 @@ await cline.delete(sessionId)
 Restore a session from a checkpoint:
 
 ```typescript
-await cline.restore({ sessionId, checkpointId })
+await nexus.restore({ sessionId, checkpointId })
 ```
 
 ### dispose(reason?)
@@ -203,7 +203,7 @@ await cline.restore({ sessionId, checkpointId })
 Clean up all resources. Always call this when done:
 
 ```typescript
-await cline.dispose("Shutting down")
+await nexus.dispose("Shutting down")
 ```
 
 ## AgentResult
@@ -230,7 +230,7 @@ interface AgentResult {
 Control tool access at the session level:
 
 ```typescript
-const session = await cline.start({
+const session = await nexus.start({
   prompt: "Review the code",
   config: { ... },
   toolPolicies: {
@@ -253,7 +253,7 @@ interface ToolPolicy {
 ## Interactive Approval
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   capabilities: {
     requestToolApproval: async (request) => {
@@ -267,32 +267,32 @@ const cline = await ClineCore.create({
 
 ## Automation API
 
-When `automation` is enabled in `ClineCore.create()`:
+When `automation` is enabled in `NexusCore.create()`:
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   automation: true,
 })
 
 // Access automation methods
-cline.automation.start()
-cline.automation.stop()
-cline.automation.reconcile(specs)
-cline.automation.ingestEvent(event)
-cline.automation.listEvents()
-cline.automation.listSpecs()
-cline.automation.listRuns()
+nexus.automation.start()
+nexus.automation.stop()
+nexus.automation.reconcile(specs)
+nexus.automation.ingestEvent(event)
+nexus.automation.listEvents()
+nexus.automation.listSpecs()
+nexus.automation.listRuns()
 ```
 
 ## Settings API
 
 ```typescript
 // Read settings
-const settings = await cline.settings.list()
+const settings = await nexus.settings.list()
 
 // Toggle tools, plugins, MCP servers
-await cline.settings.toggle({ type: "tool", name: "bash", enabled: true })
+await nexus.settings.toggle({ type: "tool", name: "bash", enabled: true })
 ```
 
 ## See Also

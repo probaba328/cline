@@ -15,8 +15,8 @@ import {
 	resolvePluginConfigSearchPaths,
 	type SkillConfig,
 	type WorkflowConfig,
-} from "@cline/core";
-import { readFileSyncStrippingUtf8Bom } from "@cline/shared/node";
+} from "@nexus/core";
+import { readFileSyncStrippingUtf8Bom } from "@nexus/shared/node";
 import { Command } from "commander";
 import { getToolCatalog } from "../runtime/tools";
 import { loadInteractiveConfigData } from "../tui/interactive-config";
@@ -28,8 +28,8 @@ type ConfigIo = {
 };
 
 function resolveCliAgentConfigSearchPaths(cwd: string): string[] {
-	const clineDir = process.env.CLINE_DIR?.trim() || join(homedir(), ".cline");
-	return [join(cwd, ".cline", "agents"), join(clineDir, "agents")];
+	const nexusDir = process.env.NEXUS_DIR?.trim() || join(homedir(), ".nexus");
+	return [join(cwd, ".nexus", "agents"), join(nexusDir, "agents")];
 }
 
 function createConfigUserInstructionService(cwd: string) {

@@ -4,7 +4,7 @@ import type {
 	AgentConfig,
 	AgentExtensionMcpServer,
 	AgentTool,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	type McpServerRegistration,
 	resolveDefaultMcpSettingsPath,

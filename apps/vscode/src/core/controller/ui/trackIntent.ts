@@ -1,5 +1,5 @@
-import { Empty } from "@shared/proto/cline/common"
-import type { IntentEvent } from "@shared/proto/cline/ui"
+import { Empty } from "@shared/proto/nexus/common"
+import type { IntentEvent } from "@shared/proto/nexus/ui"
 import { telemetryService } from "@/services/telemetry"
 import type { Controller } from "../index"
 

@@ -1,6 +1,6 @@
 import path from "path"
 import * as vscode from "vscode"
-import { OpenMultiFileDiffRequest, OpenMultiFileDiffResponse } from "@/shared/proto/index.host"
+import { ContentDiff, OpenMultiFileDiffRequest, OpenMultiFileDiffResponse } from "@/shared/proto/index.host"
 import { getCwd } from "@/utils/path"
 import { DIFF_VIEW_URI_SCHEME } from "../../VscodeDiffContentProvider"
 
@@ -9,7 +9,7 @@ export async function openMultiFileDiff(request: OpenMultiFileDiffRequest): Prom
 	await vscode.commands.executeCommand(
 		"vscode.changes",
 		request.title,
-		request.diffs.map((diff) => {
+		request.diffs.map((diff: ContentDiff) => {
 			const file = vscode.Uri.file(diff.filePath || "")
 			const relativePath = path.relative(cwd, diff.filePath || "")
 			const left = diff.leftContent ?? ""

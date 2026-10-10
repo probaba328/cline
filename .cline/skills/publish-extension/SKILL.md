@@ -1,6 +1,6 @@
 ---
 name: publish-extension
-description: Use when releasing the Cline VS Code extension — stable (currently the combined legacy+next A/B VSIX via ext-vscode-ab-package), nightly (ext-vscode-publish-nightly), or a legacy-branch hotfix (ext-vscode-publish-legacy). Guides version selection, changelog, PostHog rollout-flag coordination, workflow dispatch, environment approvals, tagging, and post-publish verification, plus the eventual cutover to publishing the SDK extension standalone.
+description: Use when releasing the Nexus VS Code extension — stable (currently the combined legacy+next A/B VSIX via ext-vscode-ab-package), nightly (ext-vscode-publish-nightly), or a legacy-branch hotfix (ext-vscode-publish-legacy). Guides version selection, changelog, PostHog rollout-flag coordination, workflow dispatch, environment approvals, tagging, and post-publish verification, plus the eventual cutover to publishing the SDK extension standalone.
 ---
 
 # VS Code Extension Release
@@ -20,7 +20,7 @@ Endgame (see "Cutover" at the bottom): once the next bundle is trusted at 100%, 
 | Channel | Marketplace ID | Workflow | Trigger | Version |
 |---|---|---|---|---|
 | Stable (combined) | `saoudrizwan.claude-dev` | `ext-vscode-ab-package.yml` | dispatch only; `publish` input defaults false | manual input (semver, e.g. `4.1.0`) |
-| Nightly (combined) | `saoudrizwan.cline-nightly` | `ext-vscode-publish-nightly.yml` | cron 12:00 UTC + dispatch | auto `<major>.<minor>.<unix-ts>` from main's `apps/vscode/package.json` |
+| Nightly (combined) | `saoudrizwan.nexus-nightly` | `ext-vscode-publish-nightly.yml` | cron 12:00 UTC + dispatch | auto `<major>.<minor>.<unix-ts>` from main's `apps/vscode/package.json` |
 | Legacy hotfix (standalone) | `saoudrizwan.claude-dev` | `ext-vscode-publish-legacy.yml` | dispatch | from `apps/vscode/package.json` on `legacy-extension` |
 | Stable standalone (post-cutover) | `saoudrizwan.claude-dev` | `ext-vscode-publish-stable.yml` | dispatch | from `apps/vscode/package.json` on `main` |
 
@@ -48,7 +48,7 @@ All three publish paths gate on tests before publishing: nightly and ab-package 
      let t = 0, n = 200;
      for (let i = 0; i < n; i += 20) {
        const rs = await Promise.all(Array.from({length: 20}, (_, j) =>
-         fetch("https://data.cline.bot/decide?v=3", { method: "POST",
+         fetch("https://data.nexus.bot/decide?v=3", { method: "POST",
            headers: {"Content-Type": "application/json"},
            body: JSON.stringify({api_key: KEY, distinct_id: `probe-${i+j}-${Math.random()}`})
          }).then(r => r.json())));
@@ -58,7 +58,7 @@ All three publish paths gate on tests before publishing: nightly and ab-package 
    })()' "$KEY"
    ```
 
-   Flag changes are made in the PostHog UI (Cline project). **0% is the kill switch** — the flag is two-way; there is no separate killswitch flag. Dialing down demotes machines back to legacy on their next window reload.
+   Flag changes are made in the PostHog UI (Nexus project). **0% is the kill switch** — the flag is two-way; there is no separate killswitch flag. Dialing down demotes machines back to legacy on their next window reload.
 
 3. **Ask before pushing** commits or tags. Environment approvals are the maintainer's to give.
 
@@ -105,7 +105,7 @@ gh run list --workflow=ext-vscode-ab-package.yml --limit 1
 Preflight (version format + monotonicity) and both test suites run first, then the ungated `build` job packages and uploads the VSIX; for `publish=true` the `publish` job then **waits for `Publish` environment approval** (Actions → run → "Review deployments"). Both bundles build the exact revisions their test gates ran against (branch names are resolved once — commits landing on either branch mid-run or during the approval wait are not picked up); `publish=true` is additionally refused for any `next-ref` other than `main` (the bun gate only tests main — non-main next-refs are for build-only artifact rehearsals). Check what a run is waiting on:
 
 ```bash
-gh api repos/cline/cline/actions/runs/<run-id>/pending_deployments
+gh api repos/nexus/nexus/actions/runs/<run-id>/pending_deployments
 ```
 
 ### Post-publish
@@ -125,9 +125,9 @@ gh api repos/cline/cline/actions/runs/<run-id>/pending_deployments
 
    A real publish also **hard-fails early** if root `CHANGELOG.md` on the built main revision doesn't start with `## [<VERSION>]` — the release prep PR must be merged before dispatching.
 
-3. Thorough artifact check (`gh run download <run-id>`): union `package.json` is `saoudrizwan.claude-dev@<VERSION>`, `next/package.json` and `legacy/package.json` carry the SAME version, `grep -c 'phc_' extension/extension.js` ≥ 1 (loader key inlined), no leftover `process.env.TELEMETRY_SERVICE_API_KEY` / `process.env.CLINE_ROLLOUT_VARIANT` literals in either bundle's dist (leftovers = a build ran without its env and telemetry is silently dead).
+3. Thorough artifact check (`gh run download <run-id>`): union `package.json` is `saoudrizwan.claude-dev@<VERSION>`, `next/package.json` and `legacy/package.json` carry the SAME version, `grep -c 'phc_' extension/extension.js` ≥ 1 (loader key inlined), no leftover `process.env.TELEMETRY_SERVICE_API_KEY` / `process.env.NEXUS_ROLLOUT_VARIANT` literals in either bundle's dist (leftovers = a build ran without its env and telemetry is silently dead).
 4. Monitor: `extension.rollout.bundle_activated` in `otel.otel_logs` filtered to `extension_version = '<VERSION>'` (stable cohort is cleanly separable — nightly versions are timestamps). Watch the next/legacy ratio and the crash-fallback rate; Metabase dashboards 17 (rollout + task error rate) and 19 (error deep dive). `extension.rollout.loader_decision` (incl. `double_failure`) is PostHog-only, not in ClickHouse.
-5. Dial the flag per the rollout plan (e.g. 0% at publish → 1% → up), verifying each change with the probe from rule 2. Announce demotions ahead of time — dialing down also demotes nightly dogfooders unless they set `"cline-nightly.rollout.bundleOverride": "next"`.
+5. Dial the flag per the rollout plan (e.g. 0% at publish → 1% → up), verifying each change with the probe from rule 2. Announce demotions ahead of time — dialing down also demotes nightly dogfooders unless they set `"nexus-nightly.rollout.bundleOverride": "next"`.
 
 ### Known caveats of this path
 
@@ -144,7 +144,7 @@ gh workflow run ext-vscode-publish-nightly.yml --ref main -f dry-run=true # arti
 gh run watch <run-id> --exit-status --interval 60
 ```
 
-No changelog/version prep — the version is computed. Verify with the marketplace query against `saoudrizwan.cline-nightly`.
+No changelog/version prep — the version is computed. Verify with the marketplace query against `saoudrizwan.nexus-nightly`.
 
 **Red run ≠ failed publish**: the final tag-push step fails whenever main's HEAD touches `.github/workflows/**` (default token cannot create such refs). If "Published" appears in the logs, the release went out; push the `nightly-main-<UTC ts>-<sha12>` tag manually with user credentials.
 
@@ -179,8 +179,8 @@ When the next bundle has held at 100% long enough to trust:
 ## Gotchas index
 
 - `inputs.*` are empty strings on `schedule` events — preserve `|| 'default'` fallbacks when editing the nightly workflow.
-- `bun run package` in `apps/vscode` does not build `@cline/*` workspace deps — fresh checkouts need `bun run build:sdk` first (workflows handle this).
+- `bun run package` in `apps/vscode` does not build `@nexus/*` workspace deps — fresh checkouts need `bun run build:sdk` first (workflows handle this).
 - Job-level `if:` ref checks in workflow YAML are advisory (a dispatched branch runs its own copy of the file); the enforced boundary is each environment's deployment-branch policy in repo settings.
 - Marketplace PATs (`VSCE_PAT`/`OVSX_PAT`) are only mounted into publish steps; neither publish workflow has an untrusted trigger surface.
 - Environment-approval runs left waiting don't time out quickly — they sit for days and (for ab-package publish runs) block their version's concurrency group.
-- Local forcing for manual testing: `CLINE_BUNDLE_OVERRIDE=next|legacy` env (launch VS Code fresh from a terminal) or the `<prefix>.rollout.bundleOverride` setting + reload; both report as `override` in telemetry so they don't pollute cohort data.
+- Local forcing for manual testing: `NEXUS_BUNDLE_OVERRIDE=next|legacy` env (launch VS Code fresh from a terminal) or the `<prefix>.rollout.bundleOverride` setting + reload; both report as `override` in telemetry so they don't pollute cohort data.

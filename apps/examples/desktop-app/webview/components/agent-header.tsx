@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionStatus } from "@cline/ui";
+import { SessionStatus } from "@nexus/ui";
 import {
 	AlertCircle,
 	Bot,
@@ -135,7 +135,7 @@ function AgentHeaderImpl({
 					showLabel={false}
 					style={
 						{
-							"--cline-ui-session-status-color": statusColor,
+							"--nexus-ui-session-status-color": statusColor,
 						} as CSSProperties
 					}
 					tone={statusTone}

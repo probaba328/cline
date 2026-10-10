@@ -9,9 +9,9 @@ import {
 	resolveGeneratedProviderIdForModelsDevKey,
 } from "../providers/provider-keys";
 import {
-	fetchClineRecommendedModelsPayload,
-	normalizeClineRecommendedProviderModels,
-} from "./catalog-cline-recommended";
+	fetchNexusRecommendedModelsPayload,
+	normalizeNexusRecommendedProviderModels,
+} from "./catalog-nexus-recommended";
 import {
 	resolveCatalogModelOperation,
 	resolveCatalogModelOperationModes,
@@ -517,21 +517,21 @@ export async function fetchLiveProviderModels(
 	fetcher: typeof fetch = fetch,
 ): Promise<Record<string, Record<string, ModelInfo>>> {
 	const emptyProviderModels: Record<string, Record<string, ModelInfo>> = {};
-	const [providerModels, clineRecommendedPayload] = await Promise.all([
+	const [providerModels, nexusRecommendedPayload] = await Promise.all([
 		fetchModelsDevProviderModels(modelsDevUrl, fetcher).catch(
 			() => emptyProviderModels,
 		),
-		fetchClineRecommendedModelsPayload(fetcher).catch(() => undefined),
+		fetchNexusRecommendedModelsPayload(fetcher).catch(() => undefined),
 	]);
-	const clineRecommended = clineRecommendedPayload
-		? normalizeClineRecommendedProviderModels(
-				clineRecommendedPayload,
+	const nexusRecommended = nexusRecommendedPayload
+		? normalizeNexusRecommendedProviderModels(
+				nexusRecommendedPayload,
 				providerModels.openrouter ?? {},
 			)
 		: {};
 
 	return {
 		...providerModels,
-		...clineRecommended,
+		...nexusRecommended,
 	};
 }

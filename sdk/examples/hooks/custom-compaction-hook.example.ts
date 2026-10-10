@@ -7,18 +7,18 @@
  * summary message before the provider request.
  *
  * Installation:
- *   cline plugin install https://github.com/cline/cline/blob/main/sdk/examples/hooks/custom-compaction-hook.example.ts --cwd .
+ *   nexus plugin install https://github.com/nexus/nexus/blob/main/sdk/examples/hooks/custom-compaction-hook.example.ts --cwd .
  *
  * Usage:
- *   cline -i "Search the codebase for dispatcher usage, then summarize it"
+ *   nexus -i "Search the codebase for dispatcher usage, then summarize it"
  *
  * Note: for most plugin-owned message rewrites, prefer registerMessageBuilder().
  * This example exists for cases where you specifically need runtime-hook access
  * to the current request and snapshot.
  */
 
-import type { AgentPlugin } from "@cline/core";
-import { estimateTokens as estimateTokensFromChars } from "@cline/shared";
+import type { AgentPlugin } from "@nexus/core";
+import { estimateTokens as estimateTokensFromChars } from "@nexus/shared";
 
 type PluginHooks = NonNullable<AgentPlugin["hooks"]>;
 type BeforeModelHook = NonNullable<PluginHooks["beforeModel"]>;

@@ -1,6 +1,6 @@
 # Scheduling and Automation
 
-The Cline SDK supports scheduled, one-off, and event-driven agent execution through the automation subsystem in `@cline/core`.
+The Nexus SDK supports scheduled, one-off, and event-driven agent execution through the automation subsystem in `@nexus/core`.
 
 ## Overview
 
@@ -16,27 +16,27 @@ Three trigger types:
 
 ```bash
 # Create a recurring schedule
-cline schedule create "Daily standup" \
+nexus schedule create "Daily standup" \
   --cron "0 9 * * MON-FRI" \
   --prompt "Summarize open PRs and blockers" \
   --workspace /path/to/project \
   --model anthropic/claude-sonnet-4-6
 
 # List schedules
-cline schedule list
+nexus schedule list
 
 # Trigger a schedule immediately
-cline schedule trigger <schedule-id>
+nexus schedule trigger <schedule-id>
 
 # Pause/resume
-cline schedule pause <schedule-id>
-cline schedule resume <schedule-id>
+nexus schedule pause <schedule-id>
+nexus schedule resume <schedule-id>
 
 # Delete
-cline schedule delete <schedule-id>
+nexus schedule delete <schedule-id>
 
 # View past executions
-cline schedule executions <schedule-id>
+nexus schedule executions <schedule-id>
 ```
 
 ## Cron Expressions
@@ -51,7 +51,7 @@ cline schedule executions <schedule-id>
 
 ## File-Based Specs
 
-Create Markdown files in `~/.cline/cron/` (global) or `.cline/cron/` (workspace):
+Create Markdown files in `~/.nexus/cron/` (global) or `.nexus/cron/` (workspace):
 
 ### Recurring Schedule
 
@@ -136,16 +136,16 @@ interface CronEventSpec {
 ## Programmatic Automation API
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   automation: true,
 })
 
 // Start automation service
-cline.automation.start()
+nexus.automation.start()
 
 // Ingest an external event
-cline.automation.ingestEvent({
+nexus.automation.ingestEvent({
   eventId: "evt-123",
   eventType: "github.pull_request.opened",
   source: "github",
@@ -154,15 +154,15 @@ cline.automation.ingestEvent({
 })
 
 // List specs, runs, events
-const specs = await cline.automation.listSpecs()
-const runs = await cline.automation.listRuns()
-const events = await cline.automation.listEvents()
+const specs = await nexus.automation.listSpecs()
+const runs = await nexus.automation.listRuns()
+const events = await nexus.automation.listEvents()
 
 // Reconcile specs from directory
-await cline.automation.reconcile(specDirectory)
+await nexus.automation.reconcile(specDirectory)
 
 // Stop automation
-cline.automation.stop()
+nexus.automation.stop()
 ```
 
 ## Event Ingestion from Plugins
@@ -203,7 +203,7 @@ ctx.automation.ingestEvent({
 
 ## Run Reports
 
-Each completed run writes a Markdown report to `.cline/cron/reports/<run-id>.md` with:
+Each completed run writes a Markdown report to `.nexus/cron/reports/<run-id>.md` with:
 - Run metadata (spec, trigger, timing)
 - Summary of agent output
 - Usage (tokens, cost)
@@ -221,7 +221,7 @@ Each completed run writes a Markdown report to `.cline/cron/reports/<run-id>.md`
 
 ## See Also
 
-- `../clinecore/REFERENCE.md` - ClineCore runtime
+- `../clinecore/REFERENCE.md` - NexusCore runtime
 - `../clinecore/api.md` - Automation API details
 - `../plugins/REFERENCE.md` - Plugin events
 - `../production/REFERENCE.md` - Production deployment

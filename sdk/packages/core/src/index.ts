@@ -1,30 +1,30 @@
 /**
- * @cline/core
+ * @nexus/core
  *
  * Core contracts, shared state utilities, and Node runtime services.
  */
 
-export * as Llms from "@cline/llms";
+export * as Llms from "@nexus/llms";
 export {
-	ClineFreeModelLimitError,
-	ClineNotSubscribedError,
-	ClineOrgIndividualInferenceSubscriptionError,
-	ClinePassLimitError,
-	extractClineFreeModelLimitResetTime,
-	extractClinePassLimitMessage,
-	getClineNotSubscribedMessage,
-	getClineOrgIndividualInferenceSubscriptionMessage,
-	getClinePassSubscriptionUrl,
-	isClineFreeModelLimitError,
-	isClineFreeModelLimitMessage,
-	isClineModelNotFoundMessage,
-	isClineNotSubscribedError,
-	isClineNotSubscribedMessage,
-	isClineOrgIndividualInferenceSubscriptionError,
-	isClineOrgIndividualInferenceSubscriptionMessage,
-	isClinePassLimitError,
-	isClinePassLimitMessage,
-} from "@cline/llms";
+	NexusFreeModelLimitError,
+	NexusNotSubscribedError,
+	NexusOrgIndividualInferenceSubscriptionError,
+	NexusPassLimitError,
+	extractNexusFreeModelLimitResetTime,
+	extractNexusPassLimitMessage,
+	getNexusNotSubscribedMessage,
+	getNexusOrgIndividualInferenceSubscriptionMessage,
+	getNexusPassSubscriptionUrl,
+	isNexusFreeModelLimitError,
+	isNexusFreeModelLimitMessage,
+	isNexusModelNotFoundMessage,
+	isNexusNotSubscribedError,
+	isNexusNotSubscribedMessage,
+	isNexusOrgIndividualInferenceSubscriptionError,
+	isNexusOrgIndividualInferenceSubscriptionMessage,
+	isNexusPassLimitError,
+	isNexusPassLimitMessage,
+} from "@nexus/llms";
 // Shared contracts and path helpers re-exported for app consumers.
 export type {
 	AddProviderActionRequest,
@@ -50,7 +50,7 @@ export type {
 	ChatStartSessionArtifacts,
 	ChatStartSessionRequest,
 	ChatTurnResult,
-	ClineAccountActionRequest,
+	NexusAccountActionRequest,
 	ConnectorHookEvent,
 	ContentBlock,
 	FeatureFlag,
@@ -97,14 +97,14 @@ export type {
 	WorkspaceInfoSchema,
 	WorkspaceManifest,
 	WorkspaceManifestSchema,
-} from "@cline/shared";
+} from "@nexus/shared";
 export {
-	buildClineSystemPrompt as getClineDefaultSystemPrompt,
+	buildNexusSystemPrompt as getNexusDefaultSystemPrompt,
 	buildSdkErrorProperties,
 	ContributionRegistry,
 	captureSdkError,
-	createClineTelemetryServiceConfig,
-	createClineTelemetryServiceMetadata,
+	createNexusTelemetryServiceConfig,
+	createNexusTelemetryServiceMetadata,
 	createContributionRegistry,
 	createTool,
 	emptyWorkspaceManifest,
@@ -118,26 +118,26 @@ export {
 	registerDisposable,
 	SDK_ERROR_TELEMETRY_EVENT,
 	stripUtf8Bom,
-} from "@cline/shared";
-export * from "@cline/shared/storage";
+} from "@nexus/shared";
+export * from "@nexus/shared/storage";
 export {
-	type ClineAccountBalance,
-	type ClineAccountOperations,
-	type ClineAccountOrganization,
-	type ClineAccountOrganizationBalance,
-	type ClineAccountOrganizationUsageTransaction,
-	type ClineAccountPaymentTransaction,
-	ClineAccountService,
-	type ClineAccountServiceOptions,
-	type ClineAccountUsageTransaction,
-	type ClineAccountUser,
-	type ClineOrganization,
-	type ClineSubscriptionPlan,
-	executeClineAccountAction,
+	type NexusAccountBalance,
+	type NexusAccountOperations,
+	type NexusAccountOrganization,
+	type NexusAccountOrganizationBalance,
+	type NexusAccountOrganizationUsageTransaction,
+	type NexusAccountPaymentTransaction,
+	NexusAccountService,
+	type NexusAccountServiceOptions,
+	type NexusAccountUsageTransaction,
+	type NexusAccountUser,
+	type NexusOrganization,
+	type NexusSubscriptionPlan,
+	executeNexusAccountAction,
 	type FeaturebaseTokenResponse,
-	isClineAccountActionRequest,
+	isNexusAccountActionRequest,
 	type ProviderActionExecutor,
-	RpcClineAccountService,
+	RpcNexusAccountService,
 	type UserCurrentPlan,
 	type UserRemoteConfigOrganization,
 	type UserRemoteConfigResponse,
@@ -147,12 +147,12 @@ export {
 	type OAuthClientCallbacksOptions,
 } from "./auth/client";
 export {
-	completeClineDeviceAuth,
-	getValidClineCredentials,
-	loginClineOAuth,
-	refreshClineToken,
-	startClineDeviceAuth,
-} from "./auth/cline";
+	completeNexusDeviceAuth,
+	getValidNexusCredentials,
+	loginNexusOAuth,
+	refreshNexusToken,
+	startNexusDeviceAuth,
+} from "./auth/nexus";
 export {
 	getValidOpenAICodexCredentials,
 	loginOpenAICodex,
@@ -199,23 +199,23 @@ export type {
 	OcaOAuthProviderOptions,
 	OcaTokenResolution,
 } from "./auth/types";
-export { ClineCore } from "./ClineCore";
+export { NexusCore } from "./NexusCore";
 export type {
-	ClineAutomationEventIngressResult,
-	ClineAutomationEventLog,
-	ClineAutomationEventSuppression,
-	ClineAutomationListEventsOptions,
-	ClineAutomationListRunsOptions,
-	ClineAutomationListSpecsOptions,
-	ClineAutomationRun,
-	ClineAutomationRunStatus,
-	ClineAutomationSpec,
-	ClineCoreAutomationApi,
-	ClineCoreAutomationOptions,
-	ClineCoreListHistoryOptions,
-	ClineCoreOptions,
-	ClineCoreSettingsApi,
-	ClineCoreStartInput,
+	NexusAutomationEventIngressResult,
+	NexusAutomationEventLog,
+	NexusAutomationEventSuppression,
+	NexusAutomationListEventsOptions,
+	NexusAutomationListRunsOptions,
+	NexusAutomationListSpecsOptions,
+	NexusAutomationRun,
+	NexusAutomationRunStatus,
+	NexusAutomationSpec,
+	NexusCoreAutomationApi,
+	NexusCoreAutomationOptions,
+	NexusCoreListHistoryOptions,
+	NexusCoreOptions,
+	NexusCoreSettingsApi,
+	NexusCoreStartInput,
 	CompareCheckpointInput,
 	CompareCheckpointResult,
 	HubOptions,
@@ -223,7 +223,7 @@ export type {
 	RestoreInput,
 	RestoreOptions,
 	RestoreResult,
-} from "./cline-core/types";
+} from "./nexus-core/types";
 export type {
 	LoadAgentPluginFromPathOptions,
 	PluginInitializationFailure,
@@ -677,7 +677,7 @@ export {
 	markLocalProviderEnabled,
 	normalizeOAuthProvider,
 	refreshProviderModelsFromSource,
-	resolveLocalClineAuthToken,
+	resolveLocalNexusAuthToken,
 	saveLocalProviderOAuthCredentials,
 	saveLocalProviderSettings,
 	saveVoiceInputSettings,
@@ -895,7 +895,7 @@ export { CORE_BUILD_VERSION } from "./version";
 export async function loadOpenTelemetryAdapter() {
 	return import("./services/telemetry/index.js");
 }
-export { Agent, createAgentRuntime } from "@cline/agents";
+export { Agent, createAgentRuntime } from "@nexus/agents";
 export {
 	createCompactionStateAwarePrepareTurn,
 	createContextCompactionPrepareTurn,
@@ -953,16 +953,16 @@ export {
 	truncateCommandOutput,
 } from "./extensions/tools";
 export {
-	applyClineFeaturedModels,
-	type ClineRecommendedModel,
-	type ClineRecommendedModelsData,
-	FALLBACK_CLINE_RECOMMENDED_MODELS,
-	type FetchClineRecommendedModelsOptions,
-	fetchClineRecommendedModels,
-	getCachedClineRecommendedModels,
-	peekClineRecommendedModels,
-	resetClineRecommendedModelsCacheForTests,
-} from "./services/llms/cline-recommended-models";
+	applyNexusFeaturedModels,
+	type NexusRecommendedModel,
+	type NexusRecommendedModelsData,
+	FALLBACK_NEXUS_RECOMMENDED_MODELS,
+	type FetchNexusRecommendedModelsOptions,
+	fetchNexusRecommendedModels,
+	getCachedNexusRecommendedModels,
+	peekNexusRecommendedModels,
+	resetNexusRecommendedModelsCacheForTests,
+} from "./services/llms/nexus-recommended-models";
 export {
 	clearLiveModelsCatalogCache,
 	clearPrivateModelsCatalogCache,
@@ -1051,7 +1051,7 @@ export type { RuntimeEnvironment } from "./types";
 export type { SessionStatus } from "./types/common";
 export { SESSION_STATUSES, SessionSource } from "./types/common";
 export type {
-	ClineCoreStartConfig,
+	NexusCoreStartConfig,
 	CoreAgentMode,
 	CoreCheckpointConfig,
 	CoreCheckpointContext,

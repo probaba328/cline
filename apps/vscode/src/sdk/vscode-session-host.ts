@@ -1,14 +1,14 @@
-// VscodeSessionHost — wraps ClineCore with VSCode-specific customizations
+// VscodeSessionHost — wraps NexusCore with VSCode-specific customizations
 //
-// Uses ClineCore.create() so the SDK owns session input normalization,
+// Uses NexusCore.create() so the SDK owns session input normalization,
 // lifecycle bootstrapping, and host selection while the VSCode extension
 // still provides its custom McpHub-backed runtime builder.
 
 import {
 	type ApplyPatchExecutor,
-	ClineCore,
-	type ClineCoreListHistoryOptions,
-	type ClineCoreStartInput,
+	NexusCore,
+	type NexusCoreListHistoryOptions,
+	type NexusCoreStartInput,
 	type CompareCheckpointInput,
 	type CompareCheckpointResult,
 	type CoreSessionEvent,
@@ -31,14 +31,14 @@ import {
 	type StartSessionInput,
 	type StartSessionResult,
 	type ToolExecutors,
-} from "@cline/core"
+} from "@nexus/core"
 import {
 	type AgentToolContext,
 	RUNTIME_CONFIG_EXTENSION_KINDS,
 	type ToolApprovalRequest,
 	type ToolApprovalResult,
 	type ToolPolicy,
-} from "@cline/shared"
+} from "@nexus/shared"
 import { StateManager } from "@/core/storage/StateManager"
 import type { VscodeTerminalManager } from "@/hosts/vscode/terminal/VscodeTerminalManager"
 import { getDistinctId } from "@/services/logging/distinctId"
@@ -97,12 +97,12 @@ export interface VscodeSessionHostOptions {
 
 export class VscodeSessionHost implements SdkSessionHost {
 	readonly runtimeAddress: string | undefined
-	private readonly inner: ClineCore
-	private readonly prepareStartSessionInput?: (input: ClineCoreStartInput) => Promise<ClineCoreStartInput>
+	private readonly inner: NexusCore
+	private readonly prepareStartSessionInput?: (input: NexusCoreStartInput) => Promise<NexusCoreStartInput>
 
 	private constructor(
-		inner: ClineCore,
-		prepareStartSessionInput?: (input: ClineCoreStartInput) => Promise<ClineCoreStartInput>,
+		inner: NexusCore,
+		prepareStartSessionInput?: (input: NexusCoreStartInput) => Promise<NexusCoreStartInput>,
 	) {
 		this.inner = inner
 		this.runtimeAddress = inner.runtimeAddress
@@ -139,10 +139,10 @@ export class VscodeSessionHost implements SdkSessionHost {
 
 		// Single funnel for session-start preparation: waits on the remote-config
 		// readiness/policy gate, applies the remote-config integration, and adds
-		// the VSCode extra tools. Used by ClineCore's prepare hook for normal
+		// the VSCode extra tools. Used by NexusCore's prepare hook for normal
 		// starts AND by restore() for checkpoint-restore replacement sessions,
-		// which ClineCore starts without running the prepare hook.
-		const prepareStartSessionInput = async (input: ClineCoreStartInput): Promise<ClineCoreStartInput> => {
+		// which NexusCore starts without running the prepare hook.
+		const prepareStartSessionInput = async (input: NexusCoreStartInput): Promise<NexusCoreStartInput> => {
 			await options.beforeStartSession?.()
 			// Read only after the readiness gate: it may have atomically replaced
 			// the integration that must be captured by this session.
@@ -168,7 +168,7 @@ export class VscodeSessionHost implements SdkSessionHost {
 					...(inputWithRemoteConfig.localRuntime ?? {}),
 					configExtensions: (
 						inputWithRemoteConfig.localRuntime?.configExtensions ?? RUNTIME_CONFIG_EXTENSION_KINDS
-					).filter((kind) => kind !== "hooks"),
+					).filter((kind: string) => kind !== "hooks"),
 				},
 				config: {
 					...inputWithRemoteConfig.config,
@@ -178,7 +178,7 @@ export class VscodeSessionHost implements SdkSessionHost {
 			}
 		}
 
-		const inner = await ClineCore.create({
+		const inner = await NexusCore.create({
 			backendMode: "local",
 			capabilities: {
 				requestToolApproval: options.requestToolApproval as
@@ -194,7 +194,7 @@ export class VscodeSessionHost implements SdkSessionHost {
 			}),
 		})
 
-		Logger.log("[VscodeSessionHost] Initialized with ClineCore + VSCode extra tools")
+		Logger.log("[VscodeSessionHost] Initialized with NexusCore + VSCode extra tools")
 		if (options.getTerminalManager) {
 			Logger.log("[VscodeSessionHost] SDK run_commands suppressed; using custom foreground/background terminal tool")
 		}
@@ -202,9 +202,9 @@ export class VscodeSessionHost implements SdkSessionHost {
 	}
 
 	async start(input: StartSessionInput): Promise<StartSessionResult>
-	async start(input: ClineCoreStartInput): Promise<StartSessionResult>
-	async start(input: StartSessionInput | ClineCoreStartInput): Promise<StartSessionResult> {
-		return this.inner.start(input as ClineCoreStartInput)
+	async start(input: NexusCoreStartInput): Promise<StartSessionResult>
+	async start(input: StartSessionInput | NexusCoreStartInput): Promise<StartSessionResult> {
+		return this.inner.start(input as NexusCoreStartInput)
 	}
 
 	async send(input: SendSessionInput) {
@@ -253,11 +253,11 @@ export class VscodeSessionHost implements SdkSessionHost {
 		return this.inner.get(sessionId)
 	}
 
-	async list(limit?: number, options: Omit<ClineCoreListHistoryOptions, "limit"> = {}): Promise<SessionHistoryRecord[]> {
+	async list(limit?: number, options: Omit<NexusCoreListHistoryOptions, "limit"> = {}): Promise<SessionHistoryRecord[]> {
 		return this.inner.list(limit, options)
 	}
 
-	async listHistory(options: ClineCoreListHistoryOptions = {}): Promise<SessionHistoryRecord[]> {
+	async listHistory(options: NexusCoreListHistoryOptions = {}): Promise<SessionHistoryRecord[]> {
 		return this.inner.listHistory(options)
 	}
 
@@ -278,7 +278,7 @@ export class VscodeSessionHost implements SdkSessionHost {
 	}
 
 	async restore(input: RestoreInput): Promise<RestoreResult> {
-		// ClineCore.restore starts the checkpoint-restore replacement session
+		// NexusCore.restore starts the checkpoint-restore replacement session
 		// WITHOUT running the prepare hook, which would bypass the remote-config
 		// session gate and integration. Run the same preparation here.
 		if (input.start && this.prepareStartSessionInput) {

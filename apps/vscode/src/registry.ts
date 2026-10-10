@@ -1,15 +1,15 @@
 import { name, publisher, version } from "../package.json"
 import { HostProvider } from "./hosts/host-provider"
 
-const prefix = name === "claude-dev" ? "cline" : name
+const prefix = name === "claude-dev" ? "nexus" : name
 
 /**
  * List of commands with the name of the extension they are registered under.
  * These should match the command IDs defined in package.json.
  * For Nightly build, the publish script has updated all the commands to use the extension name as prefix.
- * In production, all commands are registered under "cline" for consistency.
+ * In production, all commands are registered under "nexus" for consistency.
  */
-const ClineCommands = {
+const NexusCommands = {
 	PlusButton: prefix + ".plusButtonClicked",
 	McpButton: prefix + ".mcpButtonClicked",
 	MarketplaceButton: prefix + ".marketplaceButtonClicked",
@@ -19,7 +19,7 @@ const ClineCommands = {
 	WorktreesButton: prefix + ".worktreesButtonClicked",
 	TerminalOutput: prefix + ".addTerminalOutputToChat",
 	AddToChat: prefix + ".addToChat",
-	FixWithCline: prefix + ".fixWithCline",
+	FixWithNexus: prefix + ".fixWithNexus",
 	ExplainCode: prefix + ".explainCode",
 	ImproveCode: prefix + ".improveCode",
 	FocusChatInput: prefix + ".focusChatInput",
@@ -30,13 +30,15 @@ const ClineCommands = {
 	JupyterGenerateCell: prefix + ".jupyterGenerateCell",
 	JupyterExplainCell: prefix + ".jupyterExplainCell",
 	JupyterImproveCell: prefix + ".jupyterImproveCell",
+	// Diagnostics
+	PerformanceReport: prefix + ".performanceReport",
 }
 
 /**
  * IDs for the views registered by the extension.
  * These should match the name + view IDs defined in package.json.
  */
-const ClineViewIds = {
+const NexusViewIds = {
 	Sidebar: name + ".SidebarProvider",
 }
 
@@ -49,8 +51,8 @@ export const ExtensionRegistryInfo = {
 	name,
 	version,
 	publisher,
-	commands: ClineCommands,
-	views: ClineViewIds,
+	commands: NexusCommands,
+	views: NexusViewIds,
 }
 
 export interface HostInfo {
@@ -63,7 +65,7 @@ export interface HostInfo {
 	 */
 	os: string
 	/**
-	 * The type of the cline host environment, e.g. 'VSCode Extension', 'Cline for JetBrains', 'CLI'
+	 * The type of the nexus host environment, e.g. 'VSCode Extension', 'Nexus for JetBrains', 'CLI'
 	 * This is different from the platform because there are many JetBrains IDEs, but they all use the same
 	 * plugin.
 	 */
@@ -77,7 +79,7 @@ export interface HostInfo {
 	 */
 	hostVersion?: string
 	/**
-	 * The version of Cline that the host client is running
+	 * The version of Nexus that the host client is running
 	 */
 	extensionVersion: string
 }
@@ -88,10 +90,10 @@ export const HostRegistryInfo = {
 	init: async (distinctId: string) => {
 		const host = await HostProvider.env.getHostVersion({})
 		const hostVersion = host.version
-		const extensionVersion = host.clineVersion || ExtensionRegistryInfo.version
+		const extensionVersion = host.nexusVersion || ExtensionRegistryInfo.version
 		const platform = host.platform || "unknown"
 		const os = process.platform || "unknown"
-		const ide = host.clineType || "unknown"
+		const ide = host.nexusType || "unknown"
 		hostInfo = { hostVersion, extensionVersion, platform, os, ide, distinctId }
 	},
 	get: () => hostInfo,

@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionStatus } from "@cline/ui";
+import { SessionStatus } from "@nexus/ui";
 import {
 	ArrowUpDown,
 	Check,
@@ -564,7 +564,7 @@ export function SessionsView({ activeSessionId, history }: SessionsViewProps) {
 													showLabel={false}
 													style={
 														{
-															"--cline-ui-session-status-color":
+															"--nexus-ui-session-status-color":
 																sessionStatusColor(thread.status),
 														} as CSSProperties
 													}

@@ -9,19 +9,19 @@ export type {
 	IFeatureFlagsProvider,
 	WorkspaceInfo,
 	WorkspaceManifest,
-} from "@cline/shared";
+} from "@nexus/shared";
 export {
 	FEATURE_FLAGS,
 	FeatureFlagDefaultValue,
-} from "@cline/shared";
-export { ClineCore } from "./ClineCore";
+} from "@nexus/shared";
+export { NexusCore } from "./NexusCore";
 export type {
-	ClineCoreListHistoryOptions,
-	ClineCoreOptions,
-	ClineCoreStartInput,
+	NexusCoreListHistoryOptions,
+	NexusCoreOptions,
+	NexusCoreStartInput,
 	HubOptions,
 	RemoteOptions,
-} from "./cline-core/types";
+} from "./nexus-core/types";
 export type {
 	LoadAgentPluginFromPathOptions,
 	ResolveAgentPluginPathsOptions,

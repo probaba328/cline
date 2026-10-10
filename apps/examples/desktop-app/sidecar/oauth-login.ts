@@ -1,10 +1,10 @@
-import type { ProviderSettingsManager } from "@cline/core";
+import type { ProviderSettingsManager } from "@nexus/core";
 import {
 	getProviderAuthStorageId,
 	loginLocalProvider,
 	markLocalProviderEnabled,
 	saveLocalProviderOAuthCredentials,
-} from "@cline/core";
+} from "@nexus/core";
 
 export class OAuthLoginCancelledError extends Error {
 	constructor(providerId: string) {

@@ -12,7 +12,7 @@ describe("chat commands", () => {
 			{ command: "/help" },
 			{ command: "/start" },
 			{ command: "/help@clinebot", botUserName: "clinebot" },
-			{ command: "/start@cline_bot", botUserName: "@cline_bot" },
+			{ command: "/start@nexus_bot", botUserName: "@nexus_bot" },
 		]) {
 			const reply = vi.fn(async () => undefined);
 
@@ -31,7 +31,7 @@ describe("chat commands", () => {
 
 			expect(handled).toBe(true);
 			expect(reply).toHaveBeenCalledWith(
-				expect.stringContaining("Cline connector commands:"),
+				expect.stringContaining("Nexus connector commands:"),
 			);
 			expect(reply).toHaveBeenCalledWith(
 				expect.stringContaining("Current state: tools=on, yolo=off"),
@@ -90,23 +90,23 @@ describe("chat commands", () => {
 
 		expect(await maybeHandleChatCommand("/help@clinebot", context)).toBe(true);
 		expect(reply).toHaveBeenCalledWith(
-			expect.stringContaining("Cline connector commands:"),
+			expect.stringContaining("Nexus connector commands:"),
 		);
 	});
 
 	it("detects commands addressed to the configured bot", () => {
 		expect(isCommandAddressedToBot("/new@clinebot", "clinebot")).toBe(true);
-		expect(isCommandAddressedToBot("/new@cline_bot", "@cline_bot")).toBe(true);
-		expect(isCommandAddressedToBot("/new@cline.bot", "cline.bot")).toBe(true);
-		expect(isCommandAddressedToBot("/new@cline-bot", "cline-bot")).toBe(true);
+		expect(isCommandAddressedToBot("/new@nexus_bot", "@nexus_bot")).toBe(true);
+		expect(isCommandAddressedToBot("/new@nexus.bot", "nexus.bot")).toBe(true);
+		expect(isCommandAddressedToBot("/new@nexus-bot", "nexus-bot")).toBe(true);
 		expect(isCommandAddressedToBot("/new", "clinebot")).toBe(false);
 		expect(isCommandAddressedToBot("/new@otherbot", "clinebot")).toBe(false);
 		expect(isCommandAddressedToBot("/new@clinebot", undefined)).toBe(false);
 	});
 
 	it("normalizes commands addressed to dotted and hyphenated bot names", () => {
-		expect(normalizeCommandName("/new@cline.bot", "cline.bot")).toBe("/new");
-		expect(normalizeCommandName("/new@cline-bot", "cline-bot")).toBe("/new");
+		expect(normalizeCommandName("/new@nexus.bot", "nexus.bot")).toBe("/new");
+		expect(normalizeCommandName("/new@nexus-bot", "nexus-bot")).toBe("/new");
 	});
 
 	it("leaves bot-suffixed commands unmatched without a known bot username", async () => {

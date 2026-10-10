@@ -1,4 +1,4 @@
-import { createDefaultExecutors, type ToolExecutors } from "@cline/core"
+import { createDefaultExecutors, type ToolExecutors } from "@nexus/core"
 import * as path from "path"
 
 type FileReadExecutor = NonNullable<ToolExecutors["readFile"]>
@@ -17,7 +17,7 @@ export function createWorkspaceFileReadExecutor(getWorkspaceRoot: () => Promise<
 	if (!readFile) {
 		throw new Error("SDK default executors did not provide a readFile executor")
 	}
-	return async (request, context) => {
+	return async (request: Parameters<FileReadExecutor>[0], context: Parameters<FileReadExecutor>[1]) => {
 		if (path.isAbsolute(request.path)) {
 			return readFile(request, context)
 		}

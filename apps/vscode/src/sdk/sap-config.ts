@@ -4,7 +4,7 @@
 // buildSessionConfig() uses this to hand the SDK runtime the same structured
 // SAP fields that the legacy UI stores in ApiConfiguration.
 
-import type { ProviderSettings } from "@cline/core"
+import type { ProviderSettings } from "@nexus/core"
 import type { ApiConfiguration } from "@shared/api"
 import type { Mode } from "@shared/storage/types"
 
@@ -46,5 +46,5 @@ export function buildSapProviderConfig(config: ApiConfiguration, mode: Mode): Sa
 	return {
 		...(baseUrl !== undefined ? { baseUrl } : {}),
 		...(Object.keys(sap).length > 0 ? { sap } : {}),
-	}
+	} as SapProviderConfig
 }
