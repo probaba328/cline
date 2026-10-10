@@ -8,7 +8,7 @@ option java_package = "bot.nexus.proto";
 
 // Input message for all hooks
 message HookInput {
-  string cline_version = 1;
+  string nexus_version = 1;
   string hook_name = 2;
   string timestamp = 3;
   string task_id = 4;

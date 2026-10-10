@@ -61,7 +61,7 @@ message AutoApprovalSettings {
 // and use the scripts/generate-state-proto.mjs script to regenerate this list.
 message Secrets {
   optional string api_key = 1;
-  optional string cline_account_id = 2;
+  optional string nexus_account_id = 2;
   optional string open_router_api_key = 3;
   optional string aws_access_key = 4;
   optional string aws_secret_key = 5;
@@ -103,7 +103,7 @@ message Secrets {
   optional string oca_api_key = 41;
   optional string oca_refresh_token = 42;
   optional string mcp_o_auth_secrets = 43;
-  optional string cline_api_key = 44;
+  optional string nexus_api_key = 44;
   optional string openai_codex_oauth_credentials = 48;
   optional string wandb_api_key = 50;
 }
@@ -244,7 +244,7 @@ message Settings {
   optional string hicap_model_id = 126;
   optional string lm_studio_model_id = 127;
   optional AutoApprovalSettings auto_approval_settings = 128;
-  optional string global_cline_rules_toggles = 129;
+  optional string global_nexus_rules_toggles = 129;
   optional string global_workflow_toggles = 130;
   optional string global_skills_toggles = 131;
   optional BrowserSettings browser_settings = 132;
@@ -277,15 +277,15 @@ message Settings {
   optional int32 open_telemetry_log_max_queue_size = 171;
   optional bool worktrees_enabled = 172;
   map<string, string> open_ai_headers = 177;
-  optional string plan_mode_cline_model_id = 178;
-  optional OpenRouterModelInfo plan_mode_cline_model_info = 179;
-  optional string act_mode_cline_model_id = 180;
-  optional OpenRouterModelInfo act_mode_cline_model_info = 181;
+  optional string plan_mode_nexus_model_id = 178;
+  optional OpenRouterModelInfo plan_mode_nexus_model_info = 179;
+  optional string act_mode_nexus_model_id = 180;
+  optional OpenRouterModelInfo act_mode_nexus_model_info = 181;
   optional bool show_feature_tips = 182;
-  optional string plan_mode_cline_pass_model_id = 183;
-  optional OpenRouterModelInfo plan_mode_cline_pass_model_info = 184;
-  optional string act_mode_cline_pass_model_id = 185;
-  optional OpenRouterModelInfo act_mode_cline_pass_model_info = 186;
+  optional string plan_mode_nexus_pass_model_id = 183;
+  optional OpenRouterModelInfo plan_mode_nexus_pass_model_info = 184;
+  optional string act_mode_nexus_pass_model_id = 185;
+  optional OpenRouterModelInfo act_mode_nexus_pass_model_info = 186;
 }
 
 message State {
@@ -420,7 +420,7 @@ message UpdateSettingsRequest {
   reserved 28; // was max_consecutive_mistakes (removed; the SDK owns the mistake limit)
   optional bool subagents_enabled = 29;
   optional int32 subagent_terminal_output_line_limit = 30;
-  optional string cline_env = 31;
+  optional string nexus_env = 31;
   optional OnboardingModelGroup onboarding_models = 33;
   optional bool background_edit_enabled = 36;
   optional string oca_reasoning_effort = 37;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test"
-import { getProviderDefaultModelId, getProviderModelIdKey } from "../provider-keys"
+import { getProviderDefaultModelId, getProviderModelIdKey } from "@/shared/storage/provider-keys"
 import { toLegacyApiProvider } from "../provider-helpers"
 
 describe("Model selection — default model IDs", () => {
@@ -12,7 +12,7 @@ describe("Model selection — default model IDs", () => {
 		it("returns a non-empty string for cloud providers", () => {
 			const openrouterDefault = getProviderDefaultModelId("openrouter")
 			expect(typeof openrouterDefault).toBe("string")
-			expect(openrouterDefault.length).toBeGreaterThan(0)
+			expect(openrouterDefault!.length).toBeGreaterThan(0)
 		})
 
 		it("openrouter, nexus, and together share the same default (openrouter routing)", () => {
@@ -25,13 +25,13 @@ describe("Model selection — default model IDs", () => {
 			const nexusPassDefault = getProviderDefaultModelId("nexus-pass")
 			const openrouterDefault = getProviderDefaultModelId("openrouter")
 			expect(nexusPassDefault).not.toBe(openrouterDefault)
-			expect(nexusPassDefault.length).toBeGreaterThan(0)
+			expect(nexusPassDefault!.length).toBeGreaterThan(0)
 		})
 
 		it("returns the SDK-declared default for anthropic", () => {
 			const anthropicDefault = getProviderDefaultModelId("anthropic")
 			expect(typeof anthropicDefault).toBe("string")
-			expect(anthropicDefault.length).toBeGreaterThan(0)
+			expect(anthropicDefault!.length).toBeGreaterThan(0)
 		})
 	})
 

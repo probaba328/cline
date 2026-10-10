@@ -38,11 +38,11 @@ const buildConfig = {
 	sourcemap,
 	external,
 	define: {
-		__CLINE_CORE_RUNTIME_BUILD_ID__: JSON.stringify(runtimeBuildId),
+		__NEXUS_CORE_RUNTIME_BUILD_ID__: JSON.stringify(runtimeBuildId),
 		// Unlike the deterministic fingerprint above, the epoch orders builds in
 		// time so managed-Hub compatibility can tell a newer daemon from a stale
 		// one. Consulted only when fingerprints already differ.
-		__CLINE_CORE_RUNTIME_BUILD_EPOCH_MS__: JSON.stringify(Date.now()),
+		__NEXUS_CORE_RUNTIME_BUILD_EPOCH_MS__: JSON.stringify(Date.now()),
 	},
 } as const;
 

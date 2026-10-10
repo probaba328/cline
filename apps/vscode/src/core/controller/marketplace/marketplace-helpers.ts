@@ -353,7 +353,8 @@ async function installPluginMarketplaceEntry(entry: MarketplaceEntry, args: stri
 	if (!source) throw new Error("Marketplace plugin install args must start with a plugin source.")
 	const result = await installPlugin({ source })
 	const warnings = result.mcpSyncFailures.map(
-		(failure: { pluginName?: string; pluginPath: string; message: string }) => `Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
+		(failure: { pluginName?: string; pluginPath: string; message: string }) =>
+			`Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
 	)
 	return MarketplaceInstallResult.create({
 		id: entry.id,
@@ -549,7 +550,10 @@ async function togglePluginLocalEntry(
 	if (ownedMcpMutations.length > 0 && result.failures.length > 0) {
 		throw new Error(
 			`Failed to sync plugin MCP servers: ${result.failures
-				.map((failure: { pluginName?: string; pluginPath: string; message: string }) => `${failure.pluginName ?? failure.pluginPath}: ${failure.message}`)
+				.map(
+					(failure: { pluginName?: string; pluginPath: string; message: string }) =>
+						`${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
+				)
 				.join("; ")}`,
 		)
 	}

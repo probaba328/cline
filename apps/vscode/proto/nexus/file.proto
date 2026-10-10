@@ -97,8 +97,8 @@ service FileService {
 
 // Response for refreshRules operation
 message RefreshedRules {
-  NexusRulesToggles global_cline_rules_toggles = 1;
-  NexusRulesToggles local_cline_rules_toggles = 2;
+  NexusRulesToggles global_nexus_rules_toggles = 1;
+  NexusRulesToggles local_nexus_rules_toggles = 2;
   NexusRulesToggles local_cursor_rules_toggles = 3;
   NexusRulesToggles local_windsurf_rules_toggles = 4;
   NexusRulesToggles local_agents_rules_toggles = 5;
@@ -223,8 +223,8 @@ message NexusRulesToggles {
 
 // Response for toggleNexusRule operation
 message ToggleNexusRules {
-  NexusRulesToggles global_cline_rules_toggles = 1;
-  NexusRulesToggles local_cline_rules_toggles = 2;
+  NexusRulesToggles global_nexus_rules_toggles = 1;
+  NexusRulesToggles local_nexus_rules_toggles = 2;
   NexusRulesToggles remote_rules_toggles = 3;
 }
 

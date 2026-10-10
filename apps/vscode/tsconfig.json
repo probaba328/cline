@@ -29,6 +29,9 @@
 		"useDefineForClassFields": true,
 		"useUnknownInCatchVariables": false,
 		"paths": {
+			"@/package.json": [
+				"./package.json"
+			],
 			"@/*": [
 				"./src/*"
 			],

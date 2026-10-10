@@ -318,7 +318,7 @@ message NexusRecommendedModel {
 message NexusRecommendedModelsResponse {
   repeated NexusRecommendedModel recommended = 1;
   repeated NexusRecommendedModel free = 2;
-  repeated NexusRecommendedModel cline_pass = 3;
+  repeated NexusRecommendedModel nexus_pass = 3;
 }
 
 // Request for fetching OpenAI models
@@ -356,7 +356,7 @@ message SapAiCoreModelsResponse {
 // API secrets (credentials, API keys)
 message ModelsApiSecrets {
   optional string api_key = 1;
-  optional string cline_api_key = 2;
+  optional string nexus_api_key = 2;
   optional string lite_llm_api_key = 3;
   optional string open_router_api_key = 4;
   optional string aws_access_key = 5;
@@ -382,7 +382,7 @@ message ModelsApiSecrets {
   optional string sap_ai_core_client_id = 25;
   optional string sap_ai_core_client_secret = 26;
   optional string moonshot_api_key = 27;
-  optional string cline_account_id = 28;
+  optional string nexus_account_id = 28;
   optional string groq_api_key = 29;
   optional string hugging_face_api_key = 30;
   optional string huawei_cloud_maas_api_key = 31;
@@ -480,10 +480,10 @@ message ModelsApiOptions {
   optional OcaModelInfo plan_mode_oca_model_info = 132;
   optional string plan_mode_aihubmix_model_id = 133;
   optional OpenAiCompatibleModelInfo plan_mode_aihubmix_model_info = 134;
-  optional string plan_mode_cline_model_id = 135;
-  optional OpenRouterModelInfo plan_mode_cline_model_info = 136;
-  optional string plan_mode_cline_pass_model_id = 137;
-  optional OpenRouterModelInfo plan_mode_cline_pass_model_info = 138;
+  optional string plan_mode_nexus_model_id = 135;
+  optional OpenRouterModelInfo plan_mode_nexus_model_info = 136;
+  optional string plan_mode_nexus_pass_model_id = 137;
+  optional OpenRouterModelInfo plan_mode_nexus_pass_model_info = 138;
 
   // Act mode configurations
   optional string act_mode_api_provider = 200;
@@ -521,10 +521,10 @@ message ModelsApiOptions {
   optional OcaModelInfo act_mode_oca_model_info = 232;
   optional string act_mode_aihubmix_model_id = 233;
   optional OpenAiCompatibleModelInfo act_mode_aihubmix_model_info = 234;
-  optional string act_mode_cline_model_id = 235;
-  optional OpenRouterModelInfo act_mode_cline_model_info = 236;
-  optional string act_mode_cline_pass_model_id = 237;
-  optional OpenRouterModelInfo act_mode_cline_pass_model_info = 238;
+  optional string act_mode_nexus_model_id = 235;
+  optional OpenRouterModelInfo act_mode_nexus_model_info = 236;
+  optional string act_mode_nexus_pass_model_id = 237;
+  optional OpenRouterModelInfo act_mode_nexus_pass_model_info = 238;
 }
 
 // Request for updating API configuration (legacy - uses combined configuration)
@@ -670,7 +670,7 @@ message LiteLLMModelInfo {
 message ModelsApiConfiguration {
   // Global configuration fields (not mode-specific)
   optional string api_key = 1;
-  optional string cline_api_key = 2;
+  optional string nexus_api_key = 2;
   optional string ulid = 3;
   optional string lite_llm_base_url = 4;
   optional string lite_llm_api_key = 5;
@@ -728,7 +728,7 @@ message ModelsApiConfiguration {
   optional string moonshot_api_line = 57;
   optional string aws_authentication = 58;
   optional string aws_bedrock_api_key = 59;
-  optional string cline_account_id = 60;
+  optional string nexus_account_id = 60;
   optional string groq_api_key = 61;
   optional string hugging_face_api_key = 62;
   optional string huawei_cloud_maas_api_key = 63;
@@ -798,10 +798,10 @@ message ModelsApiConfiguration {
   optional OpenAiCompatibleModelInfo plan_mode_aihubmix_model_info = 137;
   optional string plan_mode_nous_research_model_id = 138;
   optional string gemini_plan_mode_thinking_level = 139;
-  optional string plan_mode_cline_model_id = 140;
-  optional OpenRouterModelInfo plan_mode_cline_model_info = 141;
-  optional string plan_mode_cline_pass_model_id = 142;
-  optional OpenRouterModelInfo plan_mode_cline_pass_model_info = 143;
+  optional string plan_mode_nexus_model_id = 140;
+  optional OpenRouterModelInfo plan_mode_nexus_model_info = 141;
+  optional string plan_mode_nexus_pass_model_id = 142;
+  optional OpenRouterModelInfo plan_mode_nexus_pass_model_info = 143;
 
   // Act mode configurations
   optional string act_mode_api_provider = 200;
@@ -844,8 +844,8 @@ message ModelsApiConfiguration {
   optional OpenAiCompatibleModelInfo act_mode_aihubmix_model_info = 237;
   optional string act_mode_nous_research_model_id = 238;
   optional string gemini_act_mode_thinking_level = 239;
-  optional string act_mode_cline_model_id = 240;
-  optional OpenRouterModelInfo act_mode_cline_model_info = 241;
-  optional string act_mode_cline_pass_model_id = 242;
-  optional OpenRouterModelInfo act_mode_cline_pass_model_info = 243;
+  optional string act_mode_nexus_model_id = 240;
+  optional OpenRouterModelInfo act_mode_nexus_model_info = 241;
+  optional string act_mode_nexus_pass_model_id = 242;
+  optional OpenRouterModelInfo act_mode_nexus_pass_model_info = 243;
 }
