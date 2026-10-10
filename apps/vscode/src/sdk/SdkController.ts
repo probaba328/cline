@@ -342,7 +342,7 @@ export class Controller {
 		this.sessionConfigBuilder = new SdkSessionConfigBuilder({
 			stateManager: this.stateManager,
 			emitHookMessage: (msg) => this.messages.emitHookMessage(msg),
-			onConsecutiveMistakeLimitReached: (context) => this.interactions.handleConsecutiveMistakeLimitReached(context),
+			onConsecutiveMistakeLimitReached: (context: string) => this.interactions.handleConsecutiveMistakeLimitReached(context),
 		})
 		this.diffEdits = new SdkDiffEditCoordinator({
 			getCwd: () => this.getWorkspaceRoot(),
@@ -377,8 +377,8 @@ export class Controller {
 			telemetry: this.sdkTelemetry.telemetry,
 			requestToolApproval: (request) => this.interactions.handleRequestToolApproval(request),
 			askQuestion: (question, options, context) => this.interactions.handleAskQuestion(question, options, context),
-			editorExecutor: (input, cwd, context) => this.diffEdits.executeEditorTool(input, cwd, context),
-			applyPatchExecutor: (input, cwd, context) => this.diffEdits.executeApplyPatchTool(input, cwd, context),
+			editorExecutor: (input: any, cwd: string, context: any) => this.diffEdits.executeEditorTool(input, cwd, context),
+			applyPatchExecutor: (input: any, cwd: string, context: any) => this.diffEdits.executeApplyPatchTool(input, cwd, context),
 			// The SDK's built-in reader resolves relative paths against the extension
 			// host's process.cwd() (usually "/"); resolve them against the workspace instead.
 			readFileExecutor: createWorkspaceFileReadExecutor(() => this.getWorkspaceRoot()),
@@ -978,7 +978,7 @@ export class Controller {
 			})
 			// start() runs the initial scan; await so the snapshot is populated
 			// before the first resolveRuntimeSlashCommand call.
-			await service.start().catch((error) => {
+			await service.start().catch((error: unknown) => {
 				Logger.warn("[SdkController] Failed to start user instruction watcher:", error)
 			})
 			return service
@@ -1003,7 +1003,7 @@ export class Controller {
 			const workspaceRoot = await this.getWorkspaceRoot()
 			const service = await this.ensureUserInstructionService(workspaceRoot)
 			const remoteWorkflows = this.stateManager.getRemoteConfigSettings()?.remoteGlobalWorkflows ?? []
-			const workflowRecords = service.listRecords("workflow").map((record) => ({
+			const workflowRecords = service.listRecords("workflow").map((record: any) => ({
 				id: record.id,
 				name: record.item.name,
 				filePath: record.filePath,
@@ -1092,7 +1092,7 @@ export class Controller {
 	private async getWorkspaceRoot(): Promise<string> {
 		try {
 			const { paths } = await HostProvider.workspace.getWorkspacePaths({})
-			const workspaceRoot = paths?.find((workspacePath) => workspacePath.trim().length > 0)
+			const workspaceRoot = paths?.find((workspacePath: string) => workspacePath.trim().length > 0)
 			if (workspaceRoot) {
 				this.lastKnownWorkspaceRoot = workspaceRoot
 				return workspaceRoot
@@ -1775,7 +1775,7 @@ export class Controller {
 
 			const sessionRecord = await sessionHost.get(sessionId)
 			const latestCheckpoint = readSessionCheckpointHistory(sessionRecord).reduce(
-				(latest, entry) => (!latest || entry.runCount > latest.runCount ? entry : latest),
+				(latest: any, entry: any) => (!latest || entry.runCount > latest.runCount ? entry : latest),
 				undefined as ReturnType<typeof readSessionCheckpointHistory>[number] | undefined,
 			)
 			if (!latestCheckpoint) {
@@ -1832,7 +1832,7 @@ export class Controller {
 
 		await HostProvider.diff.openMultiFileDiff({
 			title: "Changes since your last message",
-			diffs: diffs.map((diff) => ({
+			diffs: diffs.map((diff: any) => ({
 				filePath: diff.filePath,
 				leftContent: diff.leftContent,
 				rightContent: diff.rightContent,

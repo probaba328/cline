@@ -1,4 +1,5 @@
 import { VSCodeCheckbox, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
+import { useTranslation } from "react-i18next"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import Section from "../Section"
@@ -9,6 +10,7 @@ interface PrivacySectionProps {
 }
 
 const PrivacySection = ({ renderSectionHeader }: PrivacySectionProps) => {
+	const { t } = useTranslation()
 	const { telemetrySetting, remoteConfigSettings } = useExtensionState()
 	const telemetryEnabled = telemetrySetting !== "disabled"
 
@@ -16,7 +18,6 @@ const PrivacySection = ({ renderSectionHeader }: PrivacySectionProps) => {
 		<div>
 			{renderSectionHeader("privacy")}
 			<Section>
-				{/* Key privacy guarantee */}
 				<div
 					className="flex items-start gap-3 p-3 rounded-md"
 					style={{ background: "rgba(78,201,176,0.08)", border: "1px solid rgba(78,201,176,0.3)" }}>
@@ -26,21 +27,19 @@ const PrivacySection = ({ renderSectionHeader }: PrivacySectionProps) => {
 					/>
 					<div>
 						<p className="m-0 text-sm font-semibold" style={{ color: "#4ec9b0" }}>
-							Nexus kod veya prompt toplamaz
+							{t("settings.privacyNoCollection")}
 						</p>
 						<p className="m-0 text-xs mt-1 text-description">
-							Yazdığın kod, AI'a gönderilen istemler, dosya yolları veya proje içerikleri hiçbir zaman Nexus
-							sunucularına iletilmez.
+							{t("settings.privacyNoCollectionDesc")}
 						</p>
 					</div>
 				</div>
 
-				{/* Telemetry toggle */}
 				<div>
-					<p className="text-sm font-semibold mb-2">Kullanım ve Hata Raporlama</p>
+					<p className="text-sm font-semibold mb-2">{t("settings.telemetry")}</p>
 					<Tooltip>
 						<TooltipContent hidden={remoteConfigSettings?.telemetrySetting === undefined}>
-							Bu ayar organizasyonunun uzak yapılandırması tarafından yönetilmektedir
+							{t("settings.privacyManagedByOrg")}
 						</TooltipContent>
 						<TooltipTrigger asChild>
 							<div className="flex items-center gap-2 mb-1">
@@ -51,7 +50,7 @@ const PrivacySection = ({ renderSectionHeader }: PrivacySectionProps) => {
 										const checked = e.target.checked === true
 										updateSetting("telemetrySetting", checked ? "enabled" : "disabled")
 									}}>
-									Anonim kullanım verisi gönder
+									{t("settings.privacySendAnonymous")}
 								</VSCodeCheckbox>
 								{!!remoteConfigSettings?.telemetrySetting && (
 									<i className="codicon codicon-lock text-description text-sm" />
@@ -60,38 +59,35 @@ const PrivacySection = ({ renderSectionHeader }: PrivacySectionProps) => {
 						</TooltipTrigger>
 					</Tooltip>
 					<p className="text-xs text-description mt-1">
-						Nexus'u geliştirmemize yardımcı olan anonim kullanım istatistikleri ve hata raporları gönderilir.
+						{t("settings.privacyAnonymousDesc")}
 					</p>
 				</div>
 
-				{/* What IS collected */}
 				<div>
 					<p className="text-xs font-semibold mb-1 text-description uppercase tracking-wide">
-						Toplanabilecekler (anonim)
+						{t("settings.privacyCollected")}
 					</p>
 					<ul className="text-xs text-description m-0 pl-4 space-y-1">
-						<li>Kullanılan özellikler (ör. "ajan görevi başlatıldı")</li>
-						<li>Hata mesajları ve çöküş raporları</li>
-						<li>Uzantı sürümü ve VS Code sürümü</li>
+						<li>{t("settings.privacyCollectedFeatures")}</li>
+						<li>{t("settings.privacyCollectedErrors")}</li>
+						<li>{t("settings.privacyCollectedVersion")}</li>
 					</ul>
 				</div>
 
-				{/* What is NEVER collected */}
 				<div>
 					<p className="text-xs font-semibold mb-1 text-description uppercase tracking-wide">
-						Hiçbir zaman toplanmaz
+						{t("settings.privacyNeverCollected")}
 					</p>
 					<ul className="text-xs text-description m-0 pl-4 space-y-1">
-						<li>API anahtarları veya kimlik bilgileri</li>
-						<li>Kod içeriği, dosya adları veya proje yolları</li>
-						<li>AI'a gönderilen istemler ve yanıtlar</li>
-						<li>Kişisel kimlik bilgileri</li>
+						<li>{t("settings.privacyNeverKeys")}</li>
+						<li>{t("settings.privacyNeverCode")}</li>
+						<li>{t("settings.privacyNeverPrompts")}</li>
+						<li>{t("settings.privacyNeverPII")}</li>
 					</ul>
 				</div>
 
-				{/* Link */}
 				<p className="text-xs text-description">
-					Daha fazla bilgi:{" "}
+					{t("settings.privacyMoreInfo")}{" "}
 					<VSCodeLink
 						href="https://github.com/probaba328/cline/blob/main/SECURITY.md"
 						className="text-inherit"

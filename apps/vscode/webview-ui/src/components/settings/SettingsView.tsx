@@ -16,6 +16,7 @@ import {
 	Wrench,
 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useEvent } from "react-use"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { type NexusUser, useNexusAuth } from "@/context/NexusAuthContext"
@@ -60,87 +61,86 @@ interface SettingsTab {
 	hidden?: (params?: { user: NexusUser | null; activeOrganization: UserOrganization | null }) => boolean
 }
 
-const SETTINGS_TABS: SettingsTab[] = [
-	// ── Primary 5 sections ──────────────────────────────────────
-	{
-		id: "general",
-		name: "Genel",
-		tooltipText: "Genel Ayarlar",
-		headerText: "Genel",
-		icon: Globe,
-	},
-	{
-		id: "ai-model",
-		name: "AI Modeli",
-		tooltipText: "AI Sağlayıcı ve Model Yapılandırması",
-		headerText: "AI Modeli",
-		icon: Bot,
-	},
-	{
-		id: "privacy",
-		name: "Gizlilik",
-		tooltipText: "Gizlilik ve Telemetry",
-		headerText: "Gizlilik",
-		icon: EyeOff,
-	},
-	{
-		id: "security",
-		name: "Güvenlik",
-		tooltipText: "Anahtar Şifreleme ve SecretStorage",
-		headerText: "Güvenlik",
-		icon: Lock,
-	},
-	{
-		id: "about",
-		name: "Hakkında",
-		tooltipText: "Nexus Hakkında",
-		headerText: "Hakkında",
-		icon: Info,
-	},
-	// ── Advanced sections (divider above) ───────────────────────
-	{
-		id: "features",
-		name: "Özellikler",
-		tooltipText: "Özellik Ayarları",
-		headerText: "Özellikler",
-		icon: CheckCheck,
-		dividerBefore: true,
-	},
-	{
-		id: "terminal",
-		name: "Terminal",
-		tooltipText: "Terminal Ayarları",
-		headerText: "Terminal",
-		icon: SquareTerminal,
-	},
-	{
-		id: "remote-config",
-		name: "Uzak Yapılandırma",
-		tooltipText: "Uzaktan Yapılandırılmış Alanlar",
-		headerText: "Uzak Yapılandırma",
-		icon: HardDriveDownload,
-		hidden: ({ activeOrganization } = { user: null, activeOrganization: null }) =>
-			!activeOrganization || !isAdminOrOwner(activeOrganization),
-	},
-	{
-		id: "debug",
-		name: "Hata Ayıklama",
-		tooltipText: "Geliştirici Araçları",
-		headerText: "Hata Ayıklama",
-		icon: FlaskConical,
-		hidden: ({ user } = { user: null, activeOrganization: null }) =>
-			!IS_DEV && !isNexusInternalTester(user?.email || ""),
-	},
-]
+function buildSettingsTabs(t: (key: string) => string): SettingsTab[] {
+	return [
+		{
+			id: "general",
+			name: t("settings.general"),
+			tooltipText: t("settings.generalSettings"),
+			headerText: t("settings.general"),
+			icon: Globe,
+		},
+		{
+			id: "ai-model",
+			name: t("settings.aiModel"),
+			tooltipText: t("settings.aiModelTooltip"),
+			headerText: t("settings.aiModel"),
+			icon: Bot,
+		},
+		{
+			id: "privacy",
+			name: t("settings.privacy"),
+			tooltipText: t("settings.privacyTooltip"),
+			headerText: t("settings.privacy"),
+			icon: EyeOff,
+		},
+		{
+			id: "security",
+			name: t("settings.security"),
+			tooltipText: t("settings.securityTooltip"),
+			headerText: t("settings.security"),
+			icon: Lock,
+		},
+		{
+			id: "about",
+			name: t("settings.about"),
+			tooltipText: t("settings.aboutTooltip"),
+			headerText: t("settings.about"),
+			icon: Info,
+		},
+		{
+			id: "features",
+			name: t("settings.features"),
+			tooltipText: t("settings.featuresTooltip"),
+			headerText: t("settings.features"),
+			icon: CheckCheck,
+			dividerBefore: true,
+		},
+		{
+			id: "terminal",
+			name: t("settings.terminal"),
+			tooltipText: t("settings.terminalTooltip"),
+			headerText: t("settings.terminal"),
+			icon: SquareTerminal,
+		},
+		{
+			id: "remote-config",
+			name: t("settings.remoteConfig"),
+			tooltipText: t("settings.remoteConfigTooltip"),
+			headerText: t("settings.remoteConfig"),
+			icon: HardDriveDownload,
+			hidden: ({ activeOrganization } = { user: null, activeOrganization: null }) =>
+				!activeOrganization || !isAdminOrOwner(activeOrganization),
+		},
+		{
+			id: "debug",
+			name: t("settings.debug"),
+			tooltipText: t("settings.debugTooltip"),
+			headerText: t("settings.debug"),
+			icon: FlaskConical,
+			hidden: ({ user } = { user: null, activeOrganization: null }) =>
+				!IS_DEV && !isNexusInternalTester(user?.email || ""),
+		},
+	]
+}
 
 type SettingsViewProps = {
 	onDone: () => void
 	targetSection?: string
 }
 
-// Helper to render section header - moved outside component for better performance
-const renderSectionHeader = (tabId: string) => {
-	const tab = SETTINGS_TABS.find((t) => t.id === tabId)
+const buildRenderSectionHeader = (tabs: SettingsTab[]) => (tabId: string) => {
+	const tab = tabs.find((t) => t.id === tabId)
 	if (!tab) {
 		return null
 	}
@@ -156,6 +156,9 @@ const renderSectionHeader = (tabId: string) => {
 }
 
 const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
+	const { t } = useTranslation()
+	const settingsTabs = useMemo(() => buildSettingsTabs(t), [t])
+
 	// Memoize to avoid recreation
 	const TAB_CONTENT_MAP: Record<SettingsTabID, React.FC<any>> = useMemo(
 		() => ({
@@ -175,7 +178,9 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 	const { version, extensionVariant, environment, settingsInitialModelTab } = useExtensionState()
 	const { activeOrganization, nexusUser } = useNexusAuth()
 
-	const [activeTab, setActiveTab] = useState<string>(targetSection || SETTINGS_TABS[0].id)
+	const renderSectionHeader = useMemo(() => buildRenderSectionHeader(settingsTabs), [settingsTabs])
+
+	const [activeTab, setActiveTab] = useState<string>(targetSection || settingsTabs[0].id)
 
 	// Optimized message handler with early returns
 	const handleMessage = useCallback((event: MessageEvent) => {
@@ -195,7 +200,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 		}
 
 		// Check if valid tab ID
-		if (SETTINGS_TABS.some((tab) => tab.id === tabId)) {
+		if (settingsTabs.some((tab) => tab.id === tabId)) {
 			setActiveTab(tabId)
 			return
 		}
@@ -215,7 +220,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 				element.style.backgroundColor = "transparent"
 			}, 1200)
 		})
-	}, [])
+	}, [settingsTabs])
 
 	useEvent("message", handleMessage)
 
@@ -237,7 +242,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 
 	// Memoized tab item renderer
 	const renderTabItem = useCallback(
-		(tab: (typeof SETTINGS_TABS)[0]) => {
+		(tab: SettingsTab) => {
 			return (
 				<>
 					{tab.dividerBefore && (
@@ -294,14 +299,14 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 
 	return (
 		<Tab>
-			<ViewHeader environment={environment} onDone={onDone} title="Settings" />
+			<ViewHeader environment={environment} onDone={onDone} title={t("settings.title")} />
 
 			<div className="flex flex-1 overflow-hidden">
 				<TabList
 					className="shrink-0 flex flex-col overflow-y-auto border-r border-sidebar-background"
 					onValueChange={setActiveTab}
 					value={activeTab}>
-					{SETTINGS_TABS.filter((tab) => !tab.hidden?.({ user: nexusUser, activeOrganization })).map(renderTabItem)}
+					{settingsTabs.filter((tab) => !tab.hidden?.({ user: nexusUser, activeOrganization })).map(renderTabItem)}
 				</TabList>
 
 				<TabContent className="flex-1 overflow-auto">{ActiveContent}</TabContent>

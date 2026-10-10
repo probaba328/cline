@@ -42,9 +42,9 @@ export async function initialize(storageContext: StorageContext): Promise<Webvie
 	// These components operate before/outside of NexusCore sessions, so the
 	// session-scoped logger can't reach them.
 	setSdkLogger({
-		debug: (message) => Logger.debug(message),
-		log: (message) => Logger.log(message),
-		error: (message) => Logger.error(message),
+		debug: (message: string) => Logger.debug(message),
+		log: (message: string) => Logger.log(message),
+		error: (message: string) => Logger.error(message),
 	})
 
 	// Initialize NexusEndpoint configuration (reads bundled and ~/.nexus/endpoints.json if present)

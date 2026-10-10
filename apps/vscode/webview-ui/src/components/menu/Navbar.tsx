@@ -1,12 +1,14 @@
 import { IntentEvent } from "@shared/proto/nexus/ui"
 import { HistoryIcon, PlusIcon, PuzzleIcon, SettingsIcon, UserCircleIcon } from "lucide-react"
 import { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { TaskServiceClient, UiServiceClient } from "@/services/grpc-client"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 
 export const Navbar = () => {
+	const { t } = useTranslation()
 	const { navigateToHistory, navigateToSettings, navigateToAccount, navigateToMarketplace, navigateToChat } =
 		useExtensionState()
 
@@ -14,8 +16,8 @@ export const Navbar = () => {
 		() => [
 			{
 				id: "chat",
-				name: "Chat",
-				tooltip: "New Task",
+				name: t("nav.chat"),
+				tooltip: t("chat.newTask"),
 				icon: PlusIcon,
 				navigate: () => {
 					UiServiceClient.trackIntent(
@@ -34,34 +36,34 @@ export const Navbar = () => {
 			},
 			{
 				id: "customize",
-				name: "Customize",
-				tooltip: "Customize",
+				name: t("nav.customize"),
+				tooltip: t("nav.customize"),
 				icon: PuzzleIcon,
 				navigate: navigateToMarketplace,
 			},
 			{
 				id: "history",
-				name: "History",
-				tooltip: "History",
+				name: t("common.history"),
+				tooltip: t("common.history"),
 				icon: HistoryIcon,
 				navigate: navigateToHistory,
 			},
 			{
 				id: "account",
-				name: "Account",
-				tooltip: "Account",
+				name: t("nav.account"),
+				tooltip: t("nav.account"),
 				icon: UserCircleIcon,
 				navigate: navigateToAccount,
 			},
 			{
 				id: "settings",
-				name: "Settings",
-				tooltip: "Settings",
+				name: t("common.settings"),
+				tooltip: t("common.settings"),
 				icon: SettingsIcon,
 				navigate: navigateToSettings,
 			},
 		],
-		[navigateToAccount, navigateToChat, navigateToHistory, navigateToMarketplace, navigateToSettings],
+		[t, navigateToAccount, navigateToChat, navigateToHistory, navigateToMarketplace, navigateToSettings],
 	)
 
 	return (

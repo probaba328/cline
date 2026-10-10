@@ -353,7 +353,7 @@ async function installPluginMarketplaceEntry(entry: MarketplaceEntry, args: stri
 	if (!source) throw new Error("Marketplace plugin install args must start with a plugin source.")
 	const result = await installPlugin({ source })
 	const warnings = result.mcpSyncFailures.map(
-		(failure) => `Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
+		(failure: { pluginName?: string; pluginPath: string; message: string }) => `Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
 	)
 	return MarketplaceInstallResult.create({
 		id: entry.id,
@@ -433,7 +433,7 @@ export async function uninstallMarketplaceEntryFromCatalog(
 ): Promise<MarketplaceInstallResult> {
 	const workspaceRoot = await getWorkspacePath()
 	const result = await uninstallCoreMarketplaceEntry(toCoreMarketplaceEntry(entry), {
-		deleteMcpServer: async (name) => {
+		deleteMcpServer: async (name: string) => {
 			await controller.mcpHub?.deleteServerRPC(name)
 		},
 		workspaceRoot,
@@ -453,7 +453,7 @@ function isGlobalNexusPath(filePath: string | undefined): boolean {
 
 async function listPluginLocalEntries(): Promise<MarketplaceLocalInstalledEntry[]> {
 	const workspacePath = HostProvider.isInitialized() ? (await HostProvider.workspace.getWorkspacePaths({})).paths[0] : undefined
-	const roots = resolvePluginConfigSearchPaths(workspacePath).filter((directory) => existsSync(directory))
+	const roots = resolvePluginConfigSearchPaths(workspacePath).filter((directory: string) => existsSync(directory))
 	const disabledPlugins = new Set(readGlobalSettings().disabledPlugins ?? [])
 	const entries: MarketplaceLocalInstalledEntry[] = []
 	for (const root of roots) {
@@ -485,7 +485,7 @@ export async function listLocalMarketplaceInstalledEntries(controller: Controlle
 	)
 	const refreshedSkills = await refreshSkills(controller)
 	const skillEntries = [
-		...refreshedSkills.globalSkills.map((skill) =>
+		...refreshedSkills.globalSkills.map((skill: { name: string; description: string; path: string; enabled: boolean }) =>
 			MarketplaceLocalInstalledEntry.create({
 				id: skill.name,
 				type: "skill",
@@ -496,7 +496,7 @@ export async function listLocalMarketplaceInstalledEntries(controller: Controlle
 				enabled: skill.enabled,
 			}),
 		),
-		...refreshedSkills.localSkills.map((skill) =>
+		...refreshedSkills.localSkills.map((skill: { name: string; description: string; path: string; enabled: boolean }) =>
 			MarketplaceLocalInstalledEntry.create({
 				id: skill.name,
 				type: "skill",
@@ -549,7 +549,7 @@ async function togglePluginLocalEntry(
 	if (ownedMcpMutations.length > 0 && result.failures.length > 0) {
 		throw new Error(
 			`Failed to sync plugin MCP servers: ${result.failures
-				.map((failure) => `${failure.pluginName ?? failure.pluginPath}: ${failure.message}`)
+				.map((failure: { pluginName?: string; pluginPath: string; message: string }) => `${failure.pluginName ?? failure.pluginPath}: ${failure.message}`)
 				.join("; ")}`,
 		)
 	}
@@ -637,7 +637,7 @@ export async function uninstallLocalMarketplaceInstalledEntry(
 			type: entry.type,
 			status: "uninstalled",
 			message: `Uninstalled ${result.name}.`,
-			output: [`Path: ${result.installPath}`, ...result.removedPaths.map((path) => `Removed: ${path}`)].join("\n"),
+			output: [`Path: ${result.installPath}`, ...result.removedPaths.map((path: string) => `Removed: ${path}`)].join("\n"),
 		})
 	}
 	throw new Error(`Marketplace uninstall is not supported for ${entry.type}.`)
