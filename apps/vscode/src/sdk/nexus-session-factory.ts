@@ -75,6 +75,8 @@ export interface SessionConfigInput {
 	workspaceRoot?: string
 	/** Current mode (act/plan) */
 	mode?: Mode
+	/** Pre-loaded agent plugins to activate for this session */
+	extensions?: import("@nexus/core").AgentPlugin[]
 }
 
 /** Active session state tracked by the factory */
@@ -105,6 +107,27 @@ function createSdkLogger() {
 			Logger.error(message, metadata)
 		},
 	}
+}
+
+// ---------------------------------------------------------------------------
+// Plugin extension registry (VS Code extension-lifetime)
+// ---------------------------------------------------------------------------
+
+let _workspaceExtensions: import("@nexus/core").AgentPlugin[] = []
+
+/**
+ * Register pre-loaded agent plugins that will be injected into every new session.
+ * Called once from activate() after the plugin registry has loaded.
+ */
+export function setWorkspaceExtensions(plugins: import("@nexus/core").AgentPlugin[]): void {
+	_workspaceExtensions = plugins
+}
+
+/**
+ * Return the currently registered workspace-level agent plugins.
+ */
+export function getWorkspaceExtensions(): import("@nexus/core").AgentPlugin[] {
+	return _workspaceExtensions
 }
 
 /**
@@ -1072,6 +1095,7 @@ export async function buildSessionConfig(input: SessionConfigInput): Promise<Cor
  * without leaving empty history entries when the user never sends a message.
  */
 export function buildStartSessionInput(config: CoreSessionConfig, input: SessionConfigInput): NexusCoreStartInput {
+	const allExtensions = [..._workspaceExtensions, ...(input.extensions ?? [])]
 	return {
 		config,
 		// Do NOT pass prompt here — start() should return immediately.
@@ -1080,6 +1104,7 @@ export function buildStartSessionInput(config: CoreSessionConfig, input: Session
 		interactive: true, // VSCode extension always uses interactive mode
 		userImages: input.images,
 		userFiles: input.files,
+		...(allExtensions.length ? { localRuntime: { extensions: allExtensions } } : {}),
 	}
 }
 

@@ -1,7 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
 import * as vscode from "vscode"
-import { readGlobalState, readSecrets } from "@/sdk/legacy-state-reader"
+import { readGlobalState, readSecrets, readTaskHistory, resolveDataDir } from "@/sdk/legacy-state-reader"
 import { Logger } from "@/shared/services/Logger"
 import { ensureRulesDirectoryExists } from "./disk"
 
@@ -67,8 +67,51 @@ export async function migrateWorkspaceToGlobalStorage(context: vscode.ExtensionC
 	}
 }
 
-export async function migrateTaskHistoryToFile(_context: vscode.ExtensionContext) {
-	// TODO migrate to sdk location
+export async function migrateTaskHistoryToFile(context: vscode.ExtensionContext) {
+	try {
+		// VS Code stores task history in its own managed globalStorageUri.
+		// The SDK now shares task history across clients via ~/.nexus/data/state/.
+		// This migration copies tasks from the VS Code path to the shared path
+		// so existing tasks appear in the CLI and JetBrains.
+
+		const vscodeHistoryPath = path.join(context.globalStorageUri.fsPath, "state", "taskHistory.json")
+		const sharedHistoryPath = path.join(resolveDataDir(), "state", "taskHistory.json")
+
+		// Nothing to migrate if VS Code history file doesn't exist
+		let vscodeHistory: { id: string }[] = []
+		try {
+			const raw = await fs.readFile(vscodeHistoryPath, "utf8")
+			vscodeHistory = JSON.parse(raw)
+		} catch {
+			return // No VS Code history or same path as shared — nothing to do
+		}
+
+		if (!Array.isArray(vscodeHistory) || vscodeHistory.length === 0) {
+			return
+		}
+
+		// Skip migration when the paths resolve to the same file
+		if (vscodeHistoryPath === sharedHistoryPath) {
+			return
+		}
+
+		const sharedHistory = readTaskHistory()
+		const sharedIds = new Set(sharedHistory.map((item) => item.id))
+
+		// Merge VS Code tasks not already present in the shared store
+		const newItems = vscodeHistory.filter((item) => item.id && !sharedIds.has(item.id))
+		if (newItems.length === 0) {
+			return
+		}
+
+		const merged = [...sharedHistory, ...newItems]
+		await fs.mkdir(path.dirname(sharedHistoryPath), { recursive: true })
+		await fs.writeFile(sharedHistoryPath, JSON.stringify(merged, null, 2), "utf8")
+
+		Logger.log(`[Storage Migration] migrateTaskHistoryToFile: ${newItems.length} görev taşındı`)
+	} catch (error) {
+		Logger.warn(`[Storage Migration] migrateTaskHistoryToFile başarısız: ${error instanceof Error ? error.message : String(error)}`)
+	}
 }
 
 export async function migrateCustomInstructionsToGlobalRules(context: vscode.ExtensionContext) {

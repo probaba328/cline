@@ -6,7 +6,7 @@ import { getDistinctId, setDistinctId } from "@/services/logging/distinctId"
 import { fetch } from "@/shared/net"
 import { Setting } from "@/shared/proto/index.host"
 import { Logger } from "@/shared/services/Logger"
-import { posthogConfig } from "../../../../shared/services/config/posthog-config"
+import { posthogConfig } from "@/shared/services/config/posthog-config"
 import type { NexusAccountUserInfo } from "../../../auth/AuthService"
 import type { ITelemetryProvider, TelemetryProperties, TelemetrySettings } from "../ITelemetryProvider"
 /**

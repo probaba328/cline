@@ -9,7 +9,7 @@ const MAX_CONTENT_SIZE_BYTES = 400 * 1024
 /**
  * Format bytes into a human-readable string (e.g., "1.5 MB", "400 KB").
  */
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
 	if (bytes < 1024) {
 		return `${bytes} B`
 	}

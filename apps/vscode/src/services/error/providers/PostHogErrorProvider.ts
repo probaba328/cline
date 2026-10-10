@@ -6,8 +6,8 @@ import { PostHogClientProvider } from "@/services/telemetry/providers/posthog/Po
 import { fetch } from "@/shared/net"
 import { Setting } from "@/shared/proto/index.host"
 import { Logger } from "@/shared/services/Logger"
-import * as pkg from "../../../../package.json"
-import type { PostHogClientValidConfig } from "../../../shared/services/config/posthog-config"
+import * as pkg from "@/package.json"
+import type { PostHogClientValidConfig } from "@/shared/services/config/posthog-config"
 import { getErrorLevelFromString } from ".."
 import { NexusError } from "../NexusError"
 import type { ErrorSettings, IErrorProvider } from "./IErrorProvider"
@@ -88,7 +88,6 @@ export class PostHogErrorProvider implements IErrorProvider {
 
 		const errorDetails = {
 			message: error.message,
-			stack: error.stack,
 			name: error.name,
 			extension_version: pkg.version,
 			is_dev: isDev,

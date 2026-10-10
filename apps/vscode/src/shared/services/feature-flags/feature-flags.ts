@@ -1,4 +1,12 @@
-import type { FeatureFlagPayload } from "@/services/feature-flags/providers/IFeatureFlagsProvider"
+type JsonType =
+	| string
+	| number
+	| boolean
+	| null
+	| { [key: string]: JsonType }
+	| JsonType[]
+
+export type FeatureFlagPayload = string | number | boolean | { [key: string]: JsonType } | JsonType[] | null
 
 export enum FeatureFlag {
 	WORKTREES = "worktree-exp",

@@ -50,6 +50,8 @@ import { VscodeWebviewProvider } from "./hosts/vscode/VscodeWebviewProvider"
 import { exportVSCodeStorageToSharedFiles } from "./hosts/vscode/vscode-to-file-migration"
 import { ExtensionRegistryInfo } from "./registry"
 import { AuthService, LogoutReason } from "./sdk/auth-service"
+import { setWorkspaceExtensions } from "./sdk/nexus-session-factory"
+import { NexusPluginRegistry } from "./plugins"
 import { telemetryService } from "./services/telemetry"
 import type { RolloutBundleActivation } from "./services/telemetry/rollout-metadata"
 import { LG_TASK_URI_PATH, SharedUriHandler, TASK_URI_PATH } from "./services/uri/SharedUriHandler"
@@ -96,6 +98,18 @@ export async function activate(context: vscode.ExtensionContext) {
 	// IMPORTANT: Must be done after host provider is setup and migrations are complete
 	const webview = (await initialize(storageContext)) as VscodeWebviewProvider
 	perfMark("initialize", activationStartTime)
+
+	// 4a. Load workspace plugins (non-blocking — failures are logged, not thrown).
+	const pluginRegistry = new NexusPluginRegistry({ workspaceRoot: workspacePath })
+	pluginRegistry.loadAll().then(() => {
+		const loaded = pluginRegistry.getLoadedPlugins()
+		if (loaded.length > 0) {
+			setWorkspaceExtensions(loaded as import("@nexus/core").AgentPlugin[])
+			Logger.log(`[Nexus] ${loaded.length} plugin(s) yüklendi`)
+		}
+	}).catch((err) => {
+		Logger.warn(`[Nexus] Plugin yükleme başarısız: ${err instanceof Error ? err.message : String(err)}`)
+	})
 
 	// 5. Register services and commands specific to VS Code
 	// Initialize hook discovery cache for performance optimization
