@@ -63,27 +63,39 @@ export async function reportRolloutActivation(input: RolloutBundleActivation): P
 // This method is called when the VS Code extension is activated.
 // NOTE: This is VS Code specific - services that should be registered
 // for all-platform should be registered in common.ts.
+/** Activation step timings captured for the performance report command. */
+const perfTimings: { step: string; ms: number }[] = []
+
+function perfMark(label: string, since: number): void {
+	perfTimings.push({ step: label, ms: Math.round(performance.now() - since) })
+}
+
 export async function activate(context: vscode.ExtensionContext) {
 	const activationStartTime = performance.now()
+	perfTimings.length = 0
 
 	// 1. Set up HostProvider for VSCode
 	// IMPORTANT: This must be done before any service can be registered
 	setupHostProvider(context)
+	perfMark("hostProvider", activationStartTime)
 
 	// 2. Clean up legacy data patterns within VSCode's native storage.
 	// Moves workspace→global keys, task history→file, custom instructions→rules, etc.
 	// Must run BEFORE the file export so we copy clean state.
 	await cleanupLegacyVSCodeStorage(context)
+	perfMark("legacyStorageCleanup", activationStartTime)
 
 	// 3. One-time export of VSCode's native storage to shared file-backed stores.
 	// After this, all platforms (VSCode, CLI, JetBrains) read from ~/.nexus/data/.
 	const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
 	const storageContext = createStorageContext({ workspacePath })
 	await exportVSCodeStorageToSharedFiles(context, storageContext)
+	perfMark("storageExport", activationStartTime)
 
 	// 4. Register services and perform common initialization
 	// IMPORTANT: Must be done after host provider is setup and migrations are complete
 	const webview = (await initialize(storageContext)) as VscodeWebviewProvider
+	perfMark("initialize", activationStartTime)
 
 	// 5. Register services and commands specific to VS Code
 	// Initialize hook discovery cache for performance optimization
@@ -508,7 +520,30 @@ ${ctx.cellJson || "{}"}
 	})
 	context.subscriptions.push({ dispose: unsubSecrets })
 
-	Logger.log(`[Nexus] extension activated in ${performance.now() - activationStartTime} ms`)
+	const totalMs = Math.round(performance.now() - activationStartTime)
+	perfMark("total", activationStartTime)
+	Logger.log(`[Nexus] extension activated in ${totalMs} ms`)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand(commands.PerformanceReport, () => {
+			const mem = process.memoryUsage()
+			const toMB = (b: number) => (b / 1024 / 1024).toFixed(1) + " MB"
+			const lines = [
+				"## Nexus Performance Report",
+				"",
+				"### Activation Steps",
+				...perfTimings.map((t) => `  ${t.step.padEnd(24)} ${t.ms} ms`),
+				"",
+				"### Memory (current)",
+				`  RSS          ${toMB(mem.rss)}`,
+				`  Heap Used    ${toMB(mem.heapUsed)}`,
+				`  Heap Total   ${toMB(mem.heapTotal)}`,
+				`  External     ${toMB(mem.external)}`,
+			]
+			Logger.log(lines.join("\n"))
+			vscode.window.showInformationMessage(`Nexus: activated in ${totalMs} ms — see Output > Nexus for full report`)
+		}),
+	)
 
 	return createNexusAPI(webview.controller)
 }

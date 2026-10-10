@@ -30,6 +30,8 @@ const NexusCommands = {
 	JupyterGenerateCell: prefix + ".jupyterGenerateCell",
 	JupyterExplainCell: prefix + ".jupyterExplainCell",
 	JupyterImproveCell: prefix + ".jupyterImproveCell",
+	// Diagnostics
+	PerformanceReport: prefix + ".performanceReport",
 }
 
 /**

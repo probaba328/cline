@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs"
 import fs from "fs/promises"
+import fsSync from "node:fs"
 import * as iconv from "iconv-lite"
 import { isBinaryFile } from "isbinaryfile"
 import * as chardet from "jschardet"
@@ -67,13 +68,40 @@ async function callTextExtractionFunctions(filePath: string): Promise<string> {
 				// 20MB limit (20 * 1000 * 1024 bytes, decimal MB)
 				throw new Error(`File is too large to read into context.`)
 			}
-			const fileBuffer = await fs.readFile(filePath)
+			// For files larger than 400KB, only read the first 400KB to avoid loading
+			// the full file into memory when it will be truncated anyway.
+			const TRUNCATION_LIMIT = 400 * 1024
+			const fileBuffer =
+				fileStat.size > TRUNCATION_LIMIT
+					? await readFirstBytes(filePath, TRUNCATION_LIMIT + 512)
+					: await fs.readFile(filePath)
 			const encoding = await detectEncoding(fileBuffer, fileExtension)
 			content = iconv.decode(fileBuffer, encoding)
 	}
 
 	// Truncate content if it exceeds 400KB to prevent context overflow
 	return truncateContent(content)
+}
+
+function readFirstBytes(filePath: string, byteLimit: number): Promise<Buffer> {
+	return new Promise((resolve, reject) => {
+		const chunks: Buffer[] = []
+		let bytesRead = 0
+		const stream = fsSync.createReadStream(filePath, { highWaterMark: 64 * 1024 })
+		stream.on("data", (chunk: Buffer) => {
+			const remaining = byteLimit - bytesRead
+			if (chunk.length <= remaining) {
+				chunks.push(chunk)
+				bytesRead += chunk.length
+			} else {
+				chunks.push(chunk.subarray(0, remaining))
+				bytesRead += remaining
+				stream.destroy()
+			}
+		})
+		stream.on("close", () => resolve(Buffer.concat(chunks)))
+		stream.on("error", reject)
+	})
 }
 
 async function extractTextFromPDF(filePath: string): Promise<string> {

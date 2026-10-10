@@ -40,7 +40,6 @@
 		"llama"
 	],
 	"activationEvents": [
-		"onLanguage",
 		"onUri",
 		"onStartupFinished"
 	],
@@ -195,6 +194,11 @@
 				"title": "Generate Commit Message with Nexus - Stop",
 				"category": "Nexus",
 				"icon": "$(debug-stop)"
+			},
+			{
+				"command": "nexus.performanceReport",
+				"title": "Show Performance Report",
+				"category": "Nexus"
 			},
 			{
 				"command": "nexus.explainCode",
