@@ -20,7 +20,7 @@ import {
 	type StructuredCommandInput,
 	truncateCommandOutput,
 } from "@nexus/core"
-import type { AgentTool } from "@nexus/shared"
+import type { AgentTool, AgentToolContext } from "@nexus/shared"
 import { TerminalUserInterventionAction, telemetryService } from "@services/telemetry"
 import { NexusTempManager } from "@services/temp"
 import * as fs from "fs"
@@ -549,7 +549,7 @@ function createVscodeShellExecutor(options: VscodeRunCommandsToolOptions, state:
 	// Lazy-init terminal manager reference
 	let terminalManager: VscodeTerminalManager | undefined
 
-	return async (command, commandCwd, context): Promise<string> => {
+	return async (command: string | StructuredCommandInput, commandCwd: string, context: AgentToolContext): Promise<string> => {
 		Logger.log(`[VscodeRunCommands] Executing command in ${executionMode} mode`)
 
 		// Execute with the shell named in the model request that produced this

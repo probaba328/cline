@@ -270,7 +270,7 @@ export class SdkSessionEventCoordinator {
 			const models = await refreshNexusRecommendedModels()
 			const freeIds = models.free.map((model) => normalizeModelId(model.id)).filter(Boolean)
 			const resolvedFreeIds =
-				freeIds.length > 0 ? freeIds : NEXUS_RECOMMENDED_MODELS_FALLBACK.free.map((model) => normalizeModelId(model.id))
+				freeIds.length > 0 ? freeIds : NEXUS_RECOMMENDED_MODELS_FALLBACK.free.map((model: { id: string }) => normalizeModelId(model.id))
 			return resolvedFreeIds.includes(normalizedModelId)
 		} catch (error) {
 			Logger.error("[SdkController] Failed to check Nexus free model list:", error)
@@ -278,7 +278,7 @@ export class SdkSessionEventCoordinator {
 			if (!modelId) {
 				return false
 			}
-			const fallbackFreeIds = NEXUS_RECOMMENDED_MODELS_FALLBACK.free.map((model) => normalizeModelId(model.id))
+			const fallbackFreeIds = NEXUS_RECOMMENDED_MODELS_FALLBACK.free.map((model: { id: string }) => normalizeModelId(model.id))
 			return fallbackFreeIds.includes(normalizeModelId(modelId))
 		}
 	}

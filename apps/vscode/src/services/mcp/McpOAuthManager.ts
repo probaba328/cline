@@ -253,7 +253,7 @@ export class McpOAuthManager {
 				filePath: settingsPath,
 				clientName: "Nexus",
 				fetch,
-				openUrl: (url) => openExternal(url),
+				openUrl: (url: string) => openExternal(url),
 				callbackPorts: MCP_OAUTH_CALLBACK_PORTS,
 				timeoutMs: MCP_OAUTH_FLOW_TIMEOUT_MS,
 			})

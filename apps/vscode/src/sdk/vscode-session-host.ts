@@ -168,7 +168,7 @@ export class VscodeSessionHost implements SdkSessionHost {
 					...(inputWithRemoteConfig.localRuntime ?? {}),
 					configExtensions: (
 						inputWithRemoteConfig.localRuntime?.configExtensions ?? RUNTIME_CONFIG_EXTENSION_KINDS
-					).filter((kind) => kind !== "hooks"),
+					).filter((kind: string) => kind !== "hooks"),
 				},
 				config: {
 					...inputWithRemoteConfig.config,

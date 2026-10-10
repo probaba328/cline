@@ -8,7 +8,7 @@
 // disk — it's fetched from the Nexus API on startup and cached in memory.
 // This matches the CLI's pattern (see apps/cli/src/runtime/interactive-welcome.ts).
 
-import type { ITelemetryService, OAuthCredentials, ProviderSettings } from "@nexus/core"
+import type { ITelemetryService, OAuthCredentials, OAuthPrompt, ProviderSettings } from "@nexus/core"
 import {
 	createOAuthClientCallbacks,
 	getValidNexusCredentials,
@@ -572,10 +572,10 @@ export class AuthService {
 					useWorkOSDeviceAuth: true,
 					headers: await buildBasicNexusHeaders(),
 					callbacks: createOAuthClientCallbacks({
-						onOutput: (message) => {
+						onOutput: (message: string) => {
 							resolveAuthMessage(message)
 						},
-						onPrompt: async (prompt) => prompt.defaultValue ?? "",
+						onPrompt: async (prompt: OAuthPrompt) => prompt.defaultValue ?? "",
 						openUrl: async (url: string) => {
 							resolveAuthMessage(url)
 							await openExternal(url)
@@ -698,7 +698,7 @@ export class AuthService {
 	async ocaLogin(): Promise<String> {
 		try {
 			const callbacks = createOAuthClientCallbacks({
-				onPrompt: async (prompt) => prompt.defaultValue ?? "",
+				onPrompt: async (prompt: OAuthPrompt) => prompt.defaultValue ?? "",
 				openUrl: async (url: string) => {
 					await openExternal(url)
 				},
@@ -738,7 +738,7 @@ export class AuthService {
 	async openAiCodexLogin(): Promise<void> {
 		try {
 			const callbacks = createOAuthClientCallbacks({
-				onPrompt: async (prompt) => prompt.defaultValue ?? "",
+				onPrompt: async (prompt: OAuthPrompt) => prompt.defaultValue ?? "",
 				openUrl: async (url: string) => {
 					await openExternal(url)
 				},
