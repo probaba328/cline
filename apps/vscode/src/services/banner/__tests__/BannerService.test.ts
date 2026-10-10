@@ -860,7 +860,7 @@ describe("BannerService", () => {
 				expect(mockedPostStateToWebview.called).to.be.true
 				expect(banners).to.have.lengthOf(1)
 				expect(banners[0].actions).to.have.lengthOf(validActionTypes.length)
-				banners[0].actions!.forEach((action, index) => {
+				banners[0].actions!.forEach((action: any, index: number) => {
 					expect(action.action).to.equal(validActionTypes[index])
 				})
 			})

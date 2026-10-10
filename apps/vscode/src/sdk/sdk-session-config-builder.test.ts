@@ -28,14 +28,14 @@ describe("SdkSessionConfigBuilder", () => {
 			hooks: {},
 		})
 		const planConfig = await builder.build({ cwd: "/workspace", mode: "plan" })
-		expect(planConfig.extraTools?.some((tool) => tool.name === "switch_to_act_mode")).toBe(false)
+		expect(planConfig.extraTools?.some((tool: any) => tool.name === "switch_to_act_mode")).toBe(false)
 
 		mocks.buildSessionConfig.mockResolvedValueOnce({
 			extraTools: [],
 			hooks: {},
 		})
 		const actConfig = await builder.build({ cwd: "/workspace", mode: "act" })
-		expect(actConfig.extraTools?.some((tool) => tool.name === "switch_to_act_mode")).toBe(false)
+		expect(actConfig.extraTools?.some((tool: any) => tool.name === "switch_to_act_mode")).toBe(false)
 	})
 
 	it("wires the agent hooks into the SDK config", async () => {

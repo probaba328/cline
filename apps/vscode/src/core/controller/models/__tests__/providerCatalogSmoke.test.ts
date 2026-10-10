@@ -53,7 +53,7 @@ describe("provider model catalog backend smoke", () => {
 	it("lists providers, resolves DeepSeek models, and round-trips committed selection", async () => {
 		const providers = await listProviders(controller, Empty.create())
 		expect(providers.providers.length).toBeGreaterThanOrEqual(4)
-		expect(providers.providers.some((provider) => provider.id === "deepseek")).toBe(true)
+		expect(providers.providers.some((provider: any) => provider.id === "deepseek")).toBe(true)
 
 		const models = await resolveProviderModels(controller, {
 			providerId: "deepseek",

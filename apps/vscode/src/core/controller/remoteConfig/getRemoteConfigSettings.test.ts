@@ -84,6 +84,6 @@ describe("getRemoteConfigSettings", () => {
 		readiness.resolve()
 
 		const response = await read
-		expect(response.settings.map((setting) => setting.name)).toEqual(["Loaded before read"])
+		expect(response.settings.map((setting: any) => setting.name)).toEqual(["Loaded before read"])
 	})
 })

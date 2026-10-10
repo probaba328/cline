@@ -211,7 +211,7 @@ describe("Hook Management Integration", () => {
 			// Verify all hooks are present and disabled
 			const hooks = await refreshHooks(mockController, undefined, globalHooksDir)
 			hooks.globalHooks.should.have.length(4)
-			hooks.globalHooks.forEach((hook) => {
+			hooks.globalHooks.forEach((hook: any) => {
 				if (isWindows) {
 					hook.enabled.should.equal(true)
 				} else {
@@ -242,10 +242,10 @@ describe("Hook Management Integration", () => {
 
 			// Verify states are independent
 			const hooksAfterToggle = await refreshHooks(mockController, undefined, globalHooksDir)
-			const taskStart = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskStart")
-			const taskResume = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskResume")
-			const userPrompt = hooksAfterToggle.globalHooks.find((h) => h.name === "UserPromptSubmit")
-			const taskComplete = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskComplete")
+			const taskStart = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskStart")
+			const taskResume = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskResume")
+			const userPrompt = hooksAfterToggle.globalHooks.find((h: any) => h.name === "UserPromptSubmit")
+			const taskComplete = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskComplete")
 
 			if (isWindows) {
 				taskStart!.enabled.should.equal(true)
