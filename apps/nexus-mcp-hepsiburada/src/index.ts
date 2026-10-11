@@ -5,6 +5,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprot
 
 import { HepsiburadaClient } from "./api/client.js"
 import { HepsiburadaApiError } from "./types/hepsiburada.js"
+import { assertLicense } from "./license/index.js"
 
 import { GET_LISTINGS_TOOL, handleGetListings } from "./tools/get_listings.js"
 import { UPDATE_INVENTORY_TOOL, handleUpdateInventory } from "./tools/update_inventory.js"
@@ -13,6 +14,9 @@ import { UPDATE_TRACKING_TOOL, handleUpdateTracking } from "./tools/update_track
 import { GET_CANCELLATIONS_TOOL, handleGetCancellations } from "./tools/get_cancellations.js"
 import { APPROVE_CANCELLATION_TOOL, handleApproveCancellation } from "./tools/approve_cancellation.js"
 import { GET_SETTLEMENTS_TOOL, handleGetSettlements } from "./tools/get_settlements.js"
+
+// ── Lisans Doğrulama ──────────────────────────────────────────────────────────
+await assertLicense("hepsiburada")
 
 // ── Credentials Validation ─────────────────────────────────────────────────────
 

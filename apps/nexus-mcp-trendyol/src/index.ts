@@ -19,6 +19,10 @@ import { GET_QUESTIONS_TOOL, getQuestions } from "./tools/get_questions.js"
 import { ANSWER_QUESTION_TOOL, answerQuestion } from "./tools/answer_question.js"
 import { GET_CLAIMS_TOOL, getClaims } from "./tools/get_claims.js"
 import { GET_SETTLEMENTS_TOOL, getSettlements } from "./tools/get_settlements.js"
+import { assertLicense } from "./license/index.js"
+
+// ── Lisans Doğrulama ──────────────────────────────────────────────────────────
+await assertLicense("trendyol")
 
 // ── Credentials ───────────────────────────────────────────────────────────────
 

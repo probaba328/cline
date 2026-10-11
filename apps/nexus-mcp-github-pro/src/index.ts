@@ -5,6 +5,7 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprot
 
 import { GitHubClient } from "./api/client.js"
 import { GitHubApiError } from "./types/github.js"
+import { assertLicense } from "./license/index.js"
 
 import { GET_PULL_REQUESTS_TOOL, handleGetPullRequests } from "./tools/get_pull_requests.js"
 import { REVIEW_PULL_REQUEST_TOOL, handleReviewPullRequest } from "./tools/review_pull_request.js"
@@ -14,6 +15,9 @@ import { GET_WORKFLOW_RUNS_TOOL, handleGetWorkflowRuns } from "./tools/get_workf
 import { GET_FAILED_WORKFLOWS_TOOL, handleGetFailedWorkflows } from "./tools/get_failed_workflows.js"
 import { GET_REPO_STATS_TOOL, handleGetRepoStats } from "./tools/get_repo_stats.js"
 import { CREATE_BRANCH_TOOL, handleCreateBranch } from "./tools/create_branch.js"
+
+// ── Lisans Doğrulama ──────────────────────────────────────────────────────────
+await assertLicense("github-pro")
 
 // ── Credentials Validation ─────────────────────────────────────────────────────
 
