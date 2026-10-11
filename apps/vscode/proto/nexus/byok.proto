@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package nexus;
+
+import "nexus/common.proto";
+
+option go_package = "github.com/nexus/grpc-go/nexus";
+option java_multiple_files = true;
+option java_package = "bot.nexus.proto";
+
+// BYOK (Bring Your Own Key) service for managing user-supplied API keys.
+// Keys are stored encrypted at rest (0o600 file permissions).
+// API keys are NEVER logged, NEVER sent to Nexus servers.
+service ByokService {
+  // Validate an API key format (no network call — regex only)
+  rpc validateKeyFormat(ByokValidateFormatRequest) returns (ByokValidationResult);
+  // Test an API key by making a lightweight call to the provider (network)
+  rpc testKey(ByokTestKeyRequest) returns (ByokValidationResult);
+  // Save an API key to encrypted local storage
+  rpc saveKey(ByokSaveKeyRequest) returns (Empty);
+  // Delete a stored API key
+  rpc deleteKey(StringRequest) returns (Empty);
+  // List stored key metadata (masked keys only — full keys never returned)
+  rpc listKeys(EmptyRequest) returns (ByokKeyList);
+  // Check if a key is stored for a provider
+  rpc hasKey(StringRequest) returns (BoolResponse);
+}
+
+message ByokValidateFormatRequest {
+  string provider_id = 1;
+  string api_key = 2;
+}
+
+message ByokTestKeyRequest {
+  string provider_id = 1;
+  string api_key = 2;
+  string custom_endpoint = 3;
+}
+
+message ByokValidationResult {
+  bool ok = 1;
+  string message = 2;
+  string error_code = 3;
+}
+
+message ByokSaveKeyRequest {
+  string provider_id = 1;
+  string api_key = 2;
+  string custom_endpoint = 3;
+}
+
+message ByokKeyEntry {
+  string provider_id = 1;
+  int64 added_at = 2;
+  int64 last_used_at = 3;
+  string masked_key = 4;
+  string custom_endpoint = 5;
+}
+
+message ByokKeyList {
+  repeated ByokKeyEntry entries = 1;
+}
+
+message BoolResponse {
+  bool value = 1;
+}

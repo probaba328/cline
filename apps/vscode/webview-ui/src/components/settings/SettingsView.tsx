@@ -10,6 +10,7 @@ import {
 	Globe,
 	HardDriveDownload,
 	Info,
+	KeyRound,
 	type LucideIcon,
 	Lock,
 	SquareTerminal,
@@ -36,6 +37,7 @@ import PrivacySection from "./sections/PrivacySection"
 import SecuritySection from "./sections/SecuritySection"
 import { RemoteConfigSection } from "./sections/RemoteConfigSection"
 import TerminalSettingsSection from "./sections/TerminalSettingsSection"
+import { BYOKKeyManager } from "./byok"
 
 const IS_DEV = process.env.IS_DEV
 
@@ -43,6 +45,7 @@ const IS_DEV = process.env.IS_DEV
 type SettingsTabID =
 	| "general"
 	| "ai-model"
+	| "api-keys"
 	| "privacy"
 	| "security"
 	| "about"
@@ -76,6 +79,13 @@ function buildSettingsTabs(t: (key: string) => string): SettingsTab[] {
 			tooltipText: t("settings.aiModelTooltip"),
 			headerText: t("settings.aiModel"),
 			icon: Bot,
+		},
+		{
+			id: "api-keys",
+			name: t("settings.apiKeys", "API Keys"),
+			tooltipText: t("settings.apiKeysTooltip", "BYOK — Kendi API key'lerinizi yönetin"),
+			headerText: t("settings.apiKeys", "API Keys"),
+			icon: KeyRound,
 		},
 		{
 			id: "privacy",
@@ -164,6 +174,7 @@ const SettingsView = ({ onDone, targetSection }: SettingsViewProps) => {
 		() => ({
 			general: GeneralSettingsSection,
 			"ai-model": ApiConfigurationSection,
+			"api-keys": BYOKKeyManager,
 			privacy: PrivacySection,
 			security: SecuritySection,
 			about: AboutSection,
