@@ -1,5 +1,5 @@
-import type { SessionHistoryRecord } from "@cline/core";
-import { formatDisplayUserInput, truncateStr } from "@cline/shared";
+import type { SessionHistoryRecord } from "@nexus/core";
+import { formatDisplayUserInput, truncateStr } from "@nexus/shared";
 import { formatUsd } from "./output";
 import { shouldShowCliUsageCost } from "./usage-cost-display";
 
@@ -75,7 +75,7 @@ export function formatCheckpointDetail(
 		typeof latest.runCount === "number" && Number.isFinite(latest.runCount)
 			? ` run ${latest.runCount}`
 			: "";
-	return `Checkpoint ${shortRef}${latestRun} created ${created}. ${count} total. Restore with: cline checkpoint restore latest --session-id ${row.sessionId}`;
+	return `Checkpoint ${shortRef}${latestRun} created ${created}. ${count} total. Restore with: nexus checkpoint restore latest --session-id ${row.sessionId}`;
 }
 
 function formatUtcDate(date: Date): string {

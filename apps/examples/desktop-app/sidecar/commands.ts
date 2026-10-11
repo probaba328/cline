@@ -4,23 +4,23 @@ import { homedir } from "node:os";
 import { basename, dirname, extname, isAbsolute, join } from "node:path";
 import { promisify } from "node:util";
 import type {
-	ClineAccountActionRequest,
+	NexusAccountActionRequest,
 	CoreSettingsSnapshot,
 	ProviderCapability,
 	ProviderClient,
 	ProviderConfig,
 	ProviderProtocol,
 	SaveProviderSettingsActionRequest,
-} from "@cline/core";
+} from "@nexus/core";
 import {
 	addLocalProvider,
-	ClineAccountService,
+	NexusAccountService,
 	captureAuthRefreshSoftFailure,
 	createConfiguredStreamingTranscriptionSession,
 	createUserInstructionConfigService,
 	ensureCustomProvidersLoaded,
-	executeClineAccountAction,
-	fetchClineRecommendedModels,
+	executeNexusAccountAction,
+	fetchNexusRecommendedModels,
 	getCoreBuiltinToolCatalog,
 	getLocalProviderModels,
 	listHookConfigFiles,
@@ -31,7 +31,7 @@ import {
 	probeMcpServerConnection,
 	RuntimeOAuthTokenManager,
 	readGlobalSettings,
-	resolveLocalClineAuthToken,
+	resolveLocalNexusAuthToken,
 	resolveMcpServerRegistration,
 	resolveSessionBackend,
 	resolveAgentConfigSearchPaths as resolveSharedAgentConfigSearchPaths,
@@ -45,19 +45,19 @@ import {
 	transcribeConfiguredVoiceInput,
 	updateLocalProvider,
 	updateMcpSettingsFileSync,
-} from "@cline/core";
-import { resolveAudioTranscriptionRoute } from "@cline/llms";
+} from "@nexus/core";
+import { resolveAudioTranscriptionRoute } from "@nexus/llms";
 import {
-	CLINE_DEFAULT_MODEL_ID,
-	getClineEnvironmentConfig,
+	NEXUS_DEFAULT_MODEL_ID,
+	getNexusEnvironmentConfig,
 	isCanonicalBase64,
 	ONE_TIME_SCHEDULE_CRON_PATTERN,
 	ONE_TIME_SCHEDULE_RUN_AT_METADATA_KEY,
 	readHubScheduleMode,
-} from "@cline/shared";
-import { readFileSyncStrippingUtf8Bom } from "@cline/shared/node";
+} from "@nexus/shared";
+import { readFileSyncStrippingUtf8Bom } from "@nexus/shared/node";
 import packageJson from "../package.json";
-import { CLINE_ACCOUNT_NOT_AUTHENTICATED_RESULT } from "../webview/lib/cline-account-state";
+import { NEXUS_ACCOUNT_NOT_AUTHENTICATED_RESULT } from "../webview/lib/nexus-account-state";
 import { MAX_RECORDED_AUDIO_BYTES } from "../webview/lib/voice-input-limits";
 import {
 	connectorChannelsPayload,
@@ -291,12 +291,12 @@ function removePathIfExists(
 	return true;
 }
 
-// Cline access tokens expire between app launches, so account requests must
+// Nexus access tokens expire between app launches, so account requests must
 // resolve through the refresh-aware OAuth manager instead of reading the
 // persisted token directly. A single shared instance keeps concurrent account
 // requests single-flight; the refresh token is single-use, so parallel
 // refreshes would invalidate each other.
-let clineOAuthTokenManager: RuntimeOAuthTokenManager | undefined;
+let nexusOAuthTokenManager: RuntimeOAuthTokenManager | undefined;
 
 function syncFeatureFlagsAccountFromResult(
 	ctx: SidecarContext,
@@ -320,20 +320,20 @@ function syncFeatureFlagsAccountFromSettings(
 	manager: ProviderSettingsManager,
 ): void {
 	void identifyDesktopFeatureFlagsAccount(
-		{ id: manager.getProviderSettings("cline")?.auth?.accountId },
+		{ id: manager.getProviderSettings("nexus")?.auth?.accountId },
 		{ logger: ctx.logger, telemetry: ctx.telemetry },
 	);
 }
 
-async function resolveFreshClineAuthToken(
+async function resolveFreshNexusAuthToken(
 	ctx: SidecarContext,
 	manager: ProviderSettingsManager,
 ): Promise<string | undefined> {
 	let refreshError: Error | undefined;
 	try {
-		clineOAuthTokenManager ??= new RuntimeOAuthTokenManager();
-		const resolution = await clineOAuthTokenManager.resolveProviderApiKey({
-			providerId: "cline",
+		nexusOAuthTokenManager ??= new RuntimeOAuthTokenManager();
+		const resolution = await nexusOAuthTokenManager.resolveProviderApiKey({
+			providerId: "nexus",
 		});
 		if (resolution?.apiKey) {
 			return resolution.apiKey;
@@ -343,18 +343,18 @@ async function resolveFreshClineAuthToken(
 		// surfaces the auth failure to the caller.
 		refreshError = error instanceof Error ? error : new Error(String(error));
 	}
-	const persisted = resolveLocalClineAuthToken(
-		manager.getProviderSettings("cline"),
+	const persisted = resolveLocalNexusAuthToken(
+		manager.getProviderSettings("nexus"),
 	);
 	// Never-signed-in resolves to undefined without a refresh attempt and is
 	// silent. A refresh failure with no persisted fallback means credentials
 	// existed but yielded nothing — that is the signal a real auth regression
 	// would show up as, so report exactly one event for it.
 	if (!persisted && refreshError) {
-		ctx.logger?.error?.("Cline auth token refresh failed with no fallback", {
+		ctx.logger?.error?.("Nexus auth token refresh failed with no fallback", {
 			error: refreshError,
 		});
-		captureAuthRefreshSoftFailure(ctx.telemetry, "cline", {
+		captureAuthRefreshSoftFailure(ctx.telemetry, "nexus", {
 			errorName: refreshError.name,
 			errorCode: "desktop_refresh_failed_no_fallback_token",
 		});
@@ -692,8 +692,8 @@ async function handleRoutineScheduleCommand(
 			...timing,
 			prompt,
 			modelSelection: {
-				providerId: asTrimmedString(args?.provider) ?? "cline",
-				modelId: asTrimmedString(args?.model) ?? CLINE_DEFAULT_MODEL_ID,
+				providerId: asTrimmedString(args?.provider) ?? "nexus",
+				modelId: asTrimmedString(args?.model) ?? NEXUS_DEFAULT_MODEL_ID,
 			},
 			mode: readHubScheduleMode(args, "yolo"),
 			workspaceRoot,
@@ -726,8 +726,8 @@ async function handleRoutineScheduleCommand(
 			...timing,
 			prompt,
 			modelSelection: {
-				providerId: asTrimmedString(args?.provider) ?? "cline",
-				modelId: asTrimmedString(args?.model) ?? CLINE_DEFAULT_MODEL_ID,
+				providerId: asTrimmedString(args?.provider) ?? "nexus",
+				modelId: asTrimmedString(args?.model) ?? NEXUS_DEFAULT_MODEL_ID,
 			},
 			...(mode === undefined ? {} : { mode }),
 			workspaceRoot,
@@ -958,7 +958,7 @@ async function listUserInstructionConfigs(
 
 	const disabledTools = new Set(readGlobalSettings().disabledTools ?? []);
 	// Pin spawn/teams availability so this listing matches the hub's
-	// (apps/cline-hub/src/server/user-instructions.ts) even if the preset
+	// (apps/nexus-hub/src/server/user-instructions.ts) even if the preset
 	// defaults change.
 	const builtinToolCatalog = getCoreBuiltinToolCatalog({
 		enableSpawnAgent: true,
@@ -1568,8 +1568,8 @@ export async function handleCommand(
 		return { opened: true };
 	}
 
-	// ── Cline account ──────────────────────────────────────────────────
-	if (command === "cline_account") {
+	// ── Nexus account ──────────────────────────────────────────────────
+	if (command === "nexus_account") {
 		const operation = String(args?.operation ?? "").trim();
 		if (!operation) throw new Error("operation is required");
 		const manager = new ProviderSettingsManager();
@@ -1577,7 +1577,7 @@ export async function handleCommand(
 		// token up front and return a typed result the webview can act on
 		// instead of letting the account service throw a generic error that
 		// would be captured as error telemetry and shown raw to the user.
-		const authToken = await resolveFreshClineAuthToken(ctx, manager);
+		const authToken = await resolveFreshNexusAuthToken(ctx, manager);
 		if (!authToken) {
 			// Backstop for credentials that go away without a settings write —
 			// an expired or server-revoked token. Explicit sign-out is handled
@@ -1587,16 +1587,16 @@ export async function handleCommand(
 				{},
 				{ logger: ctx.logger, telemetry: ctx.telemetry },
 			);
-			return CLINE_ACCOUNT_NOT_AUTHENTICATED_RESULT;
+			return NEXUS_ACCOUNT_NOT_AUTHENTICATED_RESULT;
 		}
-		const settings = manager.getProviderSettings("cline");
-		const accountService = new ClineAccountService({
+		const settings = manager.getProviderSettings("nexus");
+		const accountService = new NexusAccountService({
 			apiBaseUrl:
-				settings?.baseUrl?.trim() || getClineEnvironmentConfig().apiBaseUrl,
+				settings?.baseUrl?.trim() || getNexusEnvironmentConfig().apiBaseUrl,
 			getAuthToken: async () => authToken,
 		});
-		const result = await executeClineAccountAction(
-			args as ClineAccountActionRequest,
+		const result = await executeNexusAccountAction(
+			args as NexusAccountActionRequest,
 			accountService,
 		);
 		syncFeatureFlagsAccountFromResult(ctx, operation, result);
@@ -1607,7 +1607,7 @@ export async function handleCommand(
 	if (command === "list_provider_catalog") {
 		const manager = new ProviderSettingsManager();
 		await ensureCustomProvidersLoaded(manager);
-		return await listLocalProviders(manager, { isClinePassEnabled: true });
+		return await listLocalProviders(manager, { isNexusPassEnabled: true });
 	}
 	if (command === "list_provider_models") {
 		const manager = new ProviderSettingsManager();
@@ -1616,10 +1616,10 @@ export async function handleCommand(
 			manager.getProviderConfig(String(args?.provider ?? "").trim()),
 		);
 	}
-	if (command === "list_cline_recommended_models") {
-		// Tiered picker data (recommended / free / clinePass) with
+	if (command === "list_nexus_recommended_models") {
+		// Tiered picker data (recommended / free / nexusPass) with
 		// display-ready names; falls back to a bundled list offline.
-		return await fetchClineRecommendedModels();
+		return await fetchNexusRecommendedModels();
 	}
 	if (command === "create_streaming_transcription_session") {
 		const manager = new ProviderSettingsManager();
@@ -1766,11 +1766,11 @@ export async function handleCommand(
 			apiKey: typeof args?.api_key === "string" ? args.api_key : undefined,
 			baseUrl: typeof args?.base_url === "string" ? args.base_url : undefined,
 		});
-		// Sign-out is a `save_provider_settings` that blanks the cline auth block
+		// Sign-out is a `save_provider_settings` that blanks the nexus auth block
 		// (see signOut in webview settings/account-view.tsx), so this is the
 		// authoritative signal — it fires the moment credentials are cleared
 		// rather than waiting for the next account fetch.
-		if (saved.providerId === "cline" || saved.providerId === "cline-pass") {
+		if (saved.providerId === "nexus" || saved.providerId === "nexus-pass") {
 			syncFeatureFlagsAccountFromSettings(ctx, manager);
 		}
 		return saved;

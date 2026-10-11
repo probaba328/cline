@@ -60,13 +60,13 @@ const STARS = Array.from({ length: 32 }, (_, index): AuroraStar => {
 /** Decorative layer that fills its nearest positioned ancestor. */
 export function AgentAurora() {
 	return (
-		<div aria-hidden="true" className="cline-ui-agent-aurora">
-			<div className="cline-ui-agent-aurora__horizon cline-ui-agent-aurora__soft-band" />
-			<div className="cline-ui-agent-aurora__current cline-ui-agent-aurora__current--left cline-ui-agent-aurora__soft-band" />
-			<div className="cline-ui-agent-aurora__current cline-ui-agent-aurora__current--right cline-ui-agent-aurora__soft-band" />
+		<div aria-hidden="true" className="nexus-ui-agent-aurora">
+			<div className="nexus-ui-agent-aurora__horizon nexus-ui-agent-aurora__soft-band" />
+			<div className="nexus-ui-agent-aurora__current nexus-ui-agent-aurora__current--left nexus-ui-agent-aurora__soft-band" />
+			<div className="nexus-ui-agent-aurora__current nexus-ui-agent-aurora__current--right nexus-ui-agent-aurora__soft-band" />
 			{BLOBS.map((blob) => (
 				<div
-					className={`cline-ui-agent-aurora__blob cline-ui-agent-aurora__blob--${blob.position}`}
+					className={`nexus-ui-agent-aurora__blob nexus-ui-agent-aurora__blob--${blob.position}`}
 					key={blob.id}
 					style={{
 						animationDelay: blob.delay,
@@ -77,7 +77,7 @@ export function AgentAurora() {
 			))}
 			{STARS.map((star) => (
 				<span
-					className="cline-ui-agent-aurora__star"
+					className="nexus-ui-agent-aurora__star"
 					key={`${star.left}-${star.top}`}
 					style={{
 						animationDelay: star.delay,

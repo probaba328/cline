@@ -1,9 +1,9 @@
-import { runSubprocessEvent } from "@cline/core";
+import { runSubprocessEvent } from "@nexus/core";
 import type {
 	ConnectorAuthorizationDecision,
 	ConnectorAuthorizationRequest,
 	ConnectorHookEvent,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { z } from "zod";
 import type { CliLoggerAdapter } from "../logging/adapter";
 

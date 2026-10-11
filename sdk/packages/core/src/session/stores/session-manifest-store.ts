@@ -7,9 +7,9 @@ import {
 } from "node:fs";
 import { readFile, rm } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import type * as LlmsProviders from "@cline/llms";
-import type { BasicLogger } from "@cline/shared";
-import { ensureHookLogDir } from "@cline/shared/storage";
+import type * as LlmsProviders from "@nexus/llms";
+import type { BasicLogger } from "@nexus/shared";
+import { ensureHookLogDir } from "@nexus/shared/storage";
 import { nowIso, SessionArtifacts } from "../../services/session-artifacts";
 import {
 	buildMessagesFilePayload,
@@ -302,7 +302,7 @@ export class SessionManifestStore {
 		reason: string,
 		source: string,
 	): void {
-		const envPath = process.env.CLINE_HOOKS_LOG_PATH?.trim() || undefined;
+		const envPath = process.env.NEXUS_HOOKS_LOG_PATH?.trim() || undefined;
 		const logPath = envPath ?? join(ensureHookLogDir(), "hooks.jsonl");
 		appendFileSync(
 			logPath,

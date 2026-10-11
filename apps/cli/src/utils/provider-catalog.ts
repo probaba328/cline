@@ -1,12 +1,12 @@
 import {
 	listLocalProviders as internalListLocalProviders,
 	type ProviderSettingsManager,
-} from "@cline/core";
+} from "@nexus/core";
 
 export async function listLocalProviders(
 	manager: ProviderSettingsManager,
 ): ReturnType<typeof internalListLocalProviders> {
 	return await internalListLocalProviders(manager, {
-		isClinePassEnabled: true,
+		isNexusPassEnabled: true,
 	});
 }

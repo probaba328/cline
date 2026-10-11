@@ -6,7 +6,7 @@ import type {
 	ModelModalities,
 	ModelOperation,
 	ModelOperationMode,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { modelRouteMatches } from "./model-facts";
 
 const IMAGE_LANGUAGE_OPERATION: GatewayModelOperationCapability = {
@@ -65,8 +65,8 @@ const BUILTIN_MEDIA_OPERATION_CAPABILITIES: Readonly<
 	"vercel-ai-gateway": [IMAGE_LANGUAGE_OPERATION, IMAGE_GENERATION_OPERATION],
 	digitalocean: [IMAGE_GENERATION_OPERATION],
 	xai: [IMAGE_GENERATION_OPERATION],
-	cline: [IMAGE_LANGUAGE_OPERATION, IMAGE_GENERATION_OPERATION],
-	"cline-pass": [IMAGE_LANGUAGE_OPERATION, IMAGE_GENERATION_OPERATION],
+	nexus: [IMAGE_LANGUAGE_OPERATION, IMAGE_GENERATION_OPERATION],
+	"nexus-pass": [IMAGE_LANGUAGE_OPERATION, IMAGE_GENERATION_OPERATION],
 };
 
 /**

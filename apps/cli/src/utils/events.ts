@@ -1,9 +1,9 @@
-import type { AgentEvent, TeamEvent } from "@cline/core";
+import type { AgentEvent, TeamEvent } from "@nexus/core";
 import {
 	formatCompactionDividerLabel,
 	parseCompactionNoticeMetadata,
 } from "../tui/utils/compaction-status";
-import { formatCliErrorMessage } from "./cline-pass-errors";
+import { formatCliErrorMessage } from "./nexus-pass-errors";
 import { materializeGeneratedMedia } from "./generated-media";
 import { formatToolInput, formatToolOutput, truncate } from "./helpers";
 import {

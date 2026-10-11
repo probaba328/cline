@@ -1,21 +1,21 @@
 import {
 	buildRemoteConfigSessionBlobUploadMetadata,
-	ClineAccountService,
-	type ClineCoreStartInput,
+	NexusAccountService,
+	type NexusCoreStartInput,
 	createRemoteConfigSessionMessagesArtifactUploader,
 	ProviderSettingsManager,
 	prepareRemoteConfigCoreIntegration,
 	REMOTE_CONFIG_SESSION_BLOB_UPLOAD_METADATA_KEY,
 	readRemoteConfigSessionBlobUploadMetadata,
 	registerRemoteConfigSessionBlobUpload,
-	resolveLocalClineAuthToken,
+	resolveLocalNexusAuthToken,
 	type SessionMessagesArtifactUploader,
-} from "@cline/core";
+} from "@nexus/core";
 import {
-	getClineEnvironmentConfig,
+	getNexusEnvironmentConfig,
 	type RemoteConfigBundle,
 	RemoteConfigSchema,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { getCliTelemetryService } from "./telemetry";
 
 const initializedRemoteConfigKeys = new Set<string>();
@@ -38,15 +38,15 @@ async function loadCliRemoteConfigBundleUncached(): Promise<
 	RemoteConfigBundle | undefined
 > {
 	const manager = new ProviderSettingsManager();
-	const settings = manager.getProviderSettings("cline");
-	const authToken = resolveLocalClineAuthToken(settings)?.trim();
+	const settings = manager.getProviderSettings("nexus");
+	const authToken = resolveLocalNexusAuthToken(settings)?.trim();
 	if (!authToken) {
 		return undefined;
 	}
 
-	const service = new ClineAccountService({
+	const service = new NexusAccountService({
 		apiBaseUrl:
-			settings?.baseUrl?.trim() || getClineEnvironmentConfig().apiBaseUrl,
+			settings?.baseUrl?.trim() || getNexusEnvironmentConfig().apiBaseUrl,
 		getAuthToken: async () => authToken,
 	});
 	const response = await service.fetchRemoteConfig().catch(() => null);
@@ -66,7 +66,7 @@ async function loadCliRemoteConfigBundleUncached(): Promise<
 	}
 
 	return {
-		source: "cline-account",
+		source: "nexus-account",
 		version: response.organizationId?.trim() || "remote-config",
 		remoteConfig: remoteConfigResult.data,
 	};
@@ -139,7 +139,7 @@ function captureRemoteConfigInitialized(bundle: RemoteConfigBundle): void {
 }
 
 export async function prepareCliEnterpriseIntegration(
-	input: ClineCoreStartInput,
+	input: NexusCoreStartInput,
 ) {
 	const workspacePath =
 		input.config.workspaceRoot?.trim() || input.config.cwd?.trim();
@@ -155,7 +155,7 @@ export async function prepareCliEnterpriseIntegration(
 		workspacePath,
 		pluginName: "enterprise",
 		controlPlane: {
-			name: "cline-account",
+			name: "nexus-account",
 			async fetchBundle() {
 				return bundle;
 			},

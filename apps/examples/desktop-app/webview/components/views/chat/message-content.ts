@@ -1,4 +1,4 @@
-import { formatDisplayUserInput } from "@cline/shared/browser";
+import { formatDisplayUserInput } from "@nexus/shared/browser";
 import type { ChatMessage } from "@/lib/chat-schema";
 
 export function formatChatMessageContent(

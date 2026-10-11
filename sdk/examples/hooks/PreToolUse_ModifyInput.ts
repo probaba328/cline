@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 /**
- * Cline Hook: PreToolUse (Modify Input)
+ * Nexus Hook: PreToolUse (Modify Input)
  * Demonstrates how to modify tool inputs before execution.
  * Useful for: normalizing paths, adding default options, sanitizing inputs.
- * Copy to ~/.cline/hooks/PreToolUse.ts and chmod +x
+ * Copy to ~/.nexus/hooks/PreToolUse.ts and chmod +x
  */
 
 interface ToolInput {

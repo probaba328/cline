@@ -1,6 +1,6 @@
 export const FeatureFlag = {
-	/** Enables ClinePass provider/model list exposure in supported clients. */
-	CLINE_PASS: "ext-cline-pass",
+	/** Enables NexusPass provider/model list exposure in supported clients. */
+	NEXUS_PASS: "ext-nexus-pass",
 } as const;
 
 export type KnownFeatureFlag = (typeof FeatureFlag)[keyof typeof FeatureFlag];
@@ -24,7 +24,7 @@ export type FeatureFlagsAndPayloads = {
 export interface FeatureFlagsContext {
 	/** Stable SDK/client/user identifier used by providers that evaluate per identity. */
 	distinctId?: string;
-	/** Authenticated Cline account/user ID, when available. */
+	/** Authenticated Nexus account/user ID, when available. */
 	userId?: string | null;
 	/** Optional SDK consumer name, e.g. `my-production-app`. */
 	clientName?: string;
@@ -61,7 +61,7 @@ export interface IFeatureFlagsProvider {
 export const FeatureFlagDefaultValue: Partial<
 	Record<FeatureFlag, FeatureFlagPayload | undefined>
 > = {
-	[FeatureFlag.CLINE_PASS]: false,
+	[FeatureFlag.NEXUS_PASS]: false,
 };
 
 export const FEATURE_FLAGS: readonly FeatureFlag[] = Object.values(FeatureFlag);

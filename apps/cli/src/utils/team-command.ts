@@ -1,5 +1,5 @@
-import { createTeamName } from "@cline/core";
-import { formatUserCommandBlock } from "@cline/shared";
+import { createTeamName } from "@nexus/core";
+import { formatUserCommandBlock } from "@nexus/shared";
 import type { Config } from "./types";
 
 export const TEAM_COMMAND_USAGE =

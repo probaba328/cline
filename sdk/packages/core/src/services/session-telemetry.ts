@@ -1,5 +1,5 @@
-import type { ITelemetryService } from "@cline/shared";
-import { resolveDocumentsExtensionPath } from "@cline/shared/storage";
+import type { ITelemetryService } from "@nexus/shared";
+import { resolveDocumentsExtensionPath } from "@nexus/shared/storage";
 import { listHookConfigFiles } from "../hooks/hook-file-config";
 import type { CoreSessionConfig } from "../types/config";
 import {
@@ -16,7 +16,7 @@ import type { enrichPromptWithMentions } from "./workspace";
 /**
  * Emits local-only session creation telemetry (task.created/restarted and
  * hook discovery). The transport-agnostic `session.started` event is
- * emitted from `ClineCore.start` so it fires for every backend (local,
+ * emitted from `NexusCore.start` so it fires for every backend (local,
  * hub, remote) at the outer API boundary.
  */
 export function emitSessionCreationTelemetry(

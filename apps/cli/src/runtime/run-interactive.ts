@@ -6,18 +6,18 @@ import {
 	setPlanActModeGlobally,
 	setToolAutoApproveGlobally,
 	type UserInstructionConfigService,
-} from "@cline/core";
-import { formatModeSwitchNotice } from "@cline/shared";
+} from "@nexus/core";
+import { formatModeSwitchNotice } from "@nexus/shared";
 import type { CliMigrationNotice } from "../kanban-migration/notice";
 import { logCliError } from "../logging/errors";
 import { exportHistorySession } from "../session/history-export";
 import { deleteSession } from "../session/session";
 import {
-	loadClineAccountSnapshot,
+	loadNexusAccountSnapshot,
 	loadIndividualSubscriptionPlans,
 	onProviderChange,
-	switchClineAccount,
-} from "../tui/cline-account";
+	switchNexusAccount,
+} from "../tui/nexus-account";
 import type {
 	InteractiveConfigItem,
 	LoadInteractiveConfigDataOptions,
@@ -25,14 +25,14 @@ import type {
 import {
 	type InteractiveSlashCommand,
 	listInteractiveSlashCommands,
-	resolveClineWelcomeLine,
+	resolveNexusWelcomeLine,
 } from "../tui/interactive-welcome";
 import { disableOpenTuiGraphicsProbe } from "../tui/opentui-env";
 import type { QueuedPromptItem, TuiStartupTarget } from "../tui/types";
 import { type ChatCommandState, chatCommandHost } from "../utils/chat-commands";
 import { applyCliCompactionMode } from "../utils/compaction-mode";
 import {
-	shouldZeroClineFreeModelCost,
+	shouldZeroNexusFreeModelCost,
 	zeroCliAgentEventCost,
 	zeroCliUsageCost,
 } from "../utils/free-model-cost";
@@ -150,16 +150,16 @@ export async function resumeInteractiveSession(
 	>,
 	sessionId: string,
 ) {
-	const previousAgentResume = process.env.CLINE_HOOK_AGENT_RESUME;
-	process.env.CLINE_HOOK_AGENT_RESUME = "1";
+	const previousAgentResume = process.env.NEXUS_HOOK_AGENT_RESUME;
+	process.env.NEXUS_HOOK_AGENT_RESUME = "1";
 	let messages: Awaited<ReturnType<typeof sessionRuntime.resumeSession>>;
 	try {
 		messages = await sessionRuntime.resumeSession(sessionId);
 	} catch (error) {
 		if (previousAgentResume === undefined) {
-			delete process.env.CLINE_HOOK_AGENT_RESUME;
+			delete process.env.NEXUS_HOOK_AGENT_RESUME;
 		} else {
-			process.env.CLINE_HOOK_AGENT_RESUME = previousAgentResume;
+			process.env.NEXUS_HOOK_AGENT_RESUME = previousAgentResume;
 		}
 		throw error;
 	}
@@ -179,8 +179,8 @@ export async function runInteractive(
 	userInstructionService?: UserInstructionConfigService,
 	resumeSessionId?: string,
 	options?: {
-		clineApiBaseUrl?: string;
-		clineProviderSettings?: ProviderSettings;
+		nexusApiBaseUrl?: string;
+		nexusProviderSettings?: ProviderSettings;
 		startupTarget?: TuiStartupTarget;
 		initialPrompt?: string;
 		initialNotice?: CliMigrationNotice;
@@ -524,27 +524,27 @@ export async function runInteractive(
 		workflowSlashCommands,
 		loadAdditionalSlashCommands,
 		loadWelcomeLine: async () =>
-			await resolveClineWelcomeLine({
+			await resolveNexusWelcomeLine({
 				config,
-				clineApiBaseUrl: options?.clineApiBaseUrl,
-				clineProviderSettings: options?.clineProviderSettings,
+				nexusApiBaseUrl: options?.nexusApiBaseUrl,
+				nexusProviderSettings: options?.nexusProviderSettings,
 			}),
-		loadClineAccount: async () =>
-			await loadClineAccountSnapshot({
+		loadNexusAccount: async () =>
+			await loadNexusAccountSnapshot({
 				config,
-				clineApiBaseUrl: options?.clineApiBaseUrl,
+				nexusApiBaseUrl: options?.nexusApiBaseUrl,
 			}),
 		loadIndividualSubscriptionPlans: async () =>
 			await loadIndividualSubscriptionPlans({
 				config,
-				clineApiBaseUrl: options?.clineApiBaseUrl,
-				clineProviderSettings: options?.clineProviderSettings,
+				nexusApiBaseUrl: options?.nexusApiBaseUrl,
+				nexusProviderSettings: options?.nexusProviderSettings,
 			}),
-		switchClineAccount: async (organizationId) =>
-			await switchClineAccount({
+		switchNexusAccount: async (organizationId) =>
+			await switchNexusAccount({
 				config,
 				organizationId,
-				clineApiBaseUrl: options?.clineApiBaseUrl,
+				nexusApiBaseUrl: options?.nexusApiBaseUrl,
 			}),
 		loadConfigData: configDataLoader.loadConfigData,
 		onToggleConfigItem,
@@ -615,7 +615,7 @@ export async function runInteractive(
 				}
 				input = chatCommandResult.input;
 				commandOutput = chatCommandResult.commandOutput;
-				zeroTurnCost = await shouldZeroClineFreeModelCost(config);
+				zeroTurnCost = await shouldZeroNexusFreeModelCost(config);
 				zeroCurrentTurnCost = zeroTurnCost;
 				const {
 					prompt: userInput,
@@ -803,13 +803,13 @@ export async function runInteractive(
 		},
 		onAccountChange: async () => {
 			await sessionRuntime.ensureReady();
-			await loadClineAccountSnapshot({
+			await loadNexusAccountSnapshot({
 				config,
-				clineApiBaseUrl: options?.clineApiBaseUrl,
+				nexusApiBaseUrl: options?.nexusApiBaseUrl,
 			}).catch((error) => {
 				logCliError(
 					config.logger,
-					"Cline account refresh after account change failed",
+					"Nexus account refresh after account change failed",
 					{ error },
 				);
 			});
@@ -817,7 +817,7 @@ export async function runInteractive(
 		},
 		// resumeSession initializes the manager and starts the selected session
 		// directly. Ensuring a session first would mint an empty history entry
-		// when the TUI was launched through `cline history`.
+		// when the TUI was launched through `nexus history`.
 		onResumeSession: async (sessionId: string) =>
 			await resumeInteractiveSession(sessionRuntime, sessionId),
 		onExportHistorySession: async (sessionId, format) =>
@@ -889,14 +889,14 @@ export async function runInteractive(
 			prepareTerminalForPostTuiOutput();
 		}
 		writeln(
-			"The shared Cline Hub was updated by another Cline installation. Updating this CLI…",
+			"The shared Nexus Hub was updated by another Nexus installation. Updating this CLI…",
 		);
 		const { checkForUpdates } = await import("../commands/update");
 		const exitCode = await checkForUpdates({ includeKanban: false });
 		writeln(
 			exitCode === 0
-				? "Start cline again to reconnect to the updated Hub."
-				: "Update did not complete. Run 'cline update' manually, then start cline again.",
+				? "Start nexus again to reconnect to the updated Hub."
+				: "Update did not complete. Run 'nexus update' manually, then start nexus again.",
 		);
 	}
 }

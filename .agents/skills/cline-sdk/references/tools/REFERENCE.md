@@ -1,13 +1,13 @@
 # Tools
 
-Tools are how agents interact with the world. The Cline SDK supports both built-in tools (via ClineCore) and custom tools you define yourself.
+Tools are how agents interact with the world. The Nexus SDK supports both built-in tools (via NexusCore) and custom tools you define yourself.
 
 ## Creating Custom Tools
 
-Use `createTool()` from `@cline/sdk` (or `@cline/shared`):
+Use `createTool()` from `@nexus/sdk` (or `@nexus/shared`):
 
 ```typescript
-import { createTool } from "@cline/sdk"
+import { createTool } from "@nexus/sdk"
 
 const myTool = createTool({
   name: "search_issues",
@@ -30,7 +30,7 @@ const myTool = createTool({
 ### With Zod Schema
 
 ```typescript
-import { createTool } from "@cline/sdk"
+import { createTool } from "@nexus/sdk"
 import { z } from "zod"
 
 const deployTool = createTool({
@@ -136,9 +136,9 @@ const submitAnswer = createTool({
 
 The model sees the tool result and the run ends. Access the output via `result.toolCalls`.
 
-## Built-in Tools (ClineCore Only)
+## Built-in Tools (NexusCore Only)
 
-When using `ClineCore` with `enableTools: true`, these tools are available automatically:
+When using `NexusCore` with `enableTools: true`, these tools are available automatically:
 
 | Tool | Name | What It Does |
 |------|------|-------------|
@@ -166,8 +166,8 @@ const agent = new Agent({
   },
 })
 
-// In ClineCore session
-await cline.start({
+// In NexusCore session
+await nexus.start({
   prompt: "...",
   config: { ... },
   toolPolicies: {
@@ -237,7 +237,7 @@ describe("deploy tool", () => {
 
 ## MCP Tool Integration
 
-ClineCore can connect to MCP (Model Context Protocol) servers for additional tools. Configure in `.cline/mcp-servers.json`:
+NexusCore can connect to MCP (Model Context Protocol) servers for additional tools. Configure in `.nexus/mcp-servers.json`:
 
 ```json
 {
@@ -255,5 +255,5 @@ MCP tools appear alongside built-in and custom tools automatically.
 ## See Also
 
 - `../agent/REFERENCE.md` - Using tools with Agent
-- `../clinecore/REFERENCE.md` - Using tools with ClineCore
+- `../clinecore/REFERENCE.md` - Using tools with NexusCore
 - `../plugins/REFERENCE.md` - Packaging tools as plugins

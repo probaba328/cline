@@ -4,17 +4,17 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	AGENT_CONFIG_DIRECTORY_NAME,
-	CLINE_CHAT_WORKSPACE_DIRECTORY_NAME,
-	CLINE_CONNECTOR_SETTINGS_FILE_NAME,
-	CLINE_MCP_SETTINGS_FILE_NAME,
-	CLINE_WORKSPACES_DIRECTORY_NAME,
+	NEXUS_CHAT_WORKSPACE_DIRECTORY_NAME,
+	NEXUS_CONNECTOR_SETTINGS_FILE_NAME,
+	NEXUS_MCP_SETTINGS_FILE_NAME,
+	NEXUS_WORKSPACES_DIRECTORY_NAME,
 	getPluginDisplayName,
 	HOOKS_CONFIG_DIRECTORY_NAME,
 	isChatWorkspacePath,
 	RULES_CONFIG_DIRECTORY_NAME,
 	resolveAgentsConfigDirPath,
 	resolveChatWorkspacePath,
-	resolveClineDataDir,
+	resolveNexusDataDir,
 	resolveConnectorDataDir,
 	resolveConnectorSettingsPath,
 	resolveDbDataDir,
@@ -30,46 +30,46 @@ import {
 } from "./paths";
 
 type EnvSnapshot = {
-	CLINE_DIR: string | undefined;
-	CLINE_DATA_DIR: string | undefined;
-	CLINE_CONNECTOR_DATA_DIR: string | undefined;
-	CLINE_CONNECTOR_SETTINGS_PATH: string | undefined;
-	CLINE_DB_DATA_DIR: string | undefined;
-	CLINE_GLOBAL_SETTINGS_PATH: string | undefined;
-	CLINE_MCP_SETTINGS_PATH: string | undefined;
-	CLINE_PROVIDER_SETTINGS_PATH: string | undefined;
-	CLINE_SESSION_DATA_DIR: string | undefined;
-	CLINE_TEAM_DATA_DIR: string | undefined;
+	NEXUS_DIR: string | undefined;
+	NEXUS_DATA_DIR: string | undefined;
+	NEXUS_CONNECTOR_DATA_DIR: string | undefined;
+	NEXUS_CONNECTOR_SETTINGS_PATH: string | undefined;
+	NEXUS_DB_DATA_DIR: string | undefined;
+	NEXUS_GLOBAL_SETTINGS_PATH: string | undefined;
+	NEXUS_MCP_SETTINGS_PATH: string | undefined;
+	NEXUS_PROVIDER_SETTINGS_PATH: string | undefined;
+	NEXUS_SESSION_DATA_DIR: string | undefined;
+	NEXUS_TEAM_DATA_DIR: string | undefined;
 };
 
 function captureEnv(): EnvSnapshot {
 	return {
-		CLINE_DIR: process.env.CLINE_DIR,
-		CLINE_DATA_DIR: process.env.CLINE_DATA_DIR,
-		CLINE_CONNECTOR_DATA_DIR: process.env.CLINE_CONNECTOR_DATA_DIR,
-		CLINE_CONNECTOR_SETTINGS_PATH: process.env.CLINE_CONNECTOR_SETTINGS_PATH,
-		CLINE_DB_DATA_DIR: process.env.CLINE_DB_DATA_DIR,
-		CLINE_GLOBAL_SETTINGS_PATH: process.env.CLINE_GLOBAL_SETTINGS_PATH,
-		CLINE_MCP_SETTINGS_PATH: process.env.CLINE_MCP_SETTINGS_PATH,
-		CLINE_PROVIDER_SETTINGS_PATH: process.env.CLINE_PROVIDER_SETTINGS_PATH,
-		CLINE_SESSION_DATA_DIR: process.env.CLINE_SESSION_DATA_DIR,
-		CLINE_TEAM_DATA_DIR: process.env.CLINE_TEAM_DATA_DIR,
+		NEXUS_DIR: process.env.NEXUS_DIR,
+		NEXUS_DATA_DIR: process.env.NEXUS_DATA_DIR,
+		NEXUS_CONNECTOR_DATA_DIR: process.env.NEXUS_CONNECTOR_DATA_DIR,
+		NEXUS_CONNECTOR_SETTINGS_PATH: process.env.NEXUS_CONNECTOR_SETTINGS_PATH,
+		NEXUS_DB_DATA_DIR: process.env.NEXUS_DB_DATA_DIR,
+		NEXUS_GLOBAL_SETTINGS_PATH: process.env.NEXUS_GLOBAL_SETTINGS_PATH,
+		NEXUS_MCP_SETTINGS_PATH: process.env.NEXUS_MCP_SETTINGS_PATH,
+		NEXUS_PROVIDER_SETTINGS_PATH: process.env.NEXUS_PROVIDER_SETTINGS_PATH,
+		NEXUS_SESSION_DATA_DIR: process.env.NEXUS_SESSION_DATA_DIR,
+		NEXUS_TEAM_DATA_DIR: process.env.NEXUS_TEAM_DATA_DIR,
 	};
 }
 
 function restoreEnv(snapshot: EnvSnapshot): void {
-	process.env.CLINE_DATA_DIR = snapshot.CLINE_DATA_DIR;
-	process.env.CLINE_CONNECTOR_DATA_DIR = snapshot.CLINE_CONNECTOR_DATA_DIR;
-	process.env.CLINE_CONNECTOR_SETTINGS_PATH =
-		snapshot.CLINE_CONNECTOR_SETTINGS_PATH;
-	process.env.CLINE_DIR = snapshot.CLINE_DIR;
-	process.env.CLINE_DB_DATA_DIR = snapshot.CLINE_DB_DATA_DIR;
-	process.env.CLINE_GLOBAL_SETTINGS_PATH = snapshot.CLINE_GLOBAL_SETTINGS_PATH;
-	process.env.CLINE_MCP_SETTINGS_PATH = snapshot.CLINE_MCP_SETTINGS_PATH;
-	process.env.CLINE_PROVIDER_SETTINGS_PATH =
-		snapshot.CLINE_PROVIDER_SETTINGS_PATH;
-	process.env.CLINE_SESSION_DATA_DIR = snapshot.CLINE_SESSION_DATA_DIR;
-	process.env.CLINE_TEAM_DATA_DIR = snapshot.CLINE_TEAM_DATA_DIR;
+	process.env.NEXUS_DATA_DIR = snapshot.NEXUS_DATA_DIR;
+	process.env.NEXUS_CONNECTOR_DATA_DIR = snapshot.NEXUS_CONNECTOR_DATA_DIR;
+	process.env.NEXUS_CONNECTOR_SETTINGS_PATH =
+		snapshot.NEXUS_CONNECTOR_SETTINGS_PATH;
+	process.env.NEXUS_DIR = snapshot.NEXUS_DIR;
+	process.env.NEXUS_DB_DATA_DIR = snapshot.NEXUS_DB_DATA_DIR;
+	process.env.NEXUS_GLOBAL_SETTINGS_PATH = snapshot.NEXUS_GLOBAL_SETTINGS_PATH;
+	process.env.NEXUS_MCP_SETTINGS_PATH = snapshot.NEXUS_MCP_SETTINGS_PATH;
+	process.env.NEXUS_PROVIDER_SETTINGS_PATH =
+		snapshot.NEXUS_PROVIDER_SETTINGS_PATH;
+	process.env.NEXUS_SESSION_DATA_DIR = snapshot.NEXUS_SESSION_DATA_DIR;
+	process.env.NEXUS_TEAM_DATA_DIR = snapshot.NEXUS_TEAM_DATA_DIR;
 }
 
 describe("storage path resolution", () => {
@@ -79,150 +79,150 @@ describe("storage path resolution", () => {
 		restoreEnv(snapshot);
 	});
 
-	it("uses CLINE_DATA_DIR as-is when set", () => {
+	it("uses NEXUS_DATA_DIR as-is when set", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
-		expect(resolveClineDataDir()).toBe("/tmp/cline-data");
+		expect(resolveNexusDataDir()).toBe("/tmp/nexus-data");
 	});
 
-	it("falls back to CLINE_DATA_DIR/sessions for session storage", () => {
+	it("falls back to NEXUS_DATA_DIR/sessions for session storage", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_SESSION_DATA_DIR;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_SESSION_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
-		expect(resolveSessionDataDir()).toBe(join("/tmp/cline-data", "sessions"));
+		expect(resolveSessionDataDir()).toBe(join("/tmp/nexus-data", "sessions"));
 	});
 
-	it("falls back to CLINE_DATA_DIR/teams for team storage", () => {
+	it("falls back to NEXUS_DATA_DIR/teams for team storage", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_TEAM_DATA_DIR;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_TEAM_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
-		expect(resolveTeamDataDir()).toBe(join("/tmp/cline-data", "teams"));
+		expect(resolveTeamDataDir()).toBe(join("/tmp/nexus-data", "teams"));
 	});
 
-	it("falls back to CLINE_DATA_DIR/connectors for connector storage", () => {
+	it("falls back to NEXUS_DATA_DIR/connectors for connector storage", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_CONNECTOR_DATA_DIR;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_CONNECTOR_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveConnectorDataDir()).toBe(
-			join("/tmp/cline-data", "connectors"),
+			join("/tmp/nexus-data", "connectors"),
 		);
 	});
 
-	it("falls back to CLINE_DATA_DIR/connectors/settings.json for connector settings", () => {
+	it("falls back to NEXUS_DATA_DIR/connectors/settings.json for connector settings", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_CONNECTOR_DATA_DIR;
-		delete process.env.CLINE_CONNECTOR_SETTINGS_PATH;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_CONNECTOR_DATA_DIR;
+		delete process.env.NEXUS_CONNECTOR_SETTINGS_PATH;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveConnectorSettingsPath()).toBe(
-			join("/tmp/cline-data", "connectors", CLINE_CONNECTOR_SETTINGS_FILE_NAME),
+			join("/tmp/nexus-data", "connectors", NEXUS_CONNECTOR_SETTINGS_FILE_NAME),
 		);
 	});
 
-	it("uses CLINE_CONNECTOR_SETTINGS_PATH as-is when set", () => {
+	it("uses NEXUS_CONNECTOR_SETTINGS_PATH as-is when set", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_CONNECTOR_SETTINGS_PATH =
-			"/tmp/cline-connectors/custom-settings.json";
+		process.env.NEXUS_CONNECTOR_SETTINGS_PATH =
+			"/tmp/nexus-connectors/custom-settings.json";
 
 		expect(resolveConnectorSettingsPath()).toBe(
-			"/tmp/cline-connectors/custom-settings.json",
+			"/tmp/nexus-connectors/custom-settings.json",
 		);
 	});
 
-	it("falls back to CLINE_DATA_DIR/db for sqlite storage", () => {
+	it("falls back to NEXUS_DATA_DIR/db for sqlite storage", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_DB_DATA_DIR;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_DB_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
-		expect(resolveDbDataDir()).toBe(join("/tmp/cline-data", "db"));
+		expect(resolveDbDataDir()).toBe(join("/tmp/nexus-data", "db"));
 	});
 
-	it("falls back to CLINE_DATA_DIR/settings/providers.json for provider settings", () => {
+	it("falls back to NEXUS_DATA_DIR/settings/providers.json for provider settings", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_PROVIDER_SETTINGS_PATH;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_PROVIDER_SETTINGS_PATH;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveProviderSettingsPath()).toBe(
-			join("/tmp/cline-data", "settings", "providers.json"),
+			join("/tmp/nexus-data", "settings", "providers.json"),
 		);
 	});
 
-	it("falls back to CLINE_DATA_DIR/settings/global-settings.json for global settings", () => {
+	it("falls back to NEXUS_DATA_DIR/settings/global-settings.json for global settings", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_GLOBAL_SETTINGS_PATH;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_GLOBAL_SETTINGS_PATH;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveGlobalSettingsPath()).toBe(
-			join("/tmp/cline-data", "settings", "global-settings.json"),
+			join("/tmp/nexus-data", "settings", "global-settings.json"),
 		);
 	});
 
-	it("falls back to CLINE_DATA_DIR/settings/cline_mcp_settings.json for MCP settings", () => {
+	it("falls back to NEXUS_DATA_DIR/settings/nexus_mcp_settings.json for MCP settings", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_MCP_SETTINGS_PATH;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		delete process.env.NEXUS_MCP_SETTINGS_PATH;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveMcpSettingsPath()).toBe(
-			join("/tmp/cline-data", "settings", CLINE_MCP_SETTINGS_FILE_NAME),
+			join("/tmp/nexus-data", "settings", NEXUS_MCP_SETTINGS_FILE_NAME),
 		);
 	});
 
-	it("falls back to ~/.cline/.agents for agent configs", () => {
+	it("falls back to ~/.nexus/.agents for agent configs", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DIR = "/tmp/home/.cline";
+		process.env.NEXUS_DIR = "/tmp/home/.nexus";
 
 		expect(resolveAgentsConfigDirPath()).toBe(
-			join("/tmp/home", ".cline", AGENT_CONFIG_DIRECTORY_NAME),
+			join("/tmp/home", ".nexus", AGENT_CONFIG_DIRECTORY_NAME),
 		);
 	});
 
-	it("resolves global hooks from ~/.cline", () => {
+	it("resolves global hooks from ~/.nexus", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DIR = "/tmp/home/.cline";
-		process.env.CLINE_DATA_DIR = "/tmp/home/.cline/data";
+		process.env.NEXUS_DIR = "/tmp/home/.nexus";
+		process.env.NEXUS_DATA_DIR = "/tmp/home/.nexus/data";
 
 		expect(resolveHooksConfigSearchPaths()).toEqual(
 			expect.arrayContaining([
-				join("/tmp/home", ".cline", HOOKS_CONFIG_DIRECTORY_NAME),
+				join("/tmp/home", ".nexus", HOOKS_CONFIG_DIRECTORY_NAME),
 			]),
 		);
 		expect(resolveHooksConfigSearchPaths()).not.toContain(
-			join("/tmp/home", ".cline", "data", HOOKS_CONFIG_DIRECTORY_NAME),
+			join("/tmp/home", ".nexus", "data", HOOKS_CONFIG_DIRECTORY_NAME),
 		);
 	});
 
-	it("resolves global rules from ~/.cline", () => {
+	it("resolves global rules from ~/.nexus", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DIR = "/tmp/home/.cline";
-		process.env.CLINE_DATA_DIR = "/tmp/home/.cline/data";
+		process.env.NEXUS_DIR = "/tmp/home/.nexus";
+		process.env.NEXUS_DATA_DIR = "/tmp/home/.nexus/data";
 
 		expect(resolveRulesConfigSearchPaths()).toEqual(
 			expect.arrayContaining([
 				resolveGlobalAgentsRulesPath(),
-				join("/tmp/home", ".cline", RULES_CONFIG_DIRECTORY_NAME),
+				join("/tmp/home", ".nexus", RULES_CONFIG_DIRECTORY_NAME),
 			]),
 		);
 		expect(resolveRulesConfigSearchPaths()).not.toContain(
-			join("/tmp/home", ".cline", "data", RULES_CONFIG_DIRECTORY_NAME),
+			join("/tmp/home", ".nexus", "data", RULES_CONFIG_DIRECTORY_NAME),
 		);
 	});
 
-	it("resolves legacy and new workflow paths, with .cline paths later for duplicate-name precedence", () => {
+	it("resolves legacy and new workflow paths, with .nexus paths later for duplicate-name precedence", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DIR = "/tmp/home/.cline";
+		process.env.NEXUS_DIR = "/tmp/home/.nexus";
 		const workspacePath = "/repo/demo";
 
 		const paths = resolveWorkflowsConfigSearchPaths(workspacePath);
 
 		expect(paths).toEqual([
-			join(workspacePath, ".clinerules", "workflows"),
-			expect.stringContaining(join("Documents", "Cline", "Workflows")),
-			join("/tmp/home", ".cline", "workflows"),
-			join(workspacePath, ".cline", "workflows"),
+			join(workspacePath, ".nexusrules", "workflows"),
+			expect.stringContaining(join("Documents", "Nexus", "Workflows")),
+			join("/tmp/home", ".nexus", "workflows"),
+			join(workspacePath, ".nexus", "workflows"),
 		]);
 	});
 });
@@ -235,48 +235,48 @@ describe("chat workspace paths", () => {
 	});
 
 	it("exports the canonical path segments", () => {
-		expect(CLINE_WORKSPACES_DIRECTORY_NAME).toBe("workspaces");
-		expect(CLINE_CHAT_WORKSPACE_DIRECTORY_NAME).toBe("chat");
+		expect(NEXUS_WORKSPACES_DIRECTORY_NAME).toBe("workspaces");
+		expect(NEXUS_CHAT_WORKSPACE_DIRECTORY_NAME).toBe("chat");
 	});
 
-	it("resolves the shared chat workspace under the cline data dir", () => {
+	it("resolves the shared chat workspace under the nexus data dir", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_DATA_DIR;
-		process.env.CLINE_DIR = "/tmp/home/.cline";
+		delete process.env.NEXUS_DATA_DIR;
+		process.env.NEXUS_DIR = "/tmp/home/.nexus";
 
 		expect(resolveChatWorkspacePath()).toBe(
-			join("/tmp/home/.cline", "data", "workspaces", "chat"),
+			join("/tmp/home/.nexus", "data", "workspaces", "chat"),
 		);
 	});
 
-	it("honors the CLINE_DATA_DIR override", () => {
+	it("honors the NEXUS_DATA_DIR override", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 
 		expect(resolveChatWorkspacePath()).toBe(
-			join("/tmp/cline-data", "workspaces", "chat"),
+			join("/tmp/nexus-data", "workspaces", "chat"),
 		);
 	});
 
 	it.each([
-		"/home/user/.cline/data/workspaces/chat",
-		"//home//user//.cline//data//workspaces//chat//",
-		"C:\\Users\\dev\\.cline\\data\\workspaces\\chat\\",
-		"\\\\server\\share\\.cline\\data\\workspaces\\chat",
+		"/home/user/.nexus/data/workspaces/chat",
+		"//home//user//.nexus//data//workspaces//chat//",
+		"C:\\Users\\dev\\.nexus\\data\\workspaces\\chat\\",
+		"\\\\server\\share\\.nexus\\data\\workspaces\\chat",
 	])("recognizes chat workspace root %s", (path) => {
 		expect(isChatWorkspacePath(path)).toBe(true);
 	});
 
 	it.each([
-		".cline/data/workspaces/chat",
+		".nexus/data/workspaces/chat",
 		"/tmp/chat",
-		"/tmp/cline/sessions/session-a1b2c3-temp/project",
-		"/home/user/cline/data/workspaces/chat",
-		"/home/user/.cline/workspaces/chat",
-		"/home/user/.cline/data/other/chat",
-		"/home/user/.cline/data/workspaces/Chat",
-		"/home/user/.cline/data/workspaces/chat/my-app",
-		"/home/user/.cline/data/workspaces",
+		"/tmp/nexus/sessions/session-a1b2c3-temp/project",
+		"/home/user/nexus/data/workspaces/chat",
+		"/home/user/.nexus/workspaces/chat",
+		"/home/user/.nexus/data/other/chat",
+		"/home/user/.nexus/data/workspaces/Chat",
+		"/home/user/.nexus/data/workspaces/chat/my-app",
+		"/home/user/.nexus/data/workspaces",
 	])("rejects non-chat workspace path %s", (path) => {
 		expect(isChatWorkspacePath(path)).toBe(false);
 	});
@@ -286,7 +286,7 @@ describe("getPluginDisplayName", () => {
 	const tempRoots: string[] = [];
 
 	function createTempRoot(): string {
-		const root = mkdtempSync(join(tmpdir(), "cline-plugin-name-"));
+		const root = mkdtempSync(join(tmpdir(), "nexus-plugin-name-"));
 		tempRoots.push(root);
 		return root;
 	}
@@ -309,13 +309,13 @@ describe("getPluginDisplayName", () => {
 		mkdirSync(packageDir, { recursive: true });
 		writeFileSync(
 			join(packageDir, "package.json"),
-			JSON.stringify({ name: "cline-agents-squad-plugin" }),
+			JSON.stringify({ name: "nexus-agents-squad-plugin" }),
 		);
 		const entryPath = join(packageDir, "index.ts");
 		writeFileSync(entryPath, "export default {};");
 
 		expect(getPluginDisplayName(entryPath, root)).toBe(
-			"cline-agents-squad-plugin",
+			"nexus-agents-squad-plugin",
 		);
 	});
 

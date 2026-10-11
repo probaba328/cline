@@ -1,7 +1,7 @@
-import { type ProviderSettings, ProviderSettingsManager } from "@cline/core";
-import { CLINE_DEFAULT_MODEL_ID } from "@cline/shared";
+import { type ProviderSettings, ProviderSettingsManager } from "@nexus/core";
+import { NEXUS_DEFAULT_MODEL_ID } from "@nexus/shared";
 
-export const DEFAULT_SCHEDULE_PROVIDER = "cline";
+export const DEFAULT_SCHEDULE_PROVIDER = "nexus";
 
 interface ProviderSettingsReader {
 	getLastUsedProviderSettings(): ProviderSettings | undefined;
@@ -39,7 +39,7 @@ export function resolveScheduleModelSelection(
 		explicitModel ??
 		trimToUndefined(selectedProviderSettings?.model) ??
 		(provider === DEFAULT_SCHEDULE_PROVIDER
-			? CLINE_DEFAULT_MODEL_ID
+			? NEXUS_DEFAULT_MODEL_ID
 			: undefined);
 
 	if (!model) {

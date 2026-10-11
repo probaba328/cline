@@ -55,7 +55,7 @@ describe("reshapeErrorForWebview - missing credentials", () => {
 		expect(reshapeErrorForWebview({ message: "Invalid API key" }, "openai")).toBe("Invalid API key")
 	})
 
-	it("does not blame the cline provider when the active provider id is unknown", () => {
+	it("does not blame the nexus provider when the active provider id is unknown", () => {
 		expect(reshapeErrorForWebview({ message: "Missing Authorization header" })).toBe(
 			"Missing API key for the active provider. Add credentials in Settings, or switch providers.",
 		)

@@ -14,13 +14,13 @@ describe("spawnDetachedConnector", () => {
 		expect(
 			__test__.buildDetachedConnectorArgs(
 				["connect", "telegram"],
-				["-m", "ClineAdapterBot", "-k", "token-123"],
+				["-m", "NexusAdapterBot", "-k", "token-123"],
 			),
 		).toEqual([
 			"connect",
 			"telegram",
 			"-m",
-			"ClineAdapterBot",
+			"NexusAdapterBot",
 			"-k",
 			"token-123",
 			"-i",
@@ -33,7 +33,7 @@ describe("spawnDetachedConnector", () => {
 		expect(
 			__test__.buildDetachedConnectorCommand(
 				["connect", "telegram"],
-				["-m", "ClineAdapterBot", "-k", "token-123"],
+				["-m", "NexusAdapterBot", "-k", "token-123"],
 				"/Users/test/.bun/bin/bun",
 				"./apps/cli/src/index.ts",
 				["--conditions=development"],
@@ -50,7 +50,7 @@ describe("spawnDetachedConnector", () => {
 				"connect",
 				"telegram",
 				"-m",
-				"ClineAdapterBot",
+				"NexusAdapterBot",
 				"-k",
 				"token-123",
 				"-i",
@@ -64,12 +64,12 @@ describe("spawnDetachedConnector", () => {
 		expect(
 			__test__.buildDetachedConnectorCommand(
 				["connect", "telegram"],
-				["-m", "ClineAdapterBot"],
+				["-m", "NexusAdapterBot"],
 				"/usr/local/bin/node",
 				"./apps/cli/src/index.ts",
 				[],
 				repoRoot,
-				{ CLINE_BUILD_ENV: "development" },
+				{ NEXUS_BUILD_ENV: "development" },
 			),
 		).toEqual({
 			launcher: "/usr/local/bin/node",
@@ -80,7 +80,7 @@ describe("spawnDetachedConnector", () => {
 				"connect",
 				"telegram",
 				"-m",
-				"ClineAdapterBot",
+				"NexusAdapterBot",
 				"-i",
 			],
 		});
@@ -88,20 +88,20 @@ describe("spawnDetachedConnector", () => {
 
 	it("marks detached children and removes the hub-daemon-only environment flag", () => {
 		const env = {
-			CLINE_BUILD_ENV: "production",
-			CLINE_RUN_AS_HUB_DAEMON: "1",
+			NEXUS_BUILD_ENV: "production",
+			NEXUS_RUN_AS_HUB_DAEMON: "1",
 			UNCHANGED: "value",
 		};
 
 		expect(
-			__test__.buildDetachedConnectorEnv("CLINE_TELEGRAM_CONNECT_CHILD", env),
+			__test__.buildDetachedConnectorEnv("NEXUS_TELEGRAM_CONNECT_CHILD", env),
 		).toEqual({
-			CLINE_BUILD_ENV: "production",
-			CLINE_CONNECTOR_DETACHED_CHILD: "1",
-			CLINE_TELEGRAM_CONNECT_CHILD: "1",
+			NEXUS_BUILD_ENV: "production",
+			NEXUS_CONNECTOR_DETACHED_CHILD: "1",
+			NEXUS_TELEGRAM_CONNECT_CHILD: "1",
 			UNCHANGED: "value",
 		});
-		expect(env.CLINE_RUN_AS_HUB_DAEMON).toBe("1");
+		expect(env.NEXUS_RUN_AS_HUB_DAEMON).toBe("1");
 	});
 });
 
@@ -502,8 +502,8 @@ describe("tryClaimConnectorStateFile", () => {
 
 describe("detached connector log rotation", () => {
 	it("keeps one generation once the log grows past the cap", () => {
-		const dir = mkdtempSync(join(tmpdir(), "cline-connector-log-"));
-		const logPath = join(dir, "cline-slack.log");
+		const dir = mkdtempSync(join(tmpdir(), "nexus-connector-log-"));
+		const logPath = join(dir, "nexus-slack.log");
 		writeFileSync(logPath, "x".repeat(__test__.DETACHED_LOG_MAX_BYTES + 1));
 
 		__test__.rotateOversizedLog(logPath);
@@ -515,8 +515,8 @@ describe("detached connector log rotation", () => {
 	});
 
 	it("leaves a small log in place so restarts keep their history", () => {
-		const dir = mkdtempSync(join(tmpdir(), "cline-connector-log-"));
-		const logPath = join(dir, "cline-slack.log");
+		const dir = mkdtempSync(join(tmpdir(), "nexus-connector-log-"));
+		const logPath = join(dir, "nexus-slack.log");
 		writeFileSync(logPath, "recent failure");
 
 		__test__.rotateOversizedLog(logPath);
@@ -526,7 +526,7 @@ describe("detached connector log rotation", () => {
 	});
 
 	it("does nothing when there is no log yet", () => {
-		const dir = mkdtempSync(join(tmpdir(), "cline-connector-log-"));
+		const dir = mkdtempSync(join(tmpdir(), "nexus-connector-log-"));
 		expect(() =>
 			__test__.rotateOversizedLog(join(dir, "missing.log")),
 		).not.toThrow();

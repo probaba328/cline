@@ -6,8 +6,8 @@ import type {
 	ModelOperation,
 	ModelReasoningOption,
 	ReasoningEffort,
-} from "@cline/shared";
-import { REASONING_LEVELS } from "@cline/shared";
+} from "@nexus/shared";
+import { REASONING_LEVELS } from "@nexus/shared";
 
 const ACTIVE_REASONING_EFFORTS = REASONING_LEVELS.filter(
 	(level): level is ReasoningEffort => level !== "none",
@@ -336,7 +336,7 @@ export function modelRouteMatches(
 		family?: string;
 		capabilities?: readonly string[];
 		operation?: ModelOperation;
-		modalities?: import("@cline/shared").ModelModalities;
+		modalities?: import("@nexus/shared").ModelModalities;
 	},
 ): boolean {
 	if (

@@ -1,5 +1,5 @@
-import { Empty } from "@shared/proto/cline/common"
-import type { UpdateApiConfigurationRequest } from "@shared/proto/cline/models"
+import { Empty } from "@shared/proto/nexus/common"
+import type { UpdateApiConfigurationRequest } from "@shared/proto/nexus/models"
 import { convertProtoToApiProvider } from "@shared/proto-conversions/models/api-configuration-conversion"
 import {
 	fromProtobufLiteLLMModelInfo,
@@ -10,7 +10,7 @@ import {
 import { OpenaiReasoningEffort } from "@shared/storage/types"
 import { Logger } from "@/shared/services/Logger"
 import type { Controller } from "../index"
-import { clearOrganizationForClinePassProviderSelection } from "./handleClinePassProviderSelection"
+import { clearOrganizationForNexusPassProviderSelection } from "./handleNexusPassProviderSelection"
 import { normalizeProviderSwitchModel } from "./providerSwitchNormalization"
 import { createTaskApiModelShim, resolveActiveModelIdFromApiConfiguration } from "./taskApiModel"
 
@@ -49,11 +49,11 @@ export async function updateApiConfigurationProto(
 			planModeOpenRouterModelInfo: protoApiConfiguration.planModeOpenRouterModelInfo
 				? fromProtobufModelInfo(protoApiConfiguration.planModeOpenRouterModelInfo)
 				: undefined,
-			planModeClineModelInfo: protoApiConfiguration.planModeClineModelInfo
-				? fromProtobufModelInfo(protoApiConfiguration.planModeClineModelInfo)
+			planModeNexusModelInfo: protoApiConfiguration.planModeNexusModelInfo
+				? fromProtobufModelInfo(protoApiConfiguration.planModeNexusModelInfo)
 				: undefined,
-			planModeClinePassModelInfo: protoApiConfiguration.planModeClinePassModelInfo
-				? fromProtobufModelInfo(protoApiConfiguration.planModeClinePassModelInfo)
+			planModeNexusPassModelInfo: protoApiConfiguration.planModeNexusPassModelInfo
+				? fromProtobufModelInfo(protoApiConfiguration.planModeNexusPassModelInfo)
 				: undefined,
 			planModeOpenAiModelInfo: protoApiConfiguration.planModeOpenAiModelInfo
 				? fromProtobufOpenAiCompatibleModelInfo(protoApiConfiguration.planModeOpenAiModelInfo)
@@ -90,11 +90,11 @@ export async function updateApiConfigurationProto(
 			actModeOpenRouterModelInfo: protoApiConfiguration.actModeOpenRouterModelInfo
 				? fromProtobufModelInfo(protoApiConfiguration.actModeOpenRouterModelInfo)
 				: undefined,
-			actModeClineModelInfo: protoApiConfiguration.actModeClineModelInfo
-				? fromProtobufModelInfo(protoApiConfiguration.actModeClineModelInfo)
+			actModeNexusModelInfo: protoApiConfiguration.actModeNexusModelInfo
+				? fromProtobufModelInfo(protoApiConfiguration.actModeNexusModelInfo)
 				: undefined,
-			actModeClinePassModelInfo: protoApiConfiguration.actModeClinePassModelInfo
-				? fromProtobufModelInfo(protoApiConfiguration.actModeClinePassModelInfo)
+			actModeNexusPassModelInfo: protoApiConfiguration.actModeNexusPassModelInfo
+				? fromProtobufModelInfo(protoApiConfiguration.actModeNexusPassModelInfo)
 				: undefined,
 			actModeOpenAiModelInfo: protoApiConfiguration.actModeOpenAiModelInfo
 				? fromProtobufOpenAiCompatibleModelInfo(protoApiConfiguration.actModeOpenAiModelInfo)
@@ -141,7 +141,7 @@ export async function updateApiConfigurationProto(
 
 		// Update the API configuration in storage
 		controller.stateManager.setApiConfiguration(normalizedApiConfiguration)
-		clearOrganizationForClinePassProviderSelection(controller, normalizedApiConfiguration)
+		clearOrganizationForNexusPassProviderSelection(controller, normalizedApiConfiguration)
 
 		// Update the task's API handler if there's an active task
 		if (controller.task) {

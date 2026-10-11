@@ -1,6 +1,6 @@
 "use client";
 
-import { isChatWorkspacePath } from "@cline/shared/browser";
+import { isChatWorkspacePath } from "@nexus/shared/browser";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { normalizeTitle } from "@/components/utils";
 import { toast } from "@/hooks/use-toast";
@@ -907,11 +907,11 @@ export function useSessionHistory({
 		};
 
 		window.addEventListener(
-			"cline:session-title-updated",
+			"nexus:session-title-updated",
 			handleTitleUpdated as EventListener,
 		);
 		window.addEventListener(
-			"cline:session-deleted",
+			"nexus:session-deleted",
 			handleSessionDeleted as EventListener,
 		);
 		const unsubscribeTransportDelete = desktopClient.subscribe(
@@ -928,7 +928,7 @@ export function useSessionHistory({
 					return;
 				}
 				handleSessionDeleted(
-					new CustomEvent("cline:session-deleted", {
+					new CustomEvent("nexus:session-deleted", {
 						detail: { sessionId },
 					}),
 				);
@@ -1015,11 +1015,11 @@ export function useSessionHistory({
 		);
 		return () => {
 			window.removeEventListener(
-				"cline:session-title-updated",
+				"nexus:session-title-updated",
 				handleTitleUpdated as EventListener,
 			);
 			window.removeEventListener(
-				"cline:session-deleted",
+				"nexus:session-deleted",
 				handleSessionDeleted as EventListener,
 			);
 			unsubscribeTransportDelete();
@@ -1165,7 +1165,7 @@ export function useSessionHistory({
 				};
 				onUpdateSessionMetadata?.(threadId, metadata);
 				window.dispatchEvent(
-					new CustomEvent("cline:session-title-updated", {
+					new CustomEvent("nexus:session-title-updated", {
 						detail: {
 							sessionId: threadId,
 							title: normalizedTitle,
@@ -1325,7 +1325,7 @@ export function useSessionHistory({
 				}
 				onDeleteSession?.(threadId);
 				window.dispatchEvent(
-					new CustomEvent("cline:session-deleted", {
+					new CustomEvent("nexus:session-deleted", {
 						detail: {
 							sessionId: threadId,
 						},

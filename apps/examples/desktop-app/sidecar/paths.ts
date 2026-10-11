@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { resolveSessionDataDir } from "@cline/shared/storage";
+import { resolveSessionDataDir } from "@nexus/shared/storage";
 import type { JsonRecord } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -36,7 +36,7 @@ export function resolveWorkspaceRoot(launchCwd: string): string {
 // ---------------------------------------------------------------------------
 
 export function sharedSessionDataDir(): string {
-	return process.env.CLINE_SESSION_DATA_DIR?.trim() || resolveSessionDataDir();
+	return process.env.NEXUS_SESSION_DATA_DIR?.trim() || resolveSessionDataDir();
 }
 
 export function sharedSessionArtifactPath(
@@ -60,7 +60,7 @@ export function sharedSessionMessagesWritePath(sessionId: string): string {
 
 export function toolApprovalDir(): string {
 	return (
-		process.env.CLINE_TOOL_APPROVAL_DIR?.trim() ||
+		process.env.NEXUS_TOOL_APPROVAL_DIR?.trim() ||
 		join(sharedSessionDataDir(), "tool-approvals")
 	);
 }
@@ -71,8 +71,8 @@ export function toolApprovalDir(): string {
 
 export function resolveMcpSettingsPath(): string {
 	return (
-		process.env.CLINE_MCP_SETTINGS_PATH?.trim() ||
-		join(homedir(), ".cline", "data", "settings", "cline_mcp_settings.json")
+		process.env.NEXUS_MCP_SETTINGS_PATH?.trim() ||
+		join(homedir(), ".nexus", "data", "settings", "nexus_mcp_settings.json")
 	);
 }
 
@@ -82,8 +82,8 @@ export function resolveMcpSettingsPath(): string {
 
 function kanbanDataRoot(): string {
 	return (
-		process.env.CLINE_KANBAN_DATA_DIR?.trim() ||
-		join(homedir(), ".cline", "apps", "kanban")
+		process.env.NEXUS_KANBAN_DATA_DIR?.trim() ||
+		join(homedir(), ".nexus", "apps", "kanban")
 	);
 }
 

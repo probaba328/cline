@@ -5,7 +5,7 @@ import { HostProvider } from "@/hosts/host-provider"
 import { getCwd, getDesktopDir } from "@/utils/path"
 
 /**
- * All valid hook types that can be created and executed by Cline.
+ * All valid hook types that can be created and executed by Nexus.
  * These hooks correspond to specific lifecycle events in the task execution process.
  */
 export const VALID_HOOK_TYPES = [
@@ -51,23 +51,23 @@ export async function resolveHooksDirectory(
 	globalHooksDirOverride?: string,
 ): Promise<string> {
 	if (isGlobal) {
-		return globalHooksDirOverride || path.join(os.homedir(), "Documents", "Cline", "Hooks")
+		return globalHooksDirOverride || path.join(os.homedir(), "Documents", "Nexus", "Hooks")
 	}
 
 	// For workspace hooks, find the correct workspace
 	if (workspaceName) {
 		// Multi-root workspace: find the workspace with this name
 		const workspacePaths = await HostProvider.workspace.getWorkspacePaths({})
-		const targetWorkspace = workspacePaths.paths.find((p) => path.basename(p) === workspaceName)
+		const targetWorkspace = workspacePaths.paths.find((p: string) => path.basename(p) === workspaceName)
 		if (!targetWorkspace) {
 			throw new Error(`Workspace "${workspaceName}" not found`)
 		}
-		return path.join(targetWorkspace, ".clinerules", "hooks")
+		return path.join(targetWorkspace, ".nexusrules", "hooks")
 	}
 
 	// Single workspace: use getCwd
 	const cwd = await getCwd(getDesktopDir())
-	return path.join(cwd, ".clinerules", "hooks")
+	return path.join(cwd, ".nexusrules", "hooks")
 }
 
 /**

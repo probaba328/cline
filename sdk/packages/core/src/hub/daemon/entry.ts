@@ -1,5 +1,5 @@
-import { AgentRuntimeAbortError } from "@cline/agents";
-import { initVcr, resolveClineBuildEnv } from "@cline/shared";
+import { AgentRuntimeAbortError } from "@nexus/agents";
+import { initVcr, resolveNexusBuildEnv } from "@nexus/shared";
 import { cleanupConnectorInstanceViaCli } from "../../services/connectors/connector-cleanup";
 import {
 	ConnectorSupervisor,
@@ -23,7 +23,7 @@ import {
 } from "./shutdown-coordinator";
 import { createHubDaemonTelemetry } from "./telemetry";
 
-initVcr(process.env.CLINE_VCR);
+initVcr(process.env.NEXUS_VCR);
 
 let resolveHubDaemonReady!: () => void;
 let rejectHubDaemonReady!: (error: unknown) => void;
@@ -257,7 +257,7 @@ async function main(): Promise<void> {
 			port: endpoint.port,
 			pathname: endpoint.pathname,
 			owner:
-				resolveClineBuildEnv() === "production"
+				resolveNexusBuildEnv() === "production"
 					? resolveProductionHubOwnerContext()
 					: resolveSharedHubOwnerContext(),
 			telemetry: daemonTelemetry.telemetry,

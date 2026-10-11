@@ -4,7 +4,7 @@ import {
 	hasRegisteredHandler,
 	MODEL_COLLECTIONS_BY_PROVIDER_ID,
 	normalizeProviderId,
-} from "@cline/llms";
+} from "@nexus/llms";
 import type {
 	AgentConfig,
 	AgentModel,
@@ -12,7 +12,7 @@ import type {
 	GatewayModelDefinition,
 	ITelemetryService,
 	ModelInfo,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { createAgentModelFromApiHandler } from "./apihandler-agent-model-adapter";
 import type { ProviderConfig } from "./provider-settings";
 

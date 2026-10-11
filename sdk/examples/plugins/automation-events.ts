@@ -2,17 +2,17 @@
  * Automation Event Plugin Example
  *
  * Shows how a plugin can declare normalized event types and emit events into
- * ClineCore automation without importing cron internals.
+ * NexusCore automation without importing cron internals.
  *
  * Local demo:
- *   cline plugin install https://github.com/cline/cline/blob/main/sdk/examples/plugins/automation-events.ts --cwd .
- *   mkdir -p .cline/cron/events
- *   cp examples/cron/events/local-plugin-event.event.md .cline/cron/events/local-plugin-event.event.md
- *   perl -0pi -e "s#/absolute/path/to/repo#$PWD#g" .cline/cron/events/local-plugin-event.event.md
- *   CLINE_LOCAL_EVENT_INTERVAL_MS=2000 cline -i "wait for the plugin event"
+ *   nexus plugin install https://github.com/nexus/nexus/blob/main/sdk/examples/plugins/automation-events.ts --cwd .
+ *   mkdir -p .nexus/cron/events
+ *   cp examples/cron/events/local-plugin-event.event.md .nexus/cron/events/local-plugin-event.event.md
+ *   perl -0pi -e "s#/absolute/path/to/repo#$PWD#g" .nexus/cron/events/local-plugin-event.event.md
+ *   NEXUS_LOCAL_EVENT_INTERVAL_MS=2000 nexus -i "wait for the plugin event"
  */
 
-import type { AgentPlugin } from "@cline/core";
+import type { AgentPlugin } from "@nexus/core";
 
 const stopLocalEmitters = new Map<string, () => void>();
 
@@ -54,7 +54,7 @@ export const plugin: AgentPlugin = {
 			client: ctx.client?.name,
 		});
 
-		const intervalMs = Number(process.env.CLINE_LOCAL_EVENT_INTERVAL_MS ?? 0);
+		const intervalMs = Number(process.env.NEXUS_LOCAL_EVENT_INTERVAL_MS ?? 0);
 		if (!ctx.automation || !Number.isFinite(intervalMs) || intervalMs <= 0) {
 			return;
 		}

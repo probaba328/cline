@@ -29,6 +29,9 @@
 		"useDefineForClassFields": true,
 		"useUnknownInCatchVariables": false,
 		"paths": {
+			"@/package.json": [
+				"./package.json"
+			],
 			"@/*": [
 				"./src/*"
 			],
@@ -70,7 +73,7 @@
 		"webview-ui",
 		"src/test/e2e/**/*",
 		"src/test/scenarios/**/*",
-		"src/test/cline-core-vitest-stub.ts",
+		"src/test/nexus-core-vitest-stub.ts",
 		"src/test/bun-test-preload.ts"
 	]
 }

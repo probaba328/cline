@@ -3,7 +3,7 @@
 //
 // These tests verify the runtime behavior of each CLI flag, not just that
 // the flag appears in --help output (that's covered in tests/flags.test.ts),
-// but that the flag actually changes what cline does.
+// but that the flag actually changes what nexus does.
 //
 // Tests marked in the spec reflect known gaps where the flag is accepted
 // but currently has no observable effect. They are still written so the
@@ -11,19 +11,19 @@
 // ---------------------------------------------------------------------------
 
 import { test } from "@microsoft/tui-test";
-import { CLINE_BIN, TERMINAL_WIDE } from "../helpers/constants.js";
-import { clineEnv } from "../helpers/env.js";
+import { NEXUS_BIN, TERMINAL_WIDE } from "../helpers/constants.js";
+import { nexusEnv } from "../helpers/env.js";
 import { waitForChatReady } from "../helpers/page-objects/chat.js";
 import { expectVisible } from "../helpers/terminal.js";
 
-test.describe("cline --model (interactive mode, flag ignored)", () => {
+test.describe("nexus --model (interactive mode, flag ignored)", () => {
 	test.use({
 		program: {
-			file: CLINE_BIN,
+			file: NEXUS_BIN,
 			args: ["--model", "openai/gpt-5.3-codex"],
 		},
 		...TERMINAL_WIDE,
-		env: clineEnv("default"),
+		env: nexusEnv("default"),
 	});
 
 	test("starts interactive mode", async ({ terminal }) => {
@@ -32,11 +32,11 @@ test.describe("cline --model (interactive mode, flag ignored)", () => {
 	});
 });
 
-test.describe("cline --cwd <dir>", () => {
+test.describe("nexus --cwd <dir>", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["--cwd", "/tmp"] },
+		program: { file: NEXUS_BIN, args: ["--cwd", "/tmp"] },
 		...TERMINAL_WIDE,
-		env: clineEnv("default"),
+		env: nexusEnv("default"),
 	});
 
 	test("starts interactive mode with --cwd flag", async ({ terminal }) => {
@@ -45,11 +45,11 @@ test.describe("cline --cwd <dir>", () => {
 	});
 });
 
-test.describe("cline -c <dir> (short alias)", () => {
+test.describe("nexus -c <dir> (short alias)", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["-c", "/tmp"] },
+		program: { file: NEXUS_BIN, args: ["-c", "/tmp"] },
 		...TERMINAL_WIDE,
-		env: clineEnv("default"),
+		env: nexusEnv("default"),
 	});
 
 	test("starts interactive mode with -c flag", async ({ terminal }) => {
@@ -58,14 +58,14 @@ test.describe("cline -c <dir> (short alias)", () => {
 	});
 });
 
-test.describe("cline --config (claude-sonnet-4.6)", () => {
+test.describe("nexus --config (claude-sonnet-4.6)", () => {
 	test.use({
 		program: {
-			file: CLINE_BIN,
+			file: NEXUS_BIN,
 			args: ["--config", "configs/claude-sonnet-4.6"],
 		},
 		...TERMINAL_WIDE,
-		env: clineEnv("claude-sonnet-4.6"),
+		env: nexusEnv("claude-sonnet-4.6"),
 	});
 
 	test("starts interactive mode with custom config directory", async ({
@@ -76,14 +76,14 @@ test.describe("cline --config (claude-sonnet-4.6)", () => {
 });
 
 // ---------------------------------------------------------------------------
-// cline --json --yolo "prompt"
-// Starts cline in headless yolo mode with all output conforming to JSON
+// nexus --json --yolo "prompt"
+// Starts nexus in headless yolo mode with all output conforming to JSON
 // ---------------------------------------------------------------------------
-test.describe("cline --json (headless yolo mode)", () => {
+test.describe("nexus --json (headless yolo mode)", () => {
 	test.use({
-		program: { file: CLINE_BIN, args: ["--json", "--yolo", "tell me a joke"] },
+		program: { file: NEXUS_BIN, args: ["--json", "--yolo", "tell me a joke"] },
 		...TERMINAL_WIDE,
-		env: clineEnv("unauthenticated"),
+		env: nexusEnv("unauthenticated"),
 	});
 
 	test("starts in headless yolo mode with JSON output", async ({

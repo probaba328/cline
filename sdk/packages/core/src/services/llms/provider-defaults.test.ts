@@ -67,7 +67,7 @@ describe("resolveProviderConfig", () => {
 			}),
 		);
 
-		const resolved = await resolveProviderConfig("cline", {
+		const resolved = await resolveProviderConfig("nexus", {
 			loadLatestOnInit: true,
 			failOnError: false,
 			cacheTtlMs: 0,
@@ -78,7 +78,7 @@ describe("resolveProviderConfig", () => {
 		);
 	});
 
-	it("filters image-output models from the merged Cline catalog", async () => {
+	it("filters image-output models from the merged Nexus catalog", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn(async () => {
@@ -110,14 +110,14 @@ describe("resolveProviderConfig", () => {
 		);
 
 		const resolved = await resolveProviderConfig(
-			"cline",
+			"nexus",
 			{
 				loadLatestOnInit: true,
 				failOnError: false,
 				cacheTtlMs: 0,
 			},
 			{
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "vendor/live-chat-model",
 				knownModels: {
 					"vendor/custom-image-model": {
@@ -149,7 +149,7 @@ describe("resolveProviderConfig", () => {
 		).toBeUndefined();
 	});
 
-	it("uses only live Cline recommended models for ClinePass when live models are found", async () => {
+	it("uses only live Nexus recommended models for NexusPass when live models are found", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.test/api.json") {
 				return new Response(
@@ -174,9 +174,9 @@ describe("resolveProviderConfig", () => {
 
 			return new Response(
 				JSON.stringify({
-					clinePass: [
+					nexusPass: [
 						{
-							id: "cline-pass/live-pass-model",
+							id: "nexus-pass/live-pass-model",
 							name: "vendor/live-pass-model",
 						},
 					],
@@ -189,7 +189,7 @@ describe("resolveProviderConfig", () => {
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const resolved = await resolveProviderConfig("cline-pass", {
+		const resolved = await resolveProviderConfig("nexus-pass", {
 			loadLatestOnInit: true,
 			failOnError: false,
 			cacheTtlMs: 0,
@@ -197,19 +197,19 @@ describe("resolveProviderConfig", () => {
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(resolved?.knownModels?.["cline-pass/live-pass-model"]).toMatchObject(
+		expect(resolved?.knownModels?.["nexus-pass/live-pass-model"]).toMatchObject(
 			{
-				id: "cline-pass/live-pass-model",
+				id: "nexus-pass/live-pass-model",
 				name: "Live Pass Model",
 				contextWindow: 256_000,
 				maxInputTokens: 200_000,
 				maxTokens: 32_000,
 			},
 		);
-		expect(resolved?.knownModels?.["cline-pass/mimo-v2.5-pro"]).toBeUndefined();
+		expect(resolved?.knownModels?.["nexus-pass/mimo-v2.5-pro"]).toBeUndefined();
 	});
 
-	it("keeps ClinePass models ahead of newer free models in the served catalog", async () => {
+	it("keeps NexusPass models ahead of newer free models in the served catalog", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.test/api.json") {
 				return new Response(
@@ -244,13 +244,13 @@ describe("resolveProviderConfig", () => {
 
 			return new Response(
 				JSON.stringify({
-					clinePass: [
+					nexusPass: [
 						{
-							id: "cline-pass/live-pass-model",
+							id: "nexus-pass/live-pass-model",
 							name: "vendor/live-pass-model",
 						},
 					],
-					free: [{ id: "cline-free/live-free-model" }],
+					free: [{ id: "nexus-free/live-free-model" }],
 				}),
 				{
 					status: 200,
@@ -260,7 +260,7 @@ describe("resolveProviderConfig", () => {
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const resolved = await resolveProviderConfig("cline-pass", {
+		const resolved = await resolveProviderConfig("nexus-pass", {
 			loadLatestOnInit: true,
 			failOnError: false,
 			cacheTtlMs: 0,
@@ -271,17 +271,17 @@ describe("resolveProviderConfig", () => {
 		// id is not in the live list, so a subscription model must stay first
 		// even when a free model has a newer release date.
 		expect(Object.keys(resolved?.knownModels ?? {})).toEqual([
-			"cline-pass/live-pass-model",
-			"cline-free/live-free-model",
+			"nexus-pass/live-pass-model",
+			"nexus-free/live-free-model",
 		]);
-		expect(resolved?.knownModels?.["cline-free/live-free-model"]).toMatchObject(
+		expect(resolved?.knownModels?.["nexus-free/live-free-model"]).toMatchObject(
 			{
-				id: "cline-free/live-free-model",
+				id: "nexus-free/live-free-model",
 				name: "Live Free Model (free)",
 			},
 		);
 		expect(
-			resolved?.knownModels?.["cline-free/live-free-model"]?.pricing,
+			resolved?.knownModels?.["nexus-free/live-free-model"]?.pricing,
 		).toEqual({
 			input: 0,
 			output: 0,
@@ -290,7 +290,7 @@ describe("resolveProviderConfig", () => {
 		});
 	});
 
-	it("adds cline-free models from the recommended endpoint to the Cline catalog", async () => {
+	it("adds nexus-free models from the recommended endpoint to the Nexus catalog", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.test/api.json") {
 				return new Response(
@@ -323,7 +323,7 @@ describe("resolveProviderConfig", () => {
 				JSON.stringify({
 					free: [
 						{
-							id: "cline-free/live-free-model",
+							id: "nexus-free/live-free-model",
 						},
 					],
 				}),
@@ -335,7 +335,7 @@ describe("resolveProviderConfig", () => {
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const resolved = await resolveProviderConfig("cline", {
+		const resolved = await resolveProviderConfig("nexus", {
 			loadLatestOnInit: true,
 			failOnError: false,
 			cacheTtlMs: 0,
@@ -343,9 +343,9 @@ describe("resolveProviderConfig", () => {
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(resolved?.knownModels?.["cline-free/live-free-model"]).toMatchObject(
+		expect(resolved?.knownModels?.["nexus-free/live-free-model"]).toMatchObject(
 			{
-				id: "cline-free/live-free-model",
+				id: "nexus-free/live-free-model",
 				name: "Live Free Model (free)",
 				contextWindow: 300_000,
 				maxInputTokens: 250_000,
@@ -355,7 +355,7 @@ describe("resolveProviderConfig", () => {
 		);
 	});
 
-	it("falls back to generated ClinePass models when no live ClinePass models are found", async () => {
+	it("falls back to generated NexusPass models when no live NexusPass models are found", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.test/api.json") {
 				return new Response(
@@ -376,14 +376,14 @@ describe("resolveProviderConfig", () => {
 				);
 			}
 
-			return new Response(JSON.stringify({ clinePass: [] }), {
+			return new Response(JSON.stringify({ nexusPass: [] }), {
 				status: 200,
 				headers: { "content-type": "application/json" },
 			});
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const resolved = await resolveProviderConfig("cline-pass", {
+		const resolved = await resolveProviderConfig("nexus-pass", {
 			loadLatestOnInit: true,
 			failOnError: false,
 			cacheTtlMs: 0,
@@ -391,7 +391,7 @@ describe("resolveProviderConfig", () => {
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(resolved?.knownModels?.["cline-pass/mimo-v2.5-pro"]?.name).toBe(
+		expect(resolved?.knownModels?.["nexus-pass/mimo-v2.5-pro"]?.name).toBe(
 			"MiMo-V2.5-Pro",
 		);
 		expect(
@@ -399,8 +399,8 @@ describe("resolveProviderConfig", () => {
 		).toBeUndefined();
 	});
 
-	it("prefers Vercel-style Z.ai ids in Cline known models", async () => {
-		const resolved = await resolveProviderConfig("cline");
+	it("prefers Vercel-style Z.ai ids in Nexus known models", async () => {
+		const resolved = await resolveProviderConfig("nexus");
 
 		expect(resolved?.knownModels?.["zai/glm-5.2"]).toMatchObject({
 			id: "zai/glm-5.2",
@@ -411,9 +411,9 @@ describe("resolveProviderConfig", () => {
 		expect(resolved?.knownModels?.["z-ai/glm-5.2"]).toBeUndefined();
 	});
 
-	it("preserves explicit Cline known model overrides for alias ids", async () => {
-		const resolved = await resolveProviderConfig("cline", undefined, {
-			providerId: "cline",
+	it("preserves explicit Nexus known model overrides for alias ids", async () => {
+		const resolved = await resolveProviderConfig("nexus", undefined, {
+			providerId: "nexus",
 			modelId: "z-ai/glm-5.2",
 			knownModels: {
 				"z-ai/glm-5.2": {

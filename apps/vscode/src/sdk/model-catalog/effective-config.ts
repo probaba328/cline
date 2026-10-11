@@ -60,7 +60,7 @@ const apiKeyFields: Partial<Record<string, keyof ApiConfiguration>> = {
 	"vercel-ai-gateway": "vercelAiGatewayApiKey",
 	wandb: "wandbApiKey",
 	oca: "ocaApiKey",
-	cline: "clineApiKey",
+	nexus: "nexusApiKey",
 }
 
 const baseUrlFields: Partial<Record<string, keyof ApiConfiguration>> = {
@@ -262,12 +262,12 @@ function readStateExtras(provider: string, config: ApiConfiguration): ExtrasConf
 }
 
 function readStateAuth(provider: string, config: ApiConfiguration): AuthConfig | undefined {
-	if (provider !== "cline") {
+	if (provider !== "nexus") {
 		return undefined
 	}
 
-	const accessToken = readStringFromConfig(config, "clineApiKey")
-	const accountId = readStringFromConfig(config, "clineAccountId")
+	const accessToken = readStringFromConfig(config, "nexusApiKey")
+	const accountId = readStringFromConfig(config, "nexusAccountId")
 	return accessToken || accountId ? { accessToken, accountId } : undefined
 }
 

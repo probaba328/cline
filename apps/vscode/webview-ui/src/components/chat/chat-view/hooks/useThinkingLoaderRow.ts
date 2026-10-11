@@ -1,4 +1,4 @@
-import type { ClineMessage, TurnState } from "@shared/ExtensionMessage"
+import type { NexusMessage, TurnState } from "@shared/ExtensionMessage"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { isToolGroup } from "../utils/messageUtils"
 
@@ -15,14 +15,14 @@ export const THINKING_LOADER_GRACE_MS = 500
 
 export interface ThinkingLoaderInputs {
 	turnState: TurnState | undefined
-	/** Tail of the raw clineMessages array. */
-	lastRawMessage: ClineMessage | undefined
-	groupedMessages: (ClineMessage | ClineMessage[])[]
+	/** Tail of the raw nexusMessages array. */
+	lastRawMessage: NexusMessage | undefined
+	groupedMessages: (NexusMessage | NexusMessage[])[]
 	/** Tail of groupedMessages. */
-	lastVisibleRow: ClineMessage | ClineMessage[] | undefined
+	lastVisibleRow: NexusMessage | NexusMessage[] | undefined
 	/** Tail message of lastVisibleRow (last element when it is a group). */
-	lastVisibleMessage: ClineMessage | undefined
-	modifiedMessages: ClineMessage[]
+	lastVisibleMessage: NexusMessage | undefined
+	modifiedMessages: NexusMessage[]
 	/**
 	 * Optimistic override: a turn-starting response RPC (new task or a follow-up sent outside a
 	 * streaming phase) was submitted before the backend published its next TurnState, so the

@@ -10,7 +10,7 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
 		<span
 			{...props}
 			className={clsx(
-				"inline-flex shrink-0 items-center rounded-cline-ui-sm border border-cline-ui-border bg-cline-ui-surface-hover-lighter px-1.5 pt-[0.3rem] pb-[0.2rem] text-cline-ui-muted-foreground text-cline-ui-xs",
+				"inline-flex shrink-0 items-center rounded-nexus-ui-sm border border-nexus-ui-border bg-nexus-ui-surface-hover-lighter px-1.5 pt-[0.3rem] pb-[0.2rem] text-nexus-ui-muted-foreground text-nexus-ui-xs",
 				className,
 			)}
 			data-slot="badge"

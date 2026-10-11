@@ -13,8 +13,8 @@ import type {
 	ThinkingContent,
 	ToolResultContent,
 	ToolUseContent,
-} from "@cline/shared";
-import { EMPTY_CONTENT_TEXT } from "@cline/shared";
+} from "@nexus/shared";
+import { EMPTY_CONTENT_TEXT } from "@nexus/shared";
 import { toPersistedToolResultContent } from "../../session/persisted-tool-result-content";
 
 export function messageToAgentMessages(

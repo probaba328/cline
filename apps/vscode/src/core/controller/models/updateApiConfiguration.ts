@@ -1,11 +1,11 @@
-import { Empty } from "@shared/proto/cline/common"
+import { Empty } from "@shared/proto/nexus/common"
 import { convertProtoToApiProvider } from "@shared/proto-conversions/models/api-configuration-conversion"
 import { ApiHandlerOptions, ApiProvider } from "@/shared/api"
-import { UpdateApiConfigurationRequestNew } from "@/shared/proto/index.cline"
+import { UpdateApiConfigurationRequestNew } from "@/shared/proto/index.nexus"
 import { Logger } from "@/shared/services/Logger"
 import { Secrets } from "@/shared/storage/state-keys"
 import type { Controller } from "../index"
-import { clearOrganizationForClinePassProviderSelection } from "./handleClinePassProviderSelection"
+import { clearOrganizationForNexusPassProviderSelection } from "./handleNexusPassProviderSelection"
 import { normalizeProviderSwitchModel } from "./providerSwitchNormalization"
 import { createTaskApiModelShim, resolveActiveModelIdFromApiConfiguration } from "./taskApiModel"
 
@@ -86,7 +86,7 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 			// Process entries that are in the mask
 			for (const [key, value] of Object.entries(protoSecrets)) {
 				if (maskSecretsFields.has(key)) {
-					secrets[key as keyof Secrets] = value
+					secrets[key as keyof Secrets] = value as string | undefined
 				}
 			}
 		}
@@ -109,11 +109,11 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 				if (maskOptionsFields.has(key)) {
 					// Handle enum conversions
 					if (key === "planModeApiProvider") {
-						options.planModeApiProvider = convertProtoToApiProvider(value)
+						options.planModeApiProvider = convertProtoToApiProvider(value as string)
 					} else if (key === "actModeApiProvider") {
-						options.actModeApiProvider = convertProtoToApiProvider(value)
+						options.actModeApiProvider = convertProtoToApiProvider(value as string)
 					} else {
-						options[key as keyof ApiHandlerOptions] = value
+						options[key as keyof ApiHandlerOptions] = value as never
 					}
 
 					// If mode configs should be synced, also update the alternate mode field
@@ -121,11 +121,11 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 						const alternateField = getAlternateModeField(key)
 						if (alternateField) {
 							if (alternateField === "planModeApiProvider") {
-								options.planModeApiProvider = convertProtoToApiProvider(value)
+								options.planModeApiProvider = convertProtoToApiProvider(value as string)
 							} else if (alternateField === "actModeApiProvider") {
-								options.actModeApiProvider = convertProtoToApiProvider(value)
+								options.actModeApiProvider = convertProtoToApiProvider(value as string)
 							} else {
-								options[alternateField as keyof ApiHandlerOptions] = value
+								options[alternateField as keyof ApiHandlerOptions] = value as never
 							}
 						}
 					}
@@ -145,7 +145,7 @@ export async function updateApiConfiguration(controller: Controller, request: Up
 					options,
 				),
 			)
-			clearOrganizationForClinePassProviderSelection(controller, controller.stateManager.getApiConfiguration())
+			clearOrganizationForNexusPassProviderSelection(controller, controller.stateManager.getApiConfiguration())
 		}
 
 		// Update the task's API model shim if there's an active task

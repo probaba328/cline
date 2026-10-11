@@ -20,12 +20,12 @@ import {
 	syncPluginMcpServersToSettings,
 	uninstallMarketplaceEntry as uninstallCoreMarketplaceEntry,
 	uninstallPlugin,
-} from "@cline/core"
+} from "@nexus/core"
 import { deleteSkillFile } from "@core/controller/file/deleteSkillFile"
 import { refreshSkills } from "@core/controller/file/refreshSkills"
 import { toggleSkill } from "@core/controller/file/toggleSkill"
 import { resolveActiveModelIdFromApiConfiguration } from "@core/controller/models/taskApiModel"
-import { DeleteSkillRequest, ToggleSkillRequest } from "@shared/proto/cline/file"
+import { DeleteSkillRequest, ToggleSkillRequest } from "@shared/proto/nexus/file"
 import {
 	MarketplaceCatalog,
 	MarketplaceEntry,
@@ -35,7 +35,7 @@ import {
 	MarketplaceLocalInstalledEntry,
 	MarketplaceLocalInstalledEntryRequest,
 	ToggleMarketplaceLocalInstalledEntryRequest,
-} from "@shared/proto/cline/marketplace"
+} from "@shared/proto/nexus/marketplace"
 import { HostProvider } from "@/hosts/host-provider"
 import type { Controller } from "../index"
 
@@ -47,8 +47,8 @@ type SpawnResult = {
 	stderr: string
 }
 
-const MARKETPLACE_CATALOG_URL = "https://cline.github.io/marketplace/catalog.json"
-const OFFICIAL_PLUGINS_REPO = "https://github.com/cline/plugins.git"
+const MARKETPLACE_CATALOG_URL = "https://nexus.github.io/marketplace/catalog.json"
+const OFFICIAL_PLUGINS_REPO = "https://github.com/nexus/plugins.git"
 const INSTALL_COMMAND_TIMEOUT_MS = 120_000
 const MAX_OUTPUT_CHARS = 12_000
 const SECRET_PATTERN =
@@ -184,8 +184,8 @@ function hashSource(source: string): string {
 	return createHash("sha256").update(source).digest("hex").slice(0, 12)
 }
 
-function resolveClineHome(): string {
-	return process.env.CLINE_DIR?.trim() || join(homedir(), ".cline")
+function resolveNexusHome(): string {
+	return process.env.NEXUS_DIR?.trim() || join(homedir(), ".nexus")
 }
 
 function sanitizeSegment(value: string): string {
@@ -203,7 +203,7 @@ function isOfficialPluginInstalled(entry: MarketplaceEntry): boolean {
 	if (!source || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(source.trim())) return false
 	const sourceKey = `official:${OFFICIAL_PLUGINS_REPO}#plugins/${source.trim()}`
 	const installPath = join(
-		resolveClineHome(),
+		resolveNexusHome(),
 		"plugins",
 		"_installed",
 		"official",
@@ -353,7 +353,8 @@ async function installPluginMarketplaceEntry(entry: MarketplaceEntry, args: stri
 	if (!source) throw new Error("Marketplace plugin install args must start with a plugin source.")
 	const result = await installPlugin({ source })
 	const warnings = result.mcpSyncFailures.map(
-		(failure) => `Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
+		(failure: { pluginName?: string; pluginPath: string; message: string }) =>
+			`Failed to sync plugin MCP servers for ${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
 	)
 	return MarketplaceInstallResult.create({
 		id: entry.id,
@@ -366,7 +367,7 @@ async function installPluginMarketplaceEntry(entry: MarketplaceEntry, args: stri
 
 async function installSkillMarketplaceEntry(entry: MarketplaceEntry, args: string[]): Promise<MarketplaceInstallResult> {
 	const command = "npx"
-	const commandArgs = ["-y", "skills@latest", "add", ...args, "-g", "-a", "cline", "-y"]
+	const commandArgs = ["-y", "skills@latest", "add", ...args, "-g", "-a", "nexus", "-y"]
 	const displayCommand = formatCommand(command, commandArgs)
 	let result: SpawnResult
 	try {
@@ -433,7 +434,7 @@ export async function uninstallMarketplaceEntryFromCatalog(
 ): Promise<MarketplaceInstallResult> {
 	const workspaceRoot = await getWorkspacePath()
 	const result = await uninstallCoreMarketplaceEntry(toCoreMarketplaceEntry(entry), {
-		deleteMcpServer: async (name) => {
+		deleteMcpServer: async (name: string) => {
 			await controller.mcpHub?.deleteServerRPC(name)
 		},
 		workspaceRoot,
@@ -446,14 +447,14 @@ function isPathWithin(parentPath: string, childPath: string): boolean {
 	return relativePath === "" || (!relativePath.startsWith("..") && !isAbsolute(relativePath))
 }
 
-function isGlobalClinePath(filePath: string | undefined): boolean {
+function isGlobalNexusPath(filePath: string | undefined): boolean {
 	if (!filePath || filePath.startsWith("remote:")) return false
-	return [resolveClineHome(), join(homedir(), ".agents", "skills")].some((root) => isPathWithin(root, filePath))
+	return [resolveNexusHome(), join(homedir(), ".agents", "skills")].some((root) => isPathWithin(root, filePath))
 }
 
 async function listPluginLocalEntries(): Promise<MarketplaceLocalInstalledEntry[]> {
 	const workspacePath = HostProvider.isInitialized() ? (await HostProvider.workspace.getWorkspacePaths({})).paths[0] : undefined
-	const roots = resolvePluginConfigSearchPaths(workspacePath).filter((directory) => existsSync(directory))
+	const roots = resolvePluginConfigSearchPaths(workspacePath).filter((directory: string) => existsSync(directory))
 	const disabledPlugins = new Set(readGlobalSettings().disabledPlugins ?? [])
 	const entries: MarketplaceLocalInstalledEntry[] = []
 	for (const root of roots) {
@@ -464,7 +465,7 @@ async function listPluginLocalEntries(): Promise<MarketplaceLocalInstalledEntry[
 					type: "plugin",
 					name: getPluginDisplayName(pluginPath, root),
 					path: pluginPath,
-					source: isGlobalClinePath(pluginPath) ? "global" : "workspace",
+					source: isGlobalNexusPath(pluginPath) ? "global" : "workspace",
 					enabled: !disabledPlugins.has(pluginPath),
 				}),
 			)
@@ -485,7 +486,7 @@ export async function listLocalMarketplaceInstalledEntries(controller: Controlle
 	)
 	const refreshedSkills = await refreshSkills(controller)
 	const skillEntries = [
-		...refreshedSkills.globalSkills.map((skill) =>
+		...refreshedSkills.globalSkills.map((skill: { name: string; description: string; path: string; enabled: boolean }) =>
 			MarketplaceLocalInstalledEntry.create({
 				id: skill.name,
 				type: "skill",
@@ -496,14 +497,14 @@ export async function listLocalMarketplaceInstalledEntries(controller: Controlle
 				enabled: skill.enabled,
 			}),
 		),
-		...refreshedSkills.localSkills.map((skill) =>
+		...refreshedSkills.localSkills.map((skill: { name: string; description: string; path: string; enabled: boolean }) =>
 			MarketplaceLocalInstalledEntry.create({
 				id: skill.name,
 				type: "skill",
 				name: skill.name,
 				description: skill.description,
 				path: skill.path,
-				source: isGlobalClinePath(skill.path) ? "global" : "workspace",
+				source: isGlobalNexusPath(skill.path) ? "global" : "workspace",
 				enabled: skill.enabled,
 			}),
 		),
@@ -549,7 +550,10 @@ async function togglePluginLocalEntry(
 	if (ownedMcpMutations.length > 0 && result.failures.length > 0) {
 		throw new Error(
 			`Failed to sync plugin MCP servers: ${result.failures
-				.map((failure) => `${failure.pluginName ?? failure.pluginPath}: ${failure.message}`)
+				.map(
+					(failure: { pluginName?: string; pluginPath: string; message: string }) =>
+						`${failure.pluginName ?? failure.pluginPath}: ${failure.message}`,
+				)
 				.join("; ")}`,
 		)
 	}
@@ -637,7 +641,7 @@ export async function uninstallLocalMarketplaceInstalledEntry(
 			type: entry.type,
 			status: "uninstalled",
 			message: `Uninstalled ${result.name}.`,
-			output: [`Path: ${result.installPath}`, ...result.removedPaths.map((path) => `Removed: ${path}`)].join("\n"),
+			output: [`Path: ${result.installPath}`, ...result.removedPaths.map((path: string) => `Removed: ${path}`)].join("\n"),
 		})
 	}
 	throw new Error(`Marketplace uninstall is not supported for ${entry.type}.`)

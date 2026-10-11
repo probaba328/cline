@@ -13,7 +13,7 @@ import { hookFileName, withPlatform } from "../core/hooks/__tests__/test-utils"
 import { HookDiscoveryCache } from "../core/hooks/HookDiscoveryCache"
 import { StateManager } from "../core/storage/StateManager"
 import { HostProvider } from "../hosts/host-provider"
-import { CreateHookRequest, DeleteHookRequest, ToggleHookRequest } from "../shared/proto/cline/file"
+import { CreateHookRequest, DeleteHookRequest, ToggleHookRequest } from "../shared/proto/nexus/file"
 
 /**
  * Unit tests for hook management operations
@@ -36,8 +36,8 @@ describe("Hook Management", () => {
 
 		// Create temporary directories
 		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "hook-mgmt-test-"))
-		globalHooksDir = path.join(tempDir, "global", "Documents", "Cline", "Hooks")
-		workspaceHooksDir = path.join(tempDir, "workspace", ".clinerules", "hooks")
+		globalHooksDir = path.join(tempDir, "global", "Documents", "Nexus", "Hooks")
+		workspaceHooksDir = path.join(tempDir, "workspace", ".nexusrules", "hooks")
 
 		await fs.mkdir(globalHooksDir, { recursive: true })
 		await fs.mkdir(workspaceHooksDir, { recursive: true })
@@ -218,7 +218,7 @@ describe("Hook Management", () => {
 			const content = await fs.readFile(hookPath, "utf-8")
 
 			content.should.containEql("Notification Hook")
-			response.hooksToggles!.globalHooks.some((h) => h.name === "Notification").should.equal(true)
+			response.hooksToggles!.globalHooks.some((h: any) => h.name === "Notification").should.equal(true)
 		}, 5000)
 	})
 
@@ -416,8 +416,8 @@ describe("Hook Management", () => {
 
 			const result = await refreshHooks(mockController, undefined, globalHooksDir)
 
-			const taskStart = result.globalHooks.find((h) => h.name === "TaskStart")
-			const taskCancel = result.globalHooks.find((h) => h.name === "TaskCancel")
+			const taskStart = result.globalHooks.find((h: any) => h.name === "TaskStart")
+			const taskCancel = result.globalHooks.find((h: any) => h.name === "TaskCancel")
 
 			taskStart!.enabled.should.equal(true)
 			taskCancel!.enabled.should.equal(false)
@@ -455,7 +455,7 @@ describe("Hook Management", () => {
 				await fs.writeFile(path.join(globalHooksDir, "TaskStart.ps1"), "Write-Output '{}'", { mode: 0o644 })
 
 				const result = await refreshHooks(mockController, undefined, globalHooksDir)
-				const taskStart = result.globalHooks.find((h) => h.name === "TaskStart")
+				const taskStart = result.globalHooks.find((h: any) => h.name === "TaskStart")
 				should.exist(taskStart)
 				taskStart!.absolutePath.should.equal(path.join(globalHooksDir, "TaskStart.ps1"))
 				taskStart!.enabled.should.equal(true)
@@ -468,7 +468,7 @@ describe("Hook Management", () => {
 				await fs.writeFile(path.join(globalHooksDir, "TaskResume.ps1"), "Write-Output '{}'", { mode: 0o644 })
 
 				const result = await refreshHooks(mockController, undefined, globalHooksDir)
-				const taskResume = result.globalHooks.find((h) => h.name === "TaskResume")
+				const taskResume = result.globalHooks.find((h: any) => h.name === "TaskResume")
 				should.exist(taskResume)
 				taskResume!.absolutePath.should.equal(path.join(globalHooksDir, "TaskResume.ps1"))
 			})
@@ -476,7 +476,7 @@ describe("Hook Management", () => {
 	})
 
 	describe("Edge Cases", () => {
-		it("should handle missing .clinerules directory gracefully", async () => {
+		it("should handle missing .nexusrules directory gracefully", async () => {
 			// Remove workspace hooks directory
 			await fs.rm(path.dirname(workspaceHooksDir), { recursive: true, force: true })
 
@@ -556,7 +556,7 @@ describe("Hook Management", () => {
 					globalHooksDir,
 				)
 
-				const toggled = toggleResponse.hooksToggles!.globalHooks.find((h) => h.name === "TaskCancel")
+				const toggled = toggleResponse.hooksToggles!.globalHooks.find((h: any) => h.name === "TaskCancel")
 				should.exist(toggled)
 				toggled!.absolutePath.should.equal(ps1Path)
 

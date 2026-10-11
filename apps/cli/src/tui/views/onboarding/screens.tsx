@@ -7,9 +7,9 @@ import {
 	type CodexCliStatus,
 } from "../../../utils/codex-cli";
 import {
-	ClineModelPicker,
-	type ClineModelPickerEntry,
-} from "../../components/model-selector/cline-model-picker";
+	NexusModelPicker,
+	type NexusModelPickerEntry,
+} from "../../components/model-selector/nexus-model-picker";
 import {
 	type SearchableItem,
 	SearchableList,
@@ -23,8 +23,8 @@ import { useTheme } from "../../hooks/use-theme";
 import { getInputRuleColor, getUserMessageBackground } from "../../palette";
 import { FIELD_ORDER } from "./fields";
 import {
-	type ClinePassSubscriptionOption,
-	type ClinePassSubscriptionStatus,
+	type NexusPassSubscriptionOption,
+	type NexusPassSubscriptionStatus,
 	type MenuOption,
 	THINKING_LEVELS,
 } from "./model";
@@ -52,8 +52,8 @@ function useOnboardingColors() {
 	};
 }
 
-function getClinePassSubscriptionOptionId(index: number): string {
-	return `cline-pass-subscription-option-${index}`;
+function getNexusPassSubscriptionOptionId(index: number): string {
+	return `nexus-pass-subscription-option-${index}`;
 }
 
 interface OnboardingFrameProps {
@@ -247,7 +247,7 @@ export function OnboardingDeviceCodeScreen(props: {
 import type {
 	ProviderConfigFieldKey,
 	ProviderConfigFieldRequirement,
-} from "@cline/core";
+} from "@nexus/core";
 
 const DEFAULT_FIELD_LABELS: Partial<Record<ProviderConfigFieldKey, string>> = {
 	apiKey: "API key",
@@ -463,9 +463,9 @@ export function OnboardingProviderPickerScreen(props: {
 	);
 }
 
-export function OnboardingClineModelScreen(props: {
-	clineEntries: ClineModelPickerEntry[];
-	clineModelSelected: number;
+export function OnboardingNexusModelScreen(props: {
+	nexusEntries: NexusModelPickerEntry[];
+	nexusModelSelected: number;
 	compact: boolean;
 	contentWidth: number;
 	mouse: MouseTrackerState;
@@ -485,9 +485,9 @@ export function OnboardingClineModelScreen(props: {
 				You can change this anytime
 			</text>
 
-			<ClineModelPicker
-				entries={props.clineEntries}
-				selected={props.clineModelSelected}
+			<NexusModelPicker
+				entries={props.nexusEntries}
+				selected={props.nexusModelSelected}
 				loading={props.recommendedLoading}
 			/>
 
@@ -498,17 +498,17 @@ export function OnboardingClineModelScreen(props: {
 	);
 }
 
-export function OnboardingClinePassSubscriptionScreen(props: {
+export function OnboardingNexusPassSubscriptionScreen(props: {
 	compact: boolean;
 	contentWidth: number;
 	currentPlanName: string;
 	error: string;
 	mouse: MouseTrackerState;
 	openStatus: string;
-	options: ClinePassSubscriptionOption[];
+	options: NexusPassSubscriptionOption[];
 	planFeatures: string[];
 	selected: number;
-	status: ClinePassSubscriptionStatus;
+	status: NexusPassSubscriptionStatus;
 	subscriptionUrl: string;
 }) {
 	const defaultFg = useDefaultFg();
@@ -526,7 +526,7 @@ export function OnboardingClinePassSubscriptionScreen(props: {
 		}
 		const scrollSelectedOptionIntoView = () => {
 			scrollRef.current?.scrollChildIntoView(
-				getClinePassSubscriptionOptionId(props.selected),
+				getNexusPassSubscriptionOptionId(props.selected),
 			);
 		};
 		scrollSelectedOptionIntoView();
@@ -566,32 +566,32 @@ export function OnboardingClinePassSubscriptionScreen(props: {
 							flexShrink={0}
 						>
 							{isSubscribed
-								? "ClinePass subscription active"
-								: "ClinePass subscription required"}
+								? "NexusPass subscription active"
+								: "NexusPass subscription required"}
 						</text>
 
 						{isLoading ? (
 							<box flexDirection="row" gap={1} flexShrink={0}>
 								<spinner name="dots" color="gray" />
-								<text fg="gray">Checking your ClinePass subscription...</text>
+								<text fg="gray">Checking your NexusPass subscription...</text>
 							</box>
 						) : isSubscribed ? (
 							<text fg={defaultFg} selectable flexShrink={0}>
-								Current plan: {props.currentPlanName || "ClinePass"}
+								Current plan: {props.currentPlanName || "NexusPass"}
 							</text>
 						) : isError ? (
 							<text
 								fg={defaultFg}
 								selectable
 								flexShrink={0}
-								content="Could not verify your ClinePass subscription. Re-check before choosing a ClinePass model."
+								content="Could not verify your NexusPass subscription. Re-check before choosing a NexusPass model."
 							/>
 						) : (
 							<text
 								fg={defaultFg}
 								selectable
 								flexShrink={0}
-								content="No access to ClinePass subscription models yet. Subscribe to ClinePass, the low cost open weights model coding plan."
+								content="No access to NexusPass subscription models yet. Subscribe to NexusPass, the low cost open weights model coding plan."
 							/>
 						)}
 
@@ -635,7 +635,7 @@ export function OnboardingClinePassSubscriptionScreen(props: {
 									const isSel = i === props.selected;
 									return (
 										<box
-											id={getClinePassSubscriptionOptionId(i)}
+											id={getNexusPassSubscriptionOptionId(i)}
 											key={option.value}
 											paddingX={1}
 											flexDirection="row"
@@ -880,7 +880,7 @@ export function OnboardingMainMenuScreen(props: {
 				marginTop={1}
 			>
 				<text fg={defaultFg}>
-					<strong>Welcome to Cline</strong>
+					<strong>Welcome to Nexus</strong>
 				</text>
 				<text fg="gray" marginTop={1}>
 					Connect a model provider to get started.

@@ -1,6 +1,6 @@
 # Model Providers
 
-The Cline SDK supports every major LLM provider out of the box via `@cline/llms`.
+The Nexus SDK supports every major LLM provider out of the box via `@nexus/llms`.
 
 ## Supported Providers
 
@@ -19,7 +19,7 @@ The Cline SDK supports every major LLM provider out of the box via `@cline/llms`
 ### With Agent
 
 ```typescript
-import { Agent } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
 
 const agent = new Agent({
   providerId: "anthropic",
@@ -30,14 +30,14 @@ const agent = new Agent({
 })
 ```
 
-### With ClineCore
+### With NexusCore
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-await cline.start({
+await nexus.start({
   prompt: "Hello",
   config: {
     providerId: "anthropic",
@@ -158,7 +158,7 @@ Pass additional headers to API requests:
 For advanced multi-provider setups, use the Gateway directly:
 
 ```typescript
-import { createGateway, DefaultGateway } from "@cline/llms"
+import { createGateway, DefaultGateway } from "@nexus/llms"
 
 const gateway = createGateway({
   providerConfigs: [
@@ -201,7 +201,7 @@ import {
   registerProvider,
   registerModel,
   createHandler,
-} from "@cline/llms"
+} from "@nexus/llms"
 
 // List all registered providers
 const providers = getAllProviders()
@@ -222,7 +222,7 @@ registerProvider({
 Access model info (context window, pricing, capabilities):
 
 ```typescript
-import { getModelsForProvider } from "@cline/llms"
+import { getModelsForProvider } from "@nexus/llms"
 
 const models = getModelsForProvider("anthropic")
 for (const model of models) {
@@ -246,12 +246,12 @@ agent.subscribe((event) => {
 const result = await agent.run("...")
 console.log(`Total cost: $${result.usage.totalCost?.toFixed(4)}`)
 
-// Via ClineCore accumulated usage
-const usage = await cline.getAccumulatedUsage(sessionId)
+// Via NexusCore accumulated usage
+const usage = await nexus.getAccumulatedUsage(sessionId)
 ```
 
 ## See Also
 
 - `../agent/REFERENCE.md` - Using providers with Agent
-- `../clinecore/REFERENCE.md` - Using providers with ClineCore
+- `../clinecore/REFERENCE.md` - Using providers with NexusCore
 - `../production/REFERENCE.md` - Cost control in production

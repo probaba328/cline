@@ -20,7 +20,7 @@ describe("provider usage cost display", () => {
 	it("shows usage cost by default for usage-billed providers", () => {
 		expect(resolveProviderUsageCostDisplay("openai-native")).toBe("show");
 		expect(resolveProviderUsageCostDisplay("anthropic")).toBe("show");
-		expect(resolveProviderUsageCostDisplay("cline")).toBe("show");
+		expect(resolveProviderUsageCostDisplay("nexus")).toBe("show");
 		expect(shouldShowProviderUsageCost("anthropic")).toBe(true);
 	});
 

@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import * as LlmsModels from "@cline/llms";
+import * as LlmsModels from "@nexus/llms";
 import { afterEach, describe, expect, it } from "vitest";
 import { ProviderSettingsManager } from "./provider-settings-manager";
 
@@ -162,7 +162,7 @@ describe("ProviderSettingsManager", () => {
 
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 				baseUrl: "https://api.example.test",
 				auth: {
@@ -173,31 +173,31 @@ describe("ProviderSettingsManager", () => {
 			{ setLastUsed: false, tokenSource: "oauth" },
 		);
 
-		expect(manager.getProviderSettings("cline-pass")).toEqual({
-			provider: "cline-pass",
+		expect(manager.getProviderSettings("nexus-pass")).toEqual({
+			provider: "nexus-pass",
 			baseUrl: "https://api.example.test",
 			auth: {
 				accessToken: "workos:shared-token",
 				refreshToken: "shared-refresh",
 			},
 		});
-		expect(manager.getProviderConfig("cline-pass")).toMatchObject({
-			providerId: "cline-pass",
+		expect(manager.getProviderConfig("nexus-pass")).toMatchObject({
+			providerId: "nexus-pass",
 			apiKey: "workos:shared-token",
 			baseUrl: "https://api.example.test",
 		});
 
 		manager.saveProviderSettings(
 			{
-				provider: "cline-pass",
-				model: "cline-pass/glm-5.2",
+				provider: "nexus-pass",
+				model: "nexus-pass/glm-5.2",
 			},
 			{ setLastUsed: true },
 		);
 
-		expect(manager.getProviderSettings("cline-pass")).toEqual({
-			provider: "cline-pass",
-			model: "cline-pass/glm-5.2",
+		expect(manager.getProviderSettings("nexus-pass")).toEqual({
+			provider: "nexus-pass",
+			model: "nexus-pass/glm-5.2",
 			baseUrl: "https://api.example.test",
 			auth: {
 				accessToken: "workos:shared-token",
@@ -206,7 +206,7 @@ describe("ProviderSettingsManager", () => {
 		});
 	});
 
-	it("falls back to cline when last-used provider is cline-pass and the feature is disabled", () => {
+	it("falls back to nexus when last-used provider is nexus-pass and the feature is disabled", () => {
 		const tempDir = mkdtempSync(
 			path.join(os.tmpdir(), "core-provider-settings-"),
 		);
@@ -216,7 +216,7 @@ describe("ProviderSettingsManager", () => {
 
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 				baseUrl: "https://api.example.test",
 				auth: {
@@ -228,20 +228,20 @@ describe("ProviderSettingsManager", () => {
 		);
 		manager.saveProviderSettings(
 			{
-				provider: "cline-pass",
-				model: "cline-pass/glm-5.2",
+				provider: "nexus-pass",
+				model: "nexus-pass/glm-5.2",
 			},
 			{ setLastUsed: true },
 		);
 
 		expect(manager.getLastUsedProviderSettings()).toMatchObject({
-			provider: "cline-pass",
-			model: "cline-pass/glm-5.2",
+			provider: "nexus-pass",
+			model: "nexus-pass/glm-5.2",
 		});
 		expect(
-			manager.getLastUsedProviderSettings({ isClinePassEnabled: false }),
+			manager.getLastUsedProviderSettings({ isNexusPassEnabled: false }),
 		).toEqual({
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 			baseUrl: "https://api.example.test",
 			auth: {
@@ -250,15 +250,15 @@ describe("ProviderSettingsManager", () => {
 			},
 		});
 		expect(
-			manager.getLastUsedProviderConfig({ isClinePassEnabled: false }),
+			manager.getLastUsedProviderConfig({ isNexusPassEnabled: false }),
 		).toMatchObject({
-			providerId: "cline",
+			providerId: "nexus",
 			apiKey: "workos:shared-token",
 			baseUrl: "https://api.example.test",
 		});
 	});
 
-	it("returns default cline settings when cline-pass is last-used and no cline settings exist", () => {
+	it("returns default nexus settings when nexus-pass is last-used and no nexus settings exist", () => {
 		const tempDir = mkdtempSync(
 			path.join(os.tmpdir(), "core-provider-settings-"),
 		);
@@ -268,26 +268,26 @@ describe("ProviderSettingsManager", () => {
 
 		manager.saveProviderSettings(
 			{
-				provider: "cline-pass",
-				model: "cline-pass/glm-5.2",
+				provider: "nexus-pass",
+				model: "nexus-pass/glm-5.2",
 			},
 			{ setLastUsed: true },
 		);
 
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 			},
 			{ setLastUsed: true },
 		);
 
 		expect(
-			manager.getLastUsedProviderSettings({ isClinePassEnabled: false }),
-		).toEqual({ provider: "cline" });
+			manager.getLastUsedProviderSettings({ isNexusPassEnabled: false }),
+		).toEqual({ provider: "nexus" });
 		expect(
-			manager.getLastUsedProviderConfig({ isClinePassEnabled: false })
+			manager.getLastUsedProviderConfig({ isNexusPassEnabled: false })
 				?.providerId,
-		).toBe("cline");
+		).toBe("nexus");
 	});
 
 	it("migrates legacy provider settings during manager construction", () => {

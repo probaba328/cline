@@ -1,4 +1,4 @@
-import { supportsModelTool } from "@cline/llms";
+import { supportsModelTool } from "@nexus/llms";
 import type { CoreAgentMode } from "../../types/config";
 import {
 	DEFAULT_MODEL_TOOL_ROUTING_RULES,
@@ -23,7 +23,7 @@ export function resolveToolClientType(
 	source?: string,
 ): ToolClientType | undefined {
 	if (source === "vscode") return "vscode";
-	if (source === "cli" || source?.startsWith("cline-cli")) return "cli";
+	if (source === "cli" || source?.startsWith("nexus-cli")) return "cli";
 	return undefined;
 }
 

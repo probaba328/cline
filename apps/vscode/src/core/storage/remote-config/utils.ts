@@ -161,11 +161,11 @@ export function transformRemoteConfigToStateShape(remoteConfig: RemoteConfig): P
 		}
 	}
 
-	const clineSettings = remoteConfig.providerSettings?.Cline
-	if (clineSettings) {
-		transformed.planModeApiProvider = "cline"
-		transformed.actModeApiProvider = "cline"
-		providers.push("cline")
+	const nexusSettings = remoteConfig.providerSettings?.Nexus
+	if (nexusSettings) {
+		transformed.planModeApiProvider = "nexus"
+		transformed.actModeApiProvider = "nexus"
+		providers.push("nexus")
 	}
 
 	// Map LiteLLM provider settings
@@ -276,7 +276,7 @@ export function clearRemoteConfig(organizationId?: string) {
 
 		stateManager.clearRemoteConfig()
 		telemetryService.removeProvider(REMOTE_CONFIG_OTEL_PROVIDER_ID)
-		// the remote config cline rules toggle state is stored in global state
+		// the remote config nexus rules toggle state is stored in global state
 		stateManager.setGlobalState("remoteRulesToggles", {})
 		stateManager.setGlobalState("remoteWorkflowToggles", {})
 		stateManager.setGlobalState("remoteSkillsToggles", {})

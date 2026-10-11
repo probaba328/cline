@@ -32,7 +32,7 @@ beforeEach(() => {
 	});
 	window.localStorage.clear();
 	document.documentElement.style.removeProperty("font-size");
-	delete document.documentElement.dataset.clineFontSize;
+	delete document.documentElement.dataset.nexusFontSize;
 	invoke.mockReset();
 	invoke.mockResolvedValue({
 		telemetryOptOut: false,

@@ -12,7 +12,7 @@ import { sendMcpButtonClickedEvent } from "./core/controller/ui/subscribeToMcpBu
 import { sendSettingsButtonClickedEvent } from "./core/controller/ui/subscribeToSettingsButtonClicked"
 import { sendWorktreesButtonClickedEvent } from "./core/controller/ui/subscribeToWorktreesButtonClicked"
 import { WebviewProvider } from "./core/webview"
-import { createClineAPI } from "./exports"
+import { createNexusAPI } from "./exports"
 import "./utils/path" // necessary to have access to String.prototype.toPosix
 import path from "node:path"
 import type { ExtensionContext } from "vscode"
@@ -21,10 +21,10 @@ import { vscodeHostBridgeClient } from "@/hosts/vscode/hostbridge/client/host-gr
 import { createStorageContext } from "@/shared/storage/storage-context"
 import { readTextFromClipboard, writeTextToClipboard } from "@/utils/env"
 import { initialize, tearDown } from "./common"
-import { addToCline } from "./core/controller/commands/addToCline"
-import { explainWithCline } from "./core/controller/commands/explainWithCline"
-import { fixWithCline } from "./core/controller/commands/fixWithCline"
-import { improveWithCline } from "./core/controller/commands/improveWithCline"
+import { addToNexus } from "./core/controller/commands/addToNexus"
+import { explainWithNexus } from "./core/controller/commands/explainWithNexus"
+import { fixWithNexus } from "./core/controller/commands/fixWithNexus"
+import { improveWithNexus } from "./core/controller/commands/improveWithNexus"
 import { sendAddToInputEvent } from "./core/controller/ui/subscribeToAddToInput"
 import { sendShowWebviewEvent } from "./core/controller/ui/subscribeToShowWebview"
 import { HookDiscoveryCache } from "./core/hooks/HookDiscoveryCache"
@@ -39,7 +39,7 @@ import {
 import { workspaceResolver } from "./core/workspace"
 import { findMatchingNotebookCell, getContextForCommand, showWebview } from "./hosts/vscode/commandUtils"
 import { abortCommitGeneration, generateCommitMsg } from "./hosts/vscode/commit-message-generator"
-import { registerClineOutputChannel } from "./hosts/vscode/hostbridge/env/debugLog"
+import { registerNexusOutputChannel } from "./hosts/vscode/hostbridge/env/debugLog"
 import {
 	disposeVscodeCommentReviewController,
 	getVscodeCommentReviewController,
@@ -50,6 +50,8 @@ import { VscodeWebviewProvider } from "./hosts/vscode/VscodeWebviewProvider"
 import { exportVSCodeStorageToSharedFiles } from "./hosts/vscode/vscode-to-file-migration"
 import { ExtensionRegistryInfo } from "./registry"
 import { AuthService, LogoutReason } from "./sdk/auth-service"
+import { setWorkspaceExtensions } from "./sdk/nexus-session-factory"
+import { NexusPluginRegistry } from "./plugins"
 import { telemetryService } from "./services/telemetry"
 import type { RolloutBundleActivation } from "./services/telemetry/rollout-metadata"
 import { LG_TASK_URI_PATH, SharedUriHandler, TASK_URI_PATH } from "./services/uri/SharedUriHandler"
@@ -63,27 +65,51 @@ export async function reportRolloutActivation(input: RolloutBundleActivation): P
 // This method is called when the VS Code extension is activated.
 // NOTE: This is VS Code specific - services that should be registered
 // for all-platform should be registered in common.ts.
+/** Activation step timings captured for the performance report command. */
+const perfTimings: { step: string; ms: number }[] = []
+
+function perfMark(label: string, since: number): void {
+	perfTimings.push({ step: label, ms: Math.round(performance.now() - since) })
+}
+
 export async function activate(context: vscode.ExtensionContext) {
 	const activationStartTime = performance.now()
+	perfTimings.length = 0
 
 	// 1. Set up HostProvider for VSCode
 	// IMPORTANT: This must be done before any service can be registered
 	setupHostProvider(context)
+	perfMark("hostProvider", activationStartTime)
 
 	// 2. Clean up legacy data patterns within VSCode's native storage.
 	// Moves workspace→global keys, task history→file, custom instructions→rules, etc.
 	// Must run BEFORE the file export so we copy clean state.
 	await cleanupLegacyVSCodeStorage(context)
+	perfMark("legacyStorageCleanup", activationStartTime)
 
 	// 3. One-time export of VSCode's native storage to shared file-backed stores.
-	// After this, all platforms (VSCode, CLI, JetBrains) read from ~/.cline/data/.
+	// After this, all platforms (VSCode, CLI, JetBrains) read from ~/.nexus/data/.
 	const workspacePath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
 	const storageContext = createStorageContext({ workspacePath })
 	await exportVSCodeStorageToSharedFiles(context, storageContext)
+	perfMark("storageExport", activationStartTime)
 
 	// 4. Register services and perform common initialization
 	// IMPORTANT: Must be done after host provider is setup and migrations are complete
 	const webview = (await initialize(storageContext)) as VscodeWebviewProvider
+	perfMark("initialize", activationStartTime)
+
+	// 4a. Load workspace plugins (non-blocking — failures are logged, not thrown).
+	const pluginRegistry = new NexusPluginRegistry({ workspaceRoot: workspacePath })
+	pluginRegistry.loadAll().then(() => {
+		const loaded = pluginRegistry.getLoadedPlugins()
+		if (loaded.length > 0) {
+			setWorkspaceExtensions(loaded as import("@nexus/core").AgentPlugin[])
+			Logger.log(`[Nexus] ${loaded.length} plugin(s) yüklendi`)
+		}
+	}).catch((err) => {
+		Logger.warn(`[Nexus] Plugin yükleme başarısız: ${err instanceof Error ? err.message : String(err)}`)
+	})
 
 	// 5. Register services and commands specific to VS Code
 	// Initialize hook discovery cache for performance optimization
@@ -157,14 +183,14 @@ export async function activate(context: vscode.ExtensionContext) {
 		const isTaskUri = uriPath === TASK_URI_PATH || uriPath === LG_TASK_URI_PATH
 
 		if (isTaskUri) {
-			await openClineSidebarForTaskUri()
+			await openNexusSidebarForTaskUri()
 		}
 
 		let success = await SharedUriHandler.handleUri(url)
 
 		// Task deeplinks can race with first-time sidebar initialization.
 		if (!success && isTaskUri) {
-			await openClineSidebarForTaskUri()
+			await openNexusSidebarForTaskUri()
 			success = await SharedUriHandler.handleUri(url)
 		}
 
@@ -178,23 +204,23 @@ export async function activate(context: vscode.ExtensionContext) {
 	// registered handler above, which the harness can't synthesize. When running
 	// under browser-capture (debug harness) mode, expose the same handler on
 	// globalThis so the harness can deliver simulated OAuth callbacks via
-	// `ext.evaluate`. Gated on CLINE_CAPTURE_BROWSER so it never ships in prod.
-	if (process.env.CLINE_CAPTURE_BROWSER === "1" || process.env.CLINE_CAPTURE_BROWSER === "true") {
+	// `ext.evaluate`. Gated on NEXUS_CAPTURE_BROWSER so it never ships in prod.
+	if (process.env.NEXUS_CAPTURE_BROWSER === "1" || process.env.NEXUS_CAPTURE_BROWSER === "true") {
 		;(globalThis as Record<string, unknown>).__clineHandleUri = (url: string) => SharedUriHandler.handleUri(url)
 	}
 
 	// Register size testing commands in development mode
 	if (IS_DEV) {
-		vscode.commands.executeCommand("setContext", "cline.isDevMode", IS_DEV)
+		vscode.commands.executeCommand("setContext", "nexus.isDevMode", IS_DEV)
 		// Use dynamic import to avoid loading the module in production
 		import("./dev/commands/tasks")
 			.then((module) => {
 				const devTaskCommands = module.registerTaskCommands(webview.controller)
 				context.subscriptions.push(...devTaskCommands)
-				Logger.log("[Cline Dev] Dev mode activated & dev commands registered")
+				Logger.log("[Nexus Dev] Dev mode activated & dev commands registered")
 			})
 			.catch((error) => {
-				Logger.log(`[Cline Dev] Failed to register dev commands: ${error}`)
+				Logger.log(`[Nexus Dev] Failed to register dev commands: ${error}`)
 			})
 	}
 
@@ -260,37 +286,37 @@ export async function activate(context: vscode.ExtensionContext) {
 					// diagnostics themselves via getContextForCommand.
 					const actions: vscode.CodeAction[] = []
 
-					// Add to Cline (Always available)
-					const addAction = new vscode.CodeAction("Add to Cline", vscode.CodeActionKind.QuickFix)
+					// Add to Nexus (Always available)
+					const addAction = new vscode.CodeAction("Add to Nexus", vscode.CodeActionKind.QuickFix)
 					addAction.command = {
 						command: commands.AddToChat,
-						title: "Add to Cline",
+						title: "Add to Nexus",
 					}
 					actions.push(addAction)
 
-					// Explain with Cline (Always available)
-					const explainAction = new vscode.CodeAction("Explain with Cline", vscode.CodeActionKind.RefactorExtract) // Using a refactor kind
+					// Explain with Nexus (Always available)
+					const explainAction = new vscode.CodeAction("Explain with Nexus", vscode.CodeActionKind.RefactorExtract) // Using a refactor kind
 					explainAction.command = {
 						command: commands.ExplainCode,
-						title: "Explain with Cline",
+						title: "Explain with Nexus",
 					}
 					actions.push(explainAction)
 
-					// Improve with Cline (Always available)
-					const improveAction = new vscode.CodeAction("Improve with Cline", vscode.CodeActionKind.RefactorRewrite) // Using a refactor kind
+					// Improve with Nexus (Always available)
+					const improveAction = new vscode.CodeAction("Improve with Nexus", vscode.CodeActionKind.RefactorRewrite) // Using a refactor kind
 					improveAction.command = {
 						command: commands.ImproveCode,
-						title: "Improve with Cline",
+						title: "Improve with Nexus",
 					}
 					actions.push(improveAction)
 
-					// Fix with Cline (Only if diagnostics exist)
+					// Fix with Nexus (Only if diagnostics exist)
 					if (context.diagnostics.length > 0) {
-						const fixAction = new vscode.CodeAction("Fix with Cline", vscode.CodeActionKind.QuickFix)
+						const fixAction = new vscode.CodeAction("Fix with Nexus", vscode.CodeActionKind.QuickFix)
 						fixAction.isPreferred = true
 						fixAction.command = {
-							command: commands.FixWithCline,
-							title: "Fix with Cline",
+							command: commands.FixWithNexus,
+							title: "Fix with Nexus",
 						}
 						actions.push(fixAction)
 					}
@@ -314,16 +340,16 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!context) {
 				return
 			}
-			await addToCline(context.controller, context.commandContext)
+			await addToNexus(context.controller, context.commandContext)
 		}),
 	)
 	context.subscriptions.push(
-		vscode.commands.registerCommand(commands.FixWithCline, async (range: vscode.Range, diagnostics: vscode.Diagnostic[]) => {
+		vscode.commands.registerCommand(commands.FixWithNexus, async (range: vscode.Range, diagnostics: vscode.Diagnostic[]) => {
 			const context = await getContextForCommand(range, diagnostics)
 			if (!context) {
 				return
 			}
-			await fixWithCline(context.controller, context.commandContext)
+			await fixWithNexus(context.controller, context.commandContext)
 		}),
 	)
 	context.subscriptions.push(
@@ -332,7 +358,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!context) {
 				return
 			}
-			await explainWithCline(context.controller, context.commandContext)
+			await explainWithNexus(context.controller, context.commandContext)
 		}),
 	)
 	context.subscriptions.push(
@@ -341,7 +367,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			if (!context) {
 				return
 			}
-			await improveWithCline(context.controller, context.commandContext)
+			await improveWithNexus(context.controller, context.commandContext)
 		}),
 	)
 
@@ -421,7 +447,7 @@ Current Notebook Cell Context (JSON, sanitized of image data):
 ${ctx.cellJson || "{}"}
 \`\`\``
 
-				await addToCline(ctx.controller, ctx.commandContext, notebookContext)
+				await addToNexus(ctx.controller, ctx.commandContext, notebookContext)
 			},
 		),
 	)
@@ -437,7 +463,7 @@ ${ctx.cellJson || "{}"}
 					? `\n\nCurrent Notebook Cell Context (JSON, sanitized of image data):\n\`\`\`json\n${ctx.cellJson}\n\`\`\``
 					: undefined
 
-				await explainWithCline(ctx.controller, ctx.commandContext, notebookContext)
+				await explainWithNexus(ctx.controller, ctx.commandContext, notebookContext)
 			},
 		),
 	)
@@ -463,7 +489,7 @@ Current Notebook Cell Context (JSON, sanitized of image data):
 ${ctx.cellJson || "{}"}
 \`\`\``
 
-				await improveWithCline(ctx.controller, ctx.commandContext, notebookContext)
+				await improveWithNexus(ctx.controller, ctx.commandContext, notebookContext)
 			},
 		),
 	)
@@ -471,7 +497,7 @@ ${ctx.cellJson || "{}"}
 	// Register the openWalkthrough command handler
 	context.subscriptions.push(
 		vscode.commands.registerCommand(commands.Walkthrough, async () => {
-			await vscode.commands.executeCommand("workbench.action.openWalkthrough", `${context.extension.id}#ClineWalkthrough`)
+			await vscode.commands.executeCommand("workbench.action.openWalkthrough", `${context.extension.id}#NexusWalkthrough`)
 			telemetryService.captureButtonClick("command_openWalkthrough")
 		}),
 	)
@@ -491,7 +517,7 @@ ${ctx.cellJson || "{}"}
 	// This listener catches legacy secrets.json writes from older windows and
 	// triggers a re-read from providers.json via restoreRefreshTokenAndRetrieveAuthInfo().
 	const unsubSecrets = storageContext.secrets.onDidChange((event) => {
-		if (event.key === "cline:clineAccountId") {
+		if (event.key === "nexus:nexusAccountId") {
 			const secretValue = storageContext.secrets.get<string>(event.key)
 			const activeWebview = WebviewProvider.getVisibleInstance()
 			const controller = activeWebview?.controller
@@ -508,9 +534,32 @@ ${ctx.cellJson || "{}"}
 	})
 	context.subscriptions.push({ dispose: unsubSecrets })
 
-	Logger.log(`[Cline] extension activated in ${performance.now() - activationStartTime} ms`)
+	const totalMs = Math.round(performance.now() - activationStartTime)
+	perfMark("total", activationStartTime)
+	Logger.log(`[Nexus] extension activated in ${totalMs} ms`)
 
-	return createClineAPI(webview.controller)
+	context.subscriptions.push(
+		vscode.commands.registerCommand(commands.PerformanceReport, () => {
+			const mem = process.memoryUsage()
+			const toMB = (b: number) => (b / 1024 / 1024).toFixed(1) + " MB"
+			const lines = [
+				"## Nexus Performance Report",
+				"",
+				"### Activation Steps",
+				...perfTimings.map((t) => `  ${t.step.padEnd(24)} ${t.ms} ms`),
+				"",
+				"### Memory (current)",
+				`  RSS          ${toMB(mem.rss)}`,
+				`  Heap Used    ${toMB(mem.heapUsed)}`,
+				`  Heap Total   ${toMB(mem.heapTotal)}`,
+				`  External     ${toMB(mem.external)}`,
+			]
+			Logger.log(lines.join("\n"))
+			vscode.window.showInformationMessage(`Nexus: activated in ${totalMs} ms — see Output > Nexus for full report`)
+		}),
+	)
+
+	return createNexusAPI(webview.controller)
 }
 
 async function showJupyterPromptInput(title: string, placeholder: string): Promise<string | undefined> {
@@ -560,8 +609,8 @@ async function showJupyterPromptInput(title: string, placeholder: string): Promi
 }
 
 function setupHostProvider(context: ExtensionContext) {
-	const outputChannel = registerClineOutputChannel(context)
-	outputChannel.appendLine("[Cline] Setting up VS Code host...")
+	const outputChannel = registerNexusOutputChannel(context)
+	outputChannel.appendLine("[Nexus] Setting up VS Code host...")
 
 	const createWebview = () => new VscodeWebviewProvider(context)
 	const createEditPreview = () => new VscodeEditPreview()
@@ -603,7 +652,7 @@ function getUriPath(url: string): string | undefined {
 	}
 }
 
-async function openClineSidebarForTaskUri(): Promise<void> {
+async function openNexusSidebarForTaskUri(): Promise<void> {
 	const sidebarWaitTimeoutMs = 3000
 	const sidebarWaitIntervalMs = 50
 
@@ -617,7 +666,7 @@ async function openClineSidebarForTaskUri(): Promise<void> {
 		await new Promise((resolve) => setTimeout(resolve, sidebarWaitIntervalMs))
 	}
 
-	Logger.warn("Task URI handling timed out waiting for Cline sidebar visibility")
+	Logger.warn("Task URI handling timed out waiting for Nexus sidebar visibility")
 }
 
 async function getBinaryLocation(name: string): Promise<string> {
@@ -697,7 +746,7 @@ async function cleanupLegacyVSCodeStorage(context: ExtensionContext): Promise<vo
 
 		Logger.info("[VS Code Storage Migrations] Starting")
 
-		// Migrate custom instructions to global Cline rules (one-time cleanup)
+		// Migrate custom instructions to global Nexus rules (one-time cleanup)
 		await migrateCustomInstructionsToGlobalRules(context)
 
 		// Migrate welcomeViewCompleted setting based on existing API keys (one-time cleanup)

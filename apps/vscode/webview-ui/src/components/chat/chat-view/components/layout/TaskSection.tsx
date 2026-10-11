@@ -1,10 +1,10 @@
-import { ClineMessage } from "@shared/ExtensionMessage"
+import { NexusMessage } from "@shared/ExtensionMessage"
 import React from "react"
 import TaskHeader from "@/components/chat/task-header/TaskHeader"
 import { MessageHandlers } from "../../types/chatTypes"
 
 interface TaskSectionProps {
-	task: ClineMessage
+	task: NexusMessage
 	apiMetrics: {
 		totalTokensIn: number
 		totalTokensOut: number

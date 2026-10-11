@@ -2,10 +2,10 @@ import {
 	getFileIndex,
 	type ProviderSettings,
 	type UserInstructionConfigService,
-} from "@cline/core";
+} from "@nexus/core";
 import { byLengthAsc, Fzf, type FzfResultItem } from "fzf";
 import type { Config } from "../utils/types";
-import { formatClineCredits, loadClineAccountSnapshot } from "./cline-account";
+import { formatNexusCredits, loadNexusAccountSnapshot } from "./nexus-account";
 
 export interface InteractiveSlashCommand {
 	name: string;
@@ -167,19 +167,19 @@ export async function searchWorkspaceFilesForMention(input: {
 	return rankMentionPaths(index, input.query, limit);
 }
 
-export async function resolveClineWelcomeLine(input: {
+export async function resolveNexusWelcomeLine(input: {
 	config: Config;
-	clineApiBaseUrl?: string;
-	clineProviderSettings?: ProviderSettings;
+	nexusApiBaseUrl?: string;
+	nexusProviderSettings?: ProviderSettings;
 }): Promise<string | undefined> {
-	if (input.config.providerId !== "cline") {
+	if (input.config.providerId !== "nexus") {
 		return undefined;
 	}
 	try {
-		const snapshot = await loadClineAccountSnapshot(input);
+		const snapshot = await loadNexusAccountSnapshot(input);
 		const parts = [
 			snapshot.user.email,
-			`Credits: ${formatClineCredits(snapshot.displayedBalance)}`,
+			`Credits: ${formatNexusCredits(snapshot.displayedBalance)}`,
 		];
 		if (snapshot.activeOrganization?.name.trim()) {
 			parts.push(snapshot.activeOrganization.name);

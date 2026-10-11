@@ -5,7 +5,7 @@ import {
 	Llms,
 	type ProviderOAuthCredentials,
 	type ProviderSettings,
-} from "@cline/core";
+} from "@nexus/core";
 
 export type OAuthCredentials = ProviderOAuthCredentials;
 

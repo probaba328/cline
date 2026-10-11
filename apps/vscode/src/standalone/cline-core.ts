@@ -26,7 +26,7 @@ import { initializeContext } from "./vscode-context"
 let globalLockManager: SqliteLockManager | undefined
 
 async function main() {
-	log("\n\n\nStarting cline-core service...\n\n\n")
+	log("\n\n\nStarting nexus-core service...\n\n\n")
 	log(`Environment variables: ${JSON.stringify(process.env)}`)
 
 	// Parse command line arguments
@@ -119,7 +119,7 @@ function setupHostProvider(extensionContext: any, extensionDir: string, dataDir:
 	const getCallbackUrl = (path: string, preferredPort?: number): Promise<string> => {
 		return AuthHandler.getInstance().getCallbackUrl(path, preferredPort)
 	}
-	// cline-core expects the binaries to be unpacked in the directory where it is running.
+	// nexus-core expects the binaries to be unpacked in the directory where it is running.
 	const getBinaryLocation = async (name: string): Promise<string> => path.join(process.cwd(), name)
 
 	HostProvider.initialize(
@@ -222,7 +222,7 @@ async function requestHostBridgeShutdown(): Promise<void> {
 }
 
 /**
- * Gracefully shutdown the cline-core process by:
+ * Gracefully shutdown the nexus-core process by:
  * 1. Calling shutdown RPC on the paired host bridge
  * 2. Cleaning up the lock manager entry
  * 3. Tearing down services
@@ -310,14 +310,14 @@ function parseArgs(): CliArgs {
 
 function showHelp() {
 	Logger.log(`
-Cline Core - Standalone Server
+Nexus Core - Standalone Server
 
-Usage: node cline-core.js [options]
+Usage: node nexus-core.js [options]
 
 Options:
   -p, --port <port>              Port for the main gRPC service (default: ${PROTOBUS_PORT})
   --host-bridge-port <port>      Port for the host bridge service (default: ${HOSTBRIDGE_PORT})
-  -c, --config <path>            Directory for Cline data storage (default: ~/.cline)
+  -c, --config <path>            Directory for Nexus data storage (default: ~/.nexus)
   -h, --help                     Show this help message
 
 Environment Variables:

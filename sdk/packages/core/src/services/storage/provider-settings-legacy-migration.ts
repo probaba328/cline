@@ -1,8 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import * as LlmsModels from "@cline/llms";
-import { ReasoningLevelSchema } from "@cline/shared";
-import { resolveClineDataDir } from "@cline/shared/storage";
+import * as LlmsModels from "@nexus/llms";
+import { ReasoningLevelSchema } from "@nexus/shared";
+import { resolveNexusDataDir } from "@nexus/shared/storage";
 import {
 	emptyStoredProviderSettings,
 	type ProviderSettings,
@@ -85,8 +85,8 @@ interface LegacyGlobalState {
 	minimaxApiLine?: "china" | "international";
 	planModeOpenRouterModelId?: string;
 	actModeOpenRouterModelId?: string;
-	planModeClineModelId?: string;
-	actModeClineModelId?: string;
+	planModeNexusModelId?: string;
+	actModeNexusModelId?: string;
 	planModeOpenAiModelId?: string;
 	actModeOpenAiModelId?: string;
 	planModeOpenAiModelInfo?: LegacyOpenAiModelInfo;
@@ -129,9 +129,9 @@ interface LegacyGlobalState {
 
 interface LegacySecrets {
 	apiKey?: string;
-	clineApiKey?: string;
-	"cline:clineAccountId"?: string;
-	clineAccountId?: string;
+	nexusApiKey?: string;
+	"nexus:nexusAccountId"?: string;
+	nexusAccountId?: string;
 	openRouterApiKey?: string;
 	awsAccessKey?: string;
 	awsSecretKey?: string;
@@ -196,7 +196,7 @@ export interface MigrateLegacyProviderSettingsResult {
 	lastUsedProvider?: string;
 }
 
-export type LegacyClineUserInfo = {
+export type LegacyNexusUserInfo = {
 	idToken: string;
 	expiresAt: number;
 	refreshToken: string;
@@ -205,7 +205,7 @@ export type LegacyClineUserInfo = {
 		email: string;
 		displayName: string;
 		termsAcceptedAt: string;
-		clineBenchConsent: boolean;
+		nexusBenchConsent: boolean;
 		createdAt: string;
 		updatedAt: string;
 	};
@@ -214,13 +214,13 @@ export type LegacyClineUserInfo = {
 };
 
 /**
- * Resolves legacy Cline account auth data from the raw `cline:clineAccountId`
+ * Resolves legacy Nexus account auth data from the raw `nexus:nexusAccountId`
  * secret string into the auth fields used by `ProviderSettings`.
  *
  * Returns `undefined` when the input is missing, empty, whitespace-only, or
  * unparseable JSON.
  */
-export function resolveLegacyClineAuth(
+export function resolveLegacyNexusAuth(
 	rawAccountData: string | undefined,
 ): ProviderSettings["auth"] | undefined {
 	const trimmed = rawAccountData?.trim();
@@ -228,7 +228,7 @@ export function resolveLegacyClineAuth(
 		return undefined;
 	}
 	try {
-		const data = JSON.parse(trimmed) as LegacyClineUserInfo;
+		const data = JSON.parse(trimmed) as LegacyNexusUserInfo;
 		if (!data) {
 			return undefined;
 		}
@@ -282,7 +282,7 @@ function readJsonObject<T extends object>(filePath: string): T | undefined {
 function resolveLegacyStorage(
 	options: MigrateLegacyProviderSettingsOptions,
 ): LegacyProviderStorage | undefined {
-	const dataDir = options.dataDir ?? resolveClineDataDir();
+	const dataDir = options.dataDir ?? resolveNexusDataDir();
 	const globalStatePath =
 		options.globalStatePath ?? join(dataDir, "globalState.json");
 	const secretsPath = options.secretsPath ?? join(dataDir, "secrets.json");
@@ -333,7 +333,7 @@ function resolveModelForProvider(
 			: undefined;
 	const providerModelKeyById: Record<string, keyof LegacyGlobalState> = {
 		openrouter: `${modePrefix}OpenRouterModelId` as keyof LegacyGlobalState,
-		cline: `${modePrefix}ClineModelId` as keyof LegacyGlobalState,
+		nexus: `${modePrefix}NexusModelId` as keyof LegacyGlobalState,
 		openai: `${modePrefix}OpenAiModelId` as keyof LegacyGlobalState,
 		ollama: `${modePrefix}OllamaModelId` as keyof LegacyGlobalState,
 		lmstudio: `${modePrefix}LmStudioModelId` as keyof LegacyGlobalState,
@@ -444,7 +444,7 @@ function getDefaultModelForProvider(providerId: string): string | undefined {
 	const providerCollection = LlmsModels.getProviderCollectionSync(providerId);
 	const defaultModelId = providerCollection?.provider.defaultModelId;
 	// The declared default may live only in the collection's model list (e.g.
-	// Cline's generated block holds a few free models while its default,
+	// Nexus's generated block holds a few free models while its default,
 	// anthropic/claude-sonnet-5, comes from the collection catalog).
 	if (
 		defaultModelId &&
@@ -459,20 +459,20 @@ function getDefaultModelForProvider(providerId: string): string | undefined {
 }
 
 /**
- * Cline is a fixed-catalog provider: an unknown legacy model id (retired
+ * Nexus is a fixed-catalog provider: an unknown legacy model id (retired
  * model, a suffixed variant like `...:1m`, corrupted state) would otherwise
  * be carried into inference requests as-is. Resolve the legacy id against the
- * runtime catalog (the collection model list, which `buildClineModels` in
- * @cline/llms mirrors), folding alias spellings onto their canonical ids
+ * runtime catalog (the collection model list, which `buildNexusModels` in
+ * @nexus/llms mirrors), folding alias spellings onto their canonical ids
  * (e.g. OpenRouter's `z-ai/...` -> `zai/...`) so those users keep their
  * model. Returns undefined for unavailable models so the caller falls back
  * to the catalog default.
  */
-function resolveKnownClineModel(
+function resolveKnownNexusModel(
 	providerId: string,
 	modelId: string | undefined,
 ): string | undefined {
-	if (!modelId || providerId !== "cline") {
+	if (!modelId || providerId !== "nexus") {
 		return modelId;
 	}
 	const catalogModels =
@@ -511,7 +511,7 @@ function buildLegacyProviderSettings(
 		? normalizeLegacyProviderId(rawActiveProviderForMode)
 		: undefined;
 	const model =
-		resolveKnownClineModel(
+		resolveKnownNexusModel(
 			targetProviderId,
 			resolveModelForProvider(
 				legacyGlobalState,
@@ -530,7 +530,7 @@ function buildLegacyProviderSettings(
 
 	const secretByProvider: Record<string, string | undefined> = {
 		anthropic: legacySecrets.apiKey,
-		cline: legacySecrets.clineApiKey,
+		nexus: legacySecrets.nexusApiKey,
 		openai: legacySecrets.openAiApiKey,
 		"openai-native": legacySecrets.openAiNativeApiKey,
 		openrouter: legacySecrets.openRouterApiKey,
@@ -569,20 +569,20 @@ function buildLegacyProviderSettings(
 	if (providerId === "openai-codex") {
 		Object.assign(providerSpecific, resolveLegacyCodexAuth(legacySecrets));
 	}
-	if (providerId === "cline") {
+	if (providerId === "nexus") {
 		try {
 			const legacyAuthString = trimNonEmpty(
-				legacySecrets["cline:clineAccountId"],
+				legacySecrets["nexus:nexusAccountId"],
 			);
 
 			if (legacyAuthString) {
 				providerSpecific.auth = {
 					...(providerSpecific.auth ?? {}),
-					...resolveLegacyClineAuth(legacyAuthString),
+					...resolveLegacyNexusAuth(legacyAuthString),
 				};
 			}
 		} catch {
-			// Failed to parse stored cline auth data
+			// Failed to parse stored nexus auth data
 		}
 	}
 	if (
@@ -843,16 +843,16 @@ function collectCandidateProviderIds(
 	) {
 		candidates.add("vertex");
 	}
-	if (trimNonEmpty(legacySecrets.clineApiKey)) candidates.add("cline");
-	const legacyClineAuth = resolveLegacyClineAuth(
-		trimNonEmpty(legacySecrets["cline:clineAccountId"]),
+	if (trimNonEmpty(legacySecrets.nexusApiKey)) candidates.add("nexus");
+	const legacyNexusAuth = resolveLegacyNexusAuth(
+		trimNonEmpty(legacySecrets["nexus:nexusAccountId"]),
 	);
 	if (
-		legacyClineAuth?.accessToken ||
-		legacyClineAuth?.refreshToken ||
-		legacyClineAuth?.accountId
+		legacyNexusAuth?.accessToken ||
+		legacyNexusAuth?.refreshToken ||
+		legacyNexusAuth?.accountId
 	) {
-		candidates.add("cline");
+		candidates.add("nexus");
 	}
 	if (trimNonEmpty(legacySecrets.ocaApiKey)) candidates.add("oca");
 	if (

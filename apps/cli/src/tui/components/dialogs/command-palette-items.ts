@@ -83,8 +83,8 @@ const ACTION_ITEMS: Array<{
 		action: "account",
 		label: "Open Account",
 		shortcut: "Opt+A",
-		description: "View or switch your Cline account",
-		keywords: ["account", "login", "auth", "cline"],
+		description: "View or switch your Nexus account",
+		keywords: ["account", "login", "auth", "nexus"],
 	},
 	{
 		action: "compact",
@@ -138,7 +138,7 @@ const ACTION_ITEMS: Array<{
 	},
 	{
 		action: "quit",
-		label: "Exit Cline",
+		label: "Exit Nexus",
 		shortcut: "Opt+Q",
 		description: "Close the interactive CLI",
 		keywords: ["quit", "exit"],

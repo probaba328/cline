@@ -1,9 +1,9 @@
-import { Empty } from "@shared/proto/cline/common"
-import { UpdateApiConfigurationPartialRequest } from "@shared/proto/cline/models"
+import { Empty } from "@shared/proto/nexus/common"
+import { UpdateApiConfigurationPartialRequest } from "@shared/proto/nexus/models"
 import { convertProtoToApiConfiguration } from "@shared/proto-conversions/models/api-configuration-conversion"
 import { Logger } from "@/shared/services/Logger"
 import type { Controller } from "../index"
-import { clearOrganizationForClinePassProviderSelection } from "./handleClinePassProviderSelection"
+import { clearOrganizationForNexusPassProviderSelection } from "./handleNexusPassProviderSelection"
 import { normalizeProviderSwitchModel } from "./providerSwitchNormalization"
 import { createTaskApiModelShim, resolveActiveModelIdFromApiConfiguration } from "./taskApiModel"
 
@@ -45,7 +45,7 @@ export async function updateApiConfigurationPartial(
 
 		// Update storage and task API model shim
 		controller.stateManager.setApiConfiguration(normalizedConfig)
-		clearOrganizationForClinePassProviderSelection(controller, normalizedConfig)
+		clearOrganizationForNexusPassProviderSelection(controller, normalizedConfig)
 		if (controller.task) {
 			const currentMode = controller.stateManager.getGlobalSettingsKey("mode")
 			const modelId = resolveActiveModelIdFromApiConfiguration(normalizedConfig, currentMode)

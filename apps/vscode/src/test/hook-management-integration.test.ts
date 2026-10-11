@@ -13,7 +13,7 @@ import { hookFileName } from "../core/hooks/__tests__/test-utils"
 import { HookDiscoveryCache } from "../core/hooks/HookDiscoveryCache"
 import { StateManager } from "../core/storage/StateManager"
 import { HostProvider } from "../hosts/host-provider"
-import { CreateHookRequest, DeleteHookRequest, ToggleHookRequest } from "../shared/proto/cline/file"
+import { CreateHookRequest, DeleteHookRequest, ToggleHookRequest } from "../shared/proto/nexus/file"
 
 /**
  * Integration tests for hook management
@@ -35,8 +35,8 @@ describe("Hook Management Integration", () => {
 
 		// Create temporary directories
 		tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "hook-integration-test-"))
-		globalHooksDir = path.join(tempDir, "global", "Documents", "Cline", "Hooks")
-		workspaceHooksDir = path.join(tempDir, "workspace", ".clinerules", "hooks")
+		globalHooksDir = path.join(tempDir, "global", "Documents", "Nexus", "Hooks")
+		workspaceHooksDir = path.join(tempDir, "workspace", ".nexusrules", "hooks")
 
 		await fs.mkdir(globalHooksDir, { recursive: true })
 		await fs.mkdir(workspaceHooksDir, { recursive: true })
@@ -211,7 +211,7 @@ describe("Hook Management Integration", () => {
 			// Verify all hooks are present and disabled
 			const hooks = await refreshHooks(mockController, undefined, globalHooksDir)
 			hooks.globalHooks.should.have.length(4)
-			hooks.globalHooks.forEach((hook) => {
+			hooks.globalHooks.forEach((hook: any) => {
 				if (isWindows) {
 					hook.enabled.should.equal(true)
 				} else {
@@ -242,10 +242,10 @@ describe("Hook Management Integration", () => {
 
 			// Verify states are independent
 			const hooksAfterToggle = await refreshHooks(mockController, undefined, globalHooksDir)
-			const taskStart = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskStart")
-			const taskResume = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskResume")
-			const userPrompt = hooksAfterToggle.globalHooks.find((h) => h.name === "UserPromptSubmit")
-			const taskComplete = hooksAfterToggle.globalHooks.find((h) => h.name === "TaskComplete")
+			const taskStart = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskStart")
+			const taskResume = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskResume")
+			const userPrompt = hooksAfterToggle.globalHooks.find((h: any) => h.name === "UserPromptSubmit")
+			const taskComplete = hooksAfterToggle.globalHooks.find((h: any) => h.name === "TaskComplete")
 
 			if (isWindows) {
 				taskStart!.enabled.should.equal(true)

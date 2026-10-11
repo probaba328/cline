@@ -1202,7 +1202,7 @@ function ChatThreadPane({
 			hydratedSessionRef.current = null;
 			manualTitleSessionRef.current = null;
 			window.dispatchEvent(
-				new CustomEvent("cline:session-deleted", {
+				new CustomEvent("nexus:session-deleted", {
 					detail: {
 						sessionId: activeSessionToDelete,
 					},
@@ -1449,7 +1449,7 @@ function ChatThreadPane({
 					title: normalizedTitle || undefined,
 				});
 				window.dispatchEvent(
-					new CustomEvent("cline:session-title-updated", {
+					new CustomEvent("nexus:session-title-updated", {
 						detail: {
 							sessionId: activeSessionForTitle,
 							title: normalizedTitle,
@@ -1580,7 +1580,7 @@ function ChatThreadPane({
 					</div>
 				) : null}
 				{!isWelcomeState ? (
-					<div className="cline-view-enter z-20 border-b border-border/70 bg-background/85 backdrop-blur-sm">
+					<div className="nexus-view-enter z-20 border-b border-border/70 bg-background/85 backdrop-blur-sm">
 						<AgentHeader
 							agentActivity={agentActivity}
 							agents={agents}

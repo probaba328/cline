@@ -1,7 +1,7 @@
 import type {
 	GatewayResolvedProviderConfig,
 	GatewayStreamRequest,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createOpenAIProviderModule } from "./openai";
 

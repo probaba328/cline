@@ -28,7 +28,7 @@
 	"liteLlmBaseUrl": null,
 	"liteLlmApiKey": null,
 	"liteLlmModelId": null,
-	"clineApiKey": null,
+	"nexusApiKey": null,
 	"taskHistory": [],
 	"remoteRulesToggles": {},
 	"remoteWorkflowToggles": {},

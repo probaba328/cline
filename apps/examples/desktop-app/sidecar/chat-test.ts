@@ -105,9 +105,9 @@ async function main() {
 			request: {
 				action: "start",
 				config: {
-					provider: "cline",
+					provider: "nexus",
 					model: "claude-sonnet-4-20250514",
-					apiKey: process.env.CLINE_API_KEY || "",
+					apiKey: process.env.NEXUS_API_KEY || "",
 					workspaceRoot: cwd,
 					cwd: cwd,
 					mode: "act",

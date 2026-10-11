@@ -1,4 +1,4 @@
-import { decodeJwtPayload } from "@cline/shared";
+import { decodeJwtPayload } from "@nexus/shared";
 
 export interface ProviderRequestHeaderClientContext {
 	name?: string;
@@ -32,15 +32,15 @@ export interface ResolveProviderRequestHeadersInput {
 	headers?: ProviderRequestHeaderLayers;
 }
 
-const DEFAULT_CLINE_REQUEST_HEADERS: Record<string, string> = {
-	"HTTP-Referer": "https://cline.bot",
-	"X-Title": "Cline",
+const DEFAULT_NEXUS_REQUEST_HEADERS: Record<string, string> = {
+	"HTTP-Referer": "https://nexus.bot",
+	"X-Title": "Nexus",
 	"X-IS-MULTIROOT": "false",
-	"X-CLIENT-TYPE": "cline-sdk",
+	"X-CLIENT-TYPE": "nexus-sdk",
 };
 
-function isClineBillingProvider(providerId: string): boolean {
-	return providerId === "cline" || providerId === "cline-pass";
+function isNexusBillingProvider(providerId: string): boolean {
+	return providerId === "nexus" || providerId === "nexus-pass";
 }
 
 function trimNonEmpty(value: string | undefined): string | undefined {
@@ -55,7 +55,7 @@ function resolveSource(
 	return trimNonEmpty(source) ?? defaultSource;
 }
 
-function resolveClineClientVersion(
+function resolveNexusClientVersion(
 	client: ProviderRequestHeaderClientContext | undefined,
 ): string {
 	return (
@@ -65,21 +65,21 @@ function resolveClineClientVersion(
 	);
 }
 
-function buildClineRequestHeaders(
+function buildNexusRequestHeaders(
 	input: ResolveProviderRequestHeadersInput,
 ): Record<string, string> | undefined {
-	if (!isClineBillingProvider(input.providerId)) {
+	if (!isNexusBillingProvider(input.providerId)) {
 		return undefined;
 	}
 	const source = resolveSource(input.source, input.defaultSource);
-	const clientType = trimNonEmpty(input.client?.name) ?? `cline-${source}`;
-	const clientVersion = resolveClineClientVersion(input.client);
+	const clientType = trimNonEmpty(input.client?.name) ?? `nexus-${source}`;
+	const clientVersion = resolveNexusClientVersion(input.client);
 	const platform = trimNonEmpty(input.client?.platform) ?? source;
 	const platformVersion =
 		trimNonEmpty(input.client?.platformVersion) ?? clientVersion;
 	return {
-		...DEFAULT_CLINE_REQUEST_HEADERS,
-		"User-Agent": `Cline/${clientVersion}`,
+		...DEFAULT_NEXUS_REQUEST_HEADERS,
+		"User-Agent": `Nexus/${clientVersion}`,
 		"X-IS-MULTIROOT": input.client?.isMultiRoot === true ? "true" : "false",
 		"X-CLIENT-TYPE": clientType,
 		"X-CLIENT-VERSION": clientVersion,
@@ -126,9 +126,9 @@ function buildOpenAICodexRequestHeaders(
 		trimNonEmpty(input.openAiCodex?.accountId) ??
 		deriveOpenAICodexAccountId(input.openAiCodex?.accessToken);
 	return {
-		originator: "cline",
+		originator: "nexus",
 		session_id: input.sessionId,
-		"User-Agent": `Cline/${trimNonEmpty(input.openAiCodex?.userAgentVersion) ?? "1.0.0"}`,
+		"User-Agent": `Nexus/${trimNonEmpty(input.openAiCodex?.userAgentVersion) ?? "1.0.0"}`,
 		...(accountId ? { "ChatGPT-Account-Id": accountId } : {}),
 	};
 }
@@ -137,7 +137,7 @@ function resolveRequiredProviderHeaders(
 	input: ResolveProviderRequestHeadersInput,
 ): Record<string, string> | undefined {
 	return (
-		buildClineRequestHeaders(input) ?? buildOpenAICodexRequestHeaders(input)
+		buildNexusRequestHeaders(input) ?? buildOpenAICodexRequestHeaders(input)
 	);
 }
 

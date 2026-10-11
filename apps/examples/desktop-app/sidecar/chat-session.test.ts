@@ -82,12 +82,12 @@ describe("rewriteDesktopTeamPrompt", () => {
 describe("buildSessionConnectionUpdate", () => {
 	it("does not clear reasoning settings when config omits reasoning fields", () => {
 		const update = buildSessionConnectionUpdate({
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 		});
 
 		expect(update).toEqual({
-			providerId: "cline",
+			providerId: "nexus",
 			modelId: "anthropic/claude-sonnet-4.6",
 		});
 		expect(Object.hasOwn(update, "thinking")).toBe(false);
@@ -98,12 +98,12 @@ describe("buildSessionConnectionUpdate", () => {
 	it("clears reasoning settings when thinking is explicitly disabled", () => {
 		expect(
 			buildSessionConnectionUpdate({
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 				thinking: false,
 			}),
 		).toEqual({
-			providerId: "cline",
+			providerId: "nexus",
 			modelId: "anthropic/claude-sonnet-4.6",
 			thinking: false,
 			reasoningEffort: null,
@@ -113,13 +113,13 @@ describe("buildSessionConnectionUpdate", () => {
 
 	it("updates explicit reasoning settings without clearing omitted settings", () => {
 		const update = buildSessionConnectionUpdate({
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 			reasoningEffort: "high",
 		});
 
 		expect(update).toEqual({
-			providerId: "cline",
+			providerId: "nexus",
 			modelId: "anthropic/claude-sonnet-4.6",
 			thinking: true,
 			reasoningEffort: "high",
@@ -131,7 +131,7 @@ describe("buildSessionConnectionUpdate", () => {
 describe("shouldUpdateSessionConnection", () => {
 	it("skips the redundant connection update on the first send", () => {
 		const config = {
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 			thinking: true,
 			reasoningEffort: "high",
@@ -142,7 +142,7 @@ describe("shouldUpdateSessionConnection", () => {
 
 	it("updates the connection when the selected reasoning level changes", () => {
 		const current = {
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 			thinking: true,
 			reasoningEffort: "low",
@@ -161,21 +161,21 @@ describe("hasProviderChanged", () => {
 	it("distinguishes provider switches from model switches", () => {
 		expect(
 			hasProviderChanged(
-				{ provider: "cline", model: "anthropic/claude-sonnet-4.6" },
+				{ provider: "nexus", model: "anthropic/claude-sonnet-4.6" },
 				{ provider: "openai-codex", model: "gpt-5.3-codex" },
 			),
 		).toBe(true);
 		expect(
 			hasProviderChanged(
-				{ provider: "cline", model: "anthropic/claude-sonnet-4.6" },
-				{ provider: "cline", model: "openai/gpt-5.3-codex" },
+				{ provider: "nexus", model: "anthropic/claude-sonnet-4.6" },
+				{ provider: "nexus", model: "openai/gpt-5.3-codex" },
 			),
 		).toBe(false);
 	});
 
 	it("honors a providerId-only update when the stored config uses provider", () => {
 		const current = {
-			provider: "cline",
+			provider: "nexus",
 			model: "anthropic/claude-sonnet-4.6",
 		};
 		const update = {
@@ -203,8 +203,8 @@ describe("pathless session starts", () => {
 			return {
 				sessionId: "session-pathless",
 				manifest: {
-					cwd: "/home/host/.cline/data/workspaces/chat",
-					workspace_root: "/home/host/.cline/data/workspaces/chat",
+					cwd: "/home/host/.nexus/data/workspaces/chat",
+					workspace_root: "/home/host/.nexus/data/workspaces/chat",
 				},
 				manifestPath: "/tmp/session-pathless.json",
 				messagesPath: "/tmp/session-pathless.messages.json",
@@ -219,7 +219,7 @@ describe("pathless session starts", () => {
 		const result = (await handleChatSessionCommand(ctx, {
 			action: "start",
 			config: {
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 				enableTools: true,
 				// Legacy desktop capability flags must not override the SDK's
@@ -235,12 +235,12 @@ describe("pathless session starts", () => {
 
 		expect(result).toEqual({
 			sessionId: "session-pathless",
-			cwd: "/home/host/.cline/data/workspaces/chat",
-			workspaceRoot: "/home/host/.cline/data/workspaces/chat",
+			cwd: "/home/host/.nexus/data/workspaces/chat",
+			workspaceRoot: "/home/host/.nexus/data/workspaces/chat",
 		});
 		expect(ctx.liveSessions.get("session-pathless")?.config).toMatchObject({
-			cwd: "/home/host/.cline/data/workspaces/chat",
-			workspaceRoot: "/home/host/.cline/data/workspaces/chat",
+			cwd: "/home/host/.nexus/data/workspaces/chat",
+			workspaceRoot: "/home/host/.nexus/data/workspaces/chat",
 		});
 	});
 });
@@ -272,7 +272,7 @@ describe("session forks", () => {
 					sourceSessionId,
 					{
 						config: {
-							provider: "cline",
+							provider: "nexus",
 							model: "anthropic/claude-sonnet-4.6",
 						},
 						messages: sourceMessages,
@@ -289,7 +289,7 @@ describe("session forks", () => {
 					sessionId: sourceSessionId,
 					source: "desktop",
 					status: "completed",
-					provider: "cline",
+					provider: "nexus",
 					model: "anthropic/claude-sonnet-4.6",
 					cwd: "/workspace/project",
 					workspaceRoot: "/workspace/project",
@@ -316,7 +316,7 @@ describe("session forks", () => {
 			sessionId: sourceSessionId,
 			forkBeforeRunCount: 2,
 			config: {
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 			},
 		})) as { sessionId: string; messages: unknown[] };
@@ -384,7 +384,7 @@ describe("session forks", () => {
 					sourceSessionId,
 					{
 						config: {
-							provider: "cline",
+							provider: "nexus",
 							model: "anthropic/claude-sonnet-4.6",
 							cwd: "/workspace/project",
 						},
@@ -413,7 +413,7 @@ describe("session forks", () => {
 					sessionId: sourceSessionId,
 					source: "desktop",
 					status: "completed",
-					provider: "cline",
+					provider: "nexus",
 					model: "anthropic/claude-sonnet-4.6",
 					cwd: "/workspace/project",
 					workspaceRoot: "/workspace/project",
@@ -477,7 +477,7 @@ describe("session forks", () => {
 					sourceSessionId,
 					{
 						config: {
-							provider: "cline",
+							provider: "nexus",
 							model: "anthropic/claude-sonnet-4.6",
 						},
 						messages: sourceMessages,
@@ -494,7 +494,7 @@ describe("session forks", () => {
 					sessionId: sourceSessionId,
 					source: "desktop",
 					status: "completed",
-					provider: "cline",
+					provider: "nexus",
 					model: "anthropic/claude-sonnet-4.6",
 					cwd: "/workspace/project",
 					workspaceRoot: "/workspace/project",
@@ -511,7 +511,7 @@ describe("session forks", () => {
 			action: "fork",
 			sessionId: sourceSessionId,
 			config: {
-				provider: "cline",
+				provider: "nexus",
 				model: "anthropic/claude-sonnet-4.6",
 			},
 		});
@@ -645,9 +645,9 @@ describe("session forks", () => {
 
 	it("allows a workspace restore after a queued turn completes through the event stream", async () => {
 		const sessionId = `queued-turn-session-${Date.now()}`;
-		const dataDir = mkdtempSync(join(tmpdir(), "cline-queued-restore-"));
-		const originalDataDir = process.env.CLINE_SESSION_DATA_DIR;
-		process.env.CLINE_SESSION_DATA_DIR = dataDir;
+		const dataDir = mkdtempSync(join(tmpdir(), "nexus-queued-restore-"));
+		const originalDataDir = process.env.NEXUS_SESSION_DATA_DIR;
+		process.env.NEXUS_SESSION_DATA_DIR = dataDir;
 		try {
 			const restore = vi.fn(async () => ({
 				sessionId,
@@ -681,7 +681,7 @@ describe("session forks", () => {
 				checkpointRunCount: 1,
 				config: {
 					cwd: "/workspace/project",
-					provider: "cline",
+					provider: "nexus",
 					model: "test-model",
 				},
 			};
@@ -710,9 +710,9 @@ describe("session forks", () => {
 			expect(restore).toHaveBeenCalledTimes(1);
 		} finally {
 			if (originalDataDir === undefined) {
-				delete process.env.CLINE_SESSION_DATA_DIR;
+				delete process.env.NEXUS_SESSION_DATA_DIR;
 			} else {
-				process.env.CLINE_SESSION_DATA_DIR = originalDataDir;
+				process.env.NEXUS_SESSION_DATA_DIR = originalDataDir;
 			}
 			rmSync(dataDir, { force: true, recursive: true });
 		}
@@ -754,7 +754,7 @@ describe("session forks", () => {
 
 describe("first-send connection updates", () => {
 	const baseConfig = {
-		provider: "cline",
+		provider: "nexus",
 		model: "anthropic/claude-sonnet-4.6",
 		thinking: true,
 		reasoningEffort: "high",
@@ -859,10 +859,10 @@ describe("first-send connection updates", () => {
 		"queue",
 	] as const)("forwards file attachments for %s delivery", async (delivery) => {
 		const { ctx, send, sessionId } = createContext();
-		const previousSessionDataDir = process.env.CLINE_SESSION_DATA_DIR;
+		const previousSessionDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 		const testSessionDataDir = join(
 			tmpdir(),
-			`cline-desktop-attachments-${Date.now()}-${delivery ?? "immediate"}`,
+			`nexus-desktop-attachments-${Date.now()}-${delivery ?? "immediate"}`,
 		);
 		let sentFileContent: string | undefined;
 		send.mockImplementation(async (input?: unknown) => {
@@ -874,7 +874,7 @@ describe("first-send connection updates", () => {
 		});
 
 		try {
-			process.env.CLINE_SESSION_DATA_DIR = testSessionDataDir;
+			process.env.NEXUS_SESSION_DATA_DIR = testSessionDataDir;
 			await handleChatSessionCommand(ctx, {
 				action: "send",
 				sessionId,
@@ -905,9 +905,9 @@ describe("first-send connection updates", () => {
 			}
 		} finally {
 			if (previousSessionDataDir === undefined) {
-				delete process.env.CLINE_SESSION_DATA_DIR;
+				delete process.env.NEXUS_SESSION_DATA_DIR;
 			} else {
-				process.env.CLINE_SESSION_DATA_DIR = previousSessionDataDir;
+				process.env.NEXUS_SESSION_DATA_DIR = previousSessionDataDir;
 			}
 			rmSync(testSessionDataDir, { recursive: true, force: true });
 		}
@@ -915,14 +915,14 @@ describe("first-send connection updates", () => {
 
 	it("deletes materialized attachments when a queued prompt is removed", async () => {
 		const { ctx, send, sessionId } = createContext();
-		const previousSessionDataDir = process.env.CLINE_SESSION_DATA_DIR;
+		const previousSessionDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 		const testSessionDataDir = join(
 			tmpdir(),
-			`cline-desktop-attachments-remove-${Date.now()}`,
+			`nexus-desktop-attachments-remove-${Date.now()}`,
 		);
 
 		try {
-			process.env.CLINE_SESSION_DATA_DIR = testSessionDataDir;
+			process.env.NEXUS_SESSION_DATA_DIR = testSessionDataDir;
 			const queue: Array<{
 				id: string;
 				prompt: string;
@@ -996,9 +996,9 @@ describe("first-send connection updates", () => {
 			).toBe(0);
 		} finally {
 			if (previousSessionDataDir === undefined) {
-				delete process.env.CLINE_SESSION_DATA_DIR;
+				delete process.env.NEXUS_SESSION_DATA_DIR;
 			} else {
-				process.env.CLINE_SESSION_DATA_DIR = previousSessionDataDir;
+				process.env.NEXUS_SESSION_DATA_DIR = previousSessionDataDir;
 			}
 			rmSync(testSessionDataDir, { recursive: true, force: true });
 		}
@@ -1006,14 +1006,14 @@ describe("first-send connection updates", () => {
 
 	it("deletes tracked attachments when a session is reset", async () => {
 		const { ctx, sessionId } = createContext();
-		const previousSessionDataDir = process.env.CLINE_SESSION_DATA_DIR;
+		const previousSessionDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 		const testSessionDataDir = join(
 			tmpdir(),
-			`cline-desktop-attachments-reset-${Date.now()}`,
+			`nexus-desktop-attachments-reset-${Date.now()}`,
 		);
 
 		try {
-			process.env.CLINE_SESSION_DATA_DIR = testSessionDataDir;
+			process.env.NEXUS_SESSION_DATA_DIR = testSessionDataDir;
 			const [queuedFile] = materializeUserFiles(sessionId, [
 				{ name: "queued.txt", content: "q" },
 			]) as string[];
@@ -1037,9 +1037,9 @@ describe("first-send connection updates", () => {
 			expect(ctx.liveSessions.has(sessionId)).toBe(false);
 		} finally {
 			if (previousSessionDataDir === undefined) {
-				delete process.env.CLINE_SESSION_DATA_DIR;
+				delete process.env.NEXUS_SESSION_DATA_DIR;
 			} else {
-				process.env.CLINE_SESSION_DATA_DIR = previousSessionDataDir;
+				process.env.NEXUS_SESSION_DATA_DIR = previousSessionDataDir;
 			}
 			rmSync(testSessionDataDir, { recursive: true, force: true });
 		}
@@ -1047,14 +1047,14 @@ describe("first-send connection updates", () => {
 
 	it("preserves tracked attachments across re-attach", async () => {
 		const { ctx, sessionId } = createContext();
-		const previousSessionDataDir = process.env.CLINE_SESSION_DATA_DIR;
+		const previousSessionDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 		const testSessionDataDir = join(
 			tmpdir(),
-			`cline-desktop-attachments-attach-${Date.now()}`,
+			`nexus-desktop-attachments-attach-${Date.now()}`,
 		);
 
 		try {
-			process.env.CLINE_SESSION_DATA_DIR = testSessionDataDir;
+			process.env.NEXUS_SESSION_DATA_DIR = testSessionDataDir;
 			const [queuedFile] = materializeUserFiles(sessionId, [
 				{ name: "queued.txt", content: "q" },
 			]) as string[];
@@ -1065,7 +1065,7 @@ describe("first-send connection updates", () => {
 			(ctx.sessionManager as unknown as { get: unknown }).get = vi.fn(
 				async () => ({
 					status: "idle",
-					provider: "cline",
+					provider: "nexus",
 					model: "anthropic/claude-sonnet-4.6",
 					cwd: "/workspace",
 					workspaceRoot: "/workspace",
@@ -1085,9 +1085,9 @@ describe("first-send connection updates", () => {
 			).toEqual([queuedFile]);
 		} finally {
 			if (previousSessionDataDir === undefined) {
-				delete process.env.CLINE_SESSION_DATA_DIR;
+				delete process.env.NEXUS_SESSION_DATA_DIR;
 			} else {
-				process.env.CLINE_SESSION_DATA_DIR = previousSessionDataDir;
+				process.env.NEXUS_SESSION_DATA_DIR = previousSessionDataDir;
 			}
 			rmSync(testSessionDataDir, { recursive: true, force: true });
 		}
@@ -1246,12 +1246,12 @@ describe("first-send connection updates", () => {
 
 	it("restores the previous provider runtime when replacement startup fails", async () => {
 		const { ctx, send, sessionId, start, stop } = createContext();
-		const previousKanbanDataDir = process.env.CLINE_KANBAN_DATA_DIR;
+		const previousKanbanDataDir = process.env.NEXUS_KANBAN_DATA_DIR;
 		const testKanbanDataDir = join(
 			tmpdir(),
-			`cline-provider-rollback-${process.pid}`,
+			`nexus-provider-rollback-${process.pid}`,
 		);
-		process.env.CLINE_KANBAN_DATA_DIR = testKanbanDataDir;
+		process.env.NEXUS_KANBAN_DATA_DIR = testKanbanDataDir;
 		start
 			.mockRejectedValueOnce(new Error("Codex bootstrap failed"))
 			.mockResolvedValueOnce({ sessionId });
@@ -1273,7 +1273,7 @@ describe("first-send connection updates", () => {
 			expect(start.mock.calls[1]?.[0]).toEqual(
 				expect.objectContaining({
 					config: expect.objectContaining({
-						providerId: "cline",
+						providerId: "nexus",
 						modelId: "anthropic/claude-sonnet-4.6",
 						sessionId,
 					}),
@@ -1288,15 +1288,15 @@ describe("first-send connection updates", () => {
 			await handleChatSessionCommand(ctx, {
 				action: "send",
 				sessionId,
-				prompt: "continue with Cline",
+				prompt: "continue with Nexus",
 				config: { ...baseConfig },
 			});
 			expect(send).toHaveBeenCalledOnce();
 		} finally {
 			if (previousKanbanDataDir === undefined) {
-				delete process.env.CLINE_KANBAN_DATA_DIR;
+				delete process.env.NEXUS_KANBAN_DATA_DIR;
 			} else {
-				process.env.CLINE_KANBAN_DATA_DIR = previousKanbanDataDir;
+				process.env.NEXUS_KANBAN_DATA_DIR = previousKanbanDataDir;
 			}
 			rmSync(testKanbanDataDir, { recursive: true, force: true });
 		}
@@ -1305,12 +1305,12 @@ describe("first-send connection updates", () => {
 	it("restores the previous provider when replacement label sync fails", async () => {
 		const { ctx, send, sessionId, start, stop, updateSessionConnection } =
 			createContext();
-		const previousKanbanDataDir = process.env.CLINE_KANBAN_DATA_DIR;
+		const previousKanbanDataDir = process.env.NEXUS_KANBAN_DATA_DIR;
 		const testKanbanDataDir = join(
 			tmpdir(),
-			`cline-provider-label-rollback-${process.pid}`,
+			`nexus-provider-label-rollback-${process.pid}`,
 		);
-		process.env.CLINE_KANBAN_DATA_DIR = testKanbanDataDir;
+		process.env.NEXUS_KANBAN_DATA_DIR = testKanbanDataDir;
 		try {
 			updateSessionConnection
 				.mockRejectedValueOnce(new Error("manifest write failed"))
@@ -1332,14 +1332,14 @@ describe("first-send connection updates", () => {
 			expect(start.mock.calls[1]?.[0]).toEqual(
 				expect.objectContaining({
 					config: expect.objectContaining({
-						providerId: "cline",
+						providerId: "nexus",
 						modelId: "anthropic/claude-sonnet-4.6",
 						sessionId,
 					}),
 				}),
 			);
 			expect(updateSessionConnection).toHaveBeenNthCalledWith(2, sessionId, {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-sonnet-4.6",
 				thinking: true,
 				reasoningEffort: "high",
@@ -1355,16 +1355,16 @@ describe("first-send connection updates", () => {
 			await handleChatSessionCommand(ctx, {
 				action: "send",
 				sessionId,
-				prompt: "continue with Cline",
+				prompt: "continue with Nexus",
 				config: { ...baseConfig },
 			});
 			expect(send).toHaveBeenCalledOnce();
 			expect(start).toHaveBeenCalledTimes(2);
 		} finally {
 			if (previousKanbanDataDir === undefined) {
-				delete process.env.CLINE_KANBAN_DATA_DIR;
+				delete process.env.NEXUS_KANBAN_DATA_DIR;
 			} else {
-				process.env.CLINE_KANBAN_DATA_DIR = previousKanbanDataDir;
+				process.env.NEXUS_KANBAN_DATA_DIR = previousKanbanDataDir;
 			}
 			rmSync(testKanbanDataDir, { recursive: true, force: true });
 		}
@@ -1397,7 +1397,7 @@ describe("workspace metadata prewarming", () => {
 			.fn<(cwd: string) => Promise<string>>()
 			.mockImplementationOnce(async () => await firstResult)
 			.mockResolvedValueOnce("fresh metadata");
-		const cwd = "/tmp/cline-desktop-prewarm-reuse";
+		const cwd = "/tmp/nexus-desktop-prewarm-reuse";
 
 		prewarmWorkspaceMetadata(cwd, load);
 		const consumed = consumeWorkspaceMetadata(cwd, load);
@@ -1416,7 +1416,7 @@ describe("workspace metadata prewarming", () => {
 			.fn<(cwd: string) => Promise<string>>()
 			.mockRejectedValueOnce(new Error("git unavailable"))
 			.mockResolvedValueOnce("recovered metadata");
-		const cwd = "/tmp/cline-desktop-prewarm-retry";
+		const cwd = "/tmp/nexus-desktop-prewarm-retry";
 
 		prewarmWorkspaceMetadata(cwd, load);
 		await expect(consumeWorkspaceMetadata(cwd, load)).rejects.toThrow(
@@ -1431,8 +1431,8 @@ describe("workspace metadata prewarming", () => {
 	it("keeps different workspaces in separate single-flight entries", () => {
 		const load = vi.fn(async (cwd: string) => `metadata for ${cwd}`);
 
-		prewarmWorkspaceMetadata("/tmp/cline-desktop-prewarm-a", load);
-		prewarmWorkspaceMetadata("/tmp/cline-desktop-prewarm-b", load);
+		prewarmWorkspaceMetadata("/tmp/nexus-desktop-prewarm-a", load);
+		prewarmWorkspaceMetadata("/tmp/nexus-desktop-prewarm-b", load);
 
 		expect(load).toHaveBeenCalledTimes(2);
 	});
@@ -1442,7 +1442,7 @@ describe("workspace metadata prewarming", () => {
 			.fn<(cwd: string) => Promise<string>>()
 			.mockResolvedValueOnce("startup metadata")
 			.mockResolvedValueOnce("current metadata");
-		const cwd = "/tmp/cline-desktop-prewarm-expired";
+		const cwd = "/tmp/nexus-desktop-prewarm-expired";
 
 		prewarmWorkspaceMetadata(cwd, load, () => 0);
 		await expect(
@@ -1469,7 +1469,7 @@ describe("runtime slash command expansion on send", () => {
 	function createWorkspaceWithSkill(): string {
 		const workspace = mkdtempSync(join(tmpdir(), "desktop-slash-send-"));
 		tempRoots.push(workspace);
-		const skillDir = join(workspace, ".cline", "skills", "desktop-send-skill");
+		const skillDir = join(workspace, ".nexus", "skills", "desktop-send-skill");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
 			join(skillDir, "SKILL.md"),
@@ -1478,7 +1478,7 @@ name: desktop-send-skill
 ---
 Follow the desktop send skill instructions.`,
 		);
-		const workflowsDir = join(workspace, ".cline", "workflows");
+		const workflowsDir = join(workspace, ".nexus", "workflows");
 		mkdirSync(workflowsDir, { recursive: true });
 		writeFileSync(
 			join(workflowsDir, "desktop-send-workflow.md"),
@@ -1498,7 +1498,7 @@ Follow the desktop send workflow instructions.`,
 			messages: [],
 		}));
 		const session = {
-			config: { provider: "cline", model: "test-model", cwd: workspace },
+			config: { provider: "nexus", model: "test-model", cwd: workspace },
 			messages: [],
 			promptsInQueue: [],
 			busy: false,

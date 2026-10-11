@@ -23,9 +23,9 @@ import {
 } from "node:path";
 import {
 	isPluginModulePath,
-	resolveClineDir,
+	resolveNexusDir,
 	resolvePluginModuleEntries,
-} from "@cline/shared/storage";
+} from "@nexus/shared/storage";
 import {
 	type McpServerRegistration,
 	resolveDefaultMcpSettingsPath,
@@ -91,7 +91,7 @@ export type ParsedPluginSource =
 export type PluginInstallSourceType = "npm" | "git" | "local" | "remote";
 
 interface PluginPackageManifest {
-	cline?: {
+	nexus?: {
 		plugins?: Array<{ paths?: string[] } | string>;
 	};
 	dependencies?: Record<string, string>;
@@ -103,10 +103,10 @@ interface PluginPackageManifest {
 
 const INSTALLS_DIRECTORY_NAME = "_installed";
 const PACKAGE_DIRECTORY_NAME = "package";
-const OFFICIAL_PLUGINS_REPO = "https://github.com/cline/plugins.git";
+const OFFICIAL_PLUGINS_REPO = "https://github.com/nexus/plugins.git";
 const REMOTE_PLUGIN_FETCH_TIMEOUT_MS = 30_000;
 const REMOTE_PLUGIN_MAX_BYTES = 10 * 1024 * 1024;
-const HOST_PROVIDED_SDK_PREFIX = "@cline/";
+const HOST_PROVIDED_SDK_PREFIX = "@nexus/";
 const DEPENDENCY_FIELDS = [
 	"dependencies",
 	"devDependencies",
@@ -114,9 +114,9 @@ const DEPENDENCY_FIELDS = [
 	"peerDependencies",
 ] as const;
 const WRAPPER_PACKAGE_JSON = {
-	name: "cline-installed-plugin",
+	name: "nexus-installed-plugin",
 	private: true,
-	cline: {
+	nexus: {
 		plugins: [] as Array<{ paths: string[] }>,
 	},
 };
@@ -449,8 +449,8 @@ export function parsePluginSource(
 
 function getPluginRoot(cwd: string | undefined): string {
 	return cwd
-		? join(cwd, ".cline", "plugins")
-		: join(resolveClineDir(), "plugins");
+		? join(cwd, ".nexus", "plugins")
+		: join(resolveNexusDir(), "plugins");
 }
 
 function getInstallPath(
@@ -588,7 +588,7 @@ function readPackageManifest(
 }
 
 function getManifestPaths(manifest: PluginPackageManifest | null): string[] {
-	const entries = manifest?.cline?.plugins;
+	const entries = manifest?.nexus?.plugins;
 	if (!Array.isArray(entries)) {
 		return [];
 	}
@@ -652,16 +652,16 @@ function removeInstalledHostProvidedSdkDependencies(
 	packageRoot: string,
 	preservePackageName?: string,
 ): void {
-	const clineScopeDir = join(packageRoot, "node_modules", "@cline");
-	if (!existsSync(clineScopeDir)) {
+	const nexusScopeDir = join(packageRoot, "node_modules", "@nexus");
+	if (!existsSync(nexusScopeDir)) {
 		return;
 	}
-	for (const entry of statSafeReadDir(clineScopeDir)) {
-		const packageName = `@cline/${entry.name}`;
+	for (const entry of statSafeReadDir(nexusScopeDir)) {
+		const packageName = `@nexus/${entry.name}`;
 		if (packageName === preservePackageName) {
 			continue;
 		}
-		rmSync(join(clineScopeDir, entry.name), {
+		rmSync(join(nexusScopeDir, entry.name), {
 			recursive: true,
 			force: true,
 		});
@@ -745,7 +745,7 @@ async function writeWrapperManifest(
 			{
 				...WRAPPER_PACKAGE_JSON,
 				name: packageName,
-				cline: {
+				nexus: {
 					plugins: [{ paths: entryPaths }],
 				},
 			},
@@ -766,7 +766,7 @@ async function installNpmPackage(
 	await mkdir(packageRoot, { recursive: true });
 	await writeFile(
 		join(packageRoot, "package.json"),
-		JSON.stringify({ name: "cline-plugin-install", private: true }, null, 2),
+		JSON.stringify({ name: "nexus-plugin-install", private: true }, null, 2),
 		"utf8",
 	);
 	await runCommand(npmCommand, [
@@ -863,7 +863,7 @@ async function installOfficialPlugin(
 	const sourceRoot = join(repoRoot, "plugins", parsed.slug);
 	if (!existsSync(sourceRoot) || !statSync(sourceRoot).isDirectory()) {
 		throw new Error(
-			`Official Cline plugin "${parsed.slug}" was not found at plugins/${parsed.slug} in ${officialPluginsRepo}`,
+			`Official Nexus plugin "${parsed.slug}" was not found at plugins/${parsed.slug} in ${officialPluginsRepo}`,
 		);
 	}
 
@@ -1148,7 +1148,7 @@ export async function installPlugin(
 		`${Date.now()}-${process.pid}-${hashSource(`${source}:${Math.random()}`)}`,
 	);
 	const npmCommand =
-		options.npmCommand ?? (process.env.CLINE_NPM_COMMAND?.trim() || "npm");
+		options.npmCommand ?? (process.env.NEXUS_NPM_COMMAND?.trim() || "npm");
 
 	const force = options.force === true;
 	assertCanInstall(installPath, force);

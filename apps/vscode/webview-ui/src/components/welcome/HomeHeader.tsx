@@ -1,6 +1,6 @@
-import { EmptyRequest } from "@shared/proto/cline/common"
-import ClineLogoSanta from "@/assets/ClineLogoSanta"
-import ClineLogoVariable from "@/assets/ClineLogoVariable"
+import { EmptyRequest } from "@shared/proto/nexus/common"
+import NexusLogoSanta from "@/assets/NexusLogoSanta"
+import NexusLogoVariable from "@/assets/NexusLogoVariable"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { UiServiceClient } from "@/services/grpc-client"
 
@@ -20,7 +20,7 @@ const HomeHeader = ({ shouldShowQuickWins = false }: HomeHeaderProps) => {
 	}
 
 	const isDecember = new Date().getMonth() === 11 // 11 = December (0-indexed)
-	const LogoComponent = isDecember ? ClineLogoSanta : ClineLogoVariable
+	const LogoComponent = isDecember ? NexusLogoSanta : NexusLogoVariable
 	const headingText = "What can I do for you?"
 
 	return (

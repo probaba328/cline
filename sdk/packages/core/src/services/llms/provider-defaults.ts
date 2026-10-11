@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: static */
 
-import * as Llms from "@cline/llms";
+import * as Llms from "@nexus/llms";
 import {
 	fetchModelIdsFromSource,
 	resolveModelsSourceUrl,
@@ -185,7 +185,7 @@ async function mergeKnownModels(
 			...userKnownModels,
 		});
 	}
-	if (providerId === "cline-pass" && Object.keys(liveModels).length > 0) {
+	if (providerId === "nexus-pass" && Object.keys(liveModels).length > 0) {
 		// Keep the catalog's intentional order (pass models first, free models
 		// after) instead of re-sorting by release date: the first live model is
 		// the fallback default when the bundled default id rotates out of the
@@ -203,11 +203,11 @@ async function mergeKnownModels(
 		...publicModels,
 	});
 
-	if (providerId === "cline") {
-		// Cline recommendations can use Vercel-style ids while the broader
+	if (providerId === "nexus") {
+		// Nexus recommendations can use Vercel-style ids while the broader
 		// catalog includes OpenRouter aliases for the same models. Image-output
-		// models are temporarily unavailable through Cline's inference backend,
-		// so filter them only at the Cline catalog boundary.
+		// models are temporarily unavailable through Nexus's inference backend,
+		// so filter them only at the Nexus catalog boundary.
 		return Llms.sortModelsByReleaseDate(
 			Llms.filterImageOutputModels({
 				...Llms.preferCanonicalModelIds(
@@ -230,7 +230,7 @@ function resolveCatalogModels(
 	modelsByProviderId: Record<string, Record<string, ModelInfo>>,
 ): Record<string, ModelInfo> {
 	// Runtime provider ids do not always match catalog keys. For example,
-	// Cline uses OpenRouter-backed catalog models, so live catalog lookups must
+	// Nexus uses OpenRouter-backed catalog models, so live catalog lookups must
 	// apply the same key mapping as generated catalog lookups.
 	const catalogKeys = Llms.resolveProviderModelCatalogKeys(providerId);
 	return Object.assign(

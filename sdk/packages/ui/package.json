@@ -1,10 +1,10 @@
 {
-	"name": "@cline/ui",
+	"name": "@nexus/ui",
 	"version": "0.2.0-next.6",
-	"description": "Shared Cline web theme and reusable agent UI components",
+	"description": "Shared Nexus web theme and reusable agent UI components",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cline/cline",
+		"url": "https://github.com/probaba328/cline",
 		"directory": "sdk/packages/ui"
 	},
 	"private": false,
@@ -85,7 +85,7 @@
 		"./theme/*.css"
 	],
 	"keywords": [
-		"cline",
+		"nexus",
 		"ui",
 		"design-system",
 		"react",
@@ -162,7 +162,7 @@
 		"vitest": "^4.0.18"
 	},
 	"dependencies": {
-		"@cline/shared": "workspace:*",
+		"@nexus/shared": "workspace:*",
 		"@radix-ui/react-slot": "1.2.4",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1"

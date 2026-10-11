@@ -1,6 +1,6 @@
 # Multi-Agent Coordination
 
-The Cline SDK supports two models for multi-agent work: sub-agents (parent-child) and teams (peer-to-peer).
+The Nexus SDK supports two models for multi-agent work: sub-agents (parent-child) and teams (peer-to-peer).
 
 ## Sub-Agents vs Teams
 
@@ -19,9 +19,9 @@ Sub-agents are spawned by a parent agent during a run. They execute independentl
 ### Enabling Sub-Agents
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-await cline.start({
+await nexus.start({
   prompt: "Refactor the auth module and update tests",
   config: {
     providerId: "anthropic",
@@ -56,7 +56,7 @@ Teams provide persistent, cross-session coordination between agents.
 ### Enabling Teams
 
 ```typescript
-await cline.start({
+await nexus.start({
   config: {
     providerId: "anthropic",
     modelId: "claude-sonnet-4-6",
@@ -83,7 +83,7 @@ When `enableAgentTeams` is true, the coordinator agent gets:
 Teams store shared state in:
 
 ```
-~/.cline/data/teams/[team-name]/
+~/.nexus/data/teams/[team-name]/
   task-board.json    # task assignments and status
   mailbox.json       # inter-agent messages
   mission-log.json   # coordination log
@@ -94,7 +94,7 @@ This state persists across sessions, so team members can pick up where they left
 ### CLI Team Access
 
 ```bash
-cline --team-name auth-sprint "Continue the auth refactor"
+nexus --team-name auth-sprint "Continue the auth refactor"
 ```
 
 ## Choosing Between Sub-Agents and Teams
@@ -117,7 +117,7 @@ Use teams when:
 A parent agent spawns multiple sub-agents to research different topics simultaneously:
 
 ```typescript
-await cline.start({
+await nexus.start({
   prompt: `Research these three topics in parallel:
     1. Current best practices for JWT auth
     2. OAuth 2.0 provider comparison
@@ -136,7 +136,7 @@ await cline.start({
 A coordinator manages a multi-session project:
 
 ```typescript
-await cline.start({
+await nexus.start({
   prompt: `You are the coordinator for the auth-sprint team.
     Review the task board and delegate the next highest-priority task
     to a teammate. Check status on any in-progress tasks.`,
@@ -151,7 +151,7 @@ await cline.start({
 
 ## See Also
 
-- `../clinecore/REFERENCE.md` - ClineCore runtime
+- `../clinecore/REFERENCE.md` - NexusCore runtime
 - `../clinecore/api.md` - Session config for teams
 - `../tools/REFERENCE.md` - Tool system
 - `../plugins/REFERENCE.md` - Plugin system

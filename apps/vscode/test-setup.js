@@ -38,9 +38,9 @@ Module.prototype.require = function (id) {
 
 	// The SDK packages are ESM-only and expose only an `import` condition.
 	// Integration tests run the tsc-built `out/` tree as CommonJS in VS Code's
-	// extension host, so `require("@cline/core")` fails before tests start.
+	// extension host, so `require("@nexus/core")` fails before tests start.
 	// Mock the small surface needed by legacy VS Code integration tests.
-	if (id === "@cline/core") {
+	if (id === "@nexus/core") {
 		const createNoopTelemetry = () => ({
 			setDistinctId() {},
 			setMetadata() {},
@@ -81,11 +81,11 @@ Module.prototype.require = function (id) {
 			const normalized = String(providerId || "")
 				.trim()
 				.toLowerCase()
-			if (normalized === "cline" || normalized === "cline-pass") return "cline"
+			if (normalized === "nexus" || normalized === "nexus-pass") return "nexus"
 			if (normalized === "oca" || normalized === "openai-codex") return normalized
 			return undefined
 		}
-		const formatClineApiKey = (token) => {
+		const formatNexusApiKey = (token) => {
 			const trimmed = String(token || "").trim()
 			return trimmed.toLowerCase().startsWith("workos:") ? trimmed : `workos:${trimmed}`
 		}
@@ -97,7 +97,7 @@ Module.prototype.require = function (id) {
 				storageProviderId,
 				getApiKey(settings) {
 					const accessToken = settings?.auth?.accessToken?.trim?.()
-					if (accessToken) return storageProviderId === "cline" ? formatClineApiKey(accessToken) : accessToken
+					if (accessToken) return storageProviderId === "nexus" ? formatNexusApiKey(accessToken) : accessToken
 					return settings?.apiKey?.trim?.() || settings?.auth?.apiKey?.trim?.() || undefined
 				},
 			}
@@ -111,11 +111,11 @@ Module.prototype.require = function (id) {
 		const listLocalProviders = async (manager) => ({ providers: [], settingsPath: manager.getFilePath?.() ?? "" })
 
 		return {
-			createClineTelemetryServiceConfig: (config = {}) => ({
+			createNexusTelemetryServiceConfig: (config = {}) => ({
 				enabled: false,
 				metadata: {
 					extension_version: "test",
-					cline_type: "test",
+					nexus_type: "test",
 					platform: "test",
 					platform_version: "test",
 					os_type: "test",
@@ -128,7 +128,7 @@ Module.prototype.require = function (id) {
 				flush: async () => {},
 				dispose: async () => {},
 			}),
-			ClineCore: class {
+			NexusCore: class {
 				constructor() {
 					this.runtimeAddress = undefined
 					this.pendingPrompts = {
@@ -185,7 +185,7 @@ Module.prototype.require = function (id) {
 			listLocalProviders,
 			resolveProviderConfig: async () => undefined,
 			getProviderConfigFields: () => [],
-			fetchClineRecommendedModels: async () => ({ recommended: [], free: [] }),
+			fetchNexusRecommendedModels: async () => ({ recommended: [], free: [] }),
 			readGlobalSettings: () => ({ telemetryOptOut: false }),
 			setTelemetryOptOutGlobally: () => undefined,
 			prepareRemoteConfigCoreIntegration: () => undefined,
@@ -195,28 +195,28 @@ Module.prototype.require = function (id) {
 			getProviderAuthHandler,
 			getProviderAuthStorageId,
 			resolveProviderApiKeyFromSettings,
-			getValidClineCredentials: async () => undefined,
-			loginClineOAuth: async () => undefined,
+			getValidNexusCredentials: async () => undefined,
+			loginNexusOAuth: async () => undefined,
 			loginOcaOAuth: async () => undefined,
 			loginOpenAICodex: async () => undefined,
 		}
 	}
 
-	if (id === "@cline/shared") {
+	if (id === "@nexus/shared") {
 		return {
-			buildClineSystemPrompt: () => "",
+			buildNexusSystemPrompt: () => "",
 			createTool: (tool) => tool,
 			formatDisplayUserInput: (input) => (typeof input === "string" ? input : JSON.stringify(input)),
 		}
 	}
 
-	if (id === "@cline/shared/storage") {
+	if (id === "@nexus/shared/storage") {
 		return {
 			resolveGlobalSettingsPath: () => path.join(baseUrl, ".vscode-test", "shared-global-settings.json"),
 		}
 	}
 
-	if (id === "@cline/llms") {
+	if (id === "@nexus/llms") {
 		return {
 			getAllProviders: async () => [],
 			getGeneratedModelsForProvider: () => ({}),

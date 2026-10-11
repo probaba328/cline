@@ -48,7 +48,7 @@ describe("checkManagedHubBuildMismatch", () => {
 	});
 
 	it("reports a live hub running a newer build", async () => {
-		vi.stubEnv("CLINE_HUB_BUILD_EPOCH_MS", "1000");
+		vi.stubEnv("NEXUS_HUB_BUILD_EPOCH_MS", "1000");
 		mockDiscovery({
 			record: liveRecord,
 			probe: {
@@ -75,7 +75,7 @@ describe("checkManagedHubBuildMismatch", () => {
 	});
 
 	it("reports an older hub build as outdated rather than a client update", async () => {
-		vi.stubEnv("CLINE_HUB_BUILD_EPOCH_MS", "1000");
+		vi.stubEnv("NEXUS_HUB_BUILD_EPOCH_MS", "1000");
 		mockDiscovery({
 			record: liveRecord,
 			probe: {
@@ -190,7 +190,7 @@ describe("watchManagedHubBuildMismatch", () => {
 	 */
 	it("reports an outdated hub only once it survives a second check", async () => {
 		vi.useFakeTimers();
-		vi.stubEnv("CLINE_HUB_BUILD_EPOCH_MS", "1000");
+		vi.stubEnv("NEXUS_HUB_BUILD_EPOCH_MS", "1000");
 		const probeResult: Record<string, unknown> | undefined = {
 			protocolVersion: "v1",
 			buildId: "old-build",
@@ -246,7 +246,7 @@ describe("watchManagedHubBuildMismatch", () => {
 
 	it("never reports an outdated hub that is replaced right after it is seen", async () => {
 		vi.useFakeTimers();
-		vi.stubEnv("CLINE_HUB_BUILD_EPOCH_MS", "1000");
+		vi.stubEnv("NEXUS_HUB_BUILD_EPOCH_MS", "1000");
 		let probeResult: Record<string, unknown> | undefined = {
 			protocolVersion: "v1",
 			buildId: "old-build",
@@ -303,7 +303,7 @@ describe("watchManagedHubBuildMismatch", () => {
 
 	it("fires once per mismatched hub build and re-arms after recovery", async () => {
 		vi.useFakeTimers();
-		vi.stubEnv("CLINE_HUB_BUILD_EPOCH_MS", "1000");
+		vi.stubEnv("NEXUS_HUB_BUILD_EPOCH_MS", "1000");
 		let probeResult: Record<string, unknown> | undefined = {
 			protocolVersion: "v1",
 			buildId: "newer-build",
@@ -393,7 +393,7 @@ describe("watchManagedHubBuildMismatch", () => {
 				url: "ws://127.0.0.1:59999/hub",
 			},
 		});
-		vi.stubEnv("CLINE_HUB_PORT", "25777");
+		vi.stubEnv("NEXUS_HUB_PORT", "25777");
 		const { watchManagedHubBuildMismatch } = await import(
 			"./managed-hub-build-watcher"
 		);

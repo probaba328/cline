@@ -6,8 +6,8 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
-import type { BasicLogger } from "@cline/shared";
-import { resolveSessionDataDir } from "@cline/shared/storage";
+import type { BasicLogger } from "@nexus/shared";
+import { resolveSessionDataDir } from "@nexus/shared/storage";
 import type { SessionMessagesArtifactUploader } from "../../types/session";
 import type { SessionRow } from "../models/session-row";
 import type {

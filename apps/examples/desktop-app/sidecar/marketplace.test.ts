@@ -16,22 +16,22 @@ const GOAL_ENTRY = {
 	install: { args: ["goal"] },
 };
 
-let tempClineDir: string;
-let previousClineDir: string | undefined;
+let tempNexusDir: string;
+let previousNexusDir: string | undefined;
 
 beforeEach(async () => {
-	tempClineDir = await mkdtemp(join(tmpdir(), "desktop-marketplace-"));
-	previousClineDir = process.env.CLINE_DIR;
-	process.env.CLINE_DIR = tempClineDir;
+	tempNexusDir = await mkdtemp(join(tmpdir(), "desktop-marketplace-"));
+	previousNexusDir = process.env.NEXUS_DIR;
+	process.env.NEXUS_DIR = tempNexusDir;
 });
 
 afterEach(async () => {
-	if (previousClineDir === undefined) {
-		delete process.env.CLINE_DIR;
+	if (previousNexusDir === undefined) {
+		delete process.env.NEXUS_DIR;
 	} else {
-		process.env.CLINE_DIR = previousClineDir;
+		process.env.NEXUS_DIR = previousNexusDir;
 	}
-	await rm(tempClineDir, { recursive: true, force: true });
+	await rm(tempNexusDir, { recursive: true, force: true });
 });
 
 function goalInstallDir(): string {
@@ -104,7 +104,7 @@ describe("official plugin install detection", () => {
 			JSON.stringify({
 				name: "goal",
 				private: true,
-				cline: { plugins: [{ paths: ["./package/index.ts"] }] },
+				nexus: { plugins: [{ paths: ["./package/index.ts"] }] },
 			}),
 		);
 		await writeFile(

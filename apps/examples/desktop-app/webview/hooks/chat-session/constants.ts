@@ -1,4 +1,4 @@
-import { CLINE_DEFAULT_MODEL_ID } from "@cline/shared/browser";
+import { NEXUS_DEFAULT_MODEL_ID } from "@nexus/shared/browser";
 import type { ChatSessionConfig } from "@/lib/chat-schema";
 import { readModelSelectionStorageFromWindow } from "@/lib/model-selection";
 import { normalizeProviderId } from "@/lib/provider-id";
@@ -12,10 +12,10 @@ export const CHAT_WS_RECONNECT_BASE_DELAY_MS = 300;
 export const CHAT_WS_RECONNECT_MAX_DELAY_MS = 3000;
 export const CHAT_WS_REQUEST_TIMEOUT_MS = 120000;
 export const OAUTH_MANAGED_PROVIDERS = new Set([
-	"cline",
-	// ClinePass shares the Cline account OAuth credentials (its auth handler
-	// stores under the "cline" provider), so it never has its own API key.
-	"cline-pass",
+	"nexus",
+	// NexusPass shares the Nexus account OAuth credentials (its auth handler
+	// stores under the "nexus" provider), so it never has its own API key.
+	"nexus-pass",
 	"oca",
 	"openai-codex",
 ]);
@@ -24,9 +24,9 @@ export const DEFAULT_CHAT_CONFIG: ChatSessionConfig = {
 	sessionId: undefined,
 	workspaceRoot: "",
 	cwd: "",
-	provider: "cline",
-	model: CLINE_DEFAULT_MODEL_ID,
-	apiKey: process.env.CLINE_API_KEY || "",
+	provider: "nexus",
+	model: NEXUS_DEFAULT_MODEL_ID,
+	apiKey: process.env.NEXUS_API_KEY || "",
 	mode: "act",
 	systemPrompt: undefined,
 	maxIterations: undefined,

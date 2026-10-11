@@ -1,19 +1,19 @@
-import type { AgentEvent } from "@cline/core";
+import type { AgentEvent } from "@nexus/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-	clearClineFreeModelCostCache,
-	shouldZeroClineFreeModelCost,
+	clearNexusFreeModelCostCache,
+	shouldZeroNexusFreeModelCost,
 	zeroCliAgentEventCost,
 	zeroCliUsageCost,
 } from "./free-model-cost";
 
 afterEach(() => {
-	clearClineFreeModelCostCache();
+	clearNexusFreeModelCostCache();
 	vi.unstubAllGlobals();
 });
 
-describe("shouldZeroClineFreeModelCost", () => {
-	it("uses the Cline free model list", async () => {
+describe("shouldZeroNexusFreeModelCost", () => {
+	it("uses the Nexus free model list", async () => {
 		const fetchMock = vi.fn(
 			async (_input: Parameters<typeof fetch>[0], _init?: RequestInit) => {
 				return new Response(
@@ -27,25 +27,25 @@ describe("shouldZeroClineFreeModelCost", () => {
 		vi.stubGlobal("fetch", fetchMock);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus",
 				modelId: "deepseek/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(true);
 
 		expect(fetchMock.mock.calls[0]?.[0]).toBe(
-			"https://cline.test/api/v1/ai/cline/recommended-models",
+			"https://nexus.test/api/v1/ai/nexus/recommended-models",
 		);
 	});
 
-	it("matches cline-free model ids from the free endpoint bucket exactly", async () => {
+	it("matches nexus-free model ids from the free endpoint bucket exactly", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn(async () => {
 				return new Response(
 					JSON.stringify({
-						free: [{ id: "cline-free/deepseek-v4-flash" }],
+						free: [{ id: "nexus-free/deepseek-v4-flash" }],
 					}),
 					{ status: 200, headers: { "content-type": "application/json" } },
 				);
@@ -53,37 +53,37 @@ describe("shouldZeroClineFreeModelCost", () => {
 		);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline",
-				modelId: "cline-free/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus",
+				modelId: "nexus-free/deepseek-v4-flash",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(true);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline-pass",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus-pass",
 				modelId: "deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(false);
 	});
 
-	it("does not zero non-Cline providers", async () => {
+	it("does not zero non-Nexus providers", async () => {
 		const fetchMock = vi.fn();
 		vi.stubGlobal("fetch", fetchMock);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
+			shouldZeroNexusFreeModelCost({
 				providerId: "openrouter",
 				modelId: "deepseek/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(false);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it("zeros cost of free models selected on the cline-pass provider", async () => {
+	it("zeros cost of free models selected on the nexus-pass provider", async () => {
 		vi.stubGlobal(
 			"fetch",
 			vi.fn(async () => {
@@ -97,19 +97,19 @@ describe("shouldZeroClineFreeModelCost", () => {
 		);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline-pass",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus-pass",
 				modelId: "deepseek/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(true);
 
-		// subscription (cline-pass/...) models are not in the free bucket
+		// subscription (nexus-pass/...) models are not in the free bucket
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline-pass",
-				modelId: "cline-pass/glm-5.1",
-				baseUrl: "https://cline.test/api/v1",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus-pass",
+				modelId: "nexus-pass/glm-5.1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(false);
 	});
@@ -128,10 +128,10 @@ describe("shouldZeroClineFreeModelCost", () => {
 		);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus",
 				modelId: "acme/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(false);
 	});
@@ -151,17 +151,17 @@ describe("shouldZeroClineFreeModelCost", () => {
 		vi.stubGlobal("fetch", fetchMock);
 
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus",
 				modelId: "deepseek/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(false);
 		await expect(
-			shouldZeroClineFreeModelCost({
-				providerId: "cline",
+			shouldZeroNexusFreeModelCost({
+				providerId: "nexus",
 				modelId: "deepseek/deepseek-v4-flash",
-				baseUrl: "https://cline.test/api/v1",
+				baseUrl: "https://nexus.test/api/v1",
 			}),
 		).resolves.toBe(true);
 		expect(fetchMock).toHaveBeenCalledTimes(2);

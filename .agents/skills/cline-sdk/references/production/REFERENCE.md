@@ -1,6 +1,6 @@
 # Going to Production
 
-Guidelines for deploying Cline SDK agents in production environments.
+Guidelines for deploying Nexus SDK agents in production environments.
 
 ## Error Handling
 
@@ -22,10 +22,10 @@ switch (result.status) {
 }
 ```
 
-For ClineCore, check `finishReason`:
+For NexusCore, check `finishReason`:
 
 ```typescript
-const session = await cline.start({ ... })
+const session = await nexus.start({ ... })
 
 switch (session.result?.finishReason) {
   case "completed":
@@ -98,9 +98,9 @@ agent.subscribe((event) => {
 The SDK supports OpenTelemetry for traces, metrics, and logs:
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "my-app",
   // OpenTelemetry config is picked up from environment
   // OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_SERVICE_NAME, etc.
@@ -112,7 +112,7 @@ const cline = await ClineCore.create({
 Use the `BasicLogger` interface for injectable logging:
 
 ```typescript
-import type { BasicLogger } from "@cline/sdk"
+import type { BasicLogger } from "@nexus/sdk"
 
 const logger: BasicLogger = {
   debug: (msg, meta) => console.debug(msg, meta),
@@ -120,7 +120,7 @@ const logger: BasicLogger = {
   error: (msg, meta) => console.error(msg, meta),
 }
 
-await cline.start({
+await nexus.start({
   config: {
     logger,
     // ...
@@ -203,13 +203,13 @@ toolPolicies: {
 For request/response workloads (API endpoints, queue consumers):
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "worker",
   backendMode: "local",
 })
 
 app.post("/agent", async (req, res) => {
-  const session = await cline.start({
+  const session = await nexus.start({
     prompt: req.body.prompt,
     config: { ... },
   })
@@ -222,13 +222,13 @@ app.post("/agent", async (req, res) => {
 For long-running services with session management:
 
 ```typescript
-const cline = await ClineCore.create({
+const nexus = await NexusCore.create({
   clientName: "service",
   backendMode: "hub",
 })
 
 process.on("SIGTERM", async () => {
-  await cline.dispose("SIGTERM")
+  await nexus.dispose("SIGTERM")
   process.exit(0)
 })
 ```
@@ -247,7 +247,7 @@ See `../scheduling/REFERENCE.md` for recurring agent tasks.
 ## See Also
 
 - `../agent/REFERENCE.md` - Agent overview
-- `../clinecore/REFERENCE.md` - ClineCore overview
+- `../clinecore/REFERENCE.md` - NexusCore overview
 - `../tools/REFERENCE.md` - Tool configuration
 - `../plugins/REFERENCE.md` - Metrics plugins
 - `../scheduling/REFERENCE.md` - Scheduled agents

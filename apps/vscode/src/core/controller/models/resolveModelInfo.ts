@@ -1,6 +1,6 @@
 import type { ProviderModelsResult } from "@/sdk/model-catalog/contracts"
 import { providerAllowsCustomModelIds } from "@/sdk/model-catalog/custom-model-ids"
-import { ResolveModelInfoRequest, ResolveModelInfoResponse } from "@/shared/proto/cline/models"
+import { ResolveModelInfoRequest, ResolveModelInfoResponse } from "@/shared/proto/nexus/models"
 import { toProtobufModelInfo } from "@/shared/proto-conversions/models/typeConversion"
 import { type ProviderCatalogController, parseProviderIdRequest } from "./providerCatalogShared"
 
@@ -50,6 +50,9 @@ export async function resolveModelInfo(
 		for (const mode of ["act", "plan"] as const) {
 			const selection = store.readSelection(providerId, mode)
 			if (selection?.modelId !== requestedModelId) {
+				continue
+			}
+			if (!selection) {
 				continue
 			}
 			if (selection.modelInfoSource === "fallback" && !selection.overrides) {

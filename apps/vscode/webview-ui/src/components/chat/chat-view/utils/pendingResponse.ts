@@ -1,7 +1,7 @@
-import type { ClineMessage, TurnState } from "@shared/ExtensionMessage"
+import type { NexusMessage, TurnState } from "@shared/ExtensionMessage"
 import type { PendingResponse, PendingUserMessage } from "../types/chatTypes"
 
-function sameOptimisticMessage(left: ClineMessage, right: ClineMessage): boolean {
+function sameOptimisticMessage(left: NexusMessage, right: NexusMessage): boolean {
 	const leftImages = left.images ?? []
 	const rightImages = right.images ?? []
 	const leftFiles = left.files ?? []
@@ -21,11 +21,11 @@ function sameOptimisticMessage(left: ClineMessage, right: ClineMessage): boolean
 	)
 }
 
-export function hasPendingMessageConfirmation(messages: ClineMessage[], pending: PendingUserMessage): boolean {
+export function hasPendingMessageConfirmation(messages: NexusMessage[], pending: PendingUserMessage): boolean {
 	return messages.some((message) => message.ts > pending.afterTs && sameOptimisticMessage(message, pending.message))
 }
 
-export function withPendingUserMessage(messages: ClineMessage[], pending: PendingUserMessage | undefined): ClineMessage[] {
+export function withPendingUserMessage(messages: NexusMessage[], pending: PendingUserMessage | undefined): NexusMessage[] {
 	return !pending || hasPendingMessageConfirmation(messages, pending) ? messages : [...messages, pending.message]
 }
 

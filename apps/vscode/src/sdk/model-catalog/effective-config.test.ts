@@ -202,14 +202,14 @@ describe("buildEffectiveProviderConfig", () => {
 		})
 	})
 
-	it("keeps Cline account auth in the auth envelope", async () => {
+	it("keeps Nexus account auth in the auth envelope", async () => {
 		const { buildEffectiveProviderConfig } = await import("./effective-config")
-		mocks.setApiConfiguration({ clineApiKey: "cline-access-token", clineAccountId: "account-123" })
+		mocks.setApiConfiguration({ nexusApiKey: "nexus-access-token", nexusAccountId: "account-123" })
 
-		expect(buildEffectiveProviderConfig(parseProviderId("cline"))).toEqual({
-			providerId: parseProviderId("cline"),
-			apiKey: "cline-access-token",
-			auth: { accessToken: "cline-access-token", accountId: "account-123" },
+		expect(buildEffectiveProviderConfig(parseProviderId("nexus"))).toEqual({
+			providerId: parseProviderId("nexus"),
+			apiKey: "nexus-access-token",
+			auth: { accessToken: "nexus-access-token", accountId: "account-123" },
 		})
 	})
 })

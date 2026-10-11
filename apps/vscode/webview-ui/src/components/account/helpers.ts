@@ -1,5 +1,5 @@
-import type { UsageTransaction as ClineAccountUsageTransaction } from "@shared/ClineAccount"
-import type { UsageTransaction as ProtoUsageTransaction, UserOrganization } from "@shared/proto/cline/account"
+import type { UsageTransaction as NexusAccountUsageTransaction } from "@shared/NexusAccount"
+import type { UsageTransaction as ProtoUsageTransaction, UserOrganization } from "@shared/proto/nexus/account"
 
 export const getMainRole = (roles?: string[]) => {
 	if (!roles) {
@@ -16,7 +16,7 @@ export const getMainRole = (roles?: string[]) => {
 	return "Member"
 }
 
-export const getClineUris = (base: string, type: "dashboard" | "credits", route?: "account" | "organization") => {
+export const getNexusUris = (base: string, type: "dashboard" | "credits", route?: "account" | "organization") => {
 	const dashboard = new URL("dashboard", base)
 
 	if (type === "dashboard") {
@@ -30,10 +30,10 @@ export const getClineUris = (base: string, type: "dashboard" | "credits", route?
 }
 
 /**
- * Converts a protobuf UsageTransaction to a ClineAccount UsageTransaction
+ * Converts a protobuf UsageTransaction to a NexusAccount UsageTransaction
  * by adding the missing id and metadata fields
  */
-function convertProtoUsageTransaction(protoTransaction: ProtoUsageTransaction): ClineAccountUsageTransaction {
+function convertProtoUsageTransaction(protoTransaction: ProtoUsageTransaction): NexusAccountUsageTransaction {
 	return {
 		...protoTransaction,
 		id: protoTransaction.generationId, // Use generationId as the id
@@ -46,9 +46,9 @@ function convertProtoUsageTransaction(protoTransaction: ProtoUsageTransaction): 
 }
 
 /**
- * Converts an array of protobuf UsageTransactions to ClineAccount UsageTransactions
+ * Converts an array of protobuf UsageTransactions to NexusAccount UsageTransactions
  */
-export function convertProtoUsageTransactions(protoTransactions: ProtoUsageTransaction[]): ClineAccountUsageTransaction[] {
+export function convertProtoUsageTransactions(protoTransactions: ProtoUsageTransaction[]): NexusAccountUsageTransaction[] {
 	return protoTransactions.map(convertProtoUsageTransaction)
 }
 

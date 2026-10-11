@@ -1,5 +1,5 @@
 import type { AgentSideConnection } from "@agentclientprotocol/sdk";
-import type { AgentEvent } from "@cline/core";
+import type { AgentEvent } from "@nexus/core";
 import { describe, expect, it, vi } from "vitest";
 import { forwardAgentEvent } from "./session-updates";
 

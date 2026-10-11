@@ -1,7 +1,7 @@
 # MCP OAuth Test Server
 
 A self-contained, **zero-dependency** (Node `http` only) server for exercising
-and debugging Cline's MCP OAuth flow locally.
+and debugging Nexus's MCP OAuth flow locally.
 
 It plays both roles that a real remote MCP server + its OAuth provider play:
 
@@ -13,7 +13,7 @@ It plays both roles that a real remote MCP server + its OAuth provider play:
    - `POST /token` — `authorization_code` + `refresh_token` grants
 2. **MCP StreamableHTTP resource server**:
    - `POST /mcp` — returns `401 + WWW-Authenticate: Bearer resource_metadata="..."`
-     until authenticated (this is what triggers Cline's OAuth flow), then a
+     until authenticated (this is what triggers Nexus's OAuth flow), then a
      minimal `initialize` response.
 
 The endpoint shapes match what `@modelcontextprotocol/sdk` v1.25.x discovers.
@@ -22,11 +22,11 @@ The endpoint shapes match what `@modelcontextprotocol/sdk` v1.25.x discovers.
 
 Exercises MCP OAuth failure modes without a real remote server:
 
-- **State expiry** — Cline's `McpOAuthManager` enforces a state lifetime
+- **State expiry** — Nexus's `McpOAuthManager` enforces a state lifetime
   (`MCP_OAUTH_STATE_EXPIRY_MS`). If the callback returns after the window, it's
   rejected. Use `--slow-authorize` to push past it.
 - **Denial** — the consent page's Deny button (or `--auto-deny`) redirects back
-  with `error=access_denied`, so you can observe how Cline handles a denial.
+  with `error=access_denied`, so you can observe how Nexus handles a denial.
 
 ## Run interactively
 
@@ -38,10 +38,10 @@ bun src/dev/mcp-oauth-test-server/server.ts --verbose
 ```
 
 On startup the server prints a **paste-ready `mcpServers` JSON fragment** (in
-the nested `transport` shape used by `cline_mcp_settings.json`) in addition to
+the nested `transport` shape used by `nexus_mcp_settings.json`) in addition to
 the banner — merge it under `mcpServers` in
-`~/.cline/data/settings/cline_mcp_settings.json`. Or add an MCP server
-(StreamableHTTP) in Cline by hand, pointing at:
+`~/.nexus/data/settings/nexus_mcp_settings.json`. Or add an MCP server
+(StreamableHTTP) in Nexus by hand, pointing at:
 
 ```
 http://127.0.0.1:7777/mcp
@@ -56,7 +56,7 @@ can click **Approve** or **Deny**.
 |------|-------------|
 | `--port <n>` | Port to listen on (default `7777`, env `MCP_OAUTH_TEST_PORT`). `0` = OS-assigned random port. |
 | `--random-port` | Bind an OS-assigned random free port instead of `--port` |
-| `--instances <n>` | Start N independent servers, each on its own random port (implies `--random-port`). Use to add several MCP servers to Cline at once. |
+| `--instances <n>` | Start N independent servers, each on its own random port (implies `--random-port`). Use to add several MCP servers to Nexus at once. |
 | `--auto-approve` | Skip consent; always approve |
 | `--auto-deny` | Skip consent; always deny (simulate "Deny" click) |
 | `--code-ttl <ms>` | Authorization-code lifetime (default `600000`). Set small to force expiry. |
@@ -67,20 +67,20 @@ can click **Approve** or **Deny**.
 ## Adding multiple servers at once
 
 Each instance binds its own random port and prints its `/mcp` endpoint. Add
-each one to Cline as a separate StreamableHTTP server to exercise concurrent
+each one to Nexus as a separate StreamableHTTP server to exercise concurrent
 OAuth flows / multiple authenticated servers:
 
 ```bash
 bun src/dev/mcp-oauth-test-server/server.ts --instances 3 --verbose
 ```
 
-Because OAuth state is keyed by **server name** in `cline_mcp_settings.json`,
-each Cline server entry gets its own independent tokens — even if two point at
+Because OAuth state is keyed by **server name** in `nexus_mcp_settings.json`,
+each Nexus server entry gets its own independent tokens — even if two point at
 the same URL.
 
 ## Reproducing specific bugs
 
-**"OAuth state expired" race** — make the user take longer than Cline's
+**"OAuth state expired" race** — make the user take longer than Nexus's
 10-minute state window:
 
 ```bash
@@ -100,8 +100,8 @@ The server can be driven from the debug harness without a real browser:
 - `TestServer`, `TestServerOptions`, and `parseArgs` are exported, so the
   harness can `import` and start an instance in-process (the module only
   auto-starts when run as the main script).
-- Under `CLINE_CAPTURE_BROWSER=1` (see `src/utils/env.ts`), the authorization URL
-  Cline tries to open is captured instead of launched. The harness `curl`s the
+- Under `NEXUS_CAPTURE_BROWSER=1` (see `src/utils/env.ts`), the authorization URL
+  Nexus tries to open is captured instead of launched. The harness `curl`s the
   captured `/authorize` URL (append `decision=approve` or `decision=deny` to
   skip the consent page) to get the `vscode://` callback, then delivers it to the
   extension via `globalThis.__clineHandleUri(...)` (see the debug harness README,

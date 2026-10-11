@@ -2,7 +2,7 @@ import type { ChoiceContext } from "@opentui-ui/dialog";
 import type { DialogActions } from "@opentui-ui/dialog/react";
 import { useCallback } from "react";
 import open from "../../utils/open";
-import type { ClineAccountSnapshot } from "../cline-account";
+import type { NexusAccountSnapshot } from "../nexus-account";
 import {
 	type AccountDialogAction,
 	AccountDialogContent,
@@ -16,7 +16,7 @@ import type { OpenModelSelectorOptions } from "./use-model-selector";
 export function useAccountDialog(opts: {
 	dialog: DialogActions;
 	termHeight: number;
-	loadAccount: () => Promise<ClineAccountSnapshot>;
+	loadAccount: () => Promise<NexusAccountSnapshot>;
 	switchAccount: (organizationId?: string | null) => Promise<void>;
 	onAccountChange?: () => Promise<void>;
 	openModelSelector: (options?: OpenModelSelectorOptions) => Promise<void>;
@@ -58,7 +58,7 @@ export function useAccountDialog(opts: {
 			return;
 		}
 		if (action === "learn-more") {
-			await open("https://cline.bot", { wait: false }).catch(() => {});
+			await open("https://nexus.bot", { wait: false }).catch(() => {});
 			refocusTextarea();
 			return;
 		}
@@ -67,7 +67,7 @@ export function useAccountDialog(opts: {
 				style: { maxHeight: termHeight - 2 },
 				closeOnEscape: false,
 				content: (ctx: ChoiceContext<OAuthLoginResult>) => (
-					<OAuthLoginContent {...ctx} providerId="cline" providerName="Cline" />
+					<OAuthLoginContent {...ctx} providerId="nexus" providerName="Nexus" />
 				),
 			});
 			if (saved === true) {

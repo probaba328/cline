@@ -3,11 +3,11 @@
  */
 
 import type {
-	ClineAskQuestion,
-	ClineMessage,
-	ClinePlanModeResponse,
-	ClineSayBrowserAction,
-	ClineSayTool,
+	NexusAskQuestion,
+	NexusMessage,
+	NexusPlanModeResponse,
+	NexusSayBrowserAction,
+	NexusSayTool,
 } from "@shared/ExtensionMessage"
 import { FileIcon, FolderOpenDotIcon, FolderOpenIcon, SearchIcon, ShapesIcon, WrenchIcon } from "lucide-react"
 
@@ -25,12 +25,12 @@ const LOW_STAKES_TOOLS = new Set([
 /**
  * Check if a tool message is a low-stakes tool
  */
-export function isLowStakesTool(message: ClineMessage): boolean {
+export function isLowStakesTool(message: NexusMessage): boolean {
 	if (message.say !== "tool" && message.ask !== "tool") {
 		return false
 	}
 	try {
-		const tool = JSON.parse(message.text || "{}") as ClineSayTool
+		const tool = JSON.parse(message.text || "{}") as NexusSayTool
 		return LOW_STAKES_TOOLS.has(tool.tool)
 	} catch {
 		return false
@@ -40,11 +40,11 @@ export function isLowStakesTool(message: ClineMessage): boolean {
 /**
  * Check if a message group is a tool group (array with _isToolGroup marker)
  */
-export function isToolGroup(item: ClineMessage | ClineMessage[]): item is ClineMessage[] & { _isToolGroup: true } {
-	return Array.isArray(item) && (item as ClineMessage[] & { _isToolGroup?: boolean })._isToolGroup === true
+export function isToolGroup(item: NexusMessage | NexusMessage[]): item is NexusMessage[] & { _isToolGroup: true } {
+	return Array.isArray(item) && (item as NexusMessage[] & { _isToolGroup?: boolean })._isToolGroup === true
 }
 
-function isDuplicateAskOptionEcho(message: ClineMessage, previousMessage: ClineMessage | undefined): boolean {
+function isDuplicateAskOptionEcho(message: NexusMessage, previousMessage: NexusMessage | undefined): boolean {
 	if (
 		message.type !== "say" ||
 		message.say !== "user_feedback" ||
@@ -62,7 +62,7 @@ function isDuplicateAskOptionEcho(message: ClineMessage, previousMessage: ClineM
 	}
 
 	try {
-		const parsed = JSON.parse(previousMessage.text || "{}") as ClineAskQuestion | ClinePlanModeResponse
+		const parsed = JSON.parse(previousMessage.text || "{}") as NexusAskQuestion | NexusPlanModeResponse
 		if (!parsed.options?.includes(responseText)) {
 			return false
 		}
@@ -73,11 +73,11 @@ function isDuplicateAskOptionEcho(message: ClineMessage, previousMessage: ClineM
 	}
 }
 
-function isVisibleCheckpointUserMessage(message: ClineMessage): boolean {
+function isVisibleCheckpointUserMessage(message: NexusMessage): boolean {
 	return message.type === "say" && (message.say === "task" || message.say === "user_feedback")
 }
 
-function isCheckpointAnswerMessage(messages: ClineMessage[], index: number): boolean {
+function isCheckpointAnswerMessage(messages: NexusMessage[], index: number): boolean {
 	const message = messages[index]
 	if (message?.type !== "say" || message.say !== "user_feedback") {
 		return false
@@ -99,7 +99,7 @@ function isCheckpointAnswerMessage(messages: ClineMessage[], index: number): boo
 	return false
 }
 
-export function canRestoreWorkspaceFromMessage(messages: ClineMessage[], messageTs: number | undefined): boolean {
+export function canRestoreWorkspaceFromMessage(messages: NexusMessage[], messageTs: number | undefined): boolean {
 	if (messageTs === undefined) {
 		return false
 	}
@@ -113,7 +113,7 @@ export function canRestoreWorkspaceFromMessage(messages: ClineMessage[], message
 /**
  * Filter messages that should be visible in the chat
  */
-export function filterVisibleMessages(messages: ClineMessage[]): ClineMessage[] {
+export function filterVisibleMessages(messages: NexusMessage[]): NexusMessage[] {
 	return messages.filter((message, index, arr) => {
 		if (isDuplicateAskOptionEcho(message, arr[index - 1])) {
 			return false
@@ -121,7 +121,7 @@ export function filterVisibleMessages(messages: ClineMessage[]): ClineMessage[] 
 
 		switch (message.ask) {
 			case "completion_result":
-				// don't show a chat row for a completion_result ask without text. This specific type of message only occurs if cline wants to execute a command as part of its completion result, in which case we interject the completion_result tool with the execute_command tool.
+				// don't show a chat row for a completion_result ask without text. This specific type of message only occurs if nexus wants to execute a command as part of its completion result, in which case we interject the completion_result tool with the execute_command tool.
 				if (message.text === "") {
 					return false
 				}
@@ -159,7 +159,7 @@ export function filterVisibleMessages(messages: ClineMessage[]): ClineMessage[] 
 				return false
 			}
 			case "text":
-				// Sometimes cline returns an empty text message, we don't want to render these. (We also use a say text for user messages, so in case they just sent images we still render that)
+				// Sometimes nexus returns an empty text message, we don't want to render these. (We also use a say text for user messages, so in case they just sent images we still render that)
 				if ((message.text ?? "") === "" && (message.images?.length ?? 0) === 0) {
 					return false
 				}
@@ -179,7 +179,7 @@ export function filterVisibleMessages(messages: ClineMessage[]): ClineMessage[] 
 /**
  * Check if a message is part of a browser session
  */
-function isBrowserSessionMessage(message: ClineMessage): boolean {
+function isBrowserSessionMessage(message: NexusMessage): boolean {
 	if (message.type === "ask") {
 		return message.ask === "browser_action_launch"
 	}
@@ -199,9 +199,9 @@ function isBrowserSessionMessage(message: ClineMessage): boolean {
 /**
  * Group messages, combining browser session messages into arrays
  */
-export function groupMessages(visibleMessages: ClineMessage[]): (ClineMessage | ClineMessage[])[] {
-	const result: (ClineMessage | ClineMessage[])[] = []
-	let currentGroup: ClineMessage[] = []
+export function groupMessages(visibleMessages: NexusMessage[]): (NexusMessage | NexusMessage[])[] {
+	const result: (NexusMessage | NexusMessage[])[] = []
+	let currentGroup: NexusMessage[] = []
 	let isInBrowserSession = false
 
 	const endBrowserSession = () => {
@@ -240,7 +240,7 @@ export function groupMessages(visibleMessages: ClineMessage[]): (ClineMessage | 
 
 				// Check if this is a close action
 				if (message.say === "browser_action") {
-					const browserAction = JSON.parse(message.text || "{}") as ClineSayBrowserAction
+					const browserAction = JSON.parse(message.text || "{}") as NexusSayBrowserAction
 					if (browserAction.action === "close") {
 						endBrowserSession()
 					}
@@ -269,7 +269,7 @@ export function groupMessages(visibleMessages: ClineMessage[]): (ClineMessage | 
  */
 export function findReasoningForApiReq(
 	apiReqTs: number,
-	allMessages: ClineMessage[],
+	allMessages: NexusMessage[],
 ): { reasoning: string | undefined; responseStarted: boolean } {
 	const apiReqIndex = allMessages.findIndex((m) => m.ts === apiReqTs && m.say === "api_req_started")
 	if (apiReqIndex === -1) {
@@ -313,7 +313,7 @@ export function findReasoningForApiReq(
  * - (Case A) Tools between a previous completed api_req and the current incomplete api_req
  * - (Case B) Tools after the most recent api_req overall (either because it's complete, or no loading state is active yet)
  */
-export function getToolsNotInCurrentActivities(toolGroupMessages: ClineMessage[], allMessages: ClineMessage[]): ClineMessage[] {
+export function getToolsNotInCurrentActivities(toolGroupMessages: NexusMessage[], allMessages: NexusMessage[]): NexusMessage[] {
 	// Build a Map of timestamp -> index for O(1) lookups instead of O(n) findIndex calls
 	const tsToIndex = new Map<number, number>()
 	for (let i = 0; i < allMessages.length; i++) {
@@ -322,7 +322,7 @@ export function getToolsNotInCurrentActivities(toolGroupMessages: ClineMessage[]
 
 	// Step 1: Find the MOST RECENT api_req_started overall (search backwards)
 	let mostRecentApiReqIndex = -1
-	let mostRecentApiReq: ClineMessage | null = null
+	let mostRecentApiReq: NexusMessage | null = null
 	for (let i = allMessages.length - 1; i >= 0; i--) {
 		if (allMessages[i].say === "api_req_started") {
 			mostRecentApiReqIndex = i
@@ -435,11 +435,11 @@ export function getToolsNotInCurrentActivities(toolGroupMessages: ClineMessage[]
  * - at least one low-stakes tool exists
  * - no high-stakes tool/command exists
  *
- * Note: this operates on a flat `ClineMessage[]` (e.g. `modifiedMessages`) rather than
+ * Note: this operates on a flat `NexusMessage[]` (e.g. `modifiedMessages`) rather than
  * grouped messages. It is used at render time to avoid transient UI frames where
  * `api_req_started` briefly appears before grouping absorbs it.
  */
-export function isApiReqAbsorbable(apiReqTs: number, allMessages: ClineMessage[]): boolean {
+export function isApiReqAbsorbable(apiReqTs: number, allMessages: NexusMessage[]): boolean {
 	const apiReqIndex = allMessages.findIndex((m) => m.ts === apiReqTs && m.say === "api_req_started")
 	if (apiReqIndex === -1) {
 		return false
@@ -486,7 +486,7 @@ export function isApiReqAbsorbable(apiReqTs: number, allMessages: ClineMessage[]
  * If so, it should be absorbed into the tool group rather than rendered separately.
  * The key is: no HIGH-stakes tools (write, edit, command, etc.) AND no reasoning
  */
-function isApiReqFollowedOnlyByLowStakesTools(index: number, messages: (ClineMessage | ClineMessage[])[]): boolean {
+function isApiReqFollowedOnlyByLowStakesTools(index: number, messages: (NexusMessage | NexusMessage[])[]): boolean {
 	let hasLowStakesTool = false
 	let hasReasoning = false
 	for (let i = index + 1; i < messages.length; i++) {
@@ -530,13 +530,13 @@ function isApiReqFollowedOnlyByLowStakesTools(index: number, messages: (ClineMes
  * Only creates tool groups when there's at least one actual tool - reasoning-only groups are dropped.
  * Should be called after groupMessages.
  */
-export function groupLowStakesTools(groupedMessages: (ClineMessage | ClineMessage[])[]): (ClineMessage | ClineMessage[])[] {
-	const result: (ClineMessage | ClineMessage[])[] = []
-	let toolGroup: ClineMessage[] = []
-	let pendingReasoning: ClineMessage[] = []
-	let pendingApiReq: ClineMessage[] = []
+export function groupLowStakesTools(groupedMessages: (NexusMessage | NexusMessage[])[]): (NexusMessage | NexusMessage[])[] {
+	const result: (NexusMessage | NexusMessage[])[] = []
+	let toolGroup: NexusMessage[] = []
+	let pendingReasoning: NexusMessage[] = []
+	let pendingApiReq: NexusMessage[] = []
 	let hasTools = false
-	const pendingTools: ClineMessage[] = []
+	const pendingTools: NexusMessage[] = []
 
 	const flushPending = () => {
 		pendingApiReq.forEach((m) => {
@@ -551,7 +551,7 @@ export function groupLowStakesTools(groupedMessages: (ClineMessage | ClineMessag
 
 	const commitToolGroup = () => {
 		if (toolGroup.length > 0 && hasTools) {
-			const group = toolGroup as ClineMessage[] & { _isToolGroup: boolean }
+			const group = toolGroup as NexusMessage[] & { _isToolGroup: boolean }
 			group._isToolGroup = true
 			result.push(group)
 			pendingReasoning = []

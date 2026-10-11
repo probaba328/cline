@@ -6,25 +6,25 @@
 <table>
 <tbody>
 <td align="center">
-<a href="https://discord.gg/cline" target="_blank"><strong>Discord</strong></a>
+<a href="https://discord.gg/nexus" target="_blank"><strong>Discord</strong></a>
 </td>
 <td align="center">
-<a href="https://www.reddit.com/r/cline/" target="_blank"><strong>r/cline</strong></a>
+<a href="https://www.reddit.com/r/nexus/" target="_blank"><strong>r/nexus</strong></a>
 </td>
 <td align="center">
-<a href="https://github.com/cline/cline/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>Feature Requests</strong></a>
+<a href="https://github.com/nexus/nexus/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>Feature Requests</strong></a>
 </td>
 </tbody>
 </table>
 </div>
 
-The Cline SDK is a TypeScript framework for building AI agents that can edit files, run shell commands, browse the web, call APIs, and use any custom tool you give them. It's the same engine that powers [Cline](https://github.com/cline/cline), packaged as a library you can embed in your own applications.
+The Nexus SDK is a TypeScript framework for building AI agents that can edit files, run shell commands, browse the web, call APIs, and use any custom tool you give them. It's the same engine that powers [Nexus](https://github.com/nexus/nexus), packaged as a library you can embed in your own applications.
 
 ```typescript
-import { Agent } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
 
 const agent = new Agent({
-  providerId: "cline",
+  providerId: "nexus",
   modelId: "openai/gpt-5.5",
   systemPrompt: "You are a helpful coding assistant.",
   tools: [],
@@ -39,15 +39,15 @@ That's it. The agent streams its response, calls tools if you give it any, and r
 ## Install
 
 ```bash
-npm install @cline/sdk
+npm install @nexus/sdk
 ```
 
 ## SDK Skill
 
-If you use a coding agent (Claude Code, Codex, Cline, etc.), install the [Cline SDK skill](https://github.com/cline/sdk-skill) to give your agent context on the SDK's APIs and best practices to help you build with the Cline SDK.
+If you use a coding agent (Claude Code, Codex, Nexus, etc.), install the [Nexus SDK skill](https://github.com/nexus/sdk-skill) to give your agent context on the SDK's APIs and best practices to help you build with the Nexus SDK.
 
 ```bash
-npx skills add cline/sdk-skill
+npx skills add nexus/sdk-skill
 ```
 
 Prompt it to scaffold agents, create custom tools, wire up plugins, configure providers, and more.
@@ -89,14 +89,14 @@ Explore full working examples in [`examples/`](examples) and app examples in [`a
 | [Hooks](examples/hooks) | File-based and runtime hooks for logging, review gates, context injection, and lifecycle automation |
 | [Cron Automations](examples/cron) | Recurring and event-driven automation specs for scheduled quality checks and PR workflows |
 | [Desktop App](apps/examples/desktop-app) | Tauri desktop shell with a Bun sidecar backend and Next.js UI |
-| [VS Code Extension App](apps/examples/vscode) | VS Code extension example that runs Cline sessions over the RPC runtime |
+| [VS Code Extension App](apps/examples/vscode) | VS Code extension example that runs Nexus sessions over the RPC runtime |
 
 ## Custom Tools
 
 Tools are how agents interact with the world. Define a tool with a name, a description the model reads, a JSON Schema for inputs, and a function that does the work:
 
 ```typescript
-import { createTool } from "@cline/sdk"
+import { createTool } from "@nexus/sdk"
 
 const deploy = createTool({
   name: "deploy",
@@ -180,16 +180,16 @@ const metrics: AgentPlugin = {
 }
 ```
 
-## ClineCore: Full Runtime
+## NexusCore: Full Runtime
 
-When you need session persistence, built-in tools, config discovery, and multi-process support, use `ClineCore`:
+When you need session persistence, built-in tools, config discovery, and multi-process support, use `NexusCore`:
 
 ```typescript
-import { ClineCore } from "@cline/sdk"
+import { NexusCore } from "@nexus/sdk"
 
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 
-const session = await cline.start({
+const session = await nexus.start({
   prompt: "Set up CI with GitHub Actions",
   config: {
     providerId: "anthropic",
@@ -205,13 +205,13 @@ console.log(session.result?.text)
 
 If both `cwd` and `workspaceRoot` are omitted, the execution host places the
 session in the shared chat workspace at
-`<cline-data-dir>/workspaces/chat` (by default
-`~/.cline/data/workspaces/chat`), seeded with an `AGENTS.md` rules file that
+`<nexus-data-dir>/workspaces/chat` (by default
+`~/.nexus/data/workspaces/chat`), seeded with an `AGENTS.md` rules file that
 tells the agent to treat the session as a chat and only create a named
 project folder when the user asks for one.
 The paths in `session.manifest` are the authoritative resolved workspace paths.
 
-`ClineCore` gives the agent built-in tools (`bash`, `editor`, `read_files`, `apply_patch`, `search`, `fetch_web`), persists sessions to SQLite, discovers config from `.cline/` directories, and optionally connects to an RPC sidecar for scheduled agents and cross-process session management.
+`NexusCore` gives the agent built-in tools (`bash`, `editor`, `read_files`, `apply_patch`, `search`, `fetch_web`), persists sessions to SQLite, discovers config from `.nexus/` directories, and optionally connects to an RPC sidecar for scheduled agents and cross-process session management.
 
 ## Packages
 
@@ -219,30 +219,30 @@ The SDK is a layered stack. Use as much or as little as you need:
 
 | Package | What it does |
 |---------|-------------|
-| `@cline/sdk` | Everything you need -- install this one |
-| `@cline/core` | Sessions, persistence, built-in tools, config discovery, RPC |
-| `@cline/agents` | Stateless agent loop with tool execution and streaming |
-| `@cline/llms` | LLM provider gateway (Anthropic, OpenAI, Google, Bedrock, Mistral, and more) |
-| `@cline/shared` | Types, tool creation helpers, hook engine |
+| `@nexus/sdk` | Everything you need -- install this one |
+| `@nexus/core` | Sessions, persistence, built-in tools, config discovery, RPC |
+| `@nexus/agents` | Stateless agent loop with tool execution and streaming |
+| `@nexus/llms` | LLM provider gateway (Anthropic, OpenAI, Google, Bedrock, Mistral, and more) |
+| `@nexus/shared` | Types, tool creation helpers, hook engine |
 
-`@cline/sdk` is an alias for `@cline/core` that re-exports from all packages, so a single install gives you the full API. The individual packages are available if you want a minimal dependency footprint.
+`@nexus/sdk` is an alias for `@nexus/core` that re-exports from all packages, so a single install gives you the full API. The individual packages are available if you want a minimal dependency footprint.
 
 ## CLI
 
-The Cline CLI gives you terminal access to the full SDK:
+The Nexus CLI gives you terminal access to the full SDK:
 
 ```bash
 # Interactive agent
-cline
+nexus
 
 # Single prompt
-cline "Refactor the auth module to use JWT"
+nexus "Refactor the auth module to use JWT"
 
 # Schedule an agent to run daily
-cline schedule create "PR summary" --cron "0 9 * * MON-FRI" --prompt "Summarize open PRs"
+nexus schedule create "PR summary" --cron "0 9 * * MON-FRI" --prompt "Summarize open PRs"
 
 # Connect a Telegram bot created with @BotFather
-cline connect telegram -k "$TELEGRAM_BOT_TOKEN"
+nexus connect telegram -k "$TELEGRAM_BOT_TOKEN"
 # Then send /help or /start to the bot in Telegram
 ```
 
@@ -263,19 +263,19 @@ Works with every major LLM provider out of the box:
 
 ## Documentation
 
-Full documentation at [docs.cline.bot/sdk](https://docs.cline.bot/sdk/overview):
+Full documentation at [docs.nexus.bot/sdk](https://docs.nexus.bot/sdk/overview):
 
-- [Quickstart](https://docs.cline.bot/sdk/quickstart) -- zero to running agent in 5 minutes
-- [Core Concepts](https://docs.cline.bot/sdk/agents) -- agents, sessions, tools, events, extensions, hooks
-- [Guides](https://docs.cline.bot/sdk/guides/building-an-agent) -- end-to-end tutorials for common patterns
-- [Architecture](https://docs.cline.bot/sdk/architecture/overview) -- how the SDK is structured and why
-- [API Reference](https://docs.cline.bot/sdk/reference/cline-core) -- every method, type, and config option
+- [Quickstart](https://docs.nexus.bot/sdk/quickstart) -- zero to running agent in 5 minutes
+- [Core Concepts](https://docs.nexus.bot/sdk/agents) -- agents, sessions, tools, events, extensions, hooks
+- [Guides](https://docs.nexus.bot/sdk/guides/building-an-agent) -- end-to-end tutorials for common patterns
+- [Architecture](https://docs.nexus.bot/sdk/architecture/overview) -- how the SDK is structured and why
+- [API Reference](https://docs.nexus.bot/sdk/reference/nexus-core) -- every method, type, and config option
 
 
 ## Contributing
 
-To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.md) to learn the basics. You can also join our [Discord](https://discord.gg/cline) to chat with other contributors in the `#contributors` channel. If you're looking for full-time work, check out our open positions on our [careers page](https://cline.bot/join-us)!
+To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.md) to learn the basics. You can also join our [Discord](https://discord.gg/nexus) to chat with other contributors in the `#contributors` channel. If you're looking for full-time work, check out our open positions on our [careers page](https://nexus.bot/join-us)!
 
 ## License
 
-[Apache 2.0 © 2026 Cline Bot Inc.](./LICENSE)
+[Apache 2.0 © 2026 Nexus Bot Inc.](./LICENSE)

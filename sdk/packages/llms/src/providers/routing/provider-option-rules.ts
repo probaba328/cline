@@ -1,4 +1,4 @@
-import { isClineProvider } from "@cline/shared";
+import { isNexusProvider } from "@nexus/shared";
 import { OLLAMA_DEFAULT_CONTEXT_WINDOW } from "../builtins";
 import {
 	getModelReasoningControls,
@@ -197,11 +197,11 @@ const genericProviderFanoutRule: ProviderOptionRule = {
 				}),
 };
 
-const clineGatewayReasoningRule: ProviderOptionRule = {
-	id: "provider.cline.reasoning",
+const nexusGatewayReasoningRule: ProviderOptionRule = {
+	id: "provider.nexus.reasoning",
 	phase: "provider-reasoning",
-	description: "Cline gateway accepts the shared gateway reasoning shape.",
-	applies: (input) => isClineProvider(input.request.providerId),
+	description: "Nexus gateway accepts the shared gateway reasoning shape.",
+	applies: (input) => isNexusProvider(input.request.providerId),
 	build: (input) =>
 		buildReasoningPatchForProvider(
 			input,
@@ -223,13 +223,13 @@ const openRouterReasoningRule: ProviderOptionRule = {
 		),
 };
 
-const clineMiniMaxM3GatewayReasoningRule: ProviderOptionRule = {
-	id: "provider.cline.minimax-m3.gateway-reasoning",
+const nexusMiniMaxM3GatewayReasoningRule: ProviderOptionRule = {
+	id: "provider.nexus.minimax-m3.gateway-reasoning",
 	phase: "provider-reasoning",
 	description:
-		"Cline-routed MiniMax M3 keeps the gateway reasoning shape instead of leaking generic thinking.",
+		"Nexus-routed MiniMax M3 keeps the gateway reasoning shape instead of leaking generic thinking.",
 	applies: (input) =>
-		isClineProvider(input.request.providerId) && isMiniMaxM3(input),
+		isNexusProvider(input.request.providerId) && isMiniMaxM3(input),
 	suppresses: { genericThinking: true },
 	build: () => undefined,
 };
@@ -359,13 +359,13 @@ const geminiThinkingRule: ProviderOptionRule = {
 	},
 };
 
-const clineReasoningDisabledThinkingRule: ProviderOptionRule = {
-	id: "provider.cline.disable-thinking",
+const nexusReasoningDisabledThinkingRule: ProviderOptionRule = {
+	id: "provider.nexus.disable-thinking",
 	phase: "provider",
 	description:
-		"Cline-routed non-Kimi-K2.6 Moonshot Kimi models use thinking.type=disabled when reasoning is disabled.",
+		"Nexus-routed non-Kimi-K2.6 Moonshot Kimi models use thinking.type=disabled when reasoning is disabled.",
 	applies: (input) =>
-		isClineProvider(input.request.providerId) &&
+		isNexusProvider(input.request.providerId) &&
 		isMoonshotKimiModel(input) &&
 		input.request.reasoning?.enabled === false &&
 		!isKimiK26Family(input),
@@ -514,14 +514,14 @@ export const PROVIDER_OPTION_RULES: ReadonlyArray<ProviderOptionRule> = [
 	openAiAdapterRule,
 	openAiCodexRule,
 	genericProviderFanoutRule,
-	clineGatewayReasoningRule,
+	nexusGatewayReasoningRule,
 	openRouterReasoningRule,
-	clineMiniMaxM3GatewayReasoningRule,
+	nexusMiniMaxM3GatewayReasoningRule,
 	vercelReasoningRule,
 	directMoonshotReasoningRule,
 	fireworksReasoningRule,
 	geminiThinkingRule,
-	clineReasoningDisabledThinkingRule,
+	nexusReasoningDisabledThinkingRule,
 	kimiK26ThinkingRule,
 	deepSeekThinkingRule,
 	ollamaNativeOptionsRule,

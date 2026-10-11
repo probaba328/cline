@@ -5,13 +5,13 @@ import type {
 	HubReplyEnvelope,
 	HubTransportFrame,
 	ITelemetryService,
-} from "@cline/shared";
+} from "@nexus/shared";
 import {
 	captureSdkError,
 	HUB_COMMAND_SLOW_LOG_MS,
 	resolveHubCommandTimeoutMs,
 	safeJsonParse,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type {
 	HubCommandTransport,
 	HubConnectionAuthority,

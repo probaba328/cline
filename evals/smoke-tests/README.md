@@ -1,6 +1,6 @@
 # Smoke Tests
 
-Curated smoke tests that verify Cline works correctly with LLM providers.
+Curated smoke tests that verify Nexus works correctly with LLM providers.
 
 ## Purpose
 
@@ -14,7 +14,7 @@ These tests catch regressions in:
 
 ```bash
 # One-time auth setup
-cline auth
+nexus auth
 
 # Run tests (3 trials by default)
 npm run eval:smoke:run
@@ -44,13 +44,13 @@ npm run eval:smoke:run -- --model claude-sonnet-4-5-20250929
 ### Interactive (recommended for local dev)
 
 ```bash
-cline auth
+nexus auth
 ```
 
 ### With API key (for automation)
 
 ```bash
-cline auth -p cline -k "$CLINE_API_KEY" -m anthropic/claude-sonnet-4.5
+nexus auth -p nexus -k "$NEXUS_API_KEY" -m anthropic/claude-sonnet-4.5
 ```
 
 ## Scenarios
@@ -95,7 +95,7 @@ Shows `pass@1` when trials < 3, `pass@3` otherwise.
    {
      "name": "Human-readable name",
      "description": "What this tests",
-     "prompt": "The task prompt for Cline",
+     "prompt": "The task prompt for Nexus",
      "expectedFiles": ["file1.txt"],
      "expectedContent": [
        { "file": "file1.txt", "contains": "expected text" }
@@ -107,11 +107,11 @@ Shows `pass@1` when trials < 3, `pass@3` otherwise.
 
 ## CI Integration
 
-Smoke test CI is temporarily disabled while the build step is repointed at the SDK CLI. The remaining root script runs the scenarios against whichever `cline` binary is already on `$PATH`.
+Smoke test CI is temporarily disabled while the build step is repointed at the SDK CLI. The remaining root script runs the scenarios against whichever `nexus` binary is already on `$PATH`.
 
 ### Required Secrets
 
-- `CLINE_API_KEY` - Cline API key, needed when CI is re-enabled
+- `NEXUS_API_KEY` - Nexus API key, needed when CI is re-enabled
 
 ### Viewing Results
 

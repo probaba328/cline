@@ -5,7 +5,7 @@
 A multi-turn conversational agent in the terminal with streaming output:
 
 ```typescript
-import { Agent } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
 import * as readline from "node:readline"
 
 const agent = new Agent({
@@ -56,7 +56,7 @@ prompt()
 Maintain per-thread agents with conversation memory:
 
 ```typescript
-import { Agent } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
 
 const agents = new Map<string, Agent>()
 
@@ -120,7 +120,7 @@ const result = await agent.run("Hello!")
 Use a tool with `completesRun: true` to extract structured data:
 
 ```typescript
-import { Agent, createTool } from "@cline/sdk"
+import { Agent, createTool } from "@nexus/sdk"
 import { z } from "zod"
 
 const submitReview = createTool({
@@ -179,8 +179,8 @@ try {
 ## Agent with Plugins
 
 ```typescript
-import { Agent } from "@cline/sdk"
-import type { AgentPlugin } from "@cline/sdk"
+import { Agent } from "@nexus/sdk"
+import type { AgentPlugin } from "@nexus/sdk"
 
 const loggingPlugin: AgentPlugin = {
   name: "logging",
@@ -221,15 +221,15 @@ agent2.restore(messages)
 const result = await agent2.continue("Continue where we left off")
 ```
 
-For automatic persistence, use `ClineCore` instead.
+For automatic persistence, use `NexusCore` instead.
 
 ## Pre-Built Model via Gateway
 
 For advanced provider configuration:
 
 ```typescript
-import { Agent } from "@cline/sdk"
-import { createGateway } from "@cline/llms"
+import { Agent } from "@nexus/sdk"
+import { createGateway } from "@nexus/llms"
 
 const gateway = createGateway({
   providerConfigs: [

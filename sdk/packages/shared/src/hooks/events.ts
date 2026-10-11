@@ -166,7 +166,7 @@ const PreCompactDataSchema = z.object({
 });
 
 export interface HookEventPayloadBase {
-	clineVersion: string;
+	nexusVersion: string;
 	hookName: HookEventName;
 	timestamp: string;
 	taskId: string;
@@ -270,7 +270,7 @@ export type HookEventPayload =
 
 export const HookEventPayloadSchema: z.ZodType<unknown> = z
 	.object({
-		clineVersion: z.string(),
+		nexusVersion: z.string(),
 		hookName: HookEventNameSchema,
 		timestamp: z.string(),
 		taskId: z.string(),

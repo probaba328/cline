@@ -1,7 +1,7 @@
 "use client";
 
-import type { AgendaTaskRecord } from "@cline/shared";
-import { type AgentQuickAction, AgentQuickActions } from "@cline/ui";
+import type { AgendaTaskRecord } from "@nexus/shared";
+import { type AgentQuickAction, AgentQuickActions } from "@nexus/ui";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AgendaTaskReviewDialog } from "@/components/agenda-task-review-dialog";
@@ -128,7 +128,7 @@ export function WelcomeScreen({
 					)}
 				>
 					{active ? (
-						<div className="cline-view-enter">
+						<div className="nexus-view-enter">
 							<h1 className="sr-only">What would you like to build?</h1>
 							<WelcomeHero />
 
@@ -152,7 +152,7 @@ export function WelcomeScreen({
 						className={
 							active
 								? "hidden"
-								: "cline-view-enter h-full min-h-0 overflow-hidden"
+								: "nexus-view-enter h-full min-h-0 overflow-hidden"
 						}
 						key="conversation-body"
 					>
@@ -172,7 +172,7 @@ export function WelcomeScreen({
 						<>
 							<AgentQuickActions
 								actions={actions}
-								className="cline-view-enter mt-11"
+								className="nexus-view-enter mt-11"
 								disabled={runningTaskId !== null}
 								onSelect={(action) => {
 									const task = quickActionTasks.find(

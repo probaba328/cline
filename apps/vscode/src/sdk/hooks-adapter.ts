@@ -1,4 +1,4 @@
-// Bridges Cline's file-based hook scripts into the SDK's runtime hooks.
+// Bridges Nexus's file-based hook scripts into the SDK's runtime hooks.
 //
 // Runtime hooks use typed in-process lifecycle callbacks:
 //   TaskStart        -> beforeRun
@@ -17,14 +17,14 @@ import type {
 	AgentHooks,
 	AgentRunLifecycleContext,
 	AgentStopControl,
-} from "@cline/shared"
-import type { ClineMessage } from "@shared/ExtensionMessage"
+} from "@nexus/shared"
+import type { NexusMessage } from "@shared/ExtensionMessage"
 import { Logger } from "@shared/services/Logger"
 import { HookFactory } from "@/core/hooks/hook-factory"
 import { getHooksEnabledSafe } from "@/core/hooks/hooks-utils"
 import type { StateManager } from "@/core/storage/StateManager"
 
-export type HookMessageEmitter = (message: ClineMessage) => void
+export type HookMessageEmitter = (message: NexusMessage) => void
 
 function toStringRecord(input: unknown): Record<string, string> {
 	if (input == null || typeof input !== "object" || Array.isArray(input)) {
@@ -80,7 +80,7 @@ function buildHookStatusMessage(opts: {
 	status: "running" | "completed" | "failed" | "cancelled"
 	toolName?: string
 	ts?: number
-}): ClineMessage {
+}): NexusMessage {
 	return {
 		ts: opts.ts ?? Date.now(),
 		type: "say",
@@ -101,7 +101,7 @@ export function buildAgentHooks(
 ): AgentHooks {
 	const hooksEnabled = () => getHooksEnabledSafe(stateManager.getGlobalSettingsKey("hooksEnabled"))
 	// Session-scoped discovery: the shared workspaceRoots global state can be
-	// repointed by another Cline instance, so the factory also scans this
+	// repointed by another Nexus instance, so the factory also scans this
 	// session's own workspace for hook files.
 	const createFactory = () => new HookFactory({ sessionWorkspaceRoot })
 

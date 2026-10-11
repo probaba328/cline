@@ -208,7 +208,7 @@ describe("applyCheckpointToWorktree", () => {
 		const checkpointRef = git(dir, [
 			"stash",
 			"create",
-			"cline checkpoint session=legacy run=1",
+			"nexus checkpoint session=legacy run=1",
 		]);
 		const checkpointBase = git(dir, ["rev-parse", `${checkpointRef}^1`]);
 
@@ -285,7 +285,7 @@ describe("applyCheckpointToWorktree", () => {
 			git(dir, [
 				"for-each-ref",
 				"--format=%(refname)",
-				"refs/cline/restore-transactions",
+				"refs/nexus/restore-transactions",
 			]),
 		).toBe("");
 	});
@@ -305,7 +305,7 @@ describe("applyCheckpointToWorktree", () => {
 			git(dir, [
 				"for-each-ref",
 				"--format=%(refname)",
-				"refs/cline/restore-transactions",
+				"refs/nexus/restore-transactions",
 			]),
 		).toBe("");
 	});

@@ -12,7 +12,7 @@ import {
 describe("HubInstanceLock", () => {
 	function tempLockFile(): string {
 		return resolveHubInstanceLockPath(
-			join(mkdtempSync(join(tmpdir(), "cline-hub-lock-")), "discovery.json"),
+			join(mkdtempSync(join(tmpdir(), "nexus-hub-lock-")), "discovery.json"),
 		);
 	}
 

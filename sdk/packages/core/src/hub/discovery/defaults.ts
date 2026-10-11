@@ -1,15 +1,15 @@
 import {
-	CLINE_HUB_DEV_PORT,
-	CLINE_HUB_PORT,
-	resolveClineBuildEnv,
-} from "@cline/shared";
+	NEXUS_HUB_DEV_PORT,
+	NEXUS_HUB_PORT,
+	resolveNexusBuildEnv,
+} from "@nexus/shared";
 
-const HUB_HOST_ENV = "CLINE_HUB_HOST";
-const HUB_PORT_ENV = "CLINE_HUB_PORT";
-const HUB_PATHNAME_ENV = "CLINE_HUB_PATHNAME";
+const HUB_HOST_ENV = "NEXUS_HUB_HOST";
+const HUB_PORT_ENV = "NEXUS_HUB_PORT";
+const HUB_PATHNAME_ENV = "NEXUS_HUB_PATHNAME";
 
 export const DEFAULT_HUB_HOST = "127.0.0.1";
-export const DEFAULT_HUB_PORT = CLINE_HUB_PORT;
+export const DEFAULT_HUB_PORT = NEXUS_HUB_PORT;
 export const DEFAULT_HUB_PATHNAME = "/hub";
 
 export interface HubEndpointOverrides {
@@ -24,8 +24,8 @@ export interface ResolveHubDefaultsOptions {
 }
 
 function fallbackHubPort(options: ResolveHubDefaultsOptions): number {
-	return resolveClineBuildEnv(options) === "development"
-		? CLINE_HUB_DEV_PORT
+	return resolveNexusBuildEnv(options) === "development"
+		? NEXUS_HUB_DEV_PORT
 		: DEFAULT_HUB_PORT;
 }
 

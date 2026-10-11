@@ -9,7 +9,7 @@ import {
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
-import { setClineDir } from "@cline/shared/storage";
+import { setNexusDir } from "@nexus/shared/storage";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTaskWorktree, getTaskWorktreesHomePath } from "./worktree";
 
@@ -31,19 +31,19 @@ async function pathExists(targetPath: string): Promise<boolean> {
 
 describe("createTaskWorktree", () => {
 	let sandboxRoot: string;
-	let clineDir: string;
+	let nexusDir: string;
 	let repoPath: string;
 	let nonRepoPath: string;
-	let originalClineDir: string | undefined;
+	let originalNexusDir: string | undefined;
 
 	beforeEach(async () => {
-		sandboxRoot = await mkdtemp(path.join(tmpdir(), "cline-sdk-worktree-"));
-		clineDir = path.join(sandboxRoot, ".cline");
+		sandboxRoot = await mkdtemp(path.join(tmpdir(), "nexus-sdk-worktree-"));
+		nexusDir = path.join(sandboxRoot, ".nexus");
 		repoPath = path.join(sandboxRoot, "myrepo");
 		nonRepoPath = path.join(sandboxRoot, "not-a-repo");
-		originalClineDir = process.env.CLINE_DIR;
-		process.env.CLINE_DIR = clineDir;
-		setClineDir(clineDir);
+		originalNexusDir = process.env.NEXUS_DIR;
+		process.env.NEXUS_DIR = nexusDir;
+		setNexusDir(nexusDir);
 
 		await writeFile(path.join(sandboxRoot, ".keep"), "");
 		await rm(repoPath, { recursive: true, force: true });
@@ -67,20 +67,20 @@ describe("createTaskWorktree", () => {
 	});
 
 	afterEach(async () => {
-		if (originalClineDir === undefined) {
-			delete process.env.CLINE_DIR;
+		if (originalNexusDir === undefined) {
+			delete process.env.NEXUS_DIR;
 		} else {
-			process.env.CLINE_DIR = originalClineDir;
+			process.env.NEXUS_DIR = originalNexusDir;
 		}
-		setClineDir(originalClineDir ?? path.join("~", ".cline"));
+		setNexusDir(originalNexusDir ?? path.join("~", ".nexus"));
 		await rm(sandboxRoot, { recursive: true, force: true });
 	});
 
-	it("places worktrees under ~/.cline/worktrees", () => {
-		expect(getTaskWorktreesHomePath()).toBe(path.join(clineDir, "worktrees"));
+	it("places worktrees under ~/.nexus/worktrees", () => {
+		expect(getTaskWorktreesHomePath()).toBe(path.join(nexusDir, "worktrees"));
 	});
 
-	it("creates a detached worktree at ~/.cline/worktrees/<taskId>/<repoName>", async () => {
+	it("creates a detached worktree at ~/.nexus/worktrees/<taskId>/<repoName>", async () => {
 		const result = await createTaskWorktree({
 			cwd: repoPath,
 			taskId: "my-task",
@@ -97,7 +97,7 @@ describe("createTaskWorktree", () => {
 
 		expect(await realpath(result.repoRoot)).toBe(await realpath(repoPath));
 		expect(result.path).toBe(
-			path.join(clineDir, "worktrees", "my-task", "myrepo"),
+			path.join(nexusDir, "worktrees", "my-task", "myrepo"),
 		);
 		expect(git(worktreePath, ["rev-parse", "--is-inside-work-tree"])).toBe(
 			"true",
@@ -120,7 +120,7 @@ describe("createTaskWorktree", () => {
 			throw new Error("Expected generated taskId.");
 		}
 		expect(result.path).toBe(
-			path.join(clineDir, "worktrees", result.taskId, "myrepo"),
+			path.join(nexusDir, "worktrees", result.taskId, "myrepo"),
 		);
 	});
 
@@ -143,7 +143,7 @@ describe("createTaskWorktree", () => {
 
 		expect(result.success).toBe(false);
 		expect(result.message).toMatch(/Failed to create worktree/);
-		expect(await pathExists(path.join(clineDir, "worktrees", "empty"))).toBe(
+		expect(await pathExists(path.join(nexusDir, "worktrees", "empty"))).toBe(
 			false,
 		);
 	});

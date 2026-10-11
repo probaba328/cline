@@ -1,9 +1,9 @@
 import { appendFileSync } from "node:fs";
 import { join } from "node:path";
-import type * as LlmsProviders from "@cline/llms";
-import type { AgentResult } from "@cline/shared";
-import { resolveRootSessionId } from "@cline/shared";
-import { ensureHookLogDir } from "@cline/shared/storage";
+import type * as LlmsProviders from "@nexus/llms";
+import type { AgentResult } from "@nexus/shared";
+import { resolveRootSessionId } from "@nexus/shared";
+import { ensureHookLogDir } from "@nexus/shared/storage";
 import { z } from "zod";
 import type {
 	SubAgentEndContext,
@@ -414,7 +414,7 @@ export class TeamChildSessionManager {
 	}
 
 	appendSubagentHookAudit(event: HookEventPayload): void {
-		const envPath = process.env.CLINE_HOOKS_LOG_PATH?.trim() || undefined;
+		const envPath = process.env.NEXUS_HOOKS_LOG_PATH?.trim() || undefined;
 		const logPath = envPath ?? join(ensureHookLogDir(), "hooks.jsonl");
 		appendFileSync(
 			logPath,

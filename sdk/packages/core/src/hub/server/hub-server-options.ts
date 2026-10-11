@@ -1,4 +1,4 @@
-import type { BasicLogger, ITelemetryService } from "@cline/shared";
+import type { BasicLogger, ITelemetryService } from "@nexus/shared";
 import type { CronServiceOptions } from "../../cron/service/cron-service";
 import type {
 	HubScheduleRuntimeHandlers,
@@ -31,7 +31,7 @@ export interface HubWebSocketServerOptions {
 	scheduleOptions?: Omit<HubScheduleServiceOptions, "runtimeHandlers">;
 	/**
 	 * File-based cron automation options. When provided, the hub starts a
-	 * `CronService` that watches global `~/.cline/cron/` by default, reconciles
+	 * `CronService` that watches global `~/.nexus/cron/` by default, reconciles
 	 * specs into `cron.db`, and executes queued runs through `runtimeHandlers`.
 	 * Pass `cronOptions.specs` to use a different source, including future
 	 * workspace-scoped specs.

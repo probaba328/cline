@@ -1,5 +1,5 @@
-import type { ChatRunTurnRequest, HubSessionClient } from "@cline/core";
-import { type GeneratedMedia, isGeneratedMedia } from "@cline/shared";
+import type { ChatRunTurnRequest, HubSessionClient } from "@nexus/core";
+import { type GeneratedMedia, isGeneratedMedia } from "@nexus/shared";
 import type { CliLoggerAdapter } from "../logging/adapter";
 
 export type PendingConnectorApproval = {

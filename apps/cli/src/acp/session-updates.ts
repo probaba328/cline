@@ -3,9 +3,9 @@ import type {
 	SessionConfigOption,
 	SessionUpdate,
 } from "@agentclientprotocol/sdk";
-import type { AgentEvent } from "@cline/core";
-import type { GeneratedMedia } from "@cline/shared";
-import { getErrorMessage } from "@cline/shared";
+import type { AgentEvent } from "@nexus/core";
+import type { GeneratedMedia } from "@nexus/shared";
+import { getErrorMessage } from "@nexus/shared";
 import { buildToolTitle, mapToolKind } from "./tool-utils";
 
 /**

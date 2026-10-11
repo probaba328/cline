@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import type { AgendaTaskRecord } from "@cline/shared";
+import type { AgendaTaskRecord } from "@nexus/shared";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,7 +41,7 @@ function makeThread(project: string, index: number): SessionThread {
 		codebase: project,
 		workspacePath: `/projects/${project}`,
 		time: `${index}m`,
-		provider: "cline",
+		provider: "nexus",
 		model: "test-model",
 		status: "completed",
 		isScheduled: false,
@@ -124,7 +124,7 @@ function sessionIsVisible(title: string): boolean {
 
 const signedInUser = {
 	id: "user-1",
-	email: "beatrix@cline.bot",
+	email: "beatrix@nexus.bot",
 	displayName: "Beatrix",
 	photoUrl: "",
 	createdAt: "2024-01-01T00:00:00Z",
@@ -133,7 +133,7 @@ const signedInUser = {
 		{
 			active: true,
 			memberId: "member-1",
-			name: "Cline Bot Inc",
+			name: "Nexus Bot Inc",
 			organizationId: "org-1",
 			roles: ["admin"],
 		},
@@ -144,7 +144,7 @@ beforeEach(() => {
 	Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 	window.localStorage.clear();
 	invoke.mockReset();
-	invoke.mockRejectedValue(new Error("No Cline account auth token found"));
+	invoke.mockRejectedValue(new Error("No Nexus account auth token found"));
 	desktopMocks.createAgendaTask.mockReset();
 	desktopMocks.listAgendaTasks.mockReset();
 	desktopMocks.listAgendaTasks.mockResolvedValue([]);
@@ -269,7 +269,7 @@ describe("AgentSidebar session organization", () => {
 		);
 
 		expect(container.textContent).toContain("Review PR checks");
-		expect(container.textContent).toContain("cline");
+		expect(container.textContent).toContain("nexus");
 		expect(container.textContent).not.toContain("P1 · pending approval");
 		expect(desktopMocks.listAgendaTasks).toHaveBeenCalledWith({
 			statuses: ["pending_approval", "approved", "in_progress", "failed"],
@@ -371,7 +371,7 @@ describe("AgentSidebar session organization", () => {
 		});
 		desktopMocks.createAgendaTask.mockResolvedValue(created);
 		window.localStorage.setItem(
-			"cline.code.model-selection.v1",
+			"nexus.code.model-selection.v1",
 			JSON.stringify({
 				lastProvider: "openrouter",
 				lastModelByProvider: { openrouter: "anthropic/claude-sonnet-4.6" },
@@ -572,7 +572,7 @@ describe("AgentSidebar session organization", () => {
 
 	it("builds the hover overview with branch and secondary metadata last", () => {
 		const thread = {
-			...makeThread("cline", 5),
+			...makeThread("nexus", 5),
 			gitBranch: "bee/session-overview",
 			inputTokens: 3_000_000,
 			outputTokens: 9_000,
@@ -580,14 +580,14 @@ describe("AgentSidebar session organization", () => {
 		};
 
 		expect(getSessionOverviewItems(thread)).toEqual([
-			["Workspace", "cline", "/projects/cline"],
+			["Workspace", "nexus", "/projects/nexus"],
 			["Branch", "bee/session-overview"],
-			["Provider", "cline"],
+			["Provider", "nexus"],
 			["Model", "test-model"],
 			["Tokens", "3009k"],
 			["Cost", "$3.06"],
 		]);
-		expect(getSessionOverviewItems(makeThread("cline", 5))).not.toContainEqual([
+		expect(getSessionOverviewItems(makeThread("nexus", 5))).not.toContainEqual([
 			"Branch",
 			expect.anything(),
 		]);
@@ -702,9 +702,9 @@ describe("AgentSidebar session organization", () => {
 
 		await vi.waitFor(() => {
 			expect(container.textContent).toContain("Beatrix");
-			expect(container.textContent).toContain("Cline Bot Inc");
+			expect(container.textContent).toContain("Nexus Bot Inc");
 		});
-		expect(container.textContent).not.toContain("Cline Desktop");
+		expect(container.textContent).not.toContain("Nexus Desktop");
 		expect(container.textContent).not.toContain("Local");
 		const accountButton = container.querySelector(
 			'[aria-label="Account settings"]',
@@ -717,7 +717,7 @@ describe("AgentSidebar session organization", () => {
 		].find((element) => element.textContent === "Beatrix");
 		const organizationName = [
 			...(accountButton?.querySelectorAll("span") ?? []),
-		].find((element) => element.textContent === "Cline Bot Inc");
+		].find((element) => element.textContent === "Nexus Bot Inc");
 		expect(accountName?.nextElementSibling).toBe(organizationName);
 		expect(accountName?.parentElement?.className).toContain("flex-col");
 	});
@@ -808,7 +808,7 @@ describe("AgentSidebar session organization", () => {
 					},
 				};
 			}
-			throw new Error("No Cline account auth token found");
+			throw new Error("No Nexus account auth token found");
 		});
 
 		await act(async () => {
@@ -830,7 +830,7 @@ describe("AgentSidebar session organization", () => {
 			);
 		});
 
-		const logoButton = container.querySelector('[aria-label="Cline home"]');
+		const logoButton = container.querySelector('[aria-label="Nexus home"]');
 		expect(logoButton).not.toBeNull();
 		expect(document.body.textContent).not.toContain("Version 1.2.3");
 
@@ -838,7 +838,7 @@ describe("AgentSidebar session organization", () => {
 
 		await vi.waitFor(() => {
 			expect(document.body.textContent).toContain("Version 1.2.3");
-			expect(document.body.textContent).toContain("Cline Hub @25463");
+			expect(document.body.textContent).toContain("Nexus Hub @25463");
 			expect(document.body.textContent).not.toContain(
 				"ws://127.0.0.1:25463/hub",
 			);
@@ -879,12 +879,12 @@ describe("AgentSidebar session organization", () => {
 			);
 		});
 
-		const logoButton = container.querySelector('[aria-label="Cline home"]');
+		const logoButton = container.querySelector('[aria-label="Nexus home"]');
 		expect(logoButton).not.toBeNull();
 		await hover(logoButton as Element);
 
 		await vi.waitFor(() => {
-			expect(document.body.textContent).toContain("Cline Hub @25463");
+			expect(document.body.textContent).toContain("Nexus Hub @25463");
 			expect(document.body.textContent).toContain(
 				"Hub connection closed (code=1006)",
 			);
@@ -920,7 +920,7 @@ describe("AgentSidebar session organization", () => {
 
 		const titleBar = container.querySelector("[data-tauri-drag-region]");
 		expect(titleBar).not.toBeNull();
-		expect(titleBar?.textContent).not.toContain("Cline");
+		expect(titleBar?.textContent).not.toContain("Nexus");
 
 		await click(
 			container.querySelector('[aria-label="Previous page"]') as Element,
@@ -951,7 +951,7 @@ describe("AgentSidebar session organization", () => {
 			);
 		});
 
-		const logo = container.querySelector('[aria-label="Cline home"]');
+		const logo = container.querySelector('[aria-label="Nexus home"]');
 		const showAgenda = container.querySelector('[aria-label="Show Agenda"]');
 		const newSession = container.querySelector('[aria-label="New Session"]');
 		expect(logo).not.toBeNull();
@@ -962,7 +962,7 @@ describe("AgentSidebar session organization", () => {
 		expect(onNewThread).toHaveBeenCalledOnce();
 	});
 
-	it("uses only the Cline logo for home in the collapsed sidebar", async () => {
+	it("uses only the Nexus logo for home in the collapsed sidebar", async () => {
 		await act(async () => {
 			root.render(
 				<AccountProvider>
@@ -982,7 +982,7 @@ describe("AgentSidebar session organization", () => {
 			);
 		});
 
-		expect(container.querySelector('[aria-label="Cline home"]')).not.toBeNull();
+		expect(container.querySelector('[aria-label="Nexus home"]')).not.toBeNull();
 		expect(container.querySelector('[aria-label="New Session"]')).toBeNull();
 		expect(
 			container.querySelector('[aria-label="Expand sidebar"]')?.className,
@@ -1020,7 +1020,7 @@ describe("AgentSidebar session organization", () => {
 			container.querySelector('[aria-label="Settings sections"]'),
 		).not.toBeNull();
 		const leftAlignedButtons = [
-			"Cline home",
+			"Nexus home",
 			"General",
 			"Account",
 			"Expand sidebar",
@@ -1081,7 +1081,7 @@ function makeAgendaTask(
 		description: "Confirm that CI passed.",
 		instructions: "Review CI and report failures.",
 		scope: "workspace",
-		workspaceRoot: "/projects/cline",
+		workspaceRoot: "/projects/nexus",
 		resourcePaths: [],
 		priority: 1,
 		availableAt: "2026-08-13T00:00:00.000Z",

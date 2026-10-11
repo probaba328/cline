@@ -1,26 +1,26 @@
 import {
-	type ClineSubscriptionPlan,
-	extractClineFreeModelLimitResetTime,
-} from "@cline/core";
+	type NexusSubscriptionPlan,
+	extractNexusFreeModelLimitResetTime,
+} from "@nexus/core";
 import { useTerminalDimensions } from "@opentui/react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import "opentui-spinner/react";
 import {
-	getClineOrgIndividualInferenceSubscriptionMessage,
-	getClinePassLimitDetailMessage,
+	getNexusOrgIndividualInferenceSubscriptionMessage,
+	getNexusPassLimitDetailMessage,
 	getCliSubscriptionUrl,
 	getIndividualPlanFeatures,
-	isClineFreeModelLimitErrorMessage,
-	isClineFreePromotionEndedErrorMessage,
-	isClineOrgIndividualInferenceSubscriptionErrorMessage,
-	isClinePassLimitErrorMessage,
-	isClinePassSubscriptionError,
-} from "../../utils/cline-pass-errors";
+	isNexusFreeModelLimitErrorMessage,
+	isNexusFreePromotionEndedErrorMessage,
+	isNexusOrgIndividualInferenceSubscriptionErrorMessage,
+	isNexusPassLimitErrorMessage,
+	isNexusPassSubscriptionError,
+} from "../../utils/nexus-pass-errors";
 import {
-	CLINE_CREDITS_DASHBOARD_URL,
-	isClineAccountCreditsErrorMessage,
-} from "../cline-account";
+	NEXUS_CREDITS_DASHBOARD_URL,
+	isNexusAccountCreditsErrorMessage,
+} from "../nexus-account";
 import { getUserMessageBackground } from "../palette";
 import type { ResolvedTheme } from "../themes";
 import type { ChatEntry } from "../types";
@@ -274,7 +274,7 @@ function ToolCallView(props: {
 	);
 }
 
-function ClineCreditsClinePassErrorView(props: {
+function NexusCreditsNexusPassErrorView(props: {
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
@@ -290,32 +290,32 @@ function ClineCreditsClinePassErrorView(props: {
 				borderColor="red"
 				paddingX={1}
 			>
-				<text fg="red">Cline Credits depleted</text>
+				<text fg="red">Nexus Credits depleted</text>
 				<text
 					fg={props.defaultFg}
 					selectable
 					content={
-						"You have run out of Cline credits. Add credits in the dashboard or purchase and switch to ClinePass to continue."
+						"You have run out of Nexus credits. Add credits in the dashboard or purchase and switch to NexusPass to continue."
 					}
 				/>
 				<box flexDirection="row">
 					<text fg="gray">Purchase Credits: </text>
 					<text fg={linkColor} selectable>
-						<a href={CLINE_CREDITS_DASHBOARD_URL}>
-							{CLINE_CREDITS_DASHBOARD_URL}
+						<a href={NEXUS_CREDITS_DASHBOARD_URL}>
+							{NEXUS_CREDITS_DASHBOARD_URL}
 						</a>
 					</text>
 				</box>
 				<box flexDirection="row">
-					<text fg="gray">Purchase ClinePass: </text>
+					<text fg="gray">Purchase NexusPass: </text>
 					<text fg={linkColor} selectable>
 						<a href={subscriptionUrl}>{subscriptionUrl}</a>
 					</text>
 				</box>
 				<box flexDirection="row">
-					<text fg="gray">Switch to ClinePass: </text>
+					<text fg="gray">Switch to NexusPass: </text>
 					<text fg="gray">
-						type /settings in CLI and switch provider to ClinePass
+						type /settings in CLI and switch provider to NexusPass
 					</text>
 				</box>
 			</box>
@@ -323,21 +323,21 @@ function ClineCreditsClinePassErrorView(props: {
 	);
 }
 
-function ClineCreditsErrorView(props: {
+function NexusCreditsErrorView(props: {
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
 	return (
-		<ClineCreditsClinePassErrorView
+		<NexusCreditsNexusPassErrorView
 			defaultFg={props.defaultFg}
 			theme={props.theme}
 		/>
 	);
 }
 
-function ClinePassSubscriptionErrorView(props: {
+function NexusPassSubscriptionErrorView(props: {
 	defaultFg?: string;
-	loadIndividualSubscriptionPlans?: () => Promise<ClineSubscriptionPlan[]>;
+	loadIndividualSubscriptionPlans?: () => Promise<NexusSubscriptionPlan[]>;
 	theme: ResolvedTheme;
 }) {
 	const subscriptionUrl = getCliSubscriptionUrl();
@@ -375,15 +375,15 @@ function ClinePassSubscriptionErrorView(props: {
 				borderColor={planAccent}
 				paddingX={1}
 			>
-				<text fg={planAccent}>ClinePass subscription required</text>
+				<text fg={planAccent}>NexusPass subscription required</text>
 				<text
 					fg={props.defaultFg}
 					selectable
-					content="No access to ClinePass subscription models yet. Subscribe to ClinePass, the low cost open weights model coding plan."
+					content="No access to NexusPass subscription models yet. Subscribe to NexusPass, the low cost open weights model coding plan."
 				/>
 				{planFeatures.length > 0 && (
 					<box flexDirection="column" marginTop={1}>
-						<text fg={props.defaultFg}>ClinePass includes:</text>
+						<text fg={props.defaultFg}>NexusPass includes:</text>
 						{planFeatures.map((feature) => (
 							<text key={feature} fg={props.defaultFg} selectable>
 								<span fg="green">✓ </span>
@@ -409,7 +409,7 @@ function ClinePassSubscriptionErrorView(props: {
 	);
 }
 
-function ClineOrgIndividualInferenceSubscriptionErrorView(props: {
+function NexusOrgIndividualInferenceSubscriptionErrorView(props: {
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
@@ -425,11 +425,11 @@ function ClineOrgIndividualInferenceSubscriptionErrorView(props: {
 				borderColor={planAccent}
 				paddingX={1}
 			>
-				<text fg={planAccent}>Personal ClinePass required</text>
+				<text fg={planAccent}>Personal NexusPass required</text>
 				<text
 					fg={props.defaultFg}
 					selectable
-					content={getClineOrgIndividualInferenceSubscriptionMessage()}
+					content={getNexusOrgIndividualInferenceSubscriptionMessage()}
 				/>
 			</box>
 		</box>
@@ -468,12 +468,12 @@ function CompactionDividerRow(props: {
 	);
 }
 
-function ClinePassLimitErrorView(props: {
+function NexusPassLimitErrorView(props: {
 	message: string;
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
-	const detail = getClinePassLimitDetailMessage(props.message) ?? props.message;
+	const detail = getNexusPassLimitDetailMessage(props.message) ?? props.message;
 	const accent = props.theme.accents.act;
 
 	return (
@@ -486,18 +486,18 @@ function ClinePassLimitErrorView(props: {
 				borderColor={accent}
 				paddingX={1}
 			>
-				<text fg={props.theme.accents.error}>ClinePass limit reached</text>
+				<text fg={props.theme.accents.error}>NexusPass limit reached</text>
 				<text fg={props.defaultFg} selectable content={detail} />
 				<text
 					fg={props.defaultFg}
 					selectable
-					content="Switch to Cline usage-based billing and retry with the Cline provider."
+					content="Switch to Nexus usage-based billing and retry with the Nexus provider."
 				/>
 				<box flexDirection="row">
 					<text fg="gray">Headless CLI: </text>
 					<text fg={props.defaultFg} selectable content="rerun with " />
 					<code
-						content="--provider cline"
+						content="--provider nexus"
 						filetype="bash"
 						syntaxStyle={getSyntaxStyle(props.theme)}
 						selectable
@@ -509,12 +509,12 @@ function ClinePassLimitErrorView(props: {
 	);
 }
 
-function ClineFreeModelLimitErrorView(props: {
+function NexusFreeModelLimitErrorView(props: {
 	message: string;
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
-	const resetTime = extractClineFreeModelLimitResetTime(props.message);
+	const resetTime = extractNexusFreeModelLimitResetTime(props.message);
 	const accent = props.theme.accents.act;
 
 	return (
@@ -550,7 +550,7 @@ function ClineFreeModelLimitErrorView(props: {
 	);
 }
 
-function ClineFreePromotionEndedErrorView(props: {
+function NexusFreePromotionEndedErrorView(props: {
 	defaultFg?: string;
 	theme: ResolvedTheme;
 }) {
@@ -587,7 +587,7 @@ export function ChatEntryView(props: {
 	accent?: string;
 	/** Mode the entry was produced in (resolved with the current-mode fallback). */
 	mode?: SyntaxAccentMode;
-	loadIndividualSubscriptionPlans?: () => Promise<ClineSubscriptionPlan[]>;
+	loadIndividualSubscriptionPlans?: () => Promise<NexusSubscriptionPlan[]>;
 	theme: ResolvedTheme;
 }) {
 	const { entry, mode = "act", theme } = props;
@@ -702,20 +702,20 @@ export function ChatEntryView(props: {
 			);
 
 		case "error":
-			if (isClineAccountCreditsErrorMessage(entry.text)) {
-				return <ClineCreditsErrorView defaultFg={defaultFg} theme={theme} />;
+			if (isNexusAccountCreditsErrorMessage(entry.text)) {
+				return <NexusCreditsErrorView defaultFg={defaultFg} theme={theme} />;
 			}
-			if (isClineOrgIndividualInferenceSubscriptionErrorMessage(entry.text)) {
+			if (isNexusOrgIndividualInferenceSubscriptionErrorMessage(entry.text)) {
 				return (
-					<ClineOrgIndividualInferenceSubscriptionErrorView
+					<NexusOrgIndividualInferenceSubscriptionErrorView
 						defaultFg={defaultFg}
 						theme={theme}
 					/>
 				);
 			}
-			if (isClinePassSubscriptionError(entry.text)) {
+			if (isNexusPassSubscriptionError(entry.text)) {
 				return (
-					<ClinePassSubscriptionErrorView
+					<NexusPassSubscriptionErrorView
 						defaultFg={defaultFg}
 						loadIndividualSubscriptionPlans={
 							props.loadIndividualSubscriptionPlans
@@ -724,27 +724,27 @@ export function ChatEntryView(props: {
 					/>
 				);
 			}
-			if (isClinePassLimitErrorMessage(entry.text)) {
+			if (isNexusPassLimitErrorMessage(entry.text)) {
 				return (
-					<ClinePassLimitErrorView
+					<NexusPassLimitErrorView
 						message={entry.text}
 						defaultFg={defaultFg}
 						theme={theme}
 					/>
 				);
 			}
-			if (isClineFreeModelLimitErrorMessage(entry.text)) {
+			if (isNexusFreeModelLimitErrorMessage(entry.text)) {
 				return (
-					<ClineFreeModelLimitErrorView
+					<NexusFreeModelLimitErrorView
 						defaultFg={defaultFg}
 						message={entry.text}
 						theme={theme}
 					/>
 				);
 			}
-			if (isClineFreePromotionEndedErrorMessage(entry.text)) {
+			if (isNexusFreePromotionEndedErrorMessage(entry.text)) {
 				return (
-					<ClineFreePromotionEndedErrorView
+					<NexusFreePromotionEndedErrorView
 						defaultFg={defaultFg}
 						theme={theme}
 					/>

@@ -1,4 +1,4 @@
-import type { AgentHooks, HookEventPayload } from "@cline/core";
+import type { AgentHooks, HookEventPayload } from "@nexus/core";
 import { closeInlineStreamIfNeeded } from "./events";
 import {
 	c,
@@ -120,10 +120,10 @@ function basePayload(
 	options: { cwd: string; workspaceRoot: string },
 ): Omit<HookEventPayload, "hookName"> {
 	const userId =
-		process.env.CLINE_USER_ID?.trim() || process.env.USER?.trim() || "unknown";
+		process.env.NEXUS_USER_ID?.trim() || process.env.USER?.trim() || "unknown";
 	const sessionContext = currentHookSessionContext();
 	return {
-		clineVersion: process.env.CLINE_VERSION?.trim() || "",
+		nexusVersion: process.env.NEXUS_VERSION?.trim() || "",
 		timestamp: new Date().toISOString(),
 		taskId: ctx.conversationId,
 		...(sessionContext ? { sessionContext } : {}),
@@ -191,7 +191,7 @@ export function createRuntimeHooks(options: {
 					cwd,
 					workspaceRoot,
 				});
-				const isResume = process.env.CLINE_HOOK_AGENT_RESUME === "1";
+				const isResume = process.env.NEXUS_HOOK_AGENT_RESUME === "1";
 				await dispatchHookPayload(
 					isResume
 						? {

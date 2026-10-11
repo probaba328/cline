@@ -8,42 +8,42 @@ export default defineConfig({
 	resolve: {
 		alias: [
 			{
-				find: /^@cline\/core\/telemetry$/,
+				find: /^@nexus\/core\/telemetry$/,
 				replacement: resolve(
 					rootDir,
 					"../../sdk/packages/core/src/services/telemetry/index.ts",
 				),
 			},
 			{
-				find: /^@cline\/core$/,
+				find: /^@nexus\/core$/,
 				replacement: resolve(rootDir, "../../sdk/packages/core/src/index.ts"),
 			},
 			{
-				find: /^@cline\/core\/(.+)$/,
+				find: /^@nexus\/core\/(.+)$/,
 				replacement: resolve(rootDir, "../../sdk/packages/core/src/$1"),
 			},
 			{
-				find: /^@cline\/llms$/,
+				find: /^@nexus\/llms$/,
 				replacement: resolve(rootDir, "../../sdk/packages/llms/src/index.ts"),
 			},
 			{
-				find: /^@cline\/llms\/(.+)$/,
+				find: /^@nexus\/llms\/(.+)$/,
 				replacement: resolve(rootDir, "../../sdk/packages/llms/src/$1"),
 			},
 			{
-				find: /^@cline\/shared\/(.+)$/,
+				find: /^@nexus\/shared\/(.+)$/,
 				replacement: resolve(rootDir, "../../sdk/packages/shared/src/$1"),
 			},
 			{
-				find: /^@cline\/agents$/,
+				find: /^@nexus\/agents$/,
 				replacement: resolve(rootDir, "../../sdk/packages/agents/src/index.ts"),
 			},
 			{
-				find: /^@cline\/core$/,
+				find: /^@nexus\/core$/,
 				replacement: resolve(rootDir, "../../sdk/packages/core/src/index.ts"),
 			},
 			{
-				find: /^@cline\/shared$/,
+				find: /^@nexus\/shared$/,
 				replacement: resolve(rootDir, "../../sdk/packages/shared/src/index.ts"),
 			},
 		],

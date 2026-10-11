@@ -1,7 +1,7 @@
 version: v2
 modules:
     - path: proto
-      name: cline/cline/lint
+      name: nexus/nexus/lint
 
 lint:
     use:

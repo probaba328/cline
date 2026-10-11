@@ -2,8 +2,8 @@ import { spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { type HookEventPayload, parseHookEventPayload } from "@cline/shared";
-import { ensureHookLogDir } from "@cline/shared/storage";
+import { type HookEventPayload, parseHookEventPayload } from "@nexus/shared";
+import { ensureHookLogDir } from "@nexus/shared/storage";
 import { nanoid } from "nanoid";
 import { commanderToParsedArgs, createProgram } from "../commands/program";
 import type { ParsedArgs } from "./types";
@@ -482,7 +482,7 @@ export async function appendHookAudit(event: HookEventPayload): Promise<void> {
 		ts: new Date().toISOString(),
 		...event,
 	})}\n`;
-	const envPath = process.env.CLINE_HOOKS_LOG_PATH?.trim() || undefined;
+	const envPath = process.env.NEXUS_HOOKS_LOG_PATH?.trim() || undefined;
 	const logPath = envPath ?? join(ensureHookLogDir(), "hooks.jsonl");
 	ensureHookLogDir(logPath);
 	appendFileSync(logPath, line, "utf-8");
@@ -574,9 +574,9 @@ export function resolveSandboxDataDir(
 	cwd: string,
 	explicitDir?: string,
 ): string {
-	const envDir = process.env.CLINE_SANDBOX_DATA_DIR?.trim();
+	const envDir = process.env.NEXUS_SANDBOX_DATA_DIR?.trim();
 	const baseDir =
-		explicitDir?.trim() || envDir || join(tmpdir(), "cline-sandbox");
+		explicitDir?.trim() || envDir || join(tmpdir(), "nexus-sandbox");
 	return resolve(cwd, baseDir);
 }
 
@@ -589,17 +589,17 @@ export function configureSandboxEnvironment(options: {
 		return undefined;
 	}
 	const dataDir = resolveSandboxDataDir(options.cwd, options.explicitDir);
-	process.env.CLINE_SANDBOX = "1";
-	process.env.CLINE_SANDBOX_DATA_DIR = dataDir;
-	process.env.CLINE_DATA_DIR = dataDir;
-	process.env.CLINE_DB_DATA_DIR = join(dataDir, "db");
-	process.env.CLINE_SESSION_DATA_DIR = join(dataDir, "sessions");
-	process.env.CLINE_TEAM_DATA_DIR = join(dataDir, "teams");
-	process.env.CLINE_PROVIDER_SETTINGS_PATH = join(
+	process.env.NEXUS_SANDBOX = "1";
+	process.env.NEXUS_SANDBOX_DATA_DIR = dataDir;
+	process.env.NEXUS_DATA_DIR = dataDir;
+	process.env.NEXUS_DB_DATA_DIR = join(dataDir, "db");
+	process.env.NEXUS_SESSION_DATA_DIR = join(dataDir, "sessions");
+	process.env.NEXUS_TEAM_DATA_DIR = join(dataDir, "teams");
+	process.env.NEXUS_PROVIDER_SETTINGS_PATH = join(
 		dataDir,
 		"settings",
 		"providers.json",
 	);
-	process.env.CLINE_HOOKS_LOG_PATH = join(dataDir, "logs", "hooks.jsonl");
+	process.env.NEXUS_HOOKS_LOG_PATH = join(dataDir, "logs", "hooks.jsonl");
 	return dataDir;
 }

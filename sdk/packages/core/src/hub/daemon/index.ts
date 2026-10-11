@@ -9,11 +9,11 @@ import {
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-	CLINE_RUN_AS_HUB_DAEMON_ENV,
+	NEXUS_RUN_AS_HUB_DAEMON_ENV,
 	isHubDaemonProcess,
-	resolveClineBuildEnv,
-	withResolvedClineBuildEnv,
-} from "@cline/shared";
+	resolveNexusBuildEnv,
+	withResolvedNexusBuildEnv,
+} from "@nexus/shared";
 import {
 	localHubHasNoActiveSessions,
 	rememberRecoverableLocalHubUrl,
@@ -30,7 +30,7 @@ import {
 	isManagedHubReusable,
 	probeHubServer,
 	readHubDiscovery,
-	resolveClineDataDir,
+	resolveNexusDataDir,
 	withHubStartupLock,
 	writeHubDiscovery,
 } from "../discovery";
@@ -48,7 +48,7 @@ const HUB_STARTUP_POLL_MS = 200;
 const HUB_RETIRE_TIMEOUT_MS = 3_000;
 const HUB_RETIRE_POLL_MS = 100;
 const HUB_SPAWN_RETRY_DELAYS_MS = [100, 250, 500, 1_000, 2_000];
-const COMPILED_BUN_HUB_DAEMON_ARG = "--cline-hub-daemon";
+const COMPILED_BUN_HUB_DAEMON_ARG = "--nexus-hub-daemon";
 const HUB_RETIRE_ATTEMPT_LIMIT = 3;
 const HUB_RETIRE_ATTEMPT_WINDOW_MS = 60_000;
 
@@ -97,7 +97,7 @@ function endpointArgs(endpoint: HubEndpointOverrides): string[] {
 
 function openDetachedHubLogFile(): { fd: number; logPath: string } | undefined {
 	try {
-		const logPath = join(resolveClineDataDir(), "logs", "hub-daemon.log");
+		const logPath = join(resolveNexusDataDir(), "logs", "hub-daemon.log");
 		mkdirSync(dirname(logPath), { recursive: true });
 		return { fd: openSync(logPath, "a"), logPath };
 	} catch {
@@ -106,7 +106,7 @@ function openDetachedHubLogFile(): { fd: number; logPath: string } | undefined {
 }
 
 function resolveDefaultHubOwnerContext() {
-	return resolveClineBuildEnv() === "production"
+	return resolveNexusBuildEnv() === "production"
 		? resolveProductionHubOwnerContext()
 		: resolveSharedHubOwnerContext();
 }
@@ -121,7 +121,7 @@ function isReusableHubRecord(record: HubServerProbeRecord): boolean {
  * the file is best-effort recovery metadata, not a live record — and stays
  * synchronous so it adds no async boundary to the ensure flow.
  *
- * Exported for `cline doctor`, which must not mistake a shielded live hub for
+ * Exported for `nexus doctor`, which must not mistake a shielded live hub for
  * a stale daemon just because its record is set aside.
  */
 export function readSupersededHubDiscovery(
@@ -300,7 +300,7 @@ async function retireIncompatibleHub(
  * record so upgrades do not leave orphaned daemons running stale code.
  */
 async function retireLegacySharedHub(owner: HubOwnerContext): Promise<void> {
-	if (resolveClineBuildEnv() !== "production") {
+	if (resolveNexusBuildEnv() !== "production") {
 		return;
 	}
 	const legacy = resolveSharedHubOwnerContext();
@@ -349,9 +349,9 @@ function resolveLaunchCommand(
 		args: [...entryArgs, "--cwd", workspaceRoot, ...endpointArgs(endpoint)],
 		cwd: workspaceRoot,
 		env: {
-			...withResolvedClineBuildEnv(process.env),
-			CLINE_NO_INTERACTIVE: "1",
-			[CLINE_RUN_AS_HUB_DAEMON_ENV]: "1",
+			...withResolvedNexusBuildEnv(process.env),
+			NEXUS_NO_INTERACTIVE: "1",
+			[NEXUS_RUN_AS_HUB_DAEMON_ENV]: "1",
 		},
 	};
 }
@@ -441,7 +441,7 @@ async function ensureDetachedHubServerLocked(
 		endpointOverrides.host !== undefined ||
 		endpointOverrides.port !== undefined ||
 		endpointOverrides.pathname !== undefined ||
-		!!process.env.CLINE_HUB_PORT?.trim();
+		!!process.env.NEXUS_HUB_PORT?.trim();
 	const endpoint = resolveHubEndpointOptions(endpointOverrides);
 	const expectedUrl = createHubServerUrl(
 		endpoint.host,
@@ -568,10 +568,10 @@ async function ensureDetachedHubServerLocked(
 				});
 			}
 			const upgradeHint = retiredUnusableDiscovery
-				? " This can happen immediately after upgrading from a build that wrote an empty hub auth token; run 'cline doctor fix' to stop the old daemon and repair local hub discovery."
+				? " This can happen immediately after upgrading from a build that wrote an empty hub auth token; run 'nexus doctor fix' to stop the old daemon and repair local hub discovery."
 				: "";
 			throw new Error(
-				`A compatible Cline Hub is already running at ${expectedUrl}, but its discovery record is missing or unreadable and no usable auth token is available. Run 'cline doctor fix' to repair local hub discovery.${upgradeHint}`,
+				`A compatible Nexus Hub is already running at ${expectedUrl}, but its discovery record is missing or unreadable and no usable auth token is available. Run 'nexus doctor fix' to repair local hub discovery.${upgradeHint}`,
 			);
 		}
 		const expectedOutcome = await retireIncompatibleHub(
@@ -594,7 +594,7 @@ async function ensureDetachedHubServerLocked(
 			}
 			if (endpointOverrides.allowPortFallback !== true && endpoint.port !== 0) {
 				throw new Error(
-					`An older Cline Hub is running at ${expectedUrl} and is still serving active sessions, so it was not replaced, but no usable auth token is available to attach to it. Finish those sessions, or run 'cline doctor fix' to stop the hub.`,
+					`An older Nexus Hub is running at ${expectedUrl} and is still serving active sessions, so it was not replaced, but no usable auth token is available to attach to it. Finish those sessions, or run 'nexus doctor fix' to stop the hub.`,
 				);
 			}
 		}
@@ -604,7 +604,7 @@ async function ensureDetachedHubServerLocked(
 			endpoint.port !== 0
 		) {
 			throw new Error(
-				`An incompatible Cline Hub is already running at ${expectedUrl} and could not be retired automatically. Run 'cline doctor fix' to stop stale hub daemons before starting a new hub.`,
+				`An incompatible Nexus Hub is already running at ${expectedUrl} and could not be retired automatically. Run 'nexus doctor fix' to stop stale hub daemons before starting a new hub.`,
 			);
 		}
 	}
@@ -665,7 +665,7 @@ async function ensureDetachedHubServerLocked(
 				endpoint.port !== 0
 			) {
 				throw new Error(
-					`An incompatible Cline Hub is still running at ${expectedUrl} and could not be retired automatically. Run 'cline doctor fix' to stop stale hub daemons before starting a new hub.`,
+					`An incompatible Nexus Hub is still running at ${expectedUrl} and could not be retired automatically. Run 'nexus doctor fix' to stop stale hub daemons before starting a new hub.`,
 				);
 			}
 		}

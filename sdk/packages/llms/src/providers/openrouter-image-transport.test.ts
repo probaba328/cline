@@ -1,4 +1,4 @@
-import type { AgentMessage, AgentModelEvent } from "@cline/shared";
+import type { AgentMessage, AgentModelEvent } from "@nexus/shared";
 import { describe, expect, it, vi } from "vitest";
 import { createGateway } from "./gateway";
 
@@ -55,7 +55,7 @@ describe("OpenRouter image transport", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
+					providerId: "nexus",
 					apiKey: "test",
 					fetch: fetchMock as typeof fetch,
 					models: [
@@ -75,7 +75,7 @@ describe("OpenRouter image transport", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "google/gemini-image-test",
 				messages,
 			}),
@@ -83,7 +83,7 @@ describe("OpenRouter image transport", () => {
 
 		expect(fetchMock).toHaveBeenCalledOnce();
 		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
-			"https://api.cline.bot/api/v1/images",
+			"https://api.nexus.bot/api/v1/images",
 		);
 		expect(requestBody).toMatchObject({
 			model: "google/gemini-image-test",
@@ -141,7 +141,7 @@ describe("OpenRouter image transport", () => {
 		const gateway = createGateway({
 			providerConfigs: [
 				{
-					providerId: "cline",
+					providerId: "nexus",
 					apiKey: "test",
 					fetch: fetchMock as typeof fetch,
 					models: [
@@ -160,14 +160,14 @@ describe("OpenRouter image transport", () => {
 
 		const events = await collect(
 			await gateway.stream({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId,
 				messages,
 			}),
 		);
 
 		expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
-			"https://api.cline.bot/api/v1/chat/completions",
+			"https://api.nexus.bot/api/v1/chat/completions",
 		);
 		expect(responseTextSpy).not.toHaveBeenCalled();
 		expect(events).toContainEqual({

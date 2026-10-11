@@ -6,8 +6,8 @@ import {
 	type AgentTool,
 	createContributionRegistry,
 	type Message,
-} from "@cline/shared";
-import { setHomeDir } from "@cline/shared/storage";
+} from "@nexus/shared";
+import { setHomeDir } from "@nexus/shared/storage";
 import { afterEach, describe, expect, it } from "vitest";
 import { createUserInstructionConfigService } from "../../extensions/config";
 import { PLAN_MODE_COMMAND_GUARD_EXTENSION_NAME } from "../../extensions/tools/command-guard-extension";
@@ -56,13 +56,13 @@ async function collectExtensionTools(
 
 describe("DefaultRuntimeBuilder", () => {
 	const previousHome = process.env.HOME;
-	const previousGlobalSettingsPath = process.env.CLINE_GLOBAL_SETTINGS_PATH;
+	const previousGlobalSettingsPath = process.env.NEXUS_GLOBAL_SETTINGS_PATH;
 	const tempDirs: string[] = [];
 
 	afterEach(() => {
 		process.env.HOME = previousHome;
 		setHomeDir(previousHome ?? "~");
-		process.env.CLINE_GLOBAL_SETTINGS_PATH = previousGlobalSettingsPath;
+		process.env.NEXUS_GLOBAL_SETTINGS_PATH = previousGlobalSettingsPath;
 		for (const dir of tempDirs.splice(0)) {
 			rmSync(dir, { recursive: true, force: true });
 		}
@@ -79,14 +79,14 @@ describe("DefaultRuntimeBuilder", () => {
 	});
 
 	it("derives enabled provider tools without registering a local executor", async () => {
-		const settingsRoot = mkdtempSync(join(tmpdir(), "cline-model-tools-"));
+		const settingsRoot = mkdtempSync(join(tmpdir(), "nexus-model-tools-"));
 		tempDirs.push(settingsRoot);
-		process.env.CLINE_GLOBAL_SETTINGS_PATH = join(
+		process.env.NEXUS_GLOBAL_SETTINGS_PATH = join(
 			settingsRoot,
 			"global-settings.json",
 		);
 		writeFileSync(
-			process.env.CLINE_GLOBAL_SETTINGS_PATH,
+			process.env.NEXUS_GLOBAL_SETTINGS_PATH,
 			JSON.stringify({ tools: { web_search: { enabled: true } } }),
 		);
 
@@ -133,12 +133,12 @@ describe("DefaultRuntimeBuilder", () => {
 	});
 
 	it("loads configured agent files as named subagent tools", async () => {
-		const tempHome = mkdtempSync(join(tmpdir(), "cline-agent-home-"));
-		const workspaceRoot = mkdtempSync(join(tmpdir(), "cline-agent-workspace-"));
+		const tempHome = mkdtempSync(join(tmpdir(), "nexus-agent-home-"));
+		const workspaceRoot = mkdtempSync(join(tmpdir(), "nexus-agent-workspace-"));
 		tempDirs.push(tempHome, workspaceRoot);
 		setHomeDir(tempHome);
 
-		const globalAgentsDir = join(tempHome, ".cline", "agents");
+		const globalAgentsDir = join(tempHome, ".nexus", "agents");
 		mkdirSync(globalAgentsDir, { recursive: true });
 		writeFileSync(
 			join(globalAgentsDir, "code-reviewer.yml"),
@@ -173,15 +173,15 @@ You are a code reviewer.`,
 	});
 
 	it("does not register root skills when only configured agents declare skills", async () => {
-		const tempHome = mkdtempSync(join(tmpdir(), "cline-agent-home-"));
-		const workspaceRoot = mkdtempSync(join(tmpdir(), "cline-agent-workspace-"));
+		const tempHome = mkdtempSync(join(tmpdir(), "nexus-agent-home-"));
+		const workspaceRoot = mkdtempSync(join(tmpdir(), "nexus-agent-workspace-"));
 		const cwd = join(workspaceRoot, "packages", "app");
 		tempDirs.push(tempHome, workspaceRoot);
 		setHomeDir(tempHome);
 		mkdirSync(cwd, { recursive: true });
 
-		const agentsDir = join(workspaceRoot, ".cline", "agents");
-		const skillDir = join(workspaceRoot, ".cline", "skills", "review");
+		const agentsDir = join(workspaceRoot, ".nexus", "agents");
+		const skillDir = join(workspaceRoot, ".nexus", "skills", "review");
 		mkdirSync(agentsDir, { recursive: true });
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
@@ -440,7 +440,7 @@ Use the review guidance.`,
 	it("omits tools disabled by global settings from the advertised runtime tool list", async () => {
 		const tempRoot = mkdtempSync(join(tmpdir(), "runtime-builder-global-"));
 		const settingsPath = join(tempRoot, "global-settings.json");
-		process.env.CLINE_GLOBAL_SETTINGS_PATH = settingsPath;
+		process.env.NEXUS_GLOBAL_SETTINGS_PATH = settingsPath;
 		writeFileSync(
 			settingsPath,
 			JSON.stringify({ disabledTools: ["search_codebase"] }, null, 2),
@@ -481,8 +481,8 @@ Use the review guidance.`,
 	it("includes MCP tools from configured servers", async () => {
 		const tempRoot = mkdtempSync(join(tmpdir(), "runtime-builder-mcp-"));
 		const serverPath = join(tempRoot, "mock-mcp-server.js");
-		const settingsPath = join(tempRoot, "cline_mcp_settings.json");
-		const previousSettingsPath = process.env.CLINE_MCP_SETTINGS_PATH;
+		const settingsPath = join(tempRoot, "nexus_mcp_settings.json");
+		const previousSettingsPath = process.env.NEXUS_MCP_SETTINGS_PATH;
 
 		writeFileSync(
 			serverPath,
@@ -535,7 +535,7 @@ process.stdin.on("data", (chunk) => {
 			"utf8",
 		);
 
-		process.env.CLINE_MCP_SETTINGS_PATH = settingsPath;
+		process.env.NEXUS_MCP_SETTINGS_PATH = settingsPath;
 		try {
 			const runtime = await new DefaultRuntimeBuilder().build({
 				config: makeBaseConfig(),
@@ -543,7 +543,7 @@ process.stdin.on("data", (chunk) => {
 			expect(runtime.tools.map((tool) => tool.name)).toContain("mock__echo");
 			await runtime.shutdown("test");
 		} finally {
-			process.env.CLINE_MCP_SETTINGS_PATH = previousSettingsPath;
+			process.env.NEXUS_MCP_SETTINGS_PATH = previousSettingsPath;
 		}
 	});
 
@@ -552,8 +552,8 @@ process.stdin.on("data", (chunk) => {
 			join(tmpdir(), "runtime-builder-mcp-disabled-"),
 		);
 		const serverPath = join(tempRoot, "mock-mcp-server.js");
-		const settingsPath = join(tempRoot, "cline_mcp_settings.json");
-		const previousSettingsPath = process.env.CLINE_MCP_SETTINGS_PATH;
+		const settingsPath = join(tempRoot, "nexus_mcp_settings.json");
+		const previousSettingsPath = process.env.NEXUS_MCP_SETTINGS_PATH;
 
 		writeFileSync(
 			serverPath,
@@ -605,7 +605,7 @@ process.stdin.on("data", (chunk) => {
 			"utf8",
 		);
 
-		process.env.CLINE_MCP_SETTINGS_PATH = settingsPath;
+		process.env.NEXUS_MCP_SETTINGS_PATH = settingsPath;
 		try {
 			const runtime = await new DefaultRuntimeBuilder().build({
 				config: makeBaseConfig({
@@ -617,15 +617,15 @@ process.stdin.on("data", (chunk) => {
 			);
 			await runtime.shutdown("test");
 		} finally {
-			process.env.CLINE_MCP_SETTINGS_PATH = previousSettingsPath;
+			process.env.NEXUS_MCP_SETTINGS_PATH = previousSettingsPath;
 		}
 	});
 
 	it("skips broken MCP servers without crashing", async () => {
 		const tempRoot = mkdtempSync(join(tmpdir(), "runtime-builder-mcp-bad-"));
 		const serverPath = join(tempRoot, "malformed-mcp-server.js");
-		const settingsPath = join(tempRoot, "cline_mcp_settings.json");
-		const previousSettingsPath = process.env.CLINE_MCP_SETTINGS_PATH;
+		const settingsPath = join(tempRoot, "nexus_mcp_settings.json");
+		const previousSettingsPath = process.env.NEXUS_MCP_SETTINGS_PATH;
 
 		writeFileSync(
 			serverPath,
@@ -655,7 +655,7 @@ process.stdin.on("data", (chunk) => {
 			"utf8",
 		);
 
-		process.env.CLINE_MCP_SETTINGS_PATH = settingsPath;
+		process.env.NEXUS_MCP_SETTINGS_PATH = settingsPath;
 		try {
 			const runtime = await new DefaultRuntimeBuilder().build({
 				config: makeBaseConfig(),
@@ -666,7 +666,7 @@ process.stdin.on("data", (chunk) => {
 			expect(mcpTools).toEqual([]);
 			await runtime.shutdown("test");
 		} finally {
-			process.env.CLINE_MCP_SETTINGS_PATH = previousSettingsPath;
+			process.env.NEXUS_MCP_SETTINGS_PATH = previousSettingsPath;
 		}
 	});
 
@@ -674,12 +674,12 @@ process.stdin.on("data", (chunk) => {
 		const tempRoot = mkdtempSync(
 			join(tmpdir(), "runtime-builder-mcp-invalid-"),
 		);
-		const settingsPath = join(tempRoot, "cline_mcp_settings.json");
-		const previousSettingsPath = process.env.CLINE_MCP_SETTINGS_PATH;
+		const settingsPath = join(tempRoot, "nexus_mcp_settings.json");
+		const previousSettingsPath = process.env.NEXUS_MCP_SETTINGS_PATH;
 
 		writeFileSync(settingsPath, "{ not valid json !!!", "utf8");
 
-		process.env.CLINE_MCP_SETTINGS_PATH = settingsPath;
+		process.env.NEXUS_MCP_SETTINGS_PATH = settingsPath;
 		try {
 			const runtime = await new DefaultRuntimeBuilder().build({
 				config: makeBaseConfig(),
@@ -688,13 +688,13 @@ process.stdin.on("data", (chunk) => {
 			expect(mcpTools).toEqual([]);
 			await runtime.shutdown("test");
 		} finally {
-			process.env.CLINE_MCP_SETTINGS_PATH = previousSettingsPath;
+			process.env.NEXUS_MCP_SETTINGS_PATH = previousSettingsPath;
 		}
 	});
 
 	it("includes skills tool when workspace skills are available", async () => {
 		const cwd = mkdtempSync(join(tmpdir(), "runtime-builder-skills-"));
-		const skillDir = join(cwd, ".cline", "skills", "commit");
+		const skillDir = join(cwd, ".nexus", "skills", "commit");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
 			join(skillDir, "SKILL.md"),
@@ -720,7 +720,7 @@ Use conventional commits.`,
 		const cwd = mkdtempSync(join(tmpdir(), "runtime-builder-plugin-skills-"));
 		process.env.HOME = cwd;
 		setHomeDir(cwd);
-		const pluginDir = join(cwd, ".cline", "plugins", "review-plugin");
+		const pluginDir = join(cwd, ".nexus", "plugins", "review-plugin");
 		const skillDir = join(pluginDir, "skills", "review");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
@@ -729,7 +729,7 @@ Use conventional commits.`,
 				{
 					name: "review-plugin",
 					private: true,
-					cline: {
+					nexus: {
 						plugins: [{ paths: ["./index.ts"] }],
 					},
 				},
@@ -779,7 +779,7 @@ Use the review plugin guidance.`,
 		);
 		process.env.HOME = cwd;
 		setHomeDir(cwd);
-		const pluginDir = join(cwd, ".cline", "plugins", "review-plugin");
+		const pluginDir = join(cwd, ".nexus", "plugins", "review-plugin");
 		const skillRoot = join(pluginDir, "skills");
 		const skillDir = join(skillRoot, "review");
 		mkdirSync(skillDir, { recursive: true });
@@ -788,7 +788,7 @@ Use the review plugin guidance.`,
 			JSON.stringify({
 				name: "review-plugin",
 				private: true,
-				cline: {
+				nexus: {
 					plugins: [{ paths: ["./index.ts"] }],
 				},
 			}),
@@ -837,7 +837,7 @@ Use the review plugin guidance.`,
 		);
 		process.env.HOME = cwd;
 		setHomeDir(cwd);
-		const pluginDir = join(cwd, ".cline", "plugins", "review-plugin");
+		const pluginDir = join(cwd, ".nexus", "plugins", "review-plugin");
 		const skillDir = join(pluginDir, "skills", "review");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
@@ -845,7 +845,7 @@ Use the review plugin guidance.`,
 			JSON.stringify({
 				name: "review-plugin",
 				private: true,
-				cline: {
+				nexus: {
 					plugins: [{ paths: ["./index.ts"] }],
 				},
 			}),
@@ -876,7 +876,7 @@ Use the review plugin guidance.`,
 		const cwd = mkdtempSync(
 			join(tmpdir(), "runtime-builder-skills-routing-disabled-"),
 		);
-		const skillDir = join(cwd, ".cline", "skills", "commit");
+		const skillDir = join(cwd, ".nexus", "skills", "commit");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
 			join(skillDir, "SKILL.md"),
@@ -915,8 +915,8 @@ Use conventional commits.`,
 
 	it("marks configured but disabled skills in executor metadata", async () => {
 		const cwd = mkdtempSync(join(tmpdir(), "runtime-builder-skills-disabled-"));
-		const enabledDir = join(cwd, ".cline", "skills", "commit");
-		const disabledDir = join(cwd, ".cline", "skills", "review");
+		const enabledDir = join(cwd, ".nexus", "skills", "commit");
+		const disabledDir = join(cwd, ".nexus", "skills", "review");
 		mkdirSync(enabledDir, { recursive: true });
 		mkdirSync(disabledDir, { recursive: true });
 		writeFileSync(
@@ -963,8 +963,8 @@ Disabled skill.`,
 
 	it("scopes skills tool to session-configured skills", async () => {
 		const cwd = mkdtempSync(join(tmpdir(), "runtime-builder-skills-scoped-"));
-		const commitDir = join(cwd, ".cline", "skills", "commit");
-		const reviewDir = join(cwd, ".cline", "skills", "review");
+		const commitDir = join(cwd, ".nexus", "skills", "commit");
+		const reviewDir = join(cwd, ".nexus", "skills", "review");
 		mkdirSync(commitDir, { recursive: true });
 		mkdirSync(reviewDir, { recursive: true });
 		writeFileSync(
@@ -1024,7 +1024,7 @@ Review skill.`,
 
 	it("does not register the skills tool when all configured skills are disabled", async () => {
 		const cwd = mkdtempSync(join(tmpdir(), "runtime-disabled-skills-"));
-		const skillDir = join(cwd, ".cline", "skills", "review");
+		const skillDir = join(cwd, ".nexus", "skills", "review");
 		mkdirSync(skillDir, { recursive: true });
 		writeFileSync(
 			join(skillDir, "SKILL.md"),
@@ -1036,7 +1036,7 @@ Review skill.`,
 			"utf8",
 		);
 		const userInstructionService = createUserInstructionConfigService({
-			skills: { directories: [join(cwd, ".cline", "skills")] },
+			skills: { directories: [join(cwd, ".nexus", "skills")] },
 			rules: { directories: [] },
 			workflows: { directories: [] },
 		});

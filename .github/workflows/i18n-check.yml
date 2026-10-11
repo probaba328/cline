@@ -1,0 +1,197 @@
+name: i18n-check
+
+# Tetikleyiciler:
+# - Locale dosyaları değiştiğinde (yeni string eklenmesi dahil)
+# - PR'a push yapıldığında locale veya i18n index dosyaları etkilenmişse
+on:
+    pull_request:
+        paths:
+            - "apps/vscode/webview-ui/src/i18n/locales/**"
+            - "apps/vscode/webview-ui/src/i18n/index.ts"
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pull-requests: write
+
+concurrency:
+    group: i18n-check-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    eksik-ceviri-kontrol:
+        name: Eksik Çevirileri Kontrol Et
+        runs-on: ubuntu-latest
+        steps:
+            - name: Kodu İndir
+              uses: actions/checkout@v4
+
+            # Tüm locale dosyalarını kaynak (en.json) ile karşılaştır
+            - name: Eksik Çevirileri Analiz Et
+              id: analiz
+              run: |
+                  python3 - <<'PYEOF'
+                  import json, os, sys
+
+                  LOCALE_DIR = "apps/vscode/webview-ui/src/i18n/locales"
+                  SKIP_KEYS = {"_info", "_meta"}
+
+                  def flatten(obj, prefix=""):
+                      result = {}
+                      for k, v in obj.items():
+                          if k in SKIP_KEYS:
+                              continue
+                          full_key = f"{prefix}.{k}" if prefix else k
+                          if isinstance(v, dict):
+                              result.update(flatten(v, full_key))
+                          else:
+                              result[full_key] = v
+                      return result
+
+                  with open(f"{LOCALE_DIR}/en.json", encoding="utf-8") as f:
+                      en_flat = flatten(json.load(f))
+                  en_keys = set(en_flat.keys())
+                  total_keys = len(en_keys)
+
+                  lang_info = {}
+                  with open(f"{LOCALE_DIR}/en.json", encoding="utf-8") as f:
+                      en_raw = json.load(f)
+                  lang_info["en"] = {
+                      "language": en_raw.get("_info", {}).get("language", "English"),
+                      "nativeName": en_raw.get("_info", {}).get("nativeName", "English"),
+                  }
+
+                  rows = []
+                  has_missing = False
+                  new_keys_in_en = []
+
+                  for fname in sorted(os.listdir(LOCALE_DIR)):
+                      if fname == "en.json":
+                          continue
+                      if not fname.endswith(".json"):
+                          continue
+                      code = fname[:-5]
+                      fpath = f"{LOCALE_DIR}/{fname}"
+                      with open(fpath, encoding="utf-8") as f:
+                          raw = json.load(f)
+                      info = raw.get("_info", {})
+                      native = info.get("nativeName", code)
+                      language = info.get("language", code)
+                      flat = flatten(raw)
+                      file_keys = set(flat.keys())
+                      missing = sorted(en_keys - file_keys)
+                      extra = sorted(file_keys - en_keys)
+                      filled = total_keys - len(missing)
+                      pct = int(filled / total_keys * 100) if total_keys > 0 else 0
+
+                      if pct == 100:
+                          status = "✅"
+                      elif pct >= 80:
+                          status = "🟡"
+                      else:
+                          status = "🔴"
+
+                      if missing:
+                          has_missing = True
+
+                      rows.append({
+                          "code": code,
+                          "language": language,
+                          "native": native,
+                          "missing": missing,
+                          "extra": extra,
+                          "pct": pct,
+                          "status": status,
+                          "filled": filled,
+                          "total": total_keys,
+                      })
+
+                  # Raporu oluştur
+                  lines = []
+                  lines.append("## 🌐 Çeviri Durumu Raporu")
+                  lines.append("")
+                  lines.append(f"Kaynak: `en.json` — **{total_keys} string**")
+                  lines.append("")
+
+                  if not has_missing:
+                      lines.append("✅ **Tüm diller güncel!** Eksik çeviri bulunamadı.")
+                  else:
+                      lines.append("Aşağıdaki dillerde eksik çeviriler tespit edildi:")
+
+                  lines.append("")
+                  lines.append("| Dil | Kod | Durum | Tamamlanan | Eksik |")
+                  lines.append("|-----|-----|-------|-----------|-------|")
+
+                  for r in rows:
+                      missing_count = len(r["missing"])
+                      missing_str = str(missing_count) if missing_count > 0 else "—"
+                      lines.append(
+                          f"| {r['native']} ({r['language']}) | `{r['code']}` | "
+                          f"{r['status']} {r['pct']}% | {r['filled']}/{r['total']} | {missing_str} |"
+                      )
+
+                  # Eksik key detayları
+                  for r in rows:
+                      if r["missing"]:
+                          lines.append("")
+                          lines.append(f"### ❌ `{r['code']}.json` — {len(r['missing'])} eksik key")
+                          lines.append("")
+                          lines.append("```")
+                          for key in r["missing"][:50]:
+                              lines.append(f"  {key}")
+                          if len(r["missing"]) > 50:
+                              lines.append(f"  ... ve {len(r['missing']) - 50} tane daha")
+                          lines.append("```")
+                          lines.append("")
+                          lines.append(
+                              f"Bu dile katkıda bulunmak ister misiniz? "
+                              f"[Çeviri Katkı Rehberi](../blob/main/CONTRIBUTING_TRANSLATION.md)"
+                          )
+
+                  if not has_missing:
+                      lines.append("")
+                      lines.append("---")
+                      lines.append(
+                          "_Yeni bir dil eklemek ister misiniz? "
+                          "[Yeni dil talebi oluşturun](../issues/new?template=translation.yml)_"
+                      )
+
+                  report = "\n".join(lines)
+
+                  # GitHub output'a yaz
+                  output_file = os.environ.get("GITHUB_OUTPUT", "/dev/stdout")
+                  with open(output_file, "a") as out:
+                      out.write("eksik_var=" + ("true" if has_missing else "false") + "\n")
+                      out.write("rapor<<RAPOR_EOF\n")
+                      out.write(report + "\n")
+                      out.write("RAPOR_EOF\n")
+
+                  print("Analiz tamamlandı.")
+                  print(f"Eksik çeviri var: {'EVET' if has_missing else 'HAYIR'}")
+                  PYEOF
+
+            # PR yorumunu oluştur veya güncelle
+            - name: PR Yorumu Olarak Bildir
+              uses: peter-evans/create-or-update-comment@v4
+              if: github.event_name == 'pull_request'
+              with:
+                  issue-number: ${{ github.event.pull_request.number }}
+                  body: ${{ steps.analiz.outputs.rapor }}
+                  edit-mode: replace
+                  comment-author: "github-actions[bot]"
+                  # Önceki i18n-check yorumunu bul ve güncelle (tekrar yorum açma)
+                  body-includes: "🌐 Çeviri Durumu Raporu"
+
+            # Eksik çeviri varsa adımı başarısız say (CI'ı kırmak için flag olarak kullanılabilir)
+            # Şu an sadece uyarı — CI'ı kırmak istemiyorsanız aşağıdaki "exit 1"i kaldırabilirsiniz
+            - name: Sonuç Özeti
+              run: |
+                  echo "## i18n Kontrol Sonucu" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  if [[ "${{ steps.analiz.outputs.eksik_var }}" == "true" ]]; then
+                    echo "⚠️ **Eksik çeviriler tespit edildi.** PR yorumunu inceleyin." >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "Çeviri katkısı için: [CONTRIBUTING_TRANSLATION.md](../blob/main/CONTRIBUTING_TRANSLATION.md)" >> $GITHUB_STEP_SUMMARY
+                  else
+                    echo "✅ **Tüm diller güncel. Eksik çeviri yok.**" >> $GITHUB_STEP_SUMMARY
+                  fi

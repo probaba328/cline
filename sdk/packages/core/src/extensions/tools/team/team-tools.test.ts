@@ -1,25 +1,25 @@
 import { join } from "node:path";
-import { resolveTeamDataDir } from "@cline/shared/storage";
+import { resolveTeamDataDir } from "@nexus/shared/storage";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDelegatedAgentConfigProvider } from "./delegated-agent";
 import { AgentTeamsRuntime } from "./multi-agent";
 import { createAgentTeamsTools } from "./team-tools";
 
 type EnvSnapshot = {
-	CLINE_DATA_DIR: string | undefined;
-	CLINE_TEAM_DATA_DIR: string | undefined;
+	NEXUS_DATA_DIR: string | undefined;
+	NEXUS_TEAM_DATA_DIR: string | undefined;
 };
 
 function captureEnv(): EnvSnapshot {
 	return {
-		CLINE_DATA_DIR: process.env.CLINE_DATA_DIR,
-		CLINE_TEAM_DATA_DIR: process.env.CLINE_TEAM_DATA_DIR,
+		NEXUS_DATA_DIR: process.env.NEXUS_DATA_DIR,
+		NEXUS_TEAM_DATA_DIR: process.env.NEXUS_TEAM_DATA_DIR,
 	};
 }
 
 function restoreEnv(snapshot: EnvSnapshot): void {
-	process.env.CLINE_DATA_DIR = snapshot.CLINE_DATA_DIR;
-	process.env.CLINE_TEAM_DATA_DIR = snapshot.CLINE_TEAM_DATA_DIR;
+	process.env.NEXUS_DATA_DIR = snapshot.NEXUS_DATA_DIR;
+	process.env.NEXUS_TEAM_DATA_DIR = snapshot.NEXUS_TEAM_DATA_DIR;
 }
 
 function makeTeammateConfigProvider(
@@ -39,18 +39,18 @@ describe("resolveTeamDataDir", () => {
 		restoreEnv(snapshot);
 	});
 
-	it("uses CLINE_TEAM_DATA_DIR when set", () => {
+	it("uses NEXUS_TEAM_DATA_DIR when set", () => {
 		snapshot = captureEnv();
-		process.env.CLINE_TEAM_DATA_DIR = "/tmp/team-dir";
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
+		process.env.NEXUS_TEAM_DATA_DIR = "/tmp/team-dir";
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
 		expect(resolveTeamDataDir()).toBe("/tmp/team-dir");
 	});
 
-	it("falls back to CLINE_DATA_DIR/teams", () => {
+	it("falls back to NEXUS_DATA_DIR/teams", () => {
 		snapshot = captureEnv();
-		delete process.env.CLINE_TEAM_DATA_DIR;
-		process.env.CLINE_DATA_DIR = "/tmp/cline-data";
-		expect(resolveTeamDataDir()).toBe(join("/tmp/cline-data", "teams"));
+		delete process.env.NEXUS_TEAM_DATA_DIR;
+		process.env.NEXUS_DATA_DIR = "/tmp/nexus-data";
+		expect(resolveTeamDataDir()).toBe(join("/tmp/nexus-data", "teams"));
 	});
 });
 
@@ -478,7 +478,7 @@ describe("createAgentTeamsTools runtime behavior", () => {
 			runtime,
 			requesterId: "lead",
 			teammateConfigProvider: makeTeammateConfigProvider({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-sonnet-4.6",
 				headers: { Authorization: "Bearer token" },
 			}),
@@ -509,7 +509,7 @@ describe("createAgentTeamsTools runtime behavior", () => {
 		);
 	});
 
-	it("injects workspace metadata into cline teammate system prompt", async () => {
+	it("injects workspace metadata into nexus teammate system prompt", async () => {
 		const spawnTeammate = vi.fn();
 		const runtime = {
 			getMemberRole: vi.fn(() => "lead"),
@@ -521,7 +521,7 @@ describe("createAgentTeamsTools runtime behavior", () => {
 			runtime,
 			requesterId: "lead",
 			teammateConfigProvider: makeTeammateConfigProvider({
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-sonnet-4.6",
 				cwd: "/repo/app",
 			}),

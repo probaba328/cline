@@ -1,7 +1,7 @@
-import type { ClineMessage } from "@shared/ExtensionMessage"
-import { EmptyRequest, StringRequest } from "@shared/proto/cline/common"
-import { AskResponseRequest, NewTaskRequest } from "@shared/proto/cline/task"
-import { IntentEvent } from "@shared/proto/cline/ui"
+import type { NexusMessage } from "@shared/ExtensionMessage"
+import { EmptyRequest, StringRequest } from "@shared/proto/nexus/common"
+import { AskResponseRequest, NewTaskRequest } from "@shared/proto/nexus/task"
+import { IntentEvent } from "@shared/proto/nexus/ui"
 import { useCallback, useRef } from "react"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { SlashServiceClient, TaskServiceClient, UiServiceClient } from "@/services/grpc-client"
@@ -12,7 +12,7 @@ import type { ChatState, MessageHandlers } from "../types/chatTypes"
  * Custom hook for managing message handlers
  * Handles sending messages, button clicks, and task management
  */
-export function useMessageHandlers(messages: ClineMessage[], chatState: ChatState): MessageHandlers {
+export function useMessageHandlers(messages: NexusMessage[], chatState: ChatState): MessageHandlers {
 	const { backgroundCommandRunning, turnState } = useExtensionState()
 	const {
 		setInputValue,
@@ -26,7 +26,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 		setEnableButtons,
 		setPendingUserMessage,
 		setPendingResponse,
-		clineAsk,
+		nexusAsk,
 		lastMessage,
 	} = chatState
 	const cancelInFlightRef = useRef(false)
@@ -105,7 +105,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 					setSelectedFiles(files)
 					setEnableButtons(enableButtons)
 				}
-				const beginPendingResponse = (pendingMessage?: ClineMessage) => {
+				const beginPendingResponse = (pendingMessage?: NexusMessage) => {
 					const id = ++pendingResponseIdRef.current
 					// A follow-up submitted during an active stream is queued/steering feedback.
 					// The authoritative streaming UI is already current, so forcing a loader could
@@ -200,10 +200,10 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 						}),
 					)
 					messageSent = true
-				} else if (clineAsk) {
+				} else if (nexusAsk) {
 					// For resume_task and resume_completed_task, use yesButtonClicked to match Resume button behavior
 					// This ensures Enter key and Resume button work identically
-					if (clineAsk === "resume_task" || clineAsk === "resume_completed_task") {
+					if (nexusAsk === "resume_task" || nexusAsk === "resume_completed_task") {
 						// Resuming a task opened from history rebuilds the SDK session before the
 						// extension echoes say:user_feedback, so without an optimistic bubble the
 						// user's message would not appear until the (slow) resume finishes — the
@@ -220,7 +220,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 						messageSent = true
 					} else {
 						// All other ask types use messageResponse
-						switch (clineAsk) {
+						switch (nexusAsk) {
 							case "followup":
 							case "plan_mode_respond":
 							case "tool":
@@ -242,7 +242,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 								// option buttons, that resolver consumes the response before normal follow-up
 								// routing and immediately appends the real say:user_feedback row. If we also add
 								// an optimistic pending row here, the chat shows the same answer twice.
-								const showPendingMessage = clineAsk !== "followup" && turnState?.phase !== "streaming"
+								const showPendingMessage = nexusAsk !== "followup" && turnState?.phase !== "streaming"
 
 								await sendAskResponseWithPendingState(
 									AskResponseRequest.create({
@@ -259,13 +259,13 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 						}
 					}
 				} else if (messages.length > 0) {
-					// No clineAsk set, but there is an existing conversation. Route this to the
+					// No nexusAsk set, but there is an existing conversation. Route this to the
 					// active session as a follow-up when either:
 					//
 					//   1. The authoritative turnState says the conversation is continuable —
 					//      phases "completed" / "awaiting_followup" (the agent finished or is
 					//      waiting for the user) or "streaming" (interrupt with feedback). The SDK
-					//      does not emit a trailing ask:"completion_result", so clineAsk is
+					//      does not emit a trailing ask:"completion_result", so nexusAsk is
 					//      undefined even when the user can keep talking; turnState is the source
 					//      of truth.
 					//   2. Legacy fallback (no turnState): the task looks actively running from the
@@ -308,7 +308,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 		},
 		[
 			messages,
-			clineAsk,
+			nexusAsk,
 			turnState,
 			activeQuote,
 			setInputValue,
@@ -438,7 +438,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 					break
 
 				case "new_task":
-					if (clineAsk === "new_task") {
+					if (nexusAsk === "new_task") {
 						await TaskServiceClient.newTask(
 							NewTaskRequest.create({
 								text: lastMessage?.text,
@@ -475,7 +475,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 				}
 
 				case "utility":
-					switch (clineAsk) {
+					switch (nexusAsk) {
 						case "condense":
 							await SlashServiceClient.condense(StringRequest.create({ value: lastMessage?.text })).catch((err) =>
 								console.error(err),
@@ -495,7 +495,7 @@ export function useMessageHandlers(messages: ClineMessage[], chatState: ChatStat
 			}
 		},
 		[
-			clineAsk,
+			nexusAsk,
 			lastMessage,
 			messages,
 			clearInputState,

@@ -1,239 +1,251 @@
 <p align="center">
-  <img src="assets/icons/icon.png" width="80" alt="Cline" />
+  <img src="assets/icons/nexus-logo.svg" width="80" alt="Nexus" />
 </p>
 
-<h1 align="center">Cline</h1>
+<h1 align="center">Nexus</h1>
 
 <p align="center">
-The open source coding agent in your IDE and terminal.
+  <strong>The coding agent that speaks your language</strong>
 </p>
 
-<div align="center">
-
-<div align="center">
-<table>
-<tbody>
-<td align="center">
-<a href="https://docs.cline.bot" target="_blank"><strong>Docs</strong></a>
-</td>
-<td align="center">
-<a href="https://discord.gg/cline" target="_blank"><strong>Discord</strong></a>
-</td>
-<td align="center">
-<a href="https://www.reddit.com/r/cline/" target="_blank"><strong>r/cline</strong></a>
-</td>
-<td align="center">
-<a href="https://github.com/cline/cline/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>Feature Requests</strong></a>
-</td>
-<td align="center">
-<a href="https://cline.bot/join-us" target="_blank"><strong>Join us!</strong></a>
-</td>
-</tbody>
-</table>
-</div>
-
-</div>
-
-<br>
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="50%">
-
-### CLI
-
-Run Cline in your terminal.
-Interactive chat or fully headless
-for CI/CD and scripting.
-
-```
-npm i -g cline
-```
-
-<a href="./apps/cli/README.md">Learn more</a>
-<br><br>
-
-</td>
-<td align="center" width="50%">
-
-### Kanban
-
-Run many agents in parallel from a
-web-based task board. Each card gets its own
-worktree, auto-commit, and dependency chains.
-
-```
-npm i -g kanban
-```
-
-<a href="https://github.com/cline/kanban">Learn more</a>
-<br><br>
-
-</td>
-</tr>
-<tr>
-<td align="center" width="50%">
-
-### VS Code Extension
-
-AI coding assistant in your editor.
-Create files, run commands, browse the web,
-and use tools with human-in-the-loop approval.
-
-<a href="https://marketplace.visualstudio.com/items?itemName=saoudrizwan.claude-dev">Install from VS Marketplace</a>
-<br><br>
-
-</td>
-<td align="center" width="50%">
-
-### JetBrains Plugin
-
-The same Cline experience in IntelliJ IDEA,
-PyCharm, WebStorm, GoLand, and the rest of
-the JetBrains family.
-
-<a href="https://plugins.jetbrains.com/plugin/28247-cline">Install from JetBrains Marketplace</a>
-<br><br>
-
-</td>
-</tr>
-</table>
-</div>
-
-<div align="center">
-<table>
-<tr>
-<td align="center">
-
-### SDK
-
-Build your own AI agents and integrations powered by the same engine that runs the CLI, Kanban, VS Code extension, and JetBrains plugin. Custom tools, multi-agent teams, connectors, scheduled automations, and more.
-
-```
-npm install @cline/sdk
-```
-
-<a href="https://docs.cline.bot/cline-sdk/overview">Documentation</a>
-<br><br>
-
-</td>
-</tr>
-</table>
-</div>
+<p align="center">
+  <a href="https://github.com/probaba328/cline/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache 2.0" />
+  </a>
+  <a href="https://github.com/probaba328/cline/issues">
+    <img src="https://img.shields.io/github/issues/probaba328/cline" alt="GitHub Issues" />
+  </a>
+  <a href="https://github.com/probaba328/cline/blob/main/CONTRIBUTING_TRANSLATION.md">
+    <img src="https://img.shields.io/badge/i18n-13%20languages-green" alt="13 languages" />
+  </a>
+</p>
 
 ---
 
-## Index
+## What is Nexus?
 
-| Product | Description | Location | CHANGELOG |
-|---------|------------|--------------|--------------|
-| **SDK** | Node.js programmatic agent API and extension exports. | [`sdk/`](https://github.com/cline/cline/tree/main/sdk) | [CHANGELOG.md](https://github.com/cline/cline/blob/main/sdk/CHANGELOG.md) |
-| **CLI** | Terminal UI, headless mode, shell commands, and CLI-specific flows. | [`apps/cli/`](https://github.com/cline/cline/tree/main/apps/cli) | [CHANGELOG.md](https://github.com/cline/cline/blob/main/apps/cli/CHANGELOG.md) |
-| **VS Code Extension** | The Marketplace extension and extension host integration. | [`/`](https://github.com/cline/cline/tree/main) (WIP migrating) | [CHANGELOG.md](https://github.com/cline/cline/blob/main/CHANGELOG.md) |
-| **JetBrains Plugin** | JetBrains-hosted client that talks to the shared agent core. | Currently we are not open-sourcing JetBrains plugins | - |
-| **Kanban** | Web-based multi-agent task board. | [`cline/kanban`](https://github.com/cline/kanban) | [CHANGELOG.md](https://github.com/cline/kanban/blob/main/CHANGELOG.md) |
-| **Docs site** | Public documentation pages. | [`docs/`](https://docs.cline.bot/) | - |
+Nexus is an open-source autonomous coding agent that lives inside your IDE and terminal. It reads and edits your files, runs terminal commands, browses the web, and coordinates changes across your entire codebase — always with your explicit approval at every step. Nexus is a fork of [Cline](https://github.com/cline/cline) rebuilt around three core beliefs: that great developer tools should work in every language, that your API keys belong to you alone, and that nothing should happen in your editor without your knowledge.
 
-## Edits Code Across Your Project
+---
 
-Cline reads your project structure, understands the relationships between files, and makes coordinated changes across your codebase. It monitors linter and compiler errors as it works, fixing issues like missing imports, type mismatches, and syntax errors before you even see them. In VS Code and JetBrains, every edit shows up as a diff you can review, modify, or revert. All changes are tracked with checkpoints, so you can easily undo the agent's work.
+## Why Nexus?
 
-## Runs Bash Commands
+Nexus shares Cline's powerful agent core but diverges in three important ways:
 
-Cline executes commands directly in your terminal and watches the output in real time. Install packages, run build scripts, execute tests, deploy applications, manage databases. For long-running processes like dev servers, Cline continues working in the background and reacts to new output as it appears, catching compile errors, test failures, and server crashes as they happen.
+| | Cline | Nexus |
+|---|---|---|
+| **Interface language** | English only | 13 languages, auto-detected from your IDE locale |
+| **API key ownership** | BYOK | BYOK — keys stored in OS keychain only, never sent to Nexus servers |
+| **Telemetry** | Opt-out | Opt-in — disabled by default, anonymous usage only |
+| **Fork goal** | General coding agent | Global developer communities |
 
-## Plan and Act
+### i18n — first-class internationalization
 
-Toggle between Plan mode and Act mode. In Plan mode, Cline explores your codebase, asks clarifying questions, and lays out a strategy. Once you're aligned, switch to Act mode and Cline executes the plan. Every file edit and terminal command requires your approval, so you stay in control of what actually changes. Or toggle auto-approve and let Cline run autonomously.
+Nexus automatically detects your VS Code display language and switches the UI accordingly. No configuration needed. If your language isn't fully translated yet, it falls back gracefully to English — and you can help fix that (see [Contributing Translations](#contributing-translations) below).
 
-## Rules and Skills
+### Security by design
 
-Define project-specific rules in `.clinerules` files that guide how Cline works in your codebase: coding standards, architecture conventions, deployment procedures, testing requirements. Rules are picked up automatically by the CLI, VS Code extension, and JetBrains plugin. Use skills to let the model load specific rules when needed.
+Every API key you enter is stored exclusively in your operating system's credential store (macOS Keychain, Windows Credential Manager, Linux libsecret) via VS Code's SecretStorage API. Nexus never writes credentials to disk as plain text, never logs them, and never transmits them anywhere except the AI provider endpoint you configure. See [SECURITY.md](./SECURITY.md) for the full policy.
 
-## Works With Every Model
+### Bring Your Own Key (BYOK)
 
-Cline is not locked to a single AI provider. Use whichever model fits your workflow:
+Nexus requires no account, no subscription, and no Nexus-controlled backend to function. Bring your key from any supported provider, plug it in, and start coding. You pay your provider directly; Nexus takes nothing.
 
-| Provider | Models |
-|----------|--------|
-| Anthropic | Claude Opus, Sonnet, Haiku |
-| OpenAI | GPT series models |
-| Google | Gemini series models |
-| OpenRouter | 200+ models from any provider |
-| Vercel AI Gateway | Route to many providers through one gateway |
-| AWS Bedrock | Claude, Llama, and more |
-| Azure / GCP Vertex | All hosted models |
-| Cerebras / Groq | Fast inference models |
-| Ollama / LM Studio | Run local models on your machine |
-| Any OpenAI-compatible API | Self-hosted or third-party endpoints |
+---
 
-## Extend With Plugins or MCP Servers
+## Installation
 
-Extend Cline's capabilities with plugins. Using the SDK, register tools and lifecycle hooks programmatically through the plugin system for logging, auditing, policy enforcement, or adding domain-specific capabilities. Simple plugin example below.
+### VS Code Extension
 
-```typescript
-import { Agent, createTool } from "@cline/sdk"
+Search for **Nexus** in the VS Code Extensions Marketplace.
 
-const deployTool = createTool({
-  name: "deploy",
-  description: "Deploy the current branch to staging.",
-  inputSchema: { type: "object", properties: { env: { type: "string" } }, required: ["env"] },
-  execute: async (input) => {
-    // your deployment logic
-  },
-})
-
-const agent = new Agent({ tools: [deployTool], /* ... */ })
-```
-...or use [MCP servers](https://github.com/modelcontextprotocol) to connect to databases, query APIs, manage cloud infrastructure, and interact with external systems. Use [community-built servers](https://github.com/modelcontextprotocol/servers) or ask Cline to create custom tools on the fly. In the CLI, manage servers with `cline mcp`.
-
-## Multi-Agent Teams
-
-Coordinate multiple agents working together on complex tasks. A coordinator agent breaks the work into subtasks and delegates to specialist agents, each with their own tools and context. Team state persists across sessions so you can pick up where you left off.
+To build and run from source:
 
 ```bash
-cline --team-name auth-sprint "Plan and implement user authentication with tests"
+git clone https://github.com/probaba328/cline.git
+cd cline
+bun install
+cd apps/vscode
+bun run build:webview   # builds the React UI (~15s)
+bun esbuild.mjs         # bundles the extension
 ```
 
-## Scheduled Agents
-
-Run agents on cron schedules for recurring automations. Daily PR summaries, weekly dependency checks, codebase health reports. Schedules persist across restarts and run independently of any terminal session.
+Then launch a development host:
 
 ```bash
-cline schedule create "PR summary" \
-  --cron "0 9 * * MON-FRI" \
-  --prompt "List all open PRs and their review status" \
-  --workspace /path/to/repo
+DISPLAY=:1 code --no-sandbox \
+  --user-data-dir=/tmp/vscode-userdata \
+  --extensionDevelopmentPath=$(pwd)/apps/vscode \
+  .
 ```
 
-## Connect to Slack, Telegram, Discord, and More
+Click the Nexus icon in the Activity Bar to open the chat panel.
 
-Chat with your agent from any messaging platform: Telegram, Slack, Discord, Google Chat, WhatsApp, and Linear. Each conversation thread maps to an agent session with full context. Set up access control to restrict who can interact with your agent.
+### CLI
 
 ```bash
-# Connect to Telegram
-cline connect telegram -k $BOT_TOKEN
-# Connect to Slack through webhook
-cline connect slack --bot-token $SLACK_TOKEN --signing-secret $SECRET --base-url $URL
-# Connect to Slack using socket mode
-cline connect slack --bot-token $SLACK_TOKEN --app-token $SLACK_APP_TOKEN
+# Run from source
+bun run cli
+
+# Interactive mode
+bun run cli -i
+
+# One-shot task
+bun run cli "Add unit tests for the auth module"
 ```
 
-## Headless CLI for CI/CD
-
-Run Cline with zero interaction for scripting and automation. Pipe input, get JSON output, chain commands, integrate into CI/CD pipelines.
+Configure your provider credential once:
 
 ```bash
-cline "Run tests and fix any failures"
-git diff origin/main | cline "Review these changes for issues"
-cline --json "List all TODO comments" | jq -r 'select(.type == "agent_event" and .event.text) | .event.text'
+export ANTHROPIC_API_KEY=sk-ant-...
+bun run cli -i
 ```
+
+---
+
+## Desteklenen Diller / Supported Languages
+
+Nexus 13 dili destekler. Arayüz dili, VS Code yerel ayarından (`vscode.env.language`) otomatik algılanır; İngilizce varsayılan olarak kullanılır.
+
+Nexus ships with translations for 13 languages. The interface language is detected automatically from your VS Code locale (`vscode.env.language`), with English as the fallback.
+
+| Dil | Kod | Durum | Katkıcı |
+|-----|-----|-------|---------|
+| English | `en` | ✅ Tamamlandı (kaynak) | @nexus |
+| Türkçe | `tr` | ✅ Tamamlandı | @nexus |
+| Deutsch | `de` | ✅ Tamamlandı | @nexus |
+| Français | `fr` | ✅ Tamamlandı | @nexus |
+| Español | `es` | ✅ Tamamlandı | @nexus |
+| Português (Brasil) | `pt-BR` | ✅ Tamamlandı | @nexus |
+| 日本語 | `ja` | ✅ Tamamlandı | @nexus |
+| 한국어 | `ko` | ✅ Tamamlandı | @nexus |
+| 中文 (简体) | `zh-CN` | ✅ Tamamlandı | @nexus |
+| 中文 (繁體) | `zh-TW` | ✅ Tamamlandı | @nexus |
+| العربية | `ar` | ✅ Tamamlandı | @nexus |
+| Русский | `ru` | ✅ Tamamlandı | @nexus |
+| हिन्दी | `hi` | ✅ Tamamlandı | @nexus |
+
+Eksik bir dil mi var? → [Yeni dil talebi aç](https://github.com/probaba328/cline/issues/new?template=translation.yml) · [Çeviri Katkı Rehberi](./CONTRIBUTING_TRANSLATION.md)
+
+---
+
+## Çeviri Katkısı / Contributing Translations
+
+Çeviri dosyaları `apps/vscode/webview-ui/src/i18n/locales/` dizininde bulunur.
+
+**Mevcut çeviriyi iyileştirmek için:**
+
+1. Repo'yu fork edin ve dilinizin dosyasını açın (örn. `fr.json`)
+2. String değerlerini doldurun veya düzeltin — anahtarlar değiştirilmemelidir
+3. `i18n: improve [Language] translation` başlıklı bir pull request açın
+
+**Yeni dil eklemek için:**
+
+1. `en.json` dosyasını kopyalayın, [BCP 47 etiketi](https://www.iana.org/assignments/language-subtag-registry) ile adlandırın (örn. `vi.json`)
+2. `apps/vscode/webview-ui/src/i18n/index.ts` dosyasına kaydedin
+3. `i18n: add [Language] translation` başlıklı bir pull request açın
+
+Tam rehber: [CONTRIBUTING_TRANSLATION.md](./CONTRIBUTING_TRANSLATION.md)
+
+---
+
+## Supported AI Models
+
+Nexus works with every major LLM provider out of the box. There is no preferred provider — use whatever model fits your workflow and budget.
+
+| Provider | Notable models |
+|----------|---------------|
+| [Anthropic](https://anthropic.com) | Claude Opus, Sonnet, Haiku |
+| [OpenAI](https://openai.com) | GPT-4o, o1, o3-mini |
+| [Google](https://ai.google.dev) | Gemini 2.0 Flash, Gemini 2.5 Pro |
+| [AWS Bedrock](https://aws.amazon.com/bedrock/) | Cross-region inference for Claude & Llama |
+| [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) | Enterprise GPT-4o deployments |
+| [OpenRouter](https://openrouter.ai) | 200+ models via a single API key |
+| [Ollama](https://ollama.com) | Local models (Llama 3, Mistral, Phi, …) |
+| [LM Studio](https://lmstudio.ai) | Local models with a GUI |
+| [Requesty](https://requesty.ai) | Unified model gateway |
+| [Groq](https://groq.com) | Ultra-fast inference |
+
+Configure your provider in the Settings panel or via environment variables:
+
+```bash
+# Anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# OpenAI
+export OPENAI_API_KEY=sk-...
+
+# OpenRouter
+export OPENROUTER_API_KEY=sk-or-...
+```
+
+---
+
+## Security Policy
+
+**API keys** are stored only in your OS keychain via VS Code SecretStorage. They are never logged, never written to disk as plain text, and never sent to Nexus-controlled servers.
+
+**Telemetry** is opt-in and disabled by default. When enabled, only anonymous usage events are collected — no code, no prompts, no file paths, no personal data. You can disable telemetry at any time:
+
+- **VS Code settings:** set `telemetry.telemetryLevel` to `off`
+- **Nexus settings panel:** Settings → Usage & Error Reporting → Disable
+
+**Network:** Nexus connects only to the AI provider endpoint you configure. No data is routed through Nexus infrastructure.
+
+Full details: [SECURITY.md](./SECURITY.md) · Report a vulnerability: [security@nexus.bot](mailto:security@nexus.bot)
+
+---
 
 ## Contributing
 
-Start with the [Contributing Guide](CONTRIBUTING.md). Join our [Discord](https://discord.gg/cline) and head to the `#contributors` channel to connect with other contributors. Check our [careers page](https://cline.bot/join-us) for full-time roles.
+Contributions are welcome — bug fixes, new features, translations, and documentation improvements alike.
+
+```bash
+# 1. Fork and clone
+git clone https://github.com/probaba328/cline.git
+cd cline
+
+# 2. Install dependencies (Bun required)
+bun install
+
+# 3. Build SDK packages (required before running tests)
+bun run build:sdk
+
+# 4. Create a feature branch
+git checkout -b feat/my-feature
+
+# 5. Make changes, then check types and lint
+bun run check
+
+# 6. Run tests
+bun run test:unit
+
+# 7. Push and open a pull request
+git push origin feat/my-feature
+```
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for commit message conventions and code style guidelines.
+
+### Project structure
+
+```
+apps/
+  cli/              CLI tool (@nexus/cli)
+  vscode/           VS Code extension
+    src/            Extension host (Node.js)
+    webview-ui/     Chat panel UI (React)
+  nexus-hub/        Hub daemon
+sdk/
+  packages/
+    shared/         Shared types & utilities (@nexus/shared)
+    llms/           LLM provider integrations (@nexus/llms)
+    agents/         Stateless agent loop (@nexus/agents)
+    core/           Session orchestration (@nexus/core)
+    sdk/            Public SDK entry point (@nexus/sdk)
+```
+
+---
 
 ## License
 
-[Apache 2.0 © 2026 Cline Bot Inc.](./LICENSE)
+[Apache 2.0](./LICENSE) — Nexus is a fork of [Cline](https://github.com/cline/cline), which is also Apache 2.0 licensed.

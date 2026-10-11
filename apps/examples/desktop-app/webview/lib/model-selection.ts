@@ -1,4 +1,4 @@
-export const MODEL_SELECTION_STORAGE_KEY = "cline.code.model-selection.v1";
+export const MODEL_SELECTION_STORAGE_KEY = "nexus.code.model-selection.v1";
 
 export type ModelSelectionStorage = {
 	lastProvider: string;

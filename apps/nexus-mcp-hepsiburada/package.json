@@ -1,0 +1,24 @@
+{
+  "name": "nexus-mcp-hepsiburada",
+  "version": "1.0.0",
+  "description": "Hepsiburada satıcı hesabınızı Nexus ile yönetin — MCP Server",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "bin": {
+    "nexus-mcp-hepsiburada": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

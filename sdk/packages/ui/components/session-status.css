@@ -1,19 +1,19 @@
-.cline-ui-session-status {
-	--cline-ui-session-status-color: var(--neutral-a4);
+.nexus-ui-session-status {
+	--nexus-ui-session-status-color: var(--neutral-a4);
 }
 
-.cline-ui-session-status__dot {
-	background: var(--cline-ui-session-status-color);
+.nexus-ui-session-status__dot {
+	background: var(--nexus-ui-session-status-color);
 }
 
-.cline-ui-session-status--neutral .cline-ui-session-status__dot {
+.nexus-ui-session-status--neutral .nexus-ui-session-status__dot {
 	visibility: hidden;
 }
 
-.cline-ui-session-status--running {
-	--cline-ui-session-status-color: var(--primary);
+.nexus-ui-session-status--running {
+	--nexus-ui-session-status-color: var(--primary);
 }
 
-.cline-ui-session-status--error {
-	--cline-ui-session-status-color: var(--error-text);
+.nexus-ui-session-status--error {
+	--nexus-ui-session-status-color: var(--error-text);
 }

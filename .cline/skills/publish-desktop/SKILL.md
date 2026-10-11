@@ -1,11 +1,11 @@
 ---
 name: publish-desktop
-description: Use when preparing, tagging, and publishing a Cline desktop app (apps/examples/desktop-app) release — stable (desktop-vX.Y.Z from main) or beta (desktop-vX.Y.Z-beta.N from desktop-experimental, shipped as the side-by-side "Cline Beta" app). Guides changelog drafting, version bumps in package.json + tauri.conf.json, tagging, and the desktop-publish GitHub workflow that builds, signs, notarizes, and updates the per-channel auto-update feed.
+description: Use when preparing, tagging, and publishing a Nexus desktop app (apps/examples/desktop-app) release — stable (desktop-vX.Y.Z from main) or beta (desktop-vX.Y.Z-beta.N from desktop-experimental, shipped as the side-by-side "Nexus Beta" app). Guides changelog drafting, version bumps in package.json + tauri.conf.json, tagging, and the desktop-publish GitHub workflow that builds, signs, notarizes, and updates the per-channel auto-update feed.
 ---
 
 # Desktop App Release
 
-Use this skill when the user asks to release the desktop app, publish the Cline desktop app, cut a desktop beta, bump the desktop version, create a `desktop-vX.Y.Z` (or `desktop-vX.Y.Z-beta.N`) tag, or trigger the desktop publish workflow.
+Use this skill when the user asks to release the desktop app, publish the Nexus desktop app, cut a desktop beta, bump the desktop version, create a `desktop-vX.Y.Z` (or `desktop-vX.Y.Z-beta.N`) tag, or trigger the desktop publish workflow.
 
 > Working directory: run every command below from the repository root.
 
@@ -14,8 +14,8 @@ Desktop releases are macOS-only today (a single signed + notarized universal DMG
 ## Release contract
 
 - Two channels, one workflow (`channel` input on `desktop-publish.yml`):
-  - **stable** — tag `desktop-vX.Y.Z` (no suffix; the workflow rejects prerelease suffixes on this channel), cut from `main`, feeds the rolling `desktop-latest` release, ships as "Cline".
-  - **beta** — tag `desktop-vX.Y.Z-beta.N`, cut from `desktop-experimental`, feeds the rolling `desktop-beta` release, ships as "Cline Beta" (separate bundle identifier `bot.cline.app.beta`; installs side by side with stable). Built with the extra `src-tauri/tauri.beta.conf.json` overlay. Process background: `apps/examples/desktop-app/EXPERIMENTAL.md`.
+  - **stable** — tag `desktop-vX.Y.Z` (no suffix; the workflow rejects prerelease suffixes on this channel), cut from `main`, feeds the rolling `desktop-latest` release, ships as "Nexus".
+  - **beta** — tag `desktop-vX.Y.Z-beta.N`, cut from `desktop-experimental`, feeds the rolling `desktop-beta` release, ships as "Nexus Beta" (separate bundle identifier `bot.nexus.app.beta`; installs side by side with stable). Built with the extra `src-tauri/tauri.beta.conf.json` overlay. Process background: `apps/examples/desktop-app/EXPERIMENTAL.md`.
 - Version sources (must match each other and the tag): `apps/examples/desktop-app/package.json` and `apps/examples/desktop-app/src-tauri/tauri.conf.json`. (`src-tauri/Cargo.toml` has its own version but `tauri.conf.json` overrides it; no need to touch it.)
 - Beta versions are prereleases of the **next** stable: stable `0.0.13` → betas `0.0.14-beta.1`, `-beta.2`, … Once a stable ≥ the beta base ships, the next beta bumps its base (`0.0.15-beta.1`).
 - Release prep includes approved release notes, the version bumps, and an `apps/examples/desktop-app/CHANGELOG.md` update — committed on `main` for stable, on `desktop-experimental` for beta.
@@ -52,7 +52,7 @@ git log <last-desktop-tag>..HEAD --oneline --no-merges -- apps/examples/desktop-
 git log <last-desktop-tag>..origin/desktop-experimental --oneline --no-merges -- apps/examples/desktop-app sdk/packages .github/workflows/desktop-publish.yml
 ```
 
-The sidecar bundles `@cline/core` and friends from the monorepo, so SDK changes ship inside the desktop app too. Fold user-visible SDK changes (providers, models, behavior fixes) into the notes; skip purely internal ones.
+The sidecar bundles `@nexus/core` and friends from the monorepo, so SDK changes ship inside the desktop app too. Fold user-visible SDK changes (providers, models, behavior fixes) into the notes; skip purely internal ones.
 
 3. Draft user-facing release notes.
 
@@ -73,7 +73,7 @@ Beta: apply the versioning rule — base = next stable version, increment `N` (`
 6. Verify before committing.
 
 ```sh
-bun -F @cline/code typecheck
+bun -F @nexus/code typecheck
 bun test apps/examples/desktop-app/scripts/generate-update-manifest.test.ts
 ```
 
@@ -113,7 +113,7 @@ it — the run sits in `waiting`, which is expected, not a hang. Approve it in t
 run's web UI ("Review deployments"), or:
 
 ```sh
-gh api repos/cline/cline/actions/runs/<run-id>/pending_deployments \
+gh api repos/nexus/nexus/actions/runs/<run-id>/pending_deployments \
   --method POST -f state=approved -f comment="desktop vX.Y.Z" \
   -F 'environment_ids[]=19152605990'   # PublishDesktop
 ```
@@ -127,8 +127,8 @@ If the workflow fails on missing credentials, see "Publish secrets (one-time set
 9. Verify the update feed after the run succeeds.
 
 ```sh
-curl -sL https://github.com/cline/cline/releases/download/desktop-latest/latest.json | head -30   # stable
-curl -sL https://github.com/cline/cline/releases/download/desktop-beta/latest.json | head -30    # beta
+curl -sL https://github.com/nexus/nexus/releases/download/desktop-latest/latest.json | head -30   # stable
+curl -sL https://github.com/nexus/nexus/releases/download/desktop-beta/latest.json | head -30    # beta
 ```
 
 The `version` field must be the new release and both `darwin-aarch64` and `darwin-x86_64` entries must point at the same new universal `.app.tar.gz` asset under the release tag (each slice of the fat binary requests its own arch key at runtime, so both keys serve the one artifact). Installed apps on that channel — including older per-arch installs — pick the update up on next launch or within 2 hours.

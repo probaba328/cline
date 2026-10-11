@@ -1,5 +1,5 @@
 import {
-	CLINE_DEFAULT_MODEL_ID,
+	NEXUS_DEFAULT_MODEL_ID,
 	type GatewayModelCapability,
 	type GatewayModelDefinition,
 	type GatewayModelOperationCapability,
@@ -7,11 +7,11 @@ import {
 	type GatewayProviderManifest,
 	type GatewayProviderMetadata,
 	type GatewayProviderSettings,
-	getClineEnvironmentConfig,
+	getNexusEnvironmentConfig,
 	type JsonValue,
 	type ProviderCapability,
 	type ProviderConfigField,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { getGeneratedModelsForProvider } from "../catalog/catalog.generated-access";
 import { filterImageOutputModels } from "../catalog/model-filters";
 import {
@@ -31,14 +31,14 @@ import type {
 	ProviderFamily,
 } from "./builtin-types";
 import {
-	ClineFreeModelLimitError,
-	ClineNotSubscribedError,
-	ClineOrgIndividualInferenceSubscriptionError,
-	ClinePassLimitError,
-	extractClinePassLimitMessage,
-	isClineFreeModelLimitMessage,
-	isClineNotSubscribedMessage,
-	isClineOrgIndividualInferenceSubscriptionMessage,
+	NexusFreeModelLimitError,
+	NexusNotSubscribedError,
+	NexusOrgIndividualInferenceSubscriptionError,
+	NexusPassLimitError,
+	extractNexusPassLimitMessage,
+	isNexusFreeModelLimitMessage,
+	isNexusNotSubscribedMessage,
+	isNexusOrgIndividualInferenceSubscriptionMessage,
 } from "./errors";
 import { normalizeProviderId } from "./ids";
 import {
@@ -60,7 +60,7 @@ export const DEFAULT_INTERNAL_OCA_BASE_URL =
 	"https://code-internal.aiservice.us-chicago-1.oci.oraclecloud.com/20250206/app/litellm";
 export const DEFAULT_EXTERNAL_OCA_BASE_URL =
 	"https://code.aiservice.us-chicago-1.oci.oraclecloud.com/20250206/app/litellm";
-const CLINE_PASS_PROVIDER_ID = "cline-pass";
+const NEXUS_PASS_PROVIDER_ID = "nexus-pass";
 const OPENAI_CODEX_DEFAULT_MODEL_ID = "gpt-5.4";
 const NATIVE_WEB_SEARCH_MODEL_TOOL_CAPABILITIES: readonly GatewayModelToolCapability[] =
 	[{ name: "web_search" }];
@@ -94,7 +94,7 @@ const OPENROUTER_STICKY_SESSION_METADATA: GatewayProviderMetadata = {
  * Context window requested from Ollama when neither the resolved model nor
  * the user's configuration supplies one. Matches the pre-SDK-migration
  * handler default; deliberately larger than Ollama's 4096 server default,
- * which cannot fit Cline's agentic prompts. Single source of truth — the
+ * which cannot fit Nexus's agentic prompts. Single source of truth — the
  * vendor, the VS Code session factory, and the settings UI all import this.
  */
 export const OLLAMA_DEFAULT_CONTEXT_WINDOW = 32768;
@@ -397,7 +397,7 @@ function generatedModels(providerId: string): Record<string, ModelInfo> {
 }
 
 function firstGeneratedModelId(providerId: string): string {
-	// Use the catalog's authored order, not release-date order. The cline-pass
+	// Use the catalog's authored order, not release-date order. The nexus-pass
 	// block mirrors the recommended-models endpoint, which lists the intended
 	// default subscription model first — the newest model is not necessarily a
 	// safe default.
@@ -450,10 +450,10 @@ function buildOpenAICodexModels(): Record<string, ModelInfo> {
 	return filterOpenAICodexModels(generatedModels("openai-native"));
 }
 
-// Vercel-only model ids surfaced for the Cline provider while the OpenRouter
-// catalog lacks them (Cline's backend routes these to Vercel AI Gateway).
+// Vercel-only model ids surfaced for the Nexus provider while the OpenRouter
+// catalog lacks them (Nexus's backend routes these to Vercel AI Gateway).
 // Remove an id once the OpenRouter catalog lists it.
-const VERCEL_ONLY_CLINE_MODEL_IDS: readonly string[] = [
+const VERCEL_ONLY_NEXUS_MODEL_IDS: readonly string[] = [
 	"meta/muse-spark-1.2-contributor",
 ];
 
@@ -475,8 +475,8 @@ function buildElevenLabsModels(): Record<string, ModelInfo> {
 	};
 }
 
-function buildClineModels(): Record<string, ModelInfo> {
-	// Cline is OpenRouter-backed generally, but its recommended-model endpoint
+function buildNexusModels(): Record<string, ModelInfo> {
+	// Nexus is OpenRouter-backed generally, but its recommended-model endpoint
 	// can return Vercel-style ids. Include those exact ids so runtime metadata
 	// resolves without adding duplicate OpenRouter aliases to the picker.
 	const vercelAliasModels = Object.fromEntries(
@@ -485,7 +485,7 @@ function buildClineModels(): Record<string, ModelInfo> {
 				isCanonicalModelIdForAliasRules(
 					modelId,
 					VERCEL_OPENROUTER_MODEL_ID_ALIAS_RULES,
-				) || VERCEL_ONLY_CLINE_MODEL_IDS.includes(modelId),
+				) || VERCEL_ONLY_NEXUS_MODEL_IDS.includes(modelId),
 		),
 	);
 	const models = preferCanonicalModelIds(
@@ -496,7 +496,7 @@ function buildClineModels(): Record<string, ModelInfo> {
 		VERCEL_OPENROUTER_MODEL_ID_ALIAS_RULES,
 	);
 
-	// Cline's inference backend currently rejects image-output models. Keep
+	// Nexus's inference backend currently rejects image-output models. Keep
 	// those models in their native OpenRouter and Vercel catalogs.
 	return filterImageOutputModels(models);
 }
@@ -645,7 +645,7 @@ function inferClient(spec: BuiltinSpec): ProviderClient {
 	}
 }
 
-function createClineLikeSpec(
+function createNexusLikeSpec(
 	input: Pick<BuiltinSpec, "id" | "name" | "defaultModelId"> & {
 		family?: ProviderFamily;
 	} & Partial<
@@ -663,7 +663,7 @@ function createClineLikeSpec(
 	return {
 		id: input.id,
 		name: input.name,
-		description: input.description ?? "Cline API endpoint",
+		description: input.description ?? "Nexus API endpoint",
 		family: input.family ?? "openai-compatible",
 		popular: input.popular,
 		modelToolCapabilities: NATIVE_WEB_SEARCH_MODEL_TOOL_CAPABILITIES,
@@ -671,10 +671,10 @@ function createClineLikeSpec(
 		modelsProviderId: input.modelsProviderId,
 		modelsFactory: input.modelsFactory,
 		defaultModelId: input.defaultModelId,
-		apiKeyEnv: ["CLINE_API_KEY"],
+		apiKeyEnv: ["NEXUS_API_KEY"],
 		defaults: {
 			get baseUrl(): string {
-				return `${getClineEnvironmentConfig().apiBaseUrl}/api/v1`;
+				return `${getNexusEnvironmentConfig().apiBaseUrl}/api/v1`;
 			},
 			...input.defaults,
 		},
@@ -687,7 +687,7 @@ function createClineLikeSpec(
 	};
 }
 
-async function handleClineResponseError(
+async function handleNexusResponseError(
 	response: Response,
 	providerId: string,
 ): Promise<void> {
@@ -700,60 +700,60 @@ async function handleClineResponseError(
 		.text()
 		.catch(() => "");
 
-	if (isClineOrgIndividualInferenceSubscriptionMessage(body)) {
-		throw new ClineOrgIndividualInferenceSubscriptionError(providerId);
+	if (isNexusOrgIndividualInferenceSubscriptionMessage(body)) {
+		throw new NexusOrgIndividualInferenceSubscriptionError(providerId);
 	}
 
-	if (isClineFreeModelLimitMessage(body)) {
-		throw new ClineFreeModelLimitError(body, providerId);
+	if (isNexusFreeModelLimitMessage(body)) {
+		throw new NexusFreeModelLimitError(body, providerId);
 	}
 
-	const clinePassLimitMessage = extractClinePassLimitMessage(body);
-	if (clinePassLimitMessage) {
-		throw new ClinePassLimitError(clinePassLimitMessage, providerId);
+	const nexusPassLimitMessage = extractNexusPassLimitMessage(body);
+	if (nexusPassLimitMessage) {
+		throw new NexusPassLimitError(nexusPassLimitMessage, providerId);
 	}
 
-	if (isClineNotSubscribedMessage(body)) {
-		throw new ClineNotSubscribedError(providerId);
+	if (isNexusNotSubscribedMessage(body)) {
+		throw new NexusNotSubscribedError(providerId);
 	}
 }
 
-const cline = createClineLikeSpec({
-	id: "cline",
-	family: "cline",
-	name: "Cline Usage-Billing",
+const nexus = createNexusLikeSpec({
+	id: "nexus",
+	family: "nexus",
+	name: "Nexus Usage-Billing",
 	popular: 1,
-	modelsFactory: buildClineModels,
-	defaultModelId: CLINE_DEFAULT_MODEL_ID,
+	modelsFactory: buildNexusModels,
+	defaultModelId: NEXUS_DEFAULT_MODEL_ID,
 	defaults: {
 		options: {
 			onResponseError: async (response: Response) => {
-				await handleClineResponseError(response, "cline");
+				await handleNexusResponseError(response, "nexus");
 			},
 		},
 	},
 });
 
-const clinePass = createClineLikeSpec({
-	id: CLINE_PASS_PROVIDER_ID,
-	family: "cline",
-	name: "ClinePass",
+const nexusPass = createNexusLikeSpec({
+	id: NEXUS_PASS_PROVIDER_ID,
+	family: "nexus",
+	name: "NexusPass",
 	popular: 2,
-	description: "Cline API endpoint with ClinePass models",
-	modelsProviderId: CLINE_PASS_PROVIDER_ID,
-	defaultModelId: firstGeneratedModelId(CLINE_PASS_PROVIDER_ID),
+	description: "Nexus API endpoint with NexusPass models",
+	modelsProviderId: NEXUS_PASS_PROVIDER_ID,
+	defaultModelId: firstGeneratedModelId(NEXUS_PASS_PROVIDER_ID),
 	metadata: { usageCostDisplay: "subscription" },
 	defaults: {
 		options: {
 			onResponseError: async (response: Response) => {
-				await handleClineResponseError(response, CLINE_PASS_PROVIDER_ID);
+				await handleNexusResponseError(response, NEXUS_PASS_PROVIDER_ID);
 			},
 		},
 	},
 });
 
 /**
- * Handwritten providers plus generated providers that require Cline-specific
+ * Handwritten providers plus generated providers that require Nexus-specific
  * runtime or product policy. Providers fully described by models.dev must not
  * be duplicated here.
  */
@@ -769,8 +769,8 @@ const OPENAI_COMPATIBLE_SPEC_OVERRIDES: BuiltinSpecOverride[] = [
 		apiKeyEnv: ["OPENAI_API_KEY"],
 		defaults: { baseUrl: "https://api.openai.com/v1" },
 	},
-	cline,
-	clinePass,
+	nexus,
+	nexusPass,
 	{
 		id: "deepseek",
 		name: "DeepSeek",
@@ -938,7 +938,7 @@ const OPENAI_COMPATIBLE_SPEC_OVERRIDES: BuiltinSpecOverride[] = [
 	},
 	{
 		// Fully described by models.dev except for the regional endpoint
-		// routing policy (`apiLineBaseUrls`), which is Cline-specific.
+		// routing policy (`apiLineBaseUrls`), which is Nexus-specific.
 		id: "moonshot",
 		apiLineBaseUrls: {
 			china: "https://api.moonshot.cn/v1",
@@ -1076,7 +1076,7 @@ const OPENAI_COMPATIBLE_SPEC_OVERRIDES: BuiltinSpecOverride[] = [
 
 /**
  * Non-OpenAI-compatible runtime/product overrides. Keep generated catalog facts
- * in providers.generated.ts and only retain Cline-owned behavior here.
+ * in providers.generated.ts and only retain Nexus-owned behavior here.
  */
 const BUILTIN_SPEC_OVERRIDES: BuiltinSpecOverride[] = [
 	{
@@ -1152,7 +1152,7 @@ const BUILTIN_SPEC_OVERRIDES: BuiltinSpecOverride[] = [
 		// provider-tools: the Claude Code CLI executes its own native tools
 		// (Read/Write/Bash/...) inside the spawned agent session and cannot
 		// bridge externally-executed AI SDK tools. Without this capability the
-		// gateway sends Cline's tool definitions (which the provider drops)
+		// gateway sends Nexus's tool definitions (which the provider drops)
 		// while the CLI's own tools stay enabled with no approval plumbing —
 		// every write is refused and no prompt can appear (#13146).
 		capabilities: ["reasoning", "provider-tools"],

@@ -1,15 +1,15 @@
 /**
  * macOS Notification Plugin Example
  *
- * Sends a Notification Center alert when a Cline run completes successfully.
+ * Sends a Notification Center alert when a Nexus run completes successfully.
  *
  * CLI usage:
- *   cline plugin install https://github.com/cline/cline/blob/main/sdk/examples/plugins/mac-notify.ts --cwd .
- *   cline -i "Run the test suite"
+ *   nexus plugin install https://github.com/nexus/nexus/blob/main/sdk/examples/plugins/mac-notify.ts --cwd .
+ *   nexus -i "Run the test suite"
  */
 
 import { execFile } from "node:child_process";
-import type { AgentPlugin, AgentRunResult } from "@cline/core";
+import type { AgentPlugin, AgentRunResult } from "@nexus/core";
 
 function quoteAppleScriptString(value: string): string {
 	return `"${value
@@ -58,7 +58,7 @@ const plugin: AgentPlugin = {
 			if (result.status !== "completed") {
 				return;
 			}
-			sendMacNotification("Cline session completed", summarizeResult(result));
+			sendMacNotification("Nexus session completed", summarizeResult(result));
 		},
 	},
 };

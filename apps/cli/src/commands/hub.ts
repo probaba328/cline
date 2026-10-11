@@ -8,8 +8,8 @@ import {
 	resolveProductionHubOwnerContext,
 	resolveSharedHubOwnerContext,
 	stopLocalHubServerGracefully,
-} from "@cline/core";
-import { formatUptime, resolveClineBuildEnv } from "@cline/shared";
+} from "@nexus/core";
+import { formatUptime, resolveNexusBuildEnv } from "@nexus/shared";
 import { Command, InvalidArgumentError } from "commander";
 import { version as cliVersion } from "../../package.json";
 
@@ -51,7 +51,7 @@ function formatHubUptimeFromStartedAt(
 }
 
 function resolveCliHubOwnerContext() {
-	return resolveClineBuildEnv() === "production"
+	return resolveNexusBuildEnv() === "production"
 		? resolveProductionHubOwnerContext()
 		: resolveSharedHubOwnerContext();
 }
@@ -181,7 +181,7 @@ export function createHubCommand(
 					discovery.url,
 					discovery.authToken,
 					cmdOptions.reason ??
-						(draining ? "cline hub drain" : "cline hub drain --off"),
+						(draining ? "nexus hub drain" : "nexus hub drain --off"),
 					{ off: !draining },
 				);
 				if (!ok) {
@@ -220,7 +220,7 @@ export function createHubCommand(
 					const drained = await requestHubDrain(
 						discovery.url,
 						discovery.authToken,
-						"cline hub upgrade",
+						"nexus hub upgrade",
 					).catch(() => false);
 					// An aborted upgrade must hand the hub back: leaving it
 					// draining refuses all new mutating work until a restart.
@@ -231,7 +231,7 @@ export function createHubCommand(
 						await requestHubDrain(
 							discovery.url,
 							discovery.authToken,
-							"cline hub upgrade aborted",
+							"nexus hub upgrade aborted",
 							{ off: true },
 						).catch(() => false);
 					};

@@ -1,9 +1,9 @@
-import { createContextCompactionPrepareTurn } from "@cline/core"
+import { createContextCompactionPrepareTurn } from "@nexus/core"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { StateManager } from "@/core/storage/StateManager"
 import { SdkCompactionCoordinator, type SdkCompactionCoordinatorOptions } from "./sdk-compaction-coordinator"
 
-vi.mock("@cline/core", () => ({
+vi.mock("@nexus/core", () => ({
 	createContextCompactionPrepareTurn: vi.fn(),
 	createSessionCompactionState: vi.fn((input: { compactedMessages: unknown[] }) => ({
 		version: 1,

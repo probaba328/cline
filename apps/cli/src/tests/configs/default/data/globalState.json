@@ -31,10 +31,10 @@
 			"maxBudget": 6000
 		}
 	},
-	"actModeApiProvider": "cline",
-	"planModeApiProvider": "cline",
-	"actModeClineModelId": "anthropic/claude-sonnet-4.6",
-	"planModeClineModelId": "anthropic/claude-sonnet-4.6",
+	"actModeApiProvider": "nexus",
+	"planModeApiProvider": "nexus",
+	"actModeNexusModelId": "anthropic/claude-sonnet-4.6",
+	"planModeNexusModelId": "anthropic/claude-sonnet-4.6",
 	"welcomeViewCompleted": true,
 	"actModeThinkingBudgetTokens": 0,
 	"planModeThinkingBudgetTokens": 0,
@@ -57,7 +57,7 @@
 	},
 	"primaryRootIndex": 0,
 	"globalWorkflowToggles": {},
-	"globalClineRulesToggles": {},
+	"globalNexusRulesToggles": {},
 	"isNewUser": false,
 	"subagentsEnabled": true
 }

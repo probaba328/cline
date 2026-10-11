@@ -1,8 +1,8 @@
-import type * as LlmsProviders from "@cline/llms";
+import type * as LlmsProviders from "@nexus/llms";
 import {
 	estimateRequestInputTokens,
 	type MessageWithMetadata,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	createSessionCompactionState,
@@ -28,7 +28,7 @@ type FakeChunk = Record<string, unknown>;
 
 const createHandlerMock = vi.fn();
 
-vi.mock("@cline/llms", () => ({
+vi.mock("@nexus/llms", () => ({
 	createHandlerAsync: (config: unknown) => createHandlerMock(config),
 }));
 

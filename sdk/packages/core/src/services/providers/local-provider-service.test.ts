@@ -1,14 +1,14 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import * as LlmsModels from "@cline/llms";
-import { CLINE_DEFAULT_MODEL_ID } from "@cline/shared";
+import * as LlmsModels from "@nexus/llms";
+import { NEXUS_DEFAULT_MODEL_ID } from "@nexus/shared";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	FALLBACK_CLINE_RECOMMENDED_MODELS,
-	getCachedClineRecommendedModels,
-	resetClineRecommendedModelsCacheForTests,
-} from "../llms/cline-recommended-models";
+	FALLBACK_NEXUS_RECOMMENDED_MODELS,
+	getCachedNexusRecommendedModels,
+	resetNexusRecommendedModelsCacheForTests,
+} from "../llms/nexus-recommended-models";
 import { clearLiveModelsCatalogCache } from "../llms/provider-defaults";
 import { ProviderSettingsManager } from "../storage/provider-settings-manager";
 import {
@@ -28,7 +28,7 @@ import {
 	markLocalProviderEnabled,
 	normalizeOAuthProvider,
 	refreshProviderModelsFromSource,
-	resolveLocalClineAuthToken,
+	resolveLocalNexusAuthToken,
 	saveLocalProviderSettings,
 	saveVoiceInputSettings,
 	transcribeConfiguredVoiceInput,
@@ -62,7 +62,7 @@ function makeTempManager(): {
 
 afterEach(() => {
 	clearLiveModelsCatalogCache();
-	resetClineRecommendedModelsCacheForTests();
+	resetNexusRecommendedModelsCacheForTests();
 	LlmsModels.resetRegistry();
 	vi.restoreAllMocks();
 	vi.unstubAllGlobals();
@@ -418,7 +418,7 @@ describe("addLocalProvider – model ID parsing via modelsSourceUrl", () => {
 		expect(models.map((m) => m.id).sort()).toEqual(["llama3.1", "qwen3:8b"]);
 	});
 
-	it("uses only live ClinePass models when live models are found", async () => {
+	it("uses only live NexusPass models when live models are found", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.dev/api.json") {
 				return new Response(
@@ -449,13 +449,13 @@ describe("addLocalProvider – model ID parsing via modelsSourceUrl", () => {
 
 			return new Response(
 				JSON.stringify({
-					clinePass: [
+					nexusPass: [
 						{
-							id: "cline-pass/live-pass-model",
+							id: "nexus-pass/live-pass-model",
 							name: "vendor/live-pass-model",
 						},
 					],
-					free: [{ id: "cline-free/live-free-model" }],
+					free: [{ id: "nexus-free/live-free-model" }],
 				}),
 				{
 					status: 200,
@@ -465,7 +465,7 @@ describe("addLocalProvider – model ID parsing via modelsSourceUrl", () => {
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const { models } = await getLocalProviderModels("cline-pass");
+		const { models } = await getLocalProviderModels("nexus-pass");
 
 		// models.dev, the recommended-models feed via the live catalog, and
 		// the recommended-models feed again for the featured-tier overlay
@@ -473,27 +473,27 @@ describe("addLocalProvider – model ID parsing via modelsSourceUrl", () => {
 		expect(fetchMock).toHaveBeenCalledTimes(3);
 		expect(models.map((model) => model.id)).toEqual(
 			expect.arrayContaining([
-				"cline-pass/live-pass-model",
-				"cline-free/live-free-model",
+				"nexus-pass/live-pass-model",
+				"nexus-free/live-free-model",
 			]),
 		);
 		expect(
-			models.find((model) => model.id === "cline-pass/live-pass-model"),
+			models.find((model) => model.id === "nexus-pass/live-pass-model"),
 		).toMatchObject({
-			id: "cline-pass/live-pass-model",
+			id: "nexus-pass/live-pass-model",
 			name: "Live Pass Model",
 			supportsReasoning: true,
 		});
 		expect(
-			models.find((model) => model.id === "cline-free/live-free-model"),
+			models.find((model) => model.id === "nexus-free/live-free-model"),
 		).toMatchObject({
-			id: "cline-free/live-free-model",
+			id: "nexus-free/live-free-model",
 			name: "Live Free Model (free)",
 			supportsReasoning: true,
 		});
 	});
 
-	it("falls back to generated ClinePass models when no live ClinePass models are found", async () => {
+	it("falls back to generated NexusPass models when no live NexusPass models are found", async () => {
 		const fetchMock = vi.fn(async (url: string) => {
 			if (url === "https://models.dev/api.json") {
 				return new Response(
@@ -514,21 +514,21 @@ describe("addLocalProvider – model ID parsing via modelsSourceUrl", () => {
 				);
 			}
 
-			return new Response(JSON.stringify({ clinePass: [] }), {
+			return new Response(JSON.stringify({ nexusPass: [] }), {
 				status: 200,
 				headers: { "content-type": "application/json" },
 			});
 		});
 		vi.stubGlobal("fetch", fetchMock);
 
-		const { models } = await getLocalProviderModels("cline-pass");
+		const { models } = await getLocalProviderModels("nexus-pass");
 
 		// models.dev, the recommended-models feed via the live catalog, and
 		// the recommended-models feed again for the featured-tier overlay
 		// (separately cached; both caches are cold here).
 		expect(fetchMock).toHaveBeenCalledTimes(3);
 		expect(models.map((model) => model.id)).toContain(
-			"cline-pass/mimo-v2.5-pro",
+			"nexus-pass/mimo-v2.5-pro",
 		);
 		expect(models.map((model) => model.id)).not.toContain(
 			"vendor/live-openrouter-model",
@@ -1203,7 +1203,7 @@ describe("models.json model overlays", () => {
 					{
 						version: 1,
 						providers: {
-							cline: {
+							nexus: {
 								models: {
 									"openai/gpt-5.5": {
 										id: "openai/gpt-5.5",
@@ -1222,14 +1222,14 @@ describe("models.json model overlays", () => {
 				filePath: path.join(settingsDir, "providers.json"),
 			});
 
-			const provider = await LlmsModels.getProvider("cline");
+			const provider = await LlmsModels.getProvider("nexus");
 			expect(provider).toMatchObject({
-				id: "cline",
-				baseUrl: "https://api.cline.bot/api/v1",
-				defaultModelId: CLINE_DEFAULT_MODEL_ID,
+				id: "nexus",
+				baseUrl: "https://api.nexus.bot/api/v1",
+				defaultModelId: NEXUS_DEFAULT_MODEL_ID,
 			});
 
-			const { models } = await getLocalProviderModels("cline");
+			const { models } = await getLocalProviderModels("nexus");
 			expect(
 				models.find((model) => model.id === "openai/gpt-5.5"),
 			).toMatchObject({
@@ -1637,20 +1637,20 @@ describe("listLocalProviders", () => {
 		expect(ids).toContain("list-provider-b");
 	});
 
-	it("hides ClinePass when the ClinePass feature flag is disabled", async () => {
+	it("hides NexusPass when the NexusPass feature flag is disabled", async () => {
 		const { providers } = await listLocalProviders(manager, {
-			isClinePassEnabled: false,
+			isNexusPassEnabled: false,
 		});
 
-		expect(providers.map((p) => p.id)).not.toContain("cline-pass");
+		expect(providers.map((p) => p.id)).not.toContain("nexus-pass");
 	});
 
-	it("includes ClinePass when the ClinePass feature flag is enabled", async () => {
+	it("includes NexusPass when the NexusPass feature flag is enabled", async () => {
 		const { providers } = await listLocalProviders(manager, {
-			isClinePassEnabled: true,
+			isNexusPassEnabled: true,
 		});
 
-		expect(providers.map((p) => p.id)).toContain("cline-pass");
+		expect(providers.map((p) => p.id)).toContain("nexus-pass");
 	});
 
 	it("stamps featured tiers from the bundled fallback without a feed fetch", async () => {
@@ -1659,11 +1659,11 @@ describe("listLocalProviders", () => {
 
 		const { providers } = await listLocalProviders(manager);
 		const modelList =
-			providers.find((provider) => provider.id === "cline")?.modelList ?? [];
+			providers.find((provider) => provider.id === "nexus")?.modelList ?? [];
 		const stampedIds = modelList
 			.filter((model) => model.featured?.tier === "recommended")
 			.map((model) => model.id);
-		const expectedIds = FALLBACK_CLINE_RECOMMENDED_MODELS.recommended
+		const expectedIds = FALLBACK_NEXUS_RECOMMENDED_MODELS.recommended
 			.map((model) => model.id)
 			.filter((id) => modelList.some((model) => model.id === id));
 
@@ -1676,11 +1676,11 @@ describe("listLocalProviders", () => {
 	});
 
 	it("stamps featured tiers from the cached live feed once warmed", async () => {
-		const clineModelIds = Object.keys(
-			await LlmsModels.getModelsForProvider("cline"),
+		const nexusModelIds = Object.keys(
+			await LlmsModels.getModelsForProvider("nexus"),
 		);
-		const [recommendedId, freeId] = clineModelIds;
-		await getCachedClineRecommendedModels({
+		const [recommendedId, freeId] = nexusModelIds;
+		await getCachedNexusRecommendedModels({
 			baseUrl: "https://api.example.test",
 			fetchImpl: async () =>
 				new Response(
@@ -1694,7 +1694,7 @@ describe("listLocalProviders", () => {
 							},
 						],
 						free: [{ id: freeId, name: "Live Free", description: "" }],
-						clinePass: [],
+						nexusPass: [],
 					}),
 					{ status: 200, headers: { "Content-Type": "application/json" } },
 				),
@@ -1703,7 +1703,7 @@ describe("listLocalProviders", () => {
 
 		const { providers } = await listLocalProviders(manager);
 		const modelList =
-			providers.find((provider) => provider.id === "cline")?.modelList ?? [];
+			providers.find((provider) => provider.id === "nexus")?.modelList ?? [];
 
 		expect(
 			modelList.find((model) => model.id === recommendedId)?.featured,
@@ -1757,7 +1757,7 @@ describe("listLocalProviders", () => {
 	it("marks alias providers enabled without copying shared OAuth credentials", async () => {
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 				auth: {
 					accessToken: "shared-token",
 					refreshToken: "shared-refresh",
@@ -1766,19 +1766,19 @@ describe("listLocalProviders", () => {
 			{ setLastUsed: false, tokenSource: "oauth" },
 		);
 
-		markLocalProviderEnabled(manager, "cline-pass", { tokenSource: "oauth" });
+		markLocalProviderEnabled(manager, "nexus-pass", { tokenSource: "oauth" });
 
 		const state = manager.read();
-		expect(state.providers["cline-pass"]?.settings).toEqual({
-			provider: "cline-pass",
+		expect(state.providers["nexus-pass"]?.settings).toEqual({
+			provider: "nexus-pass",
 		});
-		expect(state.providers["cline-pass"]?.tokenSource).toBe("oauth");
+		expect(state.providers["nexus-pass"]?.tokenSource).toBe("oauth");
 	});
 
-	it("resolves shared OAuth metadata for ClinePass catalog entries", async () => {
+	it("resolves shared OAuth metadata for NexusPass catalog entries", async () => {
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 				auth: {
 					accessToken: "shared-token",
 					refreshToken: "shared-refresh",
@@ -1786,16 +1786,16 @@ describe("listLocalProviders", () => {
 			},
 			{ setLastUsed: false, tokenSource: "oauth" },
 		);
-		markLocalProviderEnabled(manager, "cline-pass", { tokenSource: "oauth" });
+		markLocalProviderEnabled(manager, "nexus-pass", { tokenSource: "oauth" });
 
 		const { providers } = await listLocalProviders(manager, {
-			isClinePassEnabled: true,
+			isNexusPassEnabled: true,
 		});
-		const clinePass = providers.find(
-			(provider) => provider.id === "cline-pass",
+		const nexusPass = providers.find(
+			(provider) => provider.id === "nexus-pass",
 		);
 
-		expect(clinePass).toMatchObject({
+		expect(nexusPass).toMatchObject({
 			enabled: true,
 			oauthAccessTokenPresent: true,
 		});
@@ -1875,32 +1875,32 @@ describe("listLocalProviders", () => {
 		).toBe(false);
 	});
 
-	it("uses Cline-specific Z.ai aliases in the built-in model list", async () => {
+	it("uses Nexus-specific Z.ai aliases in the built-in model list", async () => {
 		manager.saveProviderSettings(
 			{
-				provider: "cline",
+				provider: "nexus",
 				apiKey: "test-key",
-				baseUrl: "https://api.cline.bot/api/v1",
+				baseUrl: "https://api.nexus.bot/api/v1",
 				model: "anthropic/claude-sonnet-4.6",
 			},
 			{ setLastUsed: false },
 		);
 
 		const { providers } = await listLocalProviders(manager);
-		const cline = providers.find((provider) => provider.id === "cline");
+		const nexus = providers.find((provider) => provider.id === "nexus");
 		const openrouter = providers.find(
 			(provider) => provider.id === "openrouter",
 		);
-		const clineModelIds = new Set(
-			cline?.modelList?.map((model) => model.id) ?? [],
+		const nexusModelIds = new Set(
+			nexus?.modelList?.map((model) => model.id) ?? [],
 		);
 		const openrouterModelIds = new Set(
 			openrouter?.modelList?.map((model) => model.id) ?? [],
 		);
 
-		expect(cline?.modelList?.length).toBeGreaterThan(0);
-		expect(clineModelIds).toContain("zai/glm-5.2");
-		expect(clineModelIds).not.toContain("z-ai/glm-5.2");
+		expect(nexus?.modelList?.length).toBeGreaterThan(0);
+		expect(nexusModelIds).toContain("zai/glm-5.2");
+		expect(nexusModelIds).not.toContain("z-ai/glm-5.2");
 		expect(openrouterModelIds).toContain("z-ai/glm-5.2");
 	});
 
@@ -1944,9 +1944,9 @@ describe("listLocalProviders", () => {
 // ===========================================================================
 
 describe("normalizeOAuthProvider", () => {
-	it("normalizes 'cline' to 'cline'", () => {
-		expect(normalizeOAuthProvider("cline")).toBe("cline");
-		expect(normalizeOAuthProvider("  CLINE  ")).toBe("cline");
+	it("normalizes 'nexus' to 'nexus'", () => {
+		expect(normalizeOAuthProvider("nexus")).toBe("nexus");
+		expect(normalizeOAuthProvider("  CLINE  ")).toBe("nexus");
 	});
 
 	it("normalizes 'oca' to 'oca'", () => {
@@ -1968,18 +1968,18 @@ describe("normalizeOAuthProvider", () => {
 });
 
 // ===========================================================================
-// resolveLocalClineAuthToken
+// resolveLocalNexusAuthToken
 // ===========================================================================
 
-describe("resolveLocalClineAuthToken", () => {
+describe("resolveLocalNexusAuthToken", () => {
 	it("returns undefined when settings is undefined", () => {
-		expect(resolveLocalClineAuthToken(undefined)).toBeUndefined();
+		expect(resolveLocalNexusAuthToken(undefined)).toBeUndefined();
 	});
 
 	it("returns accessToken when present", () => {
 		expect(
-			resolveLocalClineAuthToken({
-				provider: "cline" as never,
+			resolveLocalNexusAuthToken({
+				provider: "nexus" as never,
 				auth: { accessToken: "tok123" },
 			}),
 		).toBe("tok123");
@@ -1987,8 +1987,8 @@ describe("resolveLocalClineAuthToken", () => {
 
 	it("falls back to apiKey when accessToken is absent", () => {
 		expect(
-			resolveLocalClineAuthToken({
-				provider: "cline" as never,
+			resolveLocalNexusAuthToken({
+				provider: "nexus" as never,
 				apiKey: "api-key-456",
 			}),
 		).toBe("api-key-456");
@@ -1996,8 +1996,8 @@ describe("resolveLocalClineAuthToken", () => {
 
 	it("prefers accessToken over apiKey", () => {
 		expect(
-			resolveLocalClineAuthToken({
-				provider: "cline" as never,
+			resolveLocalNexusAuthToken({
+				provider: "nexus" as never,
 				apiKey: "api-key",
 				auth: { accessToken: "access-token" },
 			}),
@@ -2006,8 +2006,8 @@ describe("resolveLocalClineAuthToken", () => {
 
 	it("returns undefined when both accessToken and apiKey are empty strings", () => {
 		expect(
-			resolveLocalClineAuthToken({
-				provider: "cline" as never,
+			resolveLocalNexusAuthToken({
+				provider: "nexus" as never,
 				apiKey: "   ",
 				auth: { accessToken: "  " },
 			}),
@@ -2016,7 +2016,7 @@ describe("resolveLocalClineAuthToken", () => {
 
 	it("returns undefined when both fields are absent", () => {
 		expect(
-			resolveLocalClineAuthToken({ provider: "cline" as never }),
+			resolveLocalNexusAuthToken({ provider: "nexus" as never }),
 		).toBeUndefined();
 	});
 });

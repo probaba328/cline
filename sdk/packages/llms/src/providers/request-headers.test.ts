@@ -6,14 +6,14 @@ function jwtWithPayload(payload: Record<string, unknown>): string {
 }
 
 describe("resolveProviderRequestHeaders", () => {
-	it("adds required Cline billing headers after stored, config, and session layers", () => {
+	it("adds required Nexus billing headers after stored, config, and session layers", () => {
 		const headers = resolveProviderRequestHeaders({
-			providerId: "cline",
+			providerId: "nexus",
 			sessionId: "sess-1",
 			source: "cli",
 			defaultSource: "core",
 			client: {
-				name: "cline-cli",
+				name: "nexus-cli",
 				version: "3.0.38",
 			},
 			coreVersion: "0.2.0",
@@ -36,11 +36,11 @@ describe("resolveProviderRequestHeaders", () => {
 		});
 
 		expect(headers).toMatchObject({
-			"HTTP-Referer": "https://cline.bot",
-			"X-Title": "Cline",
-			"User-Agent": "Cline/3.0.38",
+			"HTTP-Referer": "https://nexus.bot",
+			"X-Title": "Nexus",
+			"User-Agent": "Nexus/3.0.38",
 			"X-IS-MULTIROOT": "false",
-			"X-CLIENT-TYPE": "cline-cli",
+			"X-CLIENT-TYPE": "nexus-cli",
 			"X-CLIENT-VERSION": "3.0.38",
 			"X-PLATFORM": "cli",
 			"X-PLATFORM-VERSION": "3.0.38",
@@ -53,9 +53,9 @@ describe("resolveProviderRequestHeaders", () => {
 		});
 	});
 
-	it("uses host client context for Cline billing headers when provided", () => {
+	it("uses host client context for Nexus billing headers when provided", () => {
 		const headers = resolveProviderRequestHeaders({
-			providerId: "cline-pass",
+			providerId: "nexus-pass",
 			sessionId: "sess-vscode",
 			source: "core",
 			defaultSource: "core",
@@ -70,7 +70,7 @@ describe("resolveProviderRequestHeaders", () => {
 		});
 
 		expect(headers).toMatchObject({
-			"User-Agent": "Cline/9.9.9",
+			"User-Agent": "Nexus/9.9.9",
 			"X-IS-MULTIROOT": "true",
 			"X-CLIENT-TYPE": "VSCode Extension",
 			"X-CLIENT-VERSION": "9.9.9",
@@ -110,9 +110,9 @@ describe("resolveProviderRequestHeaders", () => {
 		});
 
 		expect(headers).toMatchObject({
-			originator: "cline",
+			originator: "nexus",
 			session_id: "sess-codex",
-			"User-Agent": "Cline/3.0.38",
+			"User-Agent": "Nexus/3.0.38",
 			"ChatGPT-Account-Id": "acct-derived",
 			"x-config": "config",
 			"x-stored": "stored",

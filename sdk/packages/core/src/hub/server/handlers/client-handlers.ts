@@ -2,8 +2,8 @@ import type {
 	HubClientRegistration,
 	HubCommandEnvelope,
 	HubReplyEnvelope,
-} from "@cline/shared";
-import { createSessionId } from "@cline/shared";
+} from "@nexus/shared";
+import { createSessionId } from "@nexus/shared";
 import {
 	asPlainRecord,
 	errorReply,

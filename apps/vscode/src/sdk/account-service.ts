@@ -1,7 +1,7 @@
-// Replaces classic src/services/account/ClineAccountService.ts (see origin/main)
+// Replaces classic src/services/account/NexusAccountService.ts (see origin/main)
 //
 // SDK-backed account service. Handles credits, organizations, and user data
-// by making authenticated requests to the Cline API.
+// by making authenticated requests to the Nexus API.
 
 import type {
 	BalanceResponse,
@@ -11,17 +11,17 @@ import type {
 	UsageTransaction,
 	UserRemoteConfigDiscoveryResponse,
 	UserResponse,
-} from "@shared/ClineAccount"
+} from "@shared/NexusAccount"
 import axios, { type AxiosRequestConfig, type AxiosResponse } from "axios"
-import { ClineEnv } from "@/config"
-import { buildBasicClineHeaders } from "@/services/EnvUtils"
-import { CLINE_API_ENDPOINT } from "@/shared/cline/api"
+import { NexusEnv } from "@/config"
+import { buildBasicNexusHeaders } from "@/services/EnvUtils"
+import { NEXUS_API_ENDPOINT } from "@/shared/nexus/api"
 import { getAxiosSettings } from "@/shared/net"
 import { Logger } from "@/shared/services/Logger"
 import { AuthService } from "./auth-service"
 
-export class ClineAccountService {
-	private static instance: ClineAccountService
+export class NexusAccountService {
+	private static instance: NexusAccountService
 	private _authService: AuthService
 
 	constructor() {
@@ -29,24 +29,24 @@ export class ClineAccountService {
 	}
 
 	/**
-	 * Returns the singleton instance of ClineAccountService
+	 * Returns the singleton instance of NexusAccountService
 	 */
-	public static getInstance(): ClineAccountService {
-		if (!ClineAccountService.instance) {
-			ClineAccountService.instance = new ClineAccountService()
+	public static getInstance(): NexusAccountService {
+		if (!NexusAccountService.instance) {
+			NexusAccountService.instance = new NexusAccountService()
 		}
-		return ClineAccountService.instance
+		return NexusAccountService.instance
 	}
 
 	/**
-	 * Returns the base URL for the Cline API
+	 * Returns the base URL for the Nexus API
 	 */
 	get baseUrl(): string {
-		return ClineEnv.config().apiBaseUrl
+		return NexusEnv.config().apiBaseUrl
 	}
 
 	/**
-	 * Helper function to make authenticated requests to the Cline API.
+	 * Helper function to make authenticated requests to the Nexus API.
 	 * Uses the SDK-backed AuthService for token management.
 	 */
 	private async authenticatedRequest<T>(
@@ -56,16 +56,16 @@ export class ClineAccountService {
 	): Promise<T> {
 		const url = new URL(endpoint, this.baseUrl).toString()
 		// IMPORTANT: Prefixed with 'workos:' so backend can route verification to WorkOS provider
-		const clineAccountAuthToken = options?.authToken ?? (await this._authService.getAuthToken())
-		if (!clineAccountAuthToken) {
-			throw new Error("No Cline account auth token found")
+		const nexusAccountAuthToken = options?.authToken ?? (await this._authService.getAuthToken())
+		if (!nexusAccountAuthToken) {
+			throw new Error("No Nexus account auth token found")
 		}
 		const requestConfig: AxiosRequestConfig = {
 			...config,
 			headers: {
-				Authorization: `Bearer ${clineAccountAuthToken}`,
+				Authorization: `Bearer ${nexusAccountAuthToken}`,
 				"Content-Type": "application/json",
-				...(await buildBasicClineHeaders()),
+				...(await buildBasicNexusHeaders()),
 				...config.headers,
 			},
 			...getAxiosSettings(),
@@ -157,7 +157,7 @@ export class ClineAccountService {
 	 */
 	async fetchMe(): Promise<UserResponse | undefined> {
 		try {
-			const data = await this.authenticatedRequest<UserResponse>(CLINE_API_ENDPOINT.USER_INFO)
+			const data = await this.authenticatedRequest<UserResponse>(NEXUS_API_ENDPOINT.USER_INFO)
 			return data
 		} catch (error) {
 			Logger.error("Failed to fetch user data (RPC):", error)
@@ -235,7 +235,7 @@ export class ClineAccountService {
 		}
 
 		return await this.authenticatedRequest<UserRemoteConfigDiscoveryResponse | null>(
-			CLINE_API_ENDPOINT.USER_REMOTE_CONFIG,
+			NEXUS_API_ENDPOINT.USER_REMOTE_CONFIG,
 			{},
 			{ allowNullData: true, authToken: token },
 		)
@@ -260,7 +260,7 @@ export class ClineAccountService {
 	 */
 	async switchAccount(organizationId?: string): Promise<void> {
 		try {
-			await this.authenticatedRequest<string>(CLINE_API_ENDPOINT.ACTIVE_ACCOUNT, {
+			await this.authenticatedRequest<string>(NEXUS_API_ENDPOINT.ACTIVE_ACCOUNT, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

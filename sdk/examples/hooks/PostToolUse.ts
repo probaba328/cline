@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 /**
- * Cline Hook: PostToolUse (TypeScript)
+ * Nexus Hook: PostToolUse (TypeScript)
  * Logs tool results with structured output.
- * Copy to ~/.cline/hooks/PostToolUse.ts and chmod +x
+ * Copy to ~/.nexus/hooks/PostToolUse.ts and chmod +x
  */
 
 interface ToolResult {

@@ -1,4 +1,4 @@
-import { formatDisplayUserInput } from "@cline/shared";
+import { formatDisplayUserInput } from "@nexus/shared";
 
 export type MessageDisplayRole =
 	| "user"

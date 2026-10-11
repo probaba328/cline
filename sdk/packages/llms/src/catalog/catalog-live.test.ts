@@ -3,7 +3,7 @@ import {
 	getGeneratedModelsForProvider,
 	getGeneratedProviderModels,
 } from "./catalog.generated-access";
-import { normalizeClineRecommendedProviderModels } from "./catalog-cline-recommended";
+import { normalizeNexusRecommendedProviderModels } from "./catalog-nexus-recommended";
 import {
 	fetchLiveProviderModels,
 	fetchModelsDevProviderModels,
@@ -419,14 +419,14 @@ describe("models-dev-catalog", () => {
 		expect(providerModels.greenpt).not.toHaveProperty("green-s");
 	});
 
-	it("normalizes Cline recommended clinePass models as a generated provider source", () => {
-		const result = normalizeClineRecommendedProviderModels(
+	it("normalizes Nexus recommended nexusPass models as a generated provider source", () => {
+		const result = normalizeNexusRecommendedProviderModels(
 			{
-				clinePass: [
+				nexusPass: [
 					{
 						id: "base-model",
-						name: "ClinePass Base Model",
-						description: "Included in ClinePass",
+						name: "NexusPass Base Model",
+						description: "Included in NexusPass",
 					},
 					{
 						id: "custom-model",
@@ -453,11 +453,11 @@ describe("models-dev-catalog", () => {
 			},
 		);
 
-		expect(result["cline-pass"]).toEqual({
+		expect(result["nexus-pass"]).toEqual({
 			"base-model": {
 				id: "base-model",
 				name: "OpenRouter Base Model",
-				description: "Included in ClinePass",
+				description: "Included in NexusPass",
 				contextWindow: 200_000,
 				maxInputTokens: 180_000,
 				maxTokens: 16_384,
@@ -482,12 +482,12 @@ describe("models-dev-catalog", () => {
 		});
 	});
 
-	it("matches Cline recommended clinePass models against OpenRouter model slugs", () => {
-		const result = normalizeClineRecommendedProviderModels(
+	it("matches Nexus recommended nexusPass models against OpenRouter model slugs", () => {
+		const result = normalizeNexusRecommendedProviderModels(
 			{
-				clinePass: [
+				nexusPass: [
 					{
-						id: "cline-pass/glm-5.2",
+						id: "nexus-pass/glm-5.2",
 					},
 				],
 			},
@@ -504,8 +504,8 @@ describe("models-dev-catalog", () => {
 			},
 		);
 
-		expect(result["cline-pass"]?.["cline-pass/glm-5.2"]).toMatchObject({
-			id: "cline-pass/glm-5.2",
+		expect(result["nexus-pass"]?.["nexus-pass/glm-5.2"]).toMatchObject({
+			id: "nexus-pass/glm-5.2",
 			name: "GLM 5.2",
 			contextWindow: 256_000,
 			maxInputTokens: 200_000,
@@ -514,18 +514,18 @@ describe("models-dev-catalog", () => {
 		});
 	});
 
-	it("returns no ClinePass models when clinePass is empty or missing", () => {
-		expect(normalizeClineRecommendedProviderModels({}, {})).toEqual({});
+	it("returns no NexusPass models when nexusPass is empty or missing", () => {
+		expect(normalizeNexusRecommendedProviderModels({}, {})).toEqual({});
 		expect(
-			normalizeClineRecommendedProviderModels({ clinePass: [] }, {}),
+			normalizeNexusRecommendedProviderModels({ nexusPass: [] }, {}),
 		).toEqual({});
 	});
 
-	it("includes Cline free models alongside ClinePass models", () => {
-		const result = normalizeClineRecommendedProviderModels(
+	it("includes Nexus free models alongside NexusPass models", () => {
+		const result = normalizeNexusRecommendedProviderModels(
 			{
-				clinePass: [{ id: "cline-pass/glm-5.1", name: "glm-5.1" }],
-				free: [{ id: "cline-free/kat-coder-pro", name: "kat-coder-pro" }],
+				nexusPass: [{ id: "nexus-pass/glm-5.1", name: "glm-5.1" }],
+				free: [{ id: "nexus-free/kat-coder-pro", name: "kat-coder-pro" }],
 			},
 			{
 				"kwaipilot/kat-coder-pro": {
@@ -540,42 +540,42 @@ describe("models-dev-catalog", () => {
 			},
 		);
 
-		const models = result["cline-pass"] ?? {};
-		// ClinePass models stay first so the provider default remains a pass model
+		const models = result["nexus-pass"] ?? {};
+		// NexusPass models stay first so the provider default remains a pass model
 		expect(Object.keys(models)).toEqual([
-			"cline-pass/glm-5.1",
-			"cline-free/kat-coder-pro",
+			"nexus-pass/glm-5.1",
+			"nexus-free/kat-coder-pro",
 		]);
-		expect(models["cline-free/kat-coder-pro"]).toMatchObject({
-			id: "cline-free/kat-coder-pro",
+		expect(models["nexus-free/kat-coder-pro"]).toMatchObject({
+			id: "nexus-free/kat-coder-pro",
 			name: "KAT Coder Pro (free)",
 			contextWindow: 256_000,
 			maxInputTokens: 200_000,
 			// free models are billed at $0 regardless of catalog pricing
 			pricing: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 		});
-		expect(result.cline?.["cline-free/kat-coder-pro"]).toMatchObject({
-			id: "cline-free/kat-coder-pro",
+		expect(result.nexus?.["nexus-free/kat-coder-pro"]).toMatchObject({
+			id: "nexus-free/kat-coder-pro",
 			name: "KAT Coder Pro (free)",
 			pricing: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 		});
-		expect(models["cline-free/kat-coder-pro"]).not.toBe(
-			result.cline?.["cline-free/kat-coder-pro"],
+		expect(models["nexus-free/kat-coder-pro"]).not.toBe(
+			result.nexus?.["nexus-free/kat-coder-pro"],
 		);
 	});
 
-	it("labels a Cline free model when its name matches a ClinePass model", () => {
-		const result = normalizeClineRecommendedProviderModels(
+	it("labels a Nexus free model when its name matches a NexusPass model", () => {
+		const result = normalizeNexusRecommendedProviderModels(
 			{
-				clinePass: [
+				nexusPass: [
 					{
-						id: "cline-pass/deepseek-v4-flash",
+						id: "nexus-pass/deepseek-v4-flash",
 						name: "DeepSeek V4 Flash",
 					},
 				],
 				free: [
 					{
-						id: "cline-free/deepseek-v4-flash",
+						id: "nexus-free/deepseek-v4-flash",
 						name: "DeepSeek V4 Flash",
 					},
 				],
@@ -583,22 +583,22 @@ describe("models-dev-catalog", () => {
 			{},
 		);
 
-		expect(result["cline-pass"]?.["cline-pass/deepseek-v4-flash"]?.name).toBe(
+		expect(result["nexus-pass"]?.["nexus-pass/deepseek-v4-flash"]?.name).toBe(
 			"DeepSeek V4 Flash",
 		);
-		expect(result["cline-pass"]?.["cline-free/deepseek-v4-flash"]?.name).toBe(
+		expect(result["nexus-pass"]?.["nexus-free/deepseek-v4-flash"]?.name).toBe(
 			"DeepSeek V4 Flash (free)",
 		);
-		expect(result.cline?.["cline-free/deepseek-v4-flash"]?.name).toBe(
+		expect(result.nexus?.["nexus-free/deepseek-v4-flash"]?.name).toBe(
 			"DeepSeek V4 Flash (free)",
 		);
 	});
 
-	it("resolves free-model capabilities by slug and preserves free-only Cline catalog payloads", () => {
-		const suffixed = normalizeClineRecommendedProviderModels(
+	it("resolves free-model capabilities by slug and preserves free-only Nexus catalog payloads", () => {
+		const suffixed = normalizeNexusRecommendedProviderModels(
 			{
-				clinePass: [{ id: "cline-pass/glm-5.1" }],
-				free: [{ id: "cline-free/trinity-large-preview:free" }],
+				nexusPass: [{ id: "nexus-pass/glm-5.1" }],
+				free: [{ id: "nexus-free/trinity-large-preview:free" }],
 			},
 			{
 				"arcee-ai/trinity-large-preview:free": {
@@ -613,31 +613,31 @@ describe("models-dev-catalog", () => {
 			},
 		);
 		expect(
-			suffixed["cline-pass"]?.["cline-free/trinity-large-preview:free"],
+			suffixed["nexus-pass"]?.["nexus-free/trinity-large-preview:free"],
 		).toMatchObject({
 			name: "Trinity Large Preview (free)",
 			contextWindow: 512_000,
 		});
 		expect(
-			suffixed.cline?.["cline-free/trinity-large-preview:free"],
+			suffixed.nexus?.["nexus-free/trinity-large-preview:free"],
 		).toMatchObject({
 			name: "Trinity Large Preview (free)",
 			contextWindow: 512_000,
 		});
 
-		// free bucket alone updates the Cline provider catalog but does not rotate
-		// ClinePass away from its bundled subscription list/default.
-		const freeOnly = normalizeClineRecommendedProviderModels(
-			{ free: [{ id: "cline-free/kat-coder-pro" }] },
+		// free bucket alone updates the Nexus provider catalog but does not rotate
+		// NexusPass away from its bundled subscription list/default.
+		const freeOnly = normalizeNexusRecommendedProviderModels(
+			{ free: [{ id: "nexus-free/kat-coder-pro" }] },
 			{},
 		);
-		expect(freeOnly.cline?.["cline-free/kat-coder-pro"]).toBeDefined();
-		expect(freeOnly["cline-pass"]).toBeUndefined();
+		expect(freeOnly.nexus?.["nexus-free/kat-coder-pro"]).toBeDefined();
+		expect(freeOnly["nexus-pass"]).toBeUndefined();
 	});
 
-	it("normalizes cline-free ids from the free endpoint bucket", () => {
-		const result = normalizeClineRecommendedProviderModels(
-			{ free: [{ id: "cline-free/k2-think" }] },
+	it("normalizes nexus-free ids from the free endpoint bucket", () => {
+		const result = normalizeNexusRecommendedProviderModels(
+			{ free: [{ id: "nexus-free/k2-think" }] },
 			{
 				"moonshotai/k2-think": {
 					id: "moonshotai/k2-think",
@@ -652,9 +652,9 @@ describe("models-dev-catalog", () => {
 		);
 
 		expect(result).toEqual({
-			cline: {
-				"cline-free/k2-think": expect.objectContaining({
-					id: "cline-free/k2-think",
+			nexus: {
+				"nexus-free/k2-think": expect.objectContaining({
+					id: "nexus-free/k2-think",
 					name: "K2 Think (free)",
 					contextWindow: 1_000_000,
 					pricing: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
@@ -666,8 +666,8 @@ describe("models-dev-catalog", () => {
 	it("resolves OpenRouter display names for free models with full catalog ids", () => {
 		// The recommended-models endpoint sends slug-like names (e.g.
 		// "deepseek-v4-flash"); the overlay must keep the OpenRouter display
-		// name so merged cline/cline-pass catalogs don't show raw ids.
-		const result = normalizeClineRecommendedProviderModels(
+		// name so merged nexus/nexus-pass catalogs don't show raw ids.
+		const result = normalizeNexusRecommendedProviderModels(
 			{
 				free: [
 					{ id: "deepseek/deepseek-v4-flash", name: "deepseek-v4-flash" },
@@ -697,16 +697,16 @@ describe("models-dev-catalog", () => {
 			},
 		);
 
-		expect(result.cline?.["deepseek/deepseek-v4-flash"]).toMatchObject({
+		expect(result.nexus?.["deepseek/deepseek-v4-flash"]).toMatchObject({
 			id: "deepseek/deepseek-v4-flash",
 			name: "DeepSeek V4 Flash",
 			pricing: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 		});
-		expect(result.cline?.["poolside/laguna-s-2.1:free"]?.name).toBe(
+		expect(result.nexus?.["poolside/laguna-s-2.1:free"]?.name).toBe(
 			"Laguna S 2.1 (free)",
 		);
 		// Without a catalog match, fall back to the endpoint-provided name.
-		expect(result.cline?.["unknown/mystery-model"]?.name).toBe("mystery-model");
+		expect(result.nexus?.["unknown/mystery-model"]?.name).toBe("mystery-model");
 	});
 
 	it("uses input limits as the model request context window", () => {
@@ -1014,7 +1014,7 @@ describe("models-dev-catalog", () => {
 		expect(result["openai-native"]).toHaveProperty("gpt-live");
 	});
 
-	it("fetches live models from models.dev and Cline recommended clinePass models", async () => {
+	it("fetches live models from models.dev and Nexus recommended nexusPass models", async () => {
 		const fetcher = vi.fn(async (url: string) => {
 			if (url === "https://models.dev/api.json") {
 				return {
@@ -1039,9 +1039,9 @@ describe("models-dev-catalog", () => {
 			return {
 				ok: true,
 				json: async () => ({
-					clinePass: [
+					nexusPass: [
 						{
-							id: "cline-pass/live-base-model",
+							id: "nexus-pass/live-base-model",
 							name: "vendor/live-base-model",
 						},
 					],
@@ -1056,11 +1056,11 @@ describe("models-dev-catalog", () => {
 
 		expect(fetcher).toHaveBeenCalledWith("https://models.dev/api.json");
 		expect(fetcher).toHaveBeenCalledWith(
-			"https://api.cline.bot/api/v1/ai/cline/recommended-models",
+			"https://api.nexus.bot/api/v1/ai/nexus/recommended-models",
 		);
 		expect(result.openrouter).toHaveProperty("vendor/live-base-model");
-		expect(result["cline-pass"]?.["cline-pass/live-base-model"]).toMatchObject({
-			id: "cline-pass/live-base-model",
+		expect(result["nexus-pass"]?.["nexus-pass/live-base-model"]).toMatchObject({
+			id: "nexus-pass/live-base-model",
 			name: "Live Base Model",
 			contextWindow: 256_000,
 			maxInputTokens: 200_000,
@@ -1069,7 +1069,7 @@ describe("models-dev-catalog", () => {
 		});
 	});
 
-	it("keeps models.dev live models when Cline recommended models fail", async () => {
+	it("keeps models.dev live models when Nexus recommended models fail", async () => {
 		const fetcher = vi.fn(async (url: string) => {
 			if (url === "https://models.dev/api.json") {
 				return {
@@ -1094,10 +1094,10 @@ describe("models-dev-catalog", () => {
 		);
 
 		expect(result["openai-native"]?.["gpt-live"]?.name).toBe("GPT Live");
-		expect(result["cline-pass"]).toBeUndefined();
+		expect(result["nexus-pass"]).toBeUndefined();
 	});
 
-	it("keeps Cline recommended clinePass models when models.dev fails", async () => {
+	it("keeps Nexus recommended nexusPass models when models.dev fails", async () => {
 		const fetcher = vi.fn(async (url: string) => {
 			if (url === "https://models.dev/api.json") {
 				return { ok: false, status: 503 };
@@ -1106,9 +1106,9 @@ describe("models-dev-catalog", () => {
 			return {
 				ok: true,
 				json: async () => ({
-					clinePass: [
+					nexusPass: [
 						{
-							id: "cline-pass/live-default-model",
+							id: "nexus-pass/live-default-model",
 							name: "Live Default Model",
 						},
 					],
@@ -1123,9 +1123,9 @@ describe("models-dev-catalog", () => {
 
 		expect(result["openai-native"]).toBeUndefined();
 		expect(
-			result["cline-pass"]?.["cline-pass/live-default-model"],
+			result["nexus-pass"]?.["nexus-pass/live-default-model"],
 		).toMatchObject({
-			id: "cline-pass/live-default-model",
+			id: "nexus-pass/live-default-model",
 			name: "Live Default Model",
 			contextWindow: 128_000,
 			maxInputTokens: 128_000,

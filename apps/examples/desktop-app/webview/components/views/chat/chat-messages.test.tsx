@@ -96,7 +96,7 @@ describe("ChatMessages tool disclosures", () => {
 			},
 		]);
 
-		const icon = container.querySelector(".cline-chat-tool-icon svg");
+		const icon = container.querySelector(".nexus-chat-tool-icon svg");
 		expect(icon?.classList.contains(iconClass)).toBe(true);
 	});
 
@@ -118,7 +118,7 @@ describe("ChatMessages tool disclosures", () => {
 		expect(summary).toBeDefined();
 		expect(summary?.closest("button")).toBeNull();
 		expect(
-			container.querySelector(".cline-chat-tool")?.classList.contains("my-0"),
+			container.querySelector(".nexus-chat-tool")?.classList.contains("my-0"),
 		).toBe(true);
 	});
 
@@ -137,9 +137,9 @@ describe("ChatMessages tool disclosures", () => {
 		await renderMessages([pendingTool]);
 
 		const pendingTitle = container.querySelector(
-			".cline-chat-tool-label > span",
+			".nexus-chat-tool-label > span",
 		);
-		expect(pendingTitle?.classList.contains("cline-chat-streaming-title")).toBe(
+		expect(pendingTitle?.classList.contains("nexus-chat-streaming-title")).toBe(
 			true,
 		);
 
@@ -155,10 +155,10 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		const completedTitle = container.querySelector(
-			".cline-chat-tool-label > span",
+			".nexus-chat-tool-label > span",
 		);
 		expect(
-			completedTitle?.classList.contains("cline-chat-streaming-title"),
+			completedTitle?.classList.contains("nexus-chat-streaming-title"),
 		).toBe(false);
 	});
 
@@ -223,7 +223,7 @@ describe("ChatMessages tool disclosures", () => {
 
 		// One row per call — the multi-file read keeps its own count, and each
 		// edit stands alone; nothing merges across calls.
-		expect(container.querySelectorAll(".cline-chat-tool")).toHaveLength(5);
+		expect(container.querySelectorAll(".nexus-chat-tool")).toHaveLength(5);
 		expect(container.textContent).toContain("Read 2 files");
 		for (const path of ["one.ts", "two.ts", "three.ts", "four.ts"]) {
 			expect(container.textContent).toContain(`Edited file ${path}`);
@@ -288,18 +288,18 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		const [editBlock, readBlock] = [
-			...container.querySelectorAll(".cline-chat-tool"),
+			...container.querySelectorAll(".nexus-chat-tool"),
 		];
 		// The edit group's diff panel is visible without a click…
 		expect(
 			editBlock
-				?.querySelector(".cline-chat-disclosure-content-motion")
+				?.querySelector(".nexus-chat-disclosure-content-motion")
 				?.getAttribute("data-state"),
 		).toBe("open");
 		// …while the read group stays collapsed.
 		expect(
 			readBlock
-				?.querySelector(".cline-chat-disclosure-content-motion")
+				?.querySelector(".nexus-chat-disclosure-content-motion")
 				?.getAttribute("data-state"),
 		).toBe("closed");
 	});
@@ -320,7 +320,7 @@ describe("ChatMessages tool disclosures", () => {
 		await renderMessages([read]);
 		expect(
 			container
-				.querySelector(".cline-chat-disclosure-content-motion")
+				.querySelector(".nexus-chat-disclosure-content-motion")
 				?.getAttribute("data-state"),
 		).toBe("closed");
 
@@ -342,7 +342,7 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 		expect(
 			[
-				...container.querySelectorAll(".cline-chat-disclosure-content-motion"),
+				...container.querySelectorAll(".nexus-chat-disclosure-content-motion"),
 			].some((panel) => panel.getAttribute("data-state") === "open"),
 		).toBe(true);
 	});
@@ -514,7 +514,7 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		// Rows keep call order, each with its own specific label.
-		const labels = [...container.querySelectorAll(".cline-chat-tool")].map(
+		const labels = [...container.querySelectorAll(".nexus-chat-tool")].map(
 			(row) => row.textContent ?? "",
 		);
 		expect(labels[0]).toContain("Read file before.ts");
@@ -625,14 +625,14 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		const message = container.querySelector(
-			'.cline-chat-message[data-role="assistant"]',
+			'.nexus-chat-message[data-role="assistant"]',
 		);
 		// This narration-then-tool tail renders inside a tight run group,
 		// which in turn sits in the gap-4 conversation list; the content column
 		// keeps the gap-2 spacing between blocks within one message.
 		const runGroup = message?.parentElement;
 		const messageList = runGroup?.parentElement;
-		const content = message?.querySelector(".cline-chat-message-content");
+		const content = message?.querySelector(".nexus-chat-message-content");
 
 		expect(runGroup?.classList.contains("gap-1")).toBe(true);
 		expect(messageList?.classList.contains("gap-4")).toBe(true);
@@ -643,9 +643,9 @@ describe("ChatMessages tool disclosures", () => {
 		// ...so no block may contribute vertical margins of its own.
 		for (const element of [
 			message,
-			content?.querySelector(".cline-chat-reasoning"),
+			content?.querySelector(".nexus-chat-reasoning"),
 			content?.lastElementChild,
-			container.querySelector(".cline-chat-tool"),
+			container.querySelector(".nexus-chat-tool"),
 		]) {
 			const classes = [...(element?.classList ?? [])];
 			expect(classes.some((name) => /^-?m[ytb]-[1-9]/.test(name))).toBe(false);
@@ -674,16 +674,16 @@ describe("ChatMessages tool disclosures", () => {
 		);
 
 		const userMessage = container.querySelector(
-			'.cline-chat-message[data-role="user"]',
+			'.nexus-chat-message[data-role="user"]',
 		);
 		const userActions = userMessage?.querySelector(
-			":scope > .cline-chat-message-actions",
+			":scope > .nexus-chat-message-actions",
 		);
 		const assistantMessage = container.querySelector(
-			'.cline-chat-message[data-role="assistant"]',
+			'.nexus-chat-message[data-role="assistant"]',
 		);
 		const assistantActions = assistantMessage?.querySelector(
-			":scope > .cline-chat-message-actions",
+			":scope > .nexus-chat-message-actions",
 		);
 
 		expect(userMessage?.classList.contains("relative")).toBe(true);
@@ -691,10 +691,10 @@ describe("ChatMessages tool disclosures", () => {
 		expect(assistantMessage?.classList.contains("relative")).toBe(true);
 		expect(assistantActions?.getAttribute("data-side")).toBe("start");
 		expect(assistantActions?.getAttribute("data-visible")).toBe("true");
-		const userAction = userActions?.querySelector(".cline-chat-message-action");
+		const userAction = userActions?.querySelector(".nexus-chat-message-action");
 		expect(userAction?.getAttribute("data-slot")).toBe("icon-button");
 		const assistantActionButtons = [
-			...(assistantActions?.querySelectorAll(".cline-chat-message-action") ??
+			...(assistantActions?.querySelectorAll(".nexus-chat-message-action") ??
 				[]),
 		];
 		expect(assistantActionButtons).toHaveLength(2);
@@ -935,7 +935,7 @@ describe("ChatMessages tool disclosures", () => {
 			},
 		]);
 
-		const content = container.querySelector(".cline-chat-conversation-content");
+		const content = container.querySelector(".nexus-chat-conversation-content");
 		const messageList = content?.querySelector(":scope > div");
 
 		expect(content?.classList.contains("overflow-x-hidden")).toBe(false);
@@ -1008,7 +1008,7 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		const trigger = container.querySelector<HTMLButtonElement>(
-			".cline-chat-tool-trigger",
+			".nexus-chat-tool-trigger",
 		);
 		await act(async () => trigger?.click());
 		expect(
@@ -1034,7 +1034,7 @@ describe("ChatMessages tool disclosures", () => {
 		]);
 
 		const trigger = container.querySelector<HTMLButtonElement>(
-			".cline-chat-tool-trigger",
+			".nexus-chat-tool-trigger",
 		);
 		await act(async () => trigger?.click());
 		const output = container.querySelector('[aria-label="Command output"]');
@@ -1251,10 +1251,10 @@ describe("ChatMessages reasoning disclosure", () => {
 		});
 
 		const streamingTitle = container.querySelector(
-			".cline-chat-reasoning-trigger > span",
+			".nexus-chat-reasoning-trigger > span",
 		);
 		expect(
-			streamingTitle?.classList.contains("cline-chat-streaming-title"),
+			streamingTitle?.classList.contains("nexus-chat-streaming-title"),
 		).toBe(true);
 
 		await renderMessages(messages, {
@@ -1263,10 +1263,10 @@ describe("ChatMessages reasoning disclosure", () => {
 		});
 
 		const completedTitle = container.querySelector(
-			".cline-chat-reasoning-trigger > span",
+			".nexus-chat-reasoning-trigger > span",
 		);
 		expect(
-			completedTitle?.classList.contains("cline-chat-streaming-title"),
+			completedTitle?.classList.contains("nexus-chat-streaming-title"),
 		).toBe(false);
 	});
 
@@ -1293,15 +1293,15 @@ describe("ChatMessages reasoning disclosure", () => {
 			element.textContent?.includes("Thought for 7s"),
 		);
 		expect(trigger?.getAttribute("aria-expanded")).toBe("false");
-		expect(trigger?.querySelector(".cline-chat-thinking-icon")).not.toBeNull();
-		expect(trigger?.querySelector(".cline-chat-disclosure-icon")).toBeNull();
+		expect(trigger?.querySelector(".nexus-chat-thinking-icon")).not.toBeNull();
+		expect(trigger?.querySelector(".nexus-chat-disclosure-icon")).toBeNull();
 
 		await act(async () => trigger?.click());
 
-		const content = container.querySelector(".cline-chat-reasoning-content");
+		const content = container.querySelector(".nexus-chat-reasoning-content");
 		expect(trigger?.getAttribute("aria-expanded")).toBe("true");
 		expect(content?.textContent).toContain("Carefully considered the request.");
-		expect(content?.classList.contains("cline-chat-panel-rail")).toBe(true);
+		expect(content?.classList.contains("nexus-chat-panel-rail")).toBe(true);
 	});
 
 	it("hangs expanded reasoning and tool panels off the same left rail", async () => {
@@ -1330,10 +1330,10 @@ describe("ChatMessages reasoning disclosure", () => {
 		]);
 
 		const reasoningTrigger = container.querySelector(
-			".cline-chat-reasoning-trigger",
+			".nexus-chat-reasoning-trigger",
 		) as HTMLButtonElement | null;
 		const toolTrigger = container.querySelector(
-			".cline-chat-tool-trigger",
+			".nexus-chat-tool-trigger",
 		) as HTMLButtonElement | null;
 		await act(async () => {
 			reasoningTrigger?.click();
@@ -1341,30 +1341,30 @@ describe("ChatMessages reasoning disclosure", () => {
 		});
 
 		const reasoningContent = container.querySelector(
-			".cline-chat-reasoning-content",
+			".nexus-chat-reasoning-content",
 		);
-		const toolContent = container.querySelector(".cline-chat-tool-content");
+		const toolContent = container.querySelector(".nexus-chat-tool-content");
 		expect(reasoningContent).not.toBeNull();
 		expect(toolContent).not.toBeNull();
 
-		expect(reasoningContent?.classList.contains("cline-chat-panel-rail")).toBe(
+		expect(reasoningContent?.classList.contains("nexus-chat-panel-rail")).toBe(
 			true,
 		);
-		expect(toolContent?.classList.contains("cline-chat-panel-rail")).toBe(true);
+		expect(toolContent?.classList.contains("nexus-chat-panel-rail")).toBe(true);
 
 		// Reasoning remains capped and scrolls internally (the shared
-		// cline-chat-thinking-content styling); tool output grows into the
+		// nexus-chat-thinking-content styling); tool output grows into the
 		// conversation scroller.
 		expect(
-			reasoningContent?.classList.contains("cline-chat-thinking-content"),
+			reasoningContent?.classList.contains("nexus-chat-thinking-content"),
 		).toBe(true);
-		expect(toolContent?.classList.contains("cline-chat-thinking-content")).toBe(
+		expect(toolContent?.classList.contains("nexus-chat-thinking-content")).toBe(
 			false,
 		);
 		expect(toolContent?.classList.contains("overflow-auto")).toBe(false);
 
 		// Detail rows use the shared wrapping behavior instead of horizontal scrolling.
-		const details = toolContent?.querySelector(".cline-chat-tool-details");
+		const details = toolContent?.querySelector(".nexus-chat-tool-details");
 		expect(details?.classList.contains("whitespace-pre")).toBe(false);
 		expect(details?.classList.contains("whitespace-pre-wrap")).toBe(true);
 	});
@@ -1391,10 +1391,10 @@ describe("ChatMessages reasoning disclosure", () => {
 		]);
 
 		const message = container.querySelector(
-			'.cline-chat-message[data-role="assistant"]',
+			'.nexus-chat-message[data-role="assistant"]',
 		);
 		const actions = message?.querySelector(
-			":scope > .cline-chat-message-actions",
+			":scope > .nexus-chat-message-actions",
 		);
 		expect(actions).not.toBeNull();
 
@@ -1403,7 +1403,7 @@ describe("ChatMessages reasoning disclosure", () => {
 		// ever reshaped, the rule stops matching and the reveal silently returns.
 		expect(
 			actions?.matches(
-				".cline-chat-message:has(> .cline-chat-message-content .cline-chat-reasoning) > .cline-chat-message-actions:not([data-visible='true'])",
+				".nexus-chat-message:has(> .nexus-chat-message-content .nexus-chat-reasoning) > .nexus-chat-message-actions:not([data-visible='true'])",
 			),
 		).toBe(true);
 
@@ -1439,7 +1439,7 @@ describe("ChatMessages reasoning disclosure", () => {
 			},
 		]);
 
-		const disclosures = container.querySelectorAll(".cline-chat-reasoning");
+		const disclosures = container.querySelectorAll(".nexus-chat-reasoning");
 		expect(disclosures).toHaveLength(1);
 		const trigger = disclosures[0]?.querySelector("button");
 		expect(trigger?.textContent).toContain("Thought for 2s");
@@ -1447,7 +1447,7 @@ describe("ChatMessages reasoning disclosure", () => {
 		await act(async () => trigger?.click());
 
 		const content = disclosures[0]?.querySelector(
-			".cline-chat-reasoning-content",
+			".nexus-chat-reasoning-content",
 		);
 		const contentText = content?.textContent ?? "";
 		expect(contentText).toContain("First reasoning segment.");
@@ -1496,12 +1496,12 @@ describe("ChatMessages reasoning disclosure", () => {
 		// The completed run's working rows collapse; expand them so both
 		// disclosures render, proving they were never merged across the tool.
 		const workTrigger = container.querySelector(
-			"button.cline-chat-work-trigger",
+			"button.nexus-chat-work-trigger",
 		) as HTMLButtonElement | null;
 		expect(workTrigger).not.toBeNull();
 		await act(async () => workTrigger?.click());
 
-		expect(container.querySelectorAll(".cline-chat-reasoning")).toHaveLength(2);
+		expect(container.querySelectorAll(".nexus-chat-reasoning")).toHaveLength(2);
 	});
 
 	it("falls back to Thinking when there is no previous timestamp", async () => {
@@ -1619,26 +1619,26 @@ describe("ChatMessages work collapse", () => {
 		await renderMessages(completedRun);
 
 		const trigger = container.querySelector(
-			"button.cline-chat-work-trigger",
+			"button.nexus-chat-work-trigger",
 		) as HTMLButtonElement | null;
 		expect(trigger?.textContent).toContain(
 			"Worked for 4s and made 2 tool calls",
 		);
 		expect(trigger?.getAttribute("aria-expanded")).toBe("false");
 		// Collapsed content is lazy: the tool rows do not render until opened.
-		expect(container.querySelector(".cline-chat-tool")).toBeNull();
+		expect(container.querySelector(".nexus-chat-tool")).toBeNull();
 		expect(container.textContent).toContain("Fixed it.");
 
 		await act(async () => trigger?.click());
 		expect(trigger?.getAttribute("aria-expanded")).toBe("true");
-		expect(container.querySelectorAll(".cline-chat-tool")).toHaveLength(2);
+		expect(container.querySelectorAll(".nexus-chat-tool")).toHaveLength(2);
 	});
 
 	it("keeps the live run's rows visible while the session is active", async () => {
 		await renderMessages(completedRun, { status: "running" });
 
-		expect(container.querySelector(".cline-chat-work")).toBeNull();
-		expect(container.querySelectorAll(".cline-chat-tool")).toHaveLength(2);
+		expect(container.querySelector(".nexus-chat-work")).toBeNull();
+		expect(container.querySelectorAll(".nexus-chat-tool")).toHaveLength(2);
 	});
 
 	it.each(["cancelled", "failed", "error"] as const)(
@@ -1648,8 +1648,8 @@ describe("ChatMessages work collapse", () => {
 			// tool calls; the run still must not fold into a summary.
 			await renderMessages(completedRun, { status });
 
-			expect(container.querySelector(".cline-chat-work")).toBeNull();
-			expect(container.querySelectorAll(".cline-chat-tool")).toHaveLength(2);
+			expect(container.querySelector(".nexus-chat-work")).toBeNull();
+			expect(container.querySelectorAll(".nexus-chat-tool")).toHaveLength(2);
 		},
 	);
 });
@@ -1669,7 +1669,7 @@ describe("ChatMessages thinking indicator", () => {
 		expect(
 			[...container.querySelectorAll("span")]
 				.find((element) => element.textContent === "Thinking...")
-				?.classList.contains("cline-chat-streaming-title"),
+				?.classList.contains("nexus-chat-streaming-title"),
 		).toBe(true);
 	});
 
@@ -1809,7 +1809,7 @@ describe("ChatMessages tool approvals", () => {
 			},
 		);
 
-		const card = container.querySelector(".cline-ui-agent-approval-card");
+		const card = container.querySelector(".nexus-ui-agent-approval-card");
 		expect(card?.textContent).toContain("execute_command");
 		expect(card?.textContent).toContain('"command": "pwd"');
 

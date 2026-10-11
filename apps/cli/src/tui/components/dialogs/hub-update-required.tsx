@@ -26,15 +26,15 @@ export function HubUpdateRequiredContent(
 
 	return (
 		<box flexDirection="column" paddingX={1} gap={1}>
-			<text fg="yellow">Cline Hub was updated</text>
+			<text fg="yellow">Nexus Hub was updated</text>
 			<box flexDirection="column">
 				<text selectable>
-					Another Cline installation restarted the shared Cline Hub
+					Another Nexus installation restarted the shared Nexus Hub
 					{hubCoreVersion ? ` (core ${hubCoreVersion})` : ""}, and it no longer
 					matches this CLI.
 				</text>
 				<text selectable>
-					Update and restart Cline so this CLI and the Hub run the same version
+					Update and restart Nexus so this CLI and the Hub run the same version
 					again.
 				</text>
 			</box>

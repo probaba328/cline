@@ -1,4 +1,4 @@
-import { formatDisplayUserInput } from "@cline/shared";
+import { formatDisplayUserInput } from "@nexus/shared";
 import { readSessionManifest } from "../paths";
 import type { JsonRecord } from "../types";
 

@@ -1,5 +1,5 @@
-import { ChromePath } from "@shared/proto/cline/browser"
-import { EmptyRequest } from "@shared/proto/cline/common"
+import { ChromePath } from "@shared/proto/nexus/browser"
+import { EmptyRequest } from "@shared/proto/nexus/common"
 import { Logger } from "@/shared/services/Logger"
 import { BrowserSession } from "../../../services/browser/BrowserSession"
 import { Controller } from "../index"

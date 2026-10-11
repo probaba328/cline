@@ -1,4 +1,4 @@
-import type { ProviderListing } from "@shared/proto/cline/models"
+import type { ProviderListing } from "@shared/proto/nexus/models"
 import type { GenericProviderSettingsProps } from "./GenericProviderSettings"
 
 type GenericProviderSettingsConfig = Omit<GenericProviderSettingsProps, "currentMode" | "isPopup" | "showModelOptions">
@@ -12,8 +12,8 @@ const CUSTOM_PROVIDER_SETTINGS_IDS = new Set([
 	"asksage",
 	"bedrock",
 	"claude-code",
-	"cline",
-	"cline-pass",
+	"nexus",
+	"nexus-pass",
 	"dify",
 	"hicap",
 	"litellm",

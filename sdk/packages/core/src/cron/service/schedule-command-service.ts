@@ -4,8 +4,8 @@ import type {
 	HubReplyEnvelope,
 	HubScheduleCreateInput,
 	HubScheduleUpdateInput,
-} from "@cline/shared";
-import { createSessionId, readHubScheduleMode } from "@cline/shared";
+} from "@nexus/shared";
+import { createSessionId, readHubScheduleMode } from "@nexus/shared";
 import type { HubConnectionAuthority } from "../../hub/server/command-transport";
 import type { HubScheduleService } from "./schedule-service";
 

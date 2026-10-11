@@ -119,7 +119,7 @@ async function waitForDiscovery(
 }
 
 async function startDaemon(): Promise<ReadyDaemon> {
-	const dataDir = await mkdtemp(join(tmpdir(), "cline-hub-shutdown-e2e-"));
+	const dataDir = await mkdtemp(join(tmpdir(), "nexus-hub-shutdown-e2e-"));
 	tempDirs.add(dataDir);
 	const discoveryPath = join(dataDir, "hub-discovery.json");
 	const entryPath = fileURLToPath(
@@ -132,11 +132,11 @@ async function startDaemon(): Promise<ReadyDaemon> {
 			cwd: dataDir,
 			env: {
 				...process.env,
-				CLINE_BUILD_ENV: "development",
-				CLINE_DATA_DIR: dataDir,
-				CLINE_HUB_DISCOVERY_PATH: discoveryPath,
-				CLINE_HUB_TEST_PORT: "0",
-				CLINE_NO_INTERACTIVE: "1",
+				NEXUS_BUILD_ENV: "development",
+				NEXUS_DATA_DIR: dataDir,
+				NEXUS_HUB_DISCOVERY_PATH: discoveryPath,
+				NEXUS_HUB_TEST_PORT: "0",
+				NEXUS_NO_INTERACTIVE: "1",
 				NO_COLOR: "1",
 			},
 			stdio: ["ignore", "ignore", "pipe"],
@@ -170,7 +170,7 @@ async function openAuthenticatedSocket(
 	url: string,
 	authToken: string,
 ): Promise<WebSocket> {
-	const socket = new WebSocket(url, `cline-hub-auth.${authToken}`);
+	const socket = new WebSocket(url, `nexus-hub-auth.${authToken}`);
 	await withTimeout(
 		once(socket, "open").then(() => undefined),
 		5_000,

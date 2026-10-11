@@ -504,7 +504,7 @@ export type HubCommandName =
 	| "client.update"
 	| "client.unregister"
 	| "client.list"
-	| "cline.account.get_current"
+	| "nexus.account.get_current"
 	| "prompt_commands.list"
 	| "prompt_commands.execute"
 	| "mention_files.search"

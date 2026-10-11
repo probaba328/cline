@@ -1,4 +1,4 @@
-export interface ClineAccountOrganization {
+export interface NexusAccountOrganization {
 	active: boolean;
 	memberId: string;
 	name: string;
@@ -6,14 +6,14 @@ export interface ClineAccountOrganization {
 	roles: Array<"admin" | "member" | "owner">;
 }
 
-export interface ClineAccountUser {
+export interface NexusAccountUser {
 	id: string;
 	email: string;
 	displayName: string;
 	photoUrl: string;
 	createdAt: string;
 	updatedAt: string;
-	organizations: ClineAccountOrganization[];
+	organizations: NexusAccountOrganization[];
 }
 
 export interface UserRemoteConfigOrganization {
@@ -28,12 +28,12 @@ export interface UserRemoteConfigResponse {
 	organizations?: UserRemoteConfigOrganization[];
 }
 
-export interface ClineAccountBalance {
+export interface NexusAccountBalance {
 	balance: number;
 	userId: string;
 }
 
-export interface ClineAccountUsageTransaction {
+export interface NexusAccountUsageTransaction {
 	aiInferenceProviderName: string;
 	aiModelName: string;
 	aiModelTypeName: string;
@@ -55,14 +55,14 @@ export interface ClineAccountUsageTransaction {
 	userId: string;
 }
 
-export interface ClineAccountPaymentTransaction {
+export interface NexusAccountPaymentTransaction {
 	paidAt: string;
 	creatorId: string;
 	amountCents: number;
 	credits: number;
 }
 
-export interface ClineOrganization {
+export interface NexusOrganization {
 	createdAt: string;
 	defaultRemoteConfig?: string;
 	deletedAt?: string;
@@ -74,7 +74,7 @@ export interface ClineOrganization {
 	updatedAt: string;
 }
 
-export interface ClineAccountOrganizationBalance {
+export interface NexusAccountOrganizationBalance {
 	balance: number;
 	organizationId: string;
 }
@@ -83,7 +83,7 @@ export interface FeaturebaseTokenResponse {
 	featurebaseJwt: string;
 }
 
-export interface ClineSubscriptionPlan {
+export interface NexusSubscriptionPlan {
 	displayName?: string;
 	features?: {
 		included?: string[];
@@ -102,14 +102,14 @@ export interface UserCurrentPlan {
 	canceledAt?: string;
 	currentPeriodEnd?: string;
 	currentPeriodStart?: string;
-	plan?: ClineSubscriptionPlan | null;
+	plan?: NexusSubscriptionPlan | null;
 	planHistoryId?: string;
 	subscriptionId?: string;
 	userId?: string;
 	[key: string]: unknown;
 }
 
-export interface ClineAccountOrganizationUsageTransaction {
+export interface NexusAccountOrganizationUsageTransaction {
 	aiInferenceProviderName: string;
 	aiModelName: string;
 	aiModelTypeName: string;

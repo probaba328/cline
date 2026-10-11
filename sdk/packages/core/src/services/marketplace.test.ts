@@ -2,7 +2,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { setClineDir, setHomeDir } from "@cline/shared/storage";
+import { setNexusDir, setHomeDir } from "@nexus/shared/storage";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { uninstallMarketplaceEntry } from "./marketplace";
 
@@ -10,17 +10,17 @@ describe("marketplace service", () => {
 	let root = "";
 	let home = "";
 	let originalHome: string | undefined;
-	let originalClineDir: string | undefined;
+	let originalNexusDir: string | undefined;
 
 	beforeEach(() => {
 		root = mkdtempSync(join(tmpdir(), "core-marketplace-"));
 		home = join(root, "home");
 		originalHome = process.env.HOME;
-		originalClineDir = process.env.CLINE_DIR;
+		originalNexusDir = process.env.NEXUS_DIR;
 		process.env.HOME = home;
-		process.env.CLINE_DIR = join(home, ".cline");
+		process.env.NEXUS_DIR = join(home, ".nexus");
 		setHomeDir(home);
-		setClineDir(process.env.CLINE_DIR);
+		setNexusDir(process.env.NEXUS_DIR);
 	});
 
 	afterEach(() => {
@@ -29,16 +29,16 @@ describe("marketplace service", () => {
 		} else {
 			process.env.HOME = originalHome;
 		}
-		if (originalClineDir === undefined) {
-			delete process.env.CLINE_DIR;
+		if (originalNexusDir === undefined) {
+			delete process.env.NEXUS_DIR;
 		} else {
-			process.env.CLINE_DIR = originalClineDir;
+			process.env.NEXUS_DIR = originalNexusDir;
 		}
 		rmSync(root, { recursive: true, force: true });
 	});
 
 	it("uninstalls marketplace MCP servers from settings by default", async () => {
-		const settingsPath = join(root, "cline_mcp_settings.json");
+		const settingsPath = join(root, "nexus_mcp_settings.json");
 		await writeFile(
 			settingsPath,
 			JSON.stringify(
@@ -93,7 +93,7 @@ describe("marketplace service", () => {
 				type: "skill",
 				name: "Review Team",
 				install: {
-					args: ["github.com/cline/skills@review-team"],
+					args: ["github.com/nexus/skills@review-team"],
 				},
 			},
 			{
@@ -121,20 +121,20 @@ describe("marketplace service", () => {
 	});
 
 	it("cleans up remaining marketplace skill directories after skills CLI remove succeeds", async () => {
-		const clineSkillDir = join(
-			process.env.CLINE_DIR ?? "",
+		const nexusSkillDir = join(
+			process.env.NEXUS_DIR ?? "",
 			"skills",
 			"review-team",
 		);
-		await mkdir(clineSkillDir, { recursive: true });
-		await writeFile(join(clineSkillDir, "SKILL.md"), "# Review Team", "utf8");
+		await mkdir(nexusSkillDir, { recursive: true });
+		await writeFile(join(nexusSkillDir, "SKILL.md"), "# Review Team", "utf8");
 
 		const result = await uninstallMarketplaceEntry(
 			{
 				id: "review-team",
 				type: "skill",
 				name: "Review Team",
-				install: { args: ["github.com/cline/skills@review-team"] },
+				install: { args: ["github.com/nexus/skills@review-team"] },
 			},
 			{
 				spawnCommand: async () => ({
@@ -146,14 +146,14 @@ describe("marketplace service", () => {
 		);
 
 		expect(result.status).toBe("uninstalled");
-		expect(result.output).toContain(`Removed: ${clineSkillDir}`);
-		expect(existsSync(clineSkillDir)).toBe(false);
+		expect(result.output).toContain(`Removed: ${nexusSkillDir}`);
+		expect(existsSync(nexusSkillDir)).toBe(false);
 	});
 
 	it("uninstalls official marketplace plugins by marketplace slug", async () => {
 		const installPath = join(
 			home,
-			".cline",
+			".nexus",
 			"plugins",
 			"_installed",
 			"official",

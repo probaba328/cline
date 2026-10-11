@@ -30,19 +30,19 @@ function createSession(): LiveSession {
 }
 
 beforeEach(() => {
-	previousSessionDataDir = process.env.CLINE_SESSION_DATA_DIR;
+	previousSessionDataDir = process.env.NEXUS_SESSION_DATA_DIR;
 	testSessionDataDir = join(
 		tmpdir(),
-		`cline-desktop-attachment-lifecycle-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+		`nexus-desktop-attachment-lifecycle-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 	);
-	process.env.CLINE_SESSION_DATA_DIR = testSessionDataDir;
+	process.env.NEXUS_SESSION_DATA_DIR = testSessionDataDir;
 });
 
 afterEach(() => {
 	if (previousSessionDataDir === undefined) {
-		delete process.env.CLINE_SESSION_DATA_DIR;
+		delete process.env.NEXUS_SESSION_DATA_DIR;
 	} else {
-		process.env.CLINE_SESSION_DATA_DIR = previousSessionDataDir;
+		process.env.NEXUS_SESSION_DATA_DIR = previousSessionDataDir;
 	}
 	rmSync(testSessionDataDir, { recursive: true, force: true });
 });

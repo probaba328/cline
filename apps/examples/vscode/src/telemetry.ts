@@ -2,15 +2,15 @@ import * as os from "node:os";
 import {
 	type ConfiguredTelemetryHandle,
 	createConfiguredTelemetryHandle,
-} from "@cline/core";
+} from "@nexus/core";
 import {
-	createClineTelemetryServiceConfig,
-	createClineTelemetryServiceMetadata,
-} from "@cline/shared";
+	createNexusTelemetryServiceConfig,
+	createNexusTelemetryServiceMetadata,
+} from "@nexus/shared";
 
 export interface VscodeTelemetryOptions {
 	extensionVersion: string;
-	clineType: string;
+	nexusType: string;
 	platform: string;
 	platformVersion: string;
 	osType?: string;
@@ -36,10 +36,10 @@ export type VscodeTelemetryHandle = ConfiguredTelemetryHandle;
 export function createVscodeTelemetry(
 	options: VscodeTelemetryOptions,
 ): VscodeTelemetryHandle {
-	const config = createClineTelemetryServiceConfig({
-		metadata: createClineTelemetryServiceMetadata({
+	const config = createNexusTelemetryServiceConfig({
+		metadata: createNexusTelemetryServiceMetadata({
 			extension_version: options.extensionVersion,
-			cline_type: options.clineType,
+			nexus_type: options.nexusType,
 			platform: options.platform,
 			platform_version: options.platformVersion,
 			os_type: options.osType ?? os.platform(),

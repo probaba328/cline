@@ -1,5 +1,5 @@
-import { clearOnboardingModelsCache, getClineOnboardingModels } from "@/core/controller/models/getClineOnboardingModels"
-import type { OnboardingModel } from "@/shared/proto/cline/state"
+import { clearOnboardingModelsCache, getNexusOnboardingModels } from "@/core/controller/models/getNexusOnboardingModels"
+import type { OnboardingModel } from "@/shared/proto/nexus/state"
 import { FEATURE_FLAGS, FeatureFlag, FeatureFlagDefaultValue } from "@/shared/services/feature-flags/feature-flags"
 import { Logger } from "@/shared/services/Logger"
 import { telemetryService } from "../telemetry"
@@ -66,7 +66,7 @@ export class FeatureFlagsService {
 			throw error
 		}
 
-		getClineOnboardingModels() // Refresh onboarding models cache if relevant flag changed
+		getNexusOnboardingModels() // Refresh onboarding models cache if relevant flag changed
 	}
 
 	private async getFeatureFlag(flagName: FeatureFlag): Promise<FeatureFlagPayload | undefined> {

@@ -42,11 +42,11 @@ import type {
 } from "@/lib/provider-schema";
 import { cn } from "@/lib/utils";
 
-const FAVORITE_MODELS_STORAGE_KEY = "cline.favorite-provider-models.v1";
+const FAVORITE_MODELS_STORAGE_KEY = "nexus.favorite-provider-models.v1";
 
 // Providers whose model lists carry recommended-feed tiers (see the SDK's
-// applyClineFeaturedModels). Only these are worth a per-card list fetch.
-const FEATURED_PROVIDER_IDS = new Set(["cline", "cline-pass"]);
+// applyNexusFeaturedModels). Only these are worth a per-card list fetch.
+const FEATURED_PROVIDER_IDS = new Set(["nexus", "nexus-pass"]);
 
 /** Tier + feed tags rendered as small pills next to the model name. */
 function featuredBadges(model: ProviderModel): string[] {

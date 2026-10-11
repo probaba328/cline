@@ -1,5 +1,5 @@
-import { Empty } from "@shared/proto/cline/common"
-import { TaskFavoriteRequest } from "@shared/proto/cline/task"
+import { Empty } from "@shared/proto/nexus/common"
+import { TaskFavoriteRequest } from "@shared/proto/nexus/task"
 import { Logger } from "@/shared/services/Logger"
 import { Controller } from "../"
 

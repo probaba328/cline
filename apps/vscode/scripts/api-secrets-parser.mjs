@@ -113,9 +113,9 @@ export function extractProviderFromFieldName(fieldName) {
 		return "anthropic"
 	}
 
-	// Special case: clineAccountId maps to "cline"
+	// Special case: nexusAccountId maps to "nexus"
 	if (lowerFieldName === "clineaccountid") {
-		return "cline"
+		return "nexus"
 	}
 
 	// Special case: authNonce is not provider-specific
@@ -322,7 +322,7 @@ export function generateApiKeyDisplayName(fieldName) {
 		requestyApiKey: "Requesty API Key",
 		togetherApiKey: "Together AI API Key",
 		difyApiKey: "Dify API Key",
-		clineAccountId: "Cline Account ID",
+		nexusAccountId: "Nexus Account ID",
 		vertexProjectId: "Vertex Project ID",
 		vertexRegion: "Vertex Region",
 		sapAiCoreClientId: "SAP AI Core Client ID",

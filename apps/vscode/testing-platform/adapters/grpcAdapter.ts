@@ -1,31 +1,31 @@
-import { AccountServiceClient } from "@cline-grpc/account"
-import { BrowserServiceClient } from "@cline-grpc/browser"
-import { CheckpointsServiceClient } from "@cline-grpc/checkpoints"
-import { CommandsServiceClient } from "@cline-grpc/commands"
-import { FileServiceClient } from "@cline-grpc/file"
-import { McpServiceClient } from "@cline-grpc/mcp"
-import { ModelsServiceClient } from "@cline-grpc/models"
-import { SlashServiceClient } from "@cline-grpc/slash"
-import { StateServiceClient } from "@cline-grpc/state"
-import { TaskServiceClient } from "@cline-grpc/task"
-import { UiServiceClient } from "@cline-grpc/ui"
-import { WebServiceClient } from "@cline-grpc/web"
+import { AccountServiceClient } from "@nexus-grpc/account"
+import { BrowserServiceClient } from "@nexus-grpc/browser"
+import { CheckpointsServiceClient } from "@nexus-grpc/checkpoints"
+import { CommandsServiceClient } from "@nexus-grpc/commands"
+import { FileServiceClient } from "@nexus-grpc/file"
+import { McpServiceClient } from "@nexus-grpc/mcp"
+import { ModelsServiceClient } from "@nexus-grpc/models"
+import { SlashServiceClient } from "@nexus-grpc/slash"
+import { StateServiceClient } from "@nexus-grpc/state"
+import { TaskServiceClient } from "@nexus-grpc/task"
+import { UiServiceClient } from "@nexus-grpc/ui"
+import { WebServiceClient } from "@nexus-grpc/web"
 import { credentials } from "@grpc/grpc-js"
 import { promisify } from "util"
 
 const serviceRegistry = {
-	"cline.AccountService": AccountServiceClient,
-	"cline.BrowserService": BrowserServiceClient,
-	"cline.CheckpointsService": CheckpointsServiceClient,
-	"cline.CommandsService": CommandsServiceClient,
-	"cline.FileService": FileServiceClient,
-	"cline.McpService": McpServiceClient,
-	"cline.ModelsService": ModelsServiceClient,
-	"cline.SlashService": SlashServiceClient,
-	"cline.StateService": StateServiceClient,
-	"cline.TaskService": TaskServiceClient,
-	"cline.UiService": UiServiceClient,
-	"cline.WebService": WebServiceClient,
+	"nexus.AccountService": AccountServiceClient,
+	"nexus.BrowserService": BrowserServiceClient,
+	"nexus.CheckpointsService": CheckpointsServiceClient,
+	"nexus.CommandsService": CommandsServiceClient,
+	"nexus.FileService": FileServiceClient,
+	"nexus.McpService": McpServiceClient,
+	"nexus.ModelsService": ModelsServiceClient,
+	"nexus.SlashService": SlashServiceClient,
+	"nexus.StateService": StateServiceClient,
+	"nexus.TaskService": TaskServiceClient,
+	"nexus.UiService": UiServiceClient,
+	"nexus.WebService": WebServiceClient,
 } as const
 
 export type ServiceClients = {

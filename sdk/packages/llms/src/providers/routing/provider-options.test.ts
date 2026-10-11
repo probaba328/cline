@@ -2,7 +2,7 @@ import type {
 	GatewayProviderContext,
 	GatewayStreamRequest,
 	ModelReasoningOption,
-} from "@cline/shared";
+} from "@nexus/shared";
 import { describe, expect, it } from "vitest";
 import { BEDROCK_ROUTING_METADATA } from "./bedrock-cache-point";
 import { GLM_THINKING_ROUTING_METADATA } from "./glm-thinking";
@@ -578,36 +578,36 @@ describe("composeAiSdkProviderOptions: Anthropic thinking precedence", () => {
 			],
 		},
 		{
-			name: "Cline-routed Sonnet 4.5 -> gateway reasoning, no thinking, no effort",
+			name: "Nexus-routed Sonnet 4.5 -> gateway reasoning, no thinking, no effort",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-sonnet-4-5",
 				reasoning: { enabled: true, effort: "low" },
 			},
 			context: { family: "claude-sonnet" },
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { enabled: true, max_tokens: 1024 } },
 					lacks: ["thinking"],
 				},
 			],
 		},
 		{
-			// ClinePass is served by the shared "cline" AI SDK provider (same
-			// Cline API), which only reads the "cline" providerOptions bucket.
+			// NexusPass is served by the shared "nexus" AI SDK provider (same
+			// Nexus API), which only reads the "nexus" providerOptions bucket.
 			// Uses an explicit budget because effort-based reasoning is portable
 			// and never reaches provider-option buckets.
-			name: "ClinePass-routed Sonnet 4.5 budget -> gateway reasoning under the shared cline bucket",
+			name: "NexusPass-routed Sonnet 4.5 budget -> gateway reasoning under the shared nexus bucket",
 			request: {
-				providerId: "cline-pass",
+				providerId: "nexus-pass",
 				modelId: "anthropic/claude-sonnet-4-5",
 				reasoning: { enabled: true, budgetTokens: 2048 },
 			},
 			context: { family: "claude-sonnet" },
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { enabled: true, max_tokens: 2048 } },
 					lacks: ["thinking"],
 				},
@@ -1061,15 +1061,15 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline GLM thinking-disabled -> routed reasoning only, no thinking leak",
+			name: "nexus GLM thinking-disabled -> routed reasoning only, no thinking leak",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "z-ai/glm-4.7",
 				reasoning: { enabled: false },
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { exclude: true } },
 					lacks: ["thinking"],
 				},
@@ -1113,15 +1113,15 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 		},
 		// Kimi K2.6 family: explicit enabled/disabled and unset defaults to enabled
 		{
-			name: "cline Kimi K2.6 family reasoning.enabled=false -> thinking.type=disabled",
+			name: "nexus Kimi K2.6 family reasoning.enabled=false -> thinking.type=disabled",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "moonshotai/kimi-k2.6",
 				reasoning: { enabled: false },
 			},
 			context: { family: "kimi-k2.6" },
 			expect: [
-				{ bucket: "cline", has: { thinking: { type: "disabled" } } },
+				{ bucket: "nexus", has: { thinking: { type: "disabled" } } },
 				{
 					bucket: "openaiCompatible",
 					has: { thinking: { type: "disabled" } },
@@ -1129,28 +1129,28 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline Kimi K2.6 family reasoning.enabled=true -> thinking.type=enabled",
+			name: "nexus Kimi K2.6 family reasoning.enabled=true -> thinking.type=enabled",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "moonshotai/kimi-k2.6",
 				reasoning: { enabled: true },
 			},
 			context: { family: "kimi-k2.6" },
 			expect: [
-				{ bucket: "cline", has: { thinking: { type: "enabled" } } },
+				{ bucket: "nexus", has: { thinking: { type: "enabled" } } },
 				{ bucket: "openaiCompatible", has: { thinking: { type: "enabled" } } },
 			],
 		},
 		{
-			name: "cline generic reasoning.enabled=false -> gateway reasoning only, no thinking patch",
+			name: "nexus generic reasoning.enabled=false -> gateway reasoning only, no thinking patch",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "gpt-5.4",
 				reasoning: { enabled: false },
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { enabled: false } },
 					lacks: ["thinking"],
 				},
@@ -1161,16 +1161,16 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline non-K2.6 Moonshot Kimi reasoning.enabled=false -> thinking.type=disabled",
+			name: "nexus non-K2.6 Moonshot Kimi reasoning.enabled=false -> thinking.type=disabled",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "moonshotai/kimi-k2.5",
 				reasoning: { enabled: false },
 			},
 			context: { family: "kimi-k2.5" },
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: {
 						reasoning: { enabled: false },
 						thinking: { type: "disabled" },
@@ -1329,9 +1329,9 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline qwen prompt-cache-only route reasoning.enabled=true -> cache control, no gateway reasoning",
+			name: "nexus qwen prompt-cache-only route reasoning.enabled=true -> cache control, no gateway reasoning",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "qwen/qwen3.6-plus",
 				reasoning: { enabled: true, effort: "high" },
 			},
@@ -1355,7 +1355,7 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { cache_control: { type: "ephemeral" } },
 					lacks: [
 						"reasoning",
@@ -1368,9 +1368,9 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline unregistered qwen reasoning.enabled=true -> no gateway reasoning",
+			name: "nexus unregistered qwen reasoning.enabled=true -> no gateway reasoning",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "qwen/qwen3.7-plus",
 				reasoning: { enabled: true, effort: "high" },
 			},
@@ -1392,7 +1392,7 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					lacks: [
 						"reasoning",
 						"thinking",
@@ -1408,19 +1408,19 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline Kimi K2.6 family reasoning.enabled=false also keeps gateway reasoning shape",
+			name: "nexus Kimi K2.6 family reasoning.enabled=false also keeps gateway reasoning shape",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "moonshotai/kimi-k2.6",
 				reasoning: { enabled: false },
 			},
 			context: { family: "kimi-k2.6" },
-			expect: [{ bucket: "cline", has: { reasoning: { enabled: false } } }],
+			expect: [{ bucket: "nexus", has: { reasoning: { enabled: false } } }],
 		},
 		{
-			name: "cline Claude Fable omits an unadvertised disabled control",
+			name: "nexus Claude Fable omits an unadvertised disabled control",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-fable-5",
 				reasoning: { enabled: false },
 			},
@@ -1435,15 +1435,15 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					lacks: ["reasoning", "thinking"],
 				},
 			],
 		},
 		{
-			name: "cline Claude Fable ignores an advertised toggle because reasoning is mandatory",
+			name: "nexus Claude Fable ignores an advertised toggle because reasoning is mandatory",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "anthropic/claude-fable-5",
 				reasoning: { enabled: false },
 			},
@@ -1455,21 +1455,21 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					lacks: ["reasoning", "thinking"],
 				},
 			],
 		},
 		{
-			name: "cline StepFun 3.7 Flash reasoning.enabled=false omits disabled reasoning",
+			name: "nexus StepFun 3.7 Flash reasoning.enabled=false omits disabled reasoning",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "stepfun/step-3.7-flash",
 				reasoning: { enabled: false },
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					lacks: ["reasoning", "thinking"],
 				},
 				{
@@ -1479,15 +1479,15 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline StepFun 3.7 Flash variants reasoning.enabled=false omit disabled reasoning",
+			name: "nexus StepFun 3.7 Flash variants reasoning.enabled=false omit disabled reasoning",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "stepfun/step-3.7-flash-v2",
 				reasoning: { enabled: false },
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					lacks: ["reasoning", "thinking"],
 				},
 			],
@@ -1732,9 +1732,9 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline MiniMax M3 reasoning enabled -> gateway reasoning without thinking leak",
+			name: "nexus MiniMax M3 reasoning enabled -> gateway reasoning without thinking leak",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "minimax/minimax-m3",
 				reasoning: { enabled: true, effort: "high" },
 			},
@@ -1744,7 +1744,7 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { enabled: true, effort: "high" } },
 					lacks: ["thinking", "effort", "reasoningEffort", "reasoningSummary"],
 				},
@@ -1755,9 +1755,9 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			],
 		},
 		{
-			name: "cline MiniMax M3 reasoning disabled -> gateway reasoning disabled",
+			name: "nexus MiniMax M3 reasoning disabled -> gateway reasoning disabled",
 			request: {
-				providerId: "cline",
+				providerId: "nexus",
 				modelId: "minimax/minimax-m3",
 				reasoning: { enabled: false },
 			},
@@ -1767,7 +1767,7 @@ describe("composeAiSdkProviderOptions: family/provider thinking patches", () => 
 			},
 			expect: [
 				{
-					bucket: "cline",
+					bucket: "nexus",
 					has: { reasoning: { enabled: false } },
 					lacks: ["thinking"],
 				},
@@ -2528,30 +2528,30 @@ describe("composeAiSdkProviderOptions: provider-specific overlays", () => {
 	});
 });
 
-describe("composeAiSdkProviderOptions: ClinePass bucket normalization", () => {
-	it("keys ClinePass options to the shared cline bucket only", () => {
+describe("composeAiSdkProviderOptions: NexusPass bucket normalization", () => {
+	it("keys NexusPass options to the shared nexus bucket only", () => {
 		const result = composeAiSdkProviderOptions(
 			makeRequest({
-				providerId: "cline-pass",
+				providerId: "nexus-pass",
 				modelId: "anthropic/claude-sonnet-4-5",
 				reasoning: { enabled: true, budgetTokens: 2048 },
 			}),
 			makeContext({
-				providerId: "cline-pass",
+				providerId: "nexus-pass",
 				modelId: "anthropic/claude-sonnet-4-5",
 				family: "claude-sonnet",
 			}),
 		);
 
-		// The shared "cline" AI SDK provider serves both gateway ids and only
-		// reads the "cline" providerOptions bucket, so nothing may be emitted
-		// under the concrete "cline-pass" id or its camelCase alias.
-		expect(result.cline).toEqual(
+		// The shared "nexus" AI SDK provider serves both gateway ids and only
+		// reads the "nexus" providerOptions bucket, so nothing may be emitted
+		// under the concrete "nexus-pass" id or its camelCase alias.
+		expect(result.nexus).toEqual(
 			expect.objectContaining({
 				reasoning: { enabled: true, max_tokens: 2048 },
 			}),
 		);
-		expect(result).not.toHaveProperty("cline-pass");
-		expect(result).not.toHaveProperty("clinePass");
+		expect(result).not.toHaveProperty("nexus-pass");
+		expect(result).not.toHaveProperty("nexusPass");
 	});
 });

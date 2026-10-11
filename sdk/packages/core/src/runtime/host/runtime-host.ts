@@ -1,9 +1,9 @@
-import type * as LlmsProviders from "@cline/llms";
+import type * as LlmsProviders from "@nexus/llms";
 import type {
 	AgentMode,
 	AgentResult,
 	RuntimeConfigExtensionKind,
-} from "@cline/shared";
+} from "@nexus/shared";
 import type { HookEventPayload } from "../../hooks";
 import type { CheckpointEntry } from "../../hooks/checkpoint-hooks";
 import type { ProviderSettings } from "../../services/llms/provider-settings";
@@ -11,7 +11,7 @@ import type { SessionCompactionState } from "../../session/models/session-compac
 import type { SessionManifest } from "../../session/models/session-manifest";
 import type { SessionSource } from "../../types/common";
 import type {
-	ClineCoreStartConfig,
+	NexusCoreStartConfig,
 	CoreSessionConfig,
 } from "../../types/config";
 import type {
@@ -168,7 +168,7 @@ export interface StartSessionInput {
 	 */
 	localRuntime?: LocalRuntimeStartOptions;
 	capabilities?: RuntimeCapabilities;
-	toolPolicies?: import("@cline/shared").AgentConfig["toolPolicies"];
+	toolPolicies?: import("@nexus/shared").AgentConfig["toolPolicies"];
 }
 
 /** Session input after the execution host has resolved a concrete workspace. */
@@ -177,7 +177,7 @@ export interface ResolvedStartSessionInput
 	config: RuntimeSessionConfig;
 }
 
-export function splitCoreSessionConfig(config: ClineCoreStartConfig): {
+export function splitCoreSessionConfig(config: NexusCoreStartConfig): {
 	config: StartSessionConfig;
 	localRuntime?: LocalRuntimeStartOptions;
 } {

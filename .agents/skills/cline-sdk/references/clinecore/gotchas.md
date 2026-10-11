@@ -1,27 +1,27 @@
-# ClineCore Gotchas
+# NexusCore Gotchas
 
 ## Always Call dispose()
 
-`ClineCore` holds resources (file watchers, database connections, hub connections). Failing to call `dispose()` can leave orphan processes and file locks.
+`NexusCore` holds resources (file watchers, database connections, hub connections). Failing to call `dispose()` can leave orphan processes and file locks.
 
 ```typescript
-const cline = await ClineCore.create({ clientName: "my-app" })
+const nexus = await NexusCore.create({ clientName: "my-app" })
 try {
-  // ... use cline
+  // ... use nexus
 } finally {
-  await cline.dispose()
+  await nexus.dispose()
 }
 ```
 
 ## Node.js 22 Required
 
-ClineCore and `@cline/core` require Node.js 22 or later. If you're on an older version, you'll get runtime errors. Check with `node --version`.
+NexusCore and `@nexus/core` require Node.js 22 or later. If you're on an older version, you'll get runtime errors. Check with `node --version`.
 
 ## Session Config vs Global Config
 
 Tool policies can be set at two levels:
-- Global: in `ClineCore.create({ toolPolicies })` -- applies to all sessions
-- Per-session: in `cline.start({ toolPolicies })` -- overrides global for that session
+- Global: in `NexusCore.create({ toolPolicies })` -- applies to all sessions
+- Per-session: in `nexus.start({ toolPolicies })` -- overrides global for that session
 
 Per-session policies take precedence.
 
@@ -30,7 +30,7 @@ Per-session policies take precedence.
 Built-in tools (bash, editor, read_files, etc.) are not available unless you set `enableTools: true` in the session config:
 
 ```typescript
-await cline.start({
+await nexus.start({
   prompt: "Read package.json",
   config: {
     providerId: "anthropic",
@@ -57,12 +57,12 @@ config: {
 
 With `backendMode: "auto"`, the first session may be slow if a hub daemon needs to be spawned. For immediate responsiveness:
 - Use `backendMode: "local"` for in-process execution (fastest startup)
-- Pre-warm the hub with `cline hub ensure` CLI command
+- Pre-warm the hub with `nexus hub ensure` CLI command
 - Accept the one-time startup cost and let subsequent sessions reuse the hub
 
 ## Session Storage Location
 
-Sessions are stored at `~/.cline/data/sessions/`. This includes:
+Sessions are stored at `~/.nexus/data/sessions/`. This includes:
 - `sessions.db` - SQLite database with session metadata
 - `[session-id].json` - Individual message history files
 
@@ -78,9 +78,9 @@ For automated pipelines, either:
 
 ## Plugin Discovery Paths
 
-ClineCore discovers plugins from:
-- Global: `~/.cline/plugins/`
-- Workspace: `.cline/plugins/`
+NexusCore discovers plugins from:
+- Global: `~/.nexus/plugins/`
+- Workspace: `.nexus/plugins/`
 
 For SDK consumers, pass plugins via `extensions: [plugin]` or `pluginPaths: ["./path"]` in the session config.
 
@@ -95,7 +95,7 @@ If a plugin isn't loading, verify:
 If your plugins use `ctx.workspaceInfo` (e.g., to resolve workspace paths), you must set `extensionContext.workspace` in the session config. Without it, `ctx.workspaceInfo` is undefined:
 
 ```typescript
-await cline.start({
+await nexus.start({
   config: {
     extensions: [myPlugin],
     extensionContext: {
@@ -109,14 +109,14 @@ The CLI sets this automatically, but SDK consumers must set it explicitly.
 
 ## send() Requires an Active Session
 
-`cline.send()` only works on sessions that are still active. If a session has already completed, `send()` may return `undefined` or fail. Check session status with `cline.get(sessionId)` first.
+`nexus.send()` only works on sessions that are still active. If a session has already completed, `send()` may return `undefined` or fail. Check session status with `nexus.get(sessionId)` first.
 
 ## Result May Be Undefined
 
 `session.result` can be `undefined` if the session was started but hasn't completed yet (e.g., in a non-blocking hub mode). Check for this:
 
 ```typescript
-const session = await cline.start({ ... })
+const session = await nexus.start({ ... })
 if (session.result) {
   console.log(session.result.text)
 } else {
@@ -126,7 +126,7 @@ if (session.result) {
 
 ## Compaction and Long Sessions
 
-For long-running sessions, message history grows and eventually exceeds the model's context window. ClineCore handles this via compaction, which summarizes older messages. Configure it via `compactionConfig`:
+For long-running sessions, message history grows and eventually exceeds the model's context window. NexusCore handles this via compaction, which summarizes older messages. Configure it via `compactionConfig`:
 
 ```typescript
 config: {

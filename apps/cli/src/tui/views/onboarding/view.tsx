@@ -1,12 +1,12 @@
-import type { ProviderSettingsManager } from "@cline/core";
+import type { ProviderSettingsManager } from "@nexus/core";
 import { useTerminalDimensions } from "@opentui/react";
 import { useMouseTracker } from "../../components/tracked-robot";
 import { HOME_VIEW_MAX_WIDTH } from "../../types";
 import { useOnboardingController } from "./controller";
 import { getOAuthProviderLabel, type OnboardingResult } from "./model";
 import {
-	OnboardingClineModelScreen,
-	OnboardingClinePassSubscriptionScreen,
+	OnboardingNexusModelScreen,
+	OnboardingNexusPassSubscriptionScreen,
 	OnboardingCodexCliScreen,
 	OnboardingCustomModelIdScreen,
 	OnboardingDeviceCodeScreen,
@@ -108,11 +108,11 @@ export function OnboardingView(props: OnboardingViewProps) {
 		);
 	}
 
-	if (state.step === "cline_model") {
+	if (state.step === "nexus_model") {
 		return (
-			<OnboardingClineModelScreen
-				clineEntries={state.clineEntries}
-				clineModelSelected={state.clineModelSelected}
+			<OnboardingNexusModelScreen
+				nexusEntries={state.nexusEntries}
+				nexusModelSelected={state.nexusModelSelected}
 				compact={compact}
 				contentWidth={contentWidth}
 				mouse={mouse}
@@ -121,20 +121,20 @@ export function OnboardingView(props: OnboardingViewProps) {
 		);
 	}
 
-	if (state.step === "cline_pass_subscription") {
+	if (state.step === "nexus_pass_subscription") {
 		return (
-			<OnboardingClinePassSubscriptionScreen
+			<OnboardingNexusPassSubscriptionScreen
 				compact={compact}
 				contentWidth={contentWidth}
-				currentPlanName={state.clinePassCurrentPlanName}
-				error={state.clinePassSubscriptionError}
+				currentPlanName={state.nexusPassCurrentPlanName}
+				error={state.nexusPassSubscriptionError}
 				mouse={mouse}
-				openStatus={state.clinePassSubscriptionOpenStatus}
-				options={state.clinePassSubscriptionOptions}
-				planFeatures={state.clinePassPlanFeatures}
-				selected={state.clinePassSubscriptionSelected}
-				status={state.clinePassSubscriptionStatus}
-				subscriptionUrl={state.clinePassSubscriptionUrl}
+				openStatus={state.nexusPassSubscriptionOpenStatus}
+				options={state.nexusPassSubscriptionOptions}
+				planFeatures={state.nexusPassPlanFeatures}
+				selected={state.nexusPassSubscriptionSelected}
+				status={state.nexusPassSubscriptionStatus}
+				subscriptionUrl={state.nexusPassSubscriptionUrl}
 			/>
 		);
 	}

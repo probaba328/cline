@@ -73,7 +73,7 @@ vi.mock("@/lib/provider-model-catalog", () => ({
 	loadProviderModelCatalog: loadProviderModelCatalogMock,
 	loadProviderModels: loadProviderModelsMock,
 	subscribeToProviderModels: subscribeToProviderModelsMock,
-	VOICE_INPUT_SETTINGS_CHANGED_EVENT: "cline:test-voice-input-settings-changed",
+	VOICE_INPUT_SETTINGS_CHANGED_EVENT: "nexus:test-voice-input-settings-changed",
 }));
 
 vi.mock("@/lib/vercel-streaming-transcription", () => ({
@@ -87,9 +87,9 @@ beforeEach(() => {
 	Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 	loadProviderModelCatalogMock.mockReset().mockResolvedValue({
 		providers: [],
-		enabledProviderIds: ["cline"],
-		providerModels: { cline: ["test-model"] },
-		providerReasoningModels: { cline: [] },
+		enabledProviderIds: ["nexus"],
+		providerModels: { nexus: ["test-model"] },
+		providerReasoningModels: { nexus: [] },
 		voiceInput: null,
 	});
 	loadProviderModelsMock.mockReset().mockResolvedValue([]);
@@ -116,9 +116,9 @@ afterEach(async () => {
 });
 
 const workspaceValue = {
-	workspaceRoot: "/workspace/cline",
-	workspaces: ["/workspace/cline"],
-	listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+	workspaceRoot: "/workspace/nexus",
+	workspaces: ["/workspace/nexus"],
+	listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 	refreshWorkspaces: vi.fn(async () => undefined),
 	switchWorkspace: vi.fn(async () => true),
 	pickWorkspaceDirectory: vi.fn(async () => null),
@@ -136,9 +136,9 @@ function providerCatalog(
 ) {
 	return {
 		providers: [],
-		enabledProviderIds: ["cline"],
-		providerModels: { cline: ["test-model"] },
-		providerReasoningModels: { cline: [] },
+		enabledProviderIds: ["nexus"],
+		providerModels: { nexus: ["test-model"] },
+		providerReasoningModels: { nexus: [] },
 		voiceInput,
 	};
 }
@@ -189,7 +189,7 @@ async function renderVoiceComposer({
 					onSwitchGitBranch={vi.fn(async () => true)}
 					promptDraft={{ version: promptVersion, value: prompt }}
 					promptsInQueue={[]}
-					provider="cline"
+					provider="nexus"
 					reasoningEffort="low"
 					status="idle"
 					summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -231,9 +231,9 @@ describe("ChatInputBar", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -264,7 +264,7 @@ describe("ChatInputBar", () => {
 						onSwitchGitBranch={vi.fn(async () => true)}
 						promptDraft={{ version: 0, value: "" }}
 						promptsInQueue={[]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="idle"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -609,7 +609,7 @@ describe("ChatInputBar", () => {
 		);
 		await act(async () => {
 			window.dispatchEvent(
-				new Event("cline:test-voice-input-settings-changed"),
+				new Event("nexus:test-voice-input-settings-changed"),
 			);
 		});
 		await vi.waitFor(() => {
@@ -634,7 +634,7 @@ describe("ChatInputBar", () => {
 
 		await act(async () => {
 			window.dispatchEvent(
-				new Event("cline:test-voice-input-settings-changed"),
+				new Event("nexus:test-voice-input-settings-changed"),
 			);
 		});
 		expect(loadProviderModelCatalogMock).toHaveBeenCalledTimes(3);
@@ -720,7 +720,7 @@ describe("ChatInputBar", () => {
 		);
 		await act(async () => {
 			window.dispatchEvent(
-				new Event("cline:test-voice-input-settings-changed"),
+				new Event("nexus:test-voice-input-settings-changed"),
 			);
 		});
 		await vi.waitFor(() =>
@@ -739,9 +739,9 @@ describe("ChatInputBar", () => {
 				root.render(
 					<WorkspaceProvider
 						value={{
-							workspaceRoot: "/workspace/cline",
-							workspaces: ["/workspace/cline"],
-							listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+							workspaceRoot: "/workspace/nexus",
+							workspaces: ["/workspace/nexus"],
+							listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 							refreshWorkspaces: vi.fn(async () => undefined),
 							switchWorkspace: vi.fn(async () => true),
 							pickWorkspaceDirectory: vi.fn(async () => null),
@@ -773,7 +773,7 @@ describe("ChatInputBar", () => {
 							onRemovePromptInQueue={vi.fn()}
 							promptDraft={{ version: 0, value: "" }}
 							promptsInQueue={[]}
-							provider="cline"
+							provider="nexus"
 							reasoningEffort="high"
 							status={status}
 							summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -787,12 +787,12 @@ describe("ChatInputBar", () => {
 
 		await render("idle");
 		await vi.waitFor(() => {
-			expect(loadProviderModelsMock).toHaveBeenCalledWith("cline");
+			expect(loadProviderModelsMock).toHaveBeenCalledWith("nexus");
 		});
 		const providerModelsListener =
 			subscribeToProviderModelsMock.mock.calls[0]?.[0];
 		await act(async () => {
-			providerModelsListener?.("cline", [
+			providerModelsListener?.("nexus", [
 				{ id: "refreshed-model", name: "Refreshed model" },
 			]);
 		});
@@ -884,7 +884,7 @@ describe("ChatInputBar", () => {
 
 		expect(workspaceTrigger?.disabled).toBe(true);
 		expect(workspaceTrigger?.className).toContain("max-[560px]:size-7");
-		expect(workspaceTrigger?.textContent).toContain("cline");
+		expect(workspaceTrigger?.textContent).toContain("nexus");
 		expect(workspaceTrigger?.textContent).toContain("main");
 		const workspaceFooterSlot =
 			workspaceTrigger?.parentElement?.parentElement?.parentElement;
@@ -916,18 +916,18 @@ describe("ChatInputBar", () => {
 	it("selects High from the supported model thinking menu", async () => {
 		loadProviderModelCatalogMock.mockResolvedValue({
 			providers: [],
-			enabledProviderIds: ["cline"],
-			providerModels: { cline: ["test-model"] },
-			providerReasoningModels: { cline: ["test-model"] },
+			enabledProviderIds: ["nexus"],
+			providerModels: { nexus: ["test-model"] },
+			providerReasoningModels: { nexus: ["test-model"] },
 		});
 		const onReasoningChange = vi.fn();
 		await act(async () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -958,7 +958,7 @@ describe("ChatInputBar", () => {
 						onRemovePromptInQueue={vi.fn()}
 						promptDraft={{ version: 0, value: "" }}
 						promptsInQueue={[]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="idle"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -1012,9 +1012,9 @@ describe("ChatInputBar", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -1056,7 +1056,7 @@ describe("ChatInputBar", () => {
 								steer: true,
 							},
 						]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="running"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -1156,9 +1156,9 @@ describe("ChatInputBar", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -1196,7 +1196,7 @@ describe("ChatInputBar", () => {
 								steer: false,
 							},
 						]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="running"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -1238,8 +1238,8 @@ describe("ChatInputBar", () => {
 		window.localStorage.setItem(
 			MODEL_SELECTION_STORAGE_KEY,
 			JSON.stringify({
-				lastProvider: "cline",
-				lastModelByProvider: { cline: "test-model" },
+				lastProvider: "nexus",
+				lastModelByProvider: { nexus: "test-model" },
 			}),
 		);
 		loadProviderModelCatalogMock.mockResolvedValue({
@@ -1255,9 +1255,9 @@ describe("ChatInputBar", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -1312,8 +1312,8 @@ describe("ChatInputBar", () => {
 				window.localStorage.getItem(MODEL_SELECTION_STORAGE_KEY),
 			),
 		).toEqual({
-			lastProvider: "cline",
-			lastModelByProvider: { cline: "test-model" },
+			lastProvider: "nexus",
+			lastModelByProvider: { nexus: "test-model" },
 		});
 
 		// An explicit pick in the model dropdown DOES update the remembered
@@ -1332,7 +1332,7 @@ describe("ChatInputBar", () => {
 		).toEqual({
 			lastProvider: "openrouter",
 			lastModelByProvider: {
-				cline: "test-model",
+				nexus: "test-model",
 				openrouter: "user-picked-model",
 			},
 		});
@@ -1340,12 +1340,12 @@ describe("ChatInputBar", () => {
 		window.localStorage.removeItem(MODEL_SELECTION_STORAGE_KEY);
 	});
 
-	it("renders the cline model picker with recommended and free sections", async () => {
+	it("renders the nexus model picker with recommended and free sections", async () => {
 		loadProviderModelCatalogMock.mockResolvedValue({
 			providers: [],
-			enabledProviderIds: ["cline"],
+			enabledProviderIds: ["nexus"],
 			providerModels: {
-				cline: [
+				nexus: [
 					"anthropic/claude-opus-5",
 					"deepseek/deepseek-v4-flash",
 					"zzz/other-model",
@@ -1353,7 +1353,7 @@ describe("ChatInputBar", () => {
 			},
 			// Tier data arrives on the models themselves, stamped by the SDK.
 			providerModelDetails: {
-				cline: [
+				nexus: [
 					{
 						id: "anthropic/claude-opus-5",
 						name: "Claude Opus 5",
@@ -1369,8 +1369,8 @@ describe("ChatInputBar", () => {
 					{ id: "zzz/other-model", name: "Other Model" },
 				],
 			},
-			providerNames: { cline: "Cline" },
-			providerReasoningModels: { cline: [] },
+			providerNames: { nexus: "Nexus" },
+			providerReasoningModels: { nexus: [] },
 		});
 
 		await act(async () => {
@@ -1400,7 +1400,7 @@ describe("ChatInputBar", () => {
 						onSwitchGitBranch={vi.fn(async () => true)}
 						promptDraft={{ version: 0, value: "" }}
 						promptsInQueue={[]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="idle"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -1416,7 +1416,7 @@ describe("ChatInputBar", () => {
 			'[aria-label^="Provider:"]',
 		);
 		await vi.waitFor(() => {
-			expect(providerTrigger?.textContent).toContain("Cline");
+			expect(providerTrigger?.textContent).toContain("Nexus");
 		});
 		const modelTrigger = container.querySelector<HTMLButtonElement>(
 			'[aria-label^="Model:"]',
@@ -1430,7 +1430,7 @@ describe("ChatInputBar", () => {
 		expect(panel?.textContent).toContain("All models");
 		expect(panel?.textContent).toContain("Most intelligent model");
 		expect(
-			panel?.querySelector(".cline-ui-search-combobox__badge")?.textContent,
+			panel?.querySelector(".nexus-ui-search-combobox__badge")?.textContent,
 		).toBe("NEW");
 		// Featured entries lead; the rest of the catalog follows.
 		const optionLabels = [
@@ -1441,7 +1441,7 @@ describe("ChatInputBar", () => {
 		expect(optionLabels[2]).toContain("Other Model");
 	});
 
-	describe("cline-pass picker offer", () => {
+	describe("nexus-pass picker offer", () => {
 		const renderComposer = async (props: {
 			model: string;
 			provider: string;
@@ -1491,23 +1491,23 @@ describe("ChatInputBar", () => {
 		};
 
 		beforeEach(() => {
-			// The ClinePass offer: one subscribed and one free model, stamped
+			// The NexusPass offer: one subscribed and one free model, stamped
 			// by the SDK onto ProviderModel.featured. The catalog additionally
 			// contains a stale unstamped model outside the offer, which the
 			// picker hides while the subscribed tier is non-empty.
 			loadProviderModelCatalogMock.mockResolvedValue({
 				providers: [],
-				enabledProviderIds: ["cline", "cline-pass"],
+				enabledProviderIds: ["nexus", "nexus-pass"],
 				providerModels: {
-					cline: ["test-model"],
-					"cline-pass": [
+					nexus: ["test-model"],
+					"nexus-pass": [
 						"openai/gpt-5",
 						"google/gemini-flash",
 						"legacy/stale-model",
 					],
 				},
 				providerModelDetails: {
-					"cline-pass": [
+					"nexus-pass": [
 						{
 							id: "openai/gpt-5",
 							name: "GPT-5",
@@ -1521,8 +1521,8 @@ describe("ChatInputBar", () => {
 						{ id: "legacy/stale-model", name: "Stale Legacy" },
 					],
 				},
-				providerNames: { cline: "Cline", "cline-pass": "ClinePass" },
-				providerReasoningModels: { cline: [], "cline-pass": [] },
+				providerNames: { nexus: "Nexus", "nexus-pass": "NexusPass" },
+				providerReasoningModels: { nexus: [], "nexus-pass": [] },
 			});
 		});
 
@@ -1534,15 +1534,15 @@ describe("ChatInputBar", () => {
 			window.localStorage.setItem(
 				MODEL_SELECTION_STORAGE_KEY,
 				JSON.stringify({
-					lastProvider: "cline-pass",
-					lastModelByProvider: { "cline-pass": "legacy/stale-model" },
+					lastProvider: "nexus-pass",
+					lastModelByProvider: { "nexus-pass": "legacy/stale-model" },
 				}),
 			);
 			const onModelChange = vi.fn();
 			await renderComposer({
 				model: "",
 				onModelChange,
-				provider: "cline-pass",
+				provider: "nexus-pass",
 			});
 
 			// The default selection must come from the visible offer, not the
@@ -1566,7 +1566,7 @@ describe("ChatInputBar", () => {
 			await renderComposer({
 				model: "legacy/stale-model",
 				onModelChange,
-				provider: "cline-pass",
+				provider: "nexus-pass",
 			});
 
 			// The session's configured model stays active…
@@ -1594,10 +1594,10 @@ describe("ChatInputBar", () => {
 			window.localStorage.setItem(
 				MODEL_SELECTION_STORAGE_KEY,
 				JSON.stringify({
-					lastProvider: "cline",
+					lastProvider: "nexus",
 					lastModelByProvider: {
-						cline: "test-model",
-						"cline-pass": "legacy/stale-model",
+						nexus: "test-model",
+						"nexus-pass": "legacy/stale-model",
 					},
 				}),
 			);
@@ -1607,7 +1607,7 @@ describe("ChatInputBar", () => {
 				model: "test-model",
 				onModelChange,
 				onProviderChange,
-				provider: "cline",
+				provider: "nexus",
 			});
 
 			const providerTrigger = container.querySelector<HTMLButtonElement>(
@@ -1615,13 +1615,13 @@ describe("ChatInputBar", () => {
 			);
 			await act(async () => providerTrigger?.click());
 			const panel = document.querySelector('[role="dialog"]');
-			const clinePassOption = [
+			const nexusPassOption = [
 				...(panel?.querySelectorAll<HTMLButtonElement>('[role="option"]') ??
 					[]),
-			].find((option) => option.textContent?.includes("ClinePass"));
-			await act(async () => clinePassOption?.click());
+			].find((option) => option.textContent?.includes("NexusPass"));
+			await act(async () => nexusPassOption?.click());
 
-			expect(onProviderChange).toHaveBeenCalledWith("cline-pass");
+			expect(onProviderChange).toHaveBeenCalledWith("nexus-pass");
 			// The hidden remembered model is not restored; the selection falls
 			// back to the offer and the remembered slot is repaired.
 			expect(onModelChange).toHaveBeenCalledWith("openai/gpt-5");
@@ -1630,10 +1630,10 @@ describe("ChatInputBar", () => {
 					window.localStorage.getItem(MODEL_SELECTION_STORAGE_KEY),
 				),
 			).toEqual({
-				lastProvider: "cline-pass",
+				lastProvider: "nexus-pass",
 				lastModelByProvider: {
-					cline: "test-model",
-					"cline-pass": "openai/gpt-5",
+					nexus: "test-model",
+					"nexus-pass": "openai/gpt-5",
 				},
 			});
 		});
@@ -1646,9 +1646,9 @@ describe("ChatInputBar", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -1679,7 +1679,7 @@ describe("ChatInputBar", () => {
 						onSwitchGitBranch={vi.fn(async () => true)}
 						promptDraft={{ version: 0, value: "" }}
 						promptsInQueue={[]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="idle"
 						summary={{ toolCalls: 0, tokensIn: 0, tokensOut: 0 }}
@@ -1735,9 +1735,9 @@ describe("ChatInputBar token ring", () => {
 			root.render(
 				<WorkspaceProvider
 					value={{
-						workspaceRoot: "/workspace/cline",
-						workspaces: ["/workspace/cline"],
-						listWorkspaces: vi.fn(async () => ["/workspace/cline"]),
+						workspaceRoot: "/workspace/nexus",
+						workspaces: ["/workspace/nexus"],
+						listWorkspaces: vi.fn(async () => ["/workspace/nexus"]),
 						refreshWorkspaces: vi.fn(async () => undefined),
 						switchWorkspace: vi.fn(async () => true),
 						pickWorkspaceDirectory: vi.fn(async () => null),
@@ -1769,7 +1769,7 @@ describe("ChatInputBar token ring", () => {
 						onSwitchGitBranch={vi.fn(async () => true)}
 						promptDraft={{ version: 0, value: "" }}
 						promptsInQueue={[]}
-						provider="cline"
+						provider="nexus"
 						reasoningEffort="low"
 						status="idle"
 						summary={summary}

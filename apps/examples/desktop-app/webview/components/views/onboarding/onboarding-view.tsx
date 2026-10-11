@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, IconButton } from "@cline/ui";
+import { Button, IconButton } from "@nexus/ui";
 import {
 	ArrowLeft,
 	CheckCircle2,
@@ -10,7 +10,7 @@ import {
 	Loader2,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ClineLogo } from "@/components/cline-logo";
+import { NexusLogo } from "@/components/nexus-logo";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,14 +23,14 @@ import {
 import { WelcomeHero } from "@/components/views/chat/welcome-hero";
 import { useAccount } from "@/contexts/account-context";
 import { OAUTH_MANAGED_PROVIDERS } from "@/hooks/chat-session/constants";
-import { isClineAccountNotAuthenticatedResult } from "@/lib/cline-account-state";
+import { isNexusAccountNotAuthenticatedResult } from "@/lib/nexus-account-state";
 import { desktopClient, openExternalUrl } from "@/lib/desktop-client";
 import {
 	readModelSelectionStorageFromWindow,
 	writeModelSelectionStorageToWindow,
 } from "@/lib/model-selection";
 import {
-	CLINE_DASHBOARD_URL,
+	NEXUS_DASHBOARD_URL,
 	getProviderApiKeyUrl,
 } from "@/lib/provider-key-urls";
 import {
@@ -40,15 +40,15 @@ import {
 import type { Provider } from "@/lib/provider-schema";
 import { cn } from "@/lib/utils";
 
-const CREATE_ACCOUNT_URL = "https://app.cline.bot";
+const CREATE_ACCOUNT_URL = "https://app.nexus.bot";
 
 export type OnboardingStep = "welcome" | "connect" | "done";
 
 type OnboardingConnection =
-	| { kind: "cline" }
+	| { kind: "nexus" }
 	| { kind: "provider"; providerName: string };
 
-type SetupMethod = "cline" | "api-key";
+type SetupMethod = "nexus" | "api-key";
 
 /**
  * Providers surfaced first in the bring-your-own-key picker. Everything else
@@ -87,7 +87,7 @@ function isApiKeyOnlyProvider(provider: Provider): boolean {
 
 /**
  * Orders the provider catalog for the API-key setup step: OAuth-managed
- * providers (Cline itself, ClinePass, ChatGPT, OCA) are excluded because they
+ * providers (Nexus itself, NexusPass, ChatGPT, OCA) are excluded because they
  * have dedicated sign-in paths, providers needing more than an API key are
  * excluded because this form only collects one, popular API-key providers
  * come first, and the rest follow alphabetically.
@@ -270,10 +270,10 @@ function WelcomeStep({ onContinue }: { onContinue: () => void }) {
 				<div className="w-full">
 					<WelcomeHero variant="bot-only" />
 				</div>
-				<h1 className="mt-5 text-4xl font-semibold text-foreground">Cline</h1>
+				<h1 className="mt-5 text-4xl font-semibold text-foreground">Nexus</h1>
 				<p className="mt-2 text-lg text-foreground">Build software your way</p>
 				<p className="mt-6 text-md text-muted-foreground">
-					Cline is an AI coding agent. It reads your code, edits files, runs
+					Nexus is an AI coding agent. It reads your code, edits files, runs
 					commands, and works through tasks with you — in any project on your
 					machine.
 				</p>
@@ -307,23 +307,23 @@ function ConnectStep({
 	const { user, refreshAccount } = useAccount();
 	const [signingIn, setSigningIn] = useState(false);
 	const [signInError, setSignInError] = useState<string | null>(null);
-	const [clineApiKey, setClineApiKey] = useState("");
-	const [clineKeySaving, setClineKeySaving] = useState(false);
-	const [clineKeyError, setClineKeyError] = useState<string | null>(null);
+	const [nexusApiKey, setNexusApiKey] = useState("");
+	const [nexusKeySaving, setNexusKeySaving] = useState(false);
+	const [nexusKeyError, setNexusKeyError] = useState<string | null>(null);
 
 	// Increments whenever the user cancels a pending browser sign-in so a
 	// stale OAuth round-trip (which can dangle until the transport timeout)
 	// cannot advance or error the UI after the user has moved on.
 	const signInAttemptRef = useRef(0);
 
-	const signInWithCline = useCallback(async () => {
+	const signInWithNexus = useCallback(async () => {
 		signInAttemptRef.current += 1;
 		const attempt = signInAttemptRef.current;
 		setSigningIn(true);
 		setSignInError(null);
 		try {
 			await desktopClient.invoke("run_provider_oauth_login", {
-				provider: "cline",
+				provider: "nexus",
 			});
 			if (signInAttemptRef.current !== attempt) {
 				// The sign-in completed after the user cancelled but before the
@@ -333,9 +333,9 @@ function ConnectStep({
 				void refreshAccount();
 				return;
 			}
-			rememberProviderSelection({ id: "cline" });
+			rememberProviderSelection({ id: "nexus" });
 			await refreshAccount();
-			onConnected({ kind: "cline" });
+			onConnected({ kind: "nexus" });
 		} catch (error) {
 			if (signInAttemptRef.current !== attempt) {
 				return;
@@ -351,7 +351,7 @@ function ConnectStep({
 		}
 	}, [onConnected, refreshAccount]);
 
-	const cancelSignInWithCline = useCallback(() => {
+	const cancelSignInWithNexus = useCallback(() => {
 		signInAttemptRef.current += 1;
 		setSigningIn(false);
 		// Cancel the backend browser round-trip so a later-completed
@@ -362,7 +362,7 @@ function ConnectStep({
 			for (let attempt = 0; attempt < 3; attempt++) {
 				try {
 					await desktopClient.invoke("cancel_provider_oauth_login", {
-						provider: "cline",
+						provider: "nexus",
 					});
 					return;
 				} catch {
@@ -374,16 +374,16 @@ function ConnectStep({
 		})();
 	}, []);
 
-	const connectWithClineApiKey = useCallback(async () => {
-		const key = clineApiKey.trim();
+	const connectWithNexusApiKey = useCallback(async () => {
+		const key = nexusApiKey.trim();
 		if (!key) {
 			return;
 		}
-		setClineKeySaving(true);
-		setClineKeyError(null);
+		setNexusKeySaving(true);
+		setNexusKeyError(null);
 		try {
 			await desktopClient.invoke("save_provider_settings", {
-				provider: "cline",
+				provider: "nexus",
 				enabled: true,
 				api_key: key,
 			});
@@ -391,21 +391,21 @@ function ConnectStep({
 			// account context swallows errors, so an invalid key would
 			// otherwise onboard the user into a broken signed-in state.
 			try {
-				const verified = await desktopClient.invoke("cline_account", {
-					action: "clineAccount",
+				const verified = await desktopClient.invoke("nexus_account", {
+					action: "nexusAccount",
 					operation: "fetchMe",
 				});
 				// A typed not-authenticated result means the sidecar found no
 				// usable credential after the save — the key did not stick.
-				if (isClineAccountNotAuthenticatedResult(verified)) {
-					throw new Error("no Cline account credentials were found");
+				if (isNexusAccountNotAuthenticatedResult(verified)) {
+					throw new Error("no Nexus account credentials were found");
 				}
 			} catch (verifyError) {
 				// Roll back the persisted key so an unusable credential does
 				// not linger in provider settings.
 				await desktopClient
 					.invoke("save_provider_settings", {
-						provider: "cline",
+						provider: "nexus",
 						api_key: "",
 					})
 					.catch(() => undefined);
@@ -413,20 +413,20 @@ function ConnectStep({
 					`the key could not be verified (${getErrorMessage(verifyError)})`,
 				);
 			}
-			rememberProviderSelection({ id: "cline" });
+			rememberProviderSelection({ id: "nexus" });
 			await refreshAccount();
-			onConnected({ kind: "cline" });
+			onConnected({ kind: "nexus" });
 		} catch (error) {
-			setClineKeyError(getErrorMessage(error));
+			setNexusKeyError(getErrorMessage(error));
 		} finally {
 			// Credentials may have been saved (or rolled back); drop the
 			// short-lived catalog cache so consumers reload the persisted state.
 			invalidateProviderCatalogCache();
-			setClineKeySaving(false);
+			setNexusKeySaving(false);
 		}
-	}, [clineApiKey, onConnected, refreshAccount]);
+	}, [nexusApiKey, onConnected, refreshAccount]);
 
-	const clineBusy = signingIn || clineKeySaving;
+	const nexusBusy = signingIn || nexusKeySaving;
 
 	const [providers, setProviders] = useState<Provider[]>([]);
 	const [providersLoading, setProvidersLoading] = useState(true);
@@ -500,8 +500,8 @@ function ConnectStep({
 		}
 	}, [apiKey, onConnected, selectedProvider, selectedProviderId]);
 
-	const [selectedMethod, setSelectedMethod] = useState<SetupMethod>("cline");
-	const [clineKeyFormExpanded, setClineKeyFormExpanded] = useState(false);
+	const [selectedMethod, setSelectedMethod] = useState<SetupMethod>("nexus");
+	const [nexusKeyFormExpanded, setNexusKeyFormExpanded] = useState(false);
 
 	return (
 		<OnboardingContent surface="panel">
@@ -518,20 +518,20 @@ function ConnectStep({
 					<ArrowLeft className="size-4" />
 				</IconButton>
 				<h1 className="mt-6 text-2xl font-semibold tracking-tight text-foreground">
-					Set up Cline
+					Set up Nexus
 				</h1>
 				<p className="mt-4 text-sm text-muted-foreground">
-					Choose how Cline connects to models. You can add more providers
+					Choose how Nexus connects to models. You can add more providers
 					anytime in Settings.
 				</p>
 			</div>
 
 			<div className="mt-8 flex flex-col gap-3">
 				<SetupOptionCard
-					id="cline"
-					onSelect={() => setSelectedMethod("cline")}
-					selectLabel="Sign in with Cline"
-					selected={selectedMethod === "cline"}
+					id="nexus"
+					onSelect={() => setSelectedMethod("nexus")}
+					selectLabel="Sign in with Nexus"
+					selected={selectedMethod === "nexus"}
 				>
 					<SetupOptionHeader
 						accessory={
@@ -543,8 +543,8 @@ function ConnectStep({
 							</Badge>
 						}
 						description="Latest models with regular free promos. No API keys needed."
-						icon={<ClineLogo className="size-5" />}
-						title="Sign in with Cline"
+						icon={<NexusLogo className="size-5" />}
+						title="Sign in with Nexus"
 					/>
 					{user ? (
 						<div className="mt-6 flex flex-wrap items-center justify-end gap-6">
@@ -556,8 +556,8 @@ function ConnectStep({
 							</p>
 							<Button
 								onClick={() => {
-									rememberProviderSelection({ id: "cline" });
-									onConnected({ kind: "cline" });
+									rememberProviderSelection({ id: "nexus" });
+									onConnected({ kind: "nexus" });
 								}}
 								size="md"
 								tone="accent"
@@ -570,8 +570,8 @@ function ConnectStep({
 					) : (
 						<div className="mt-8 ml-12 flex flex-wrap items-center gap-1 max-[720px]:ml-0">
 							<Button
-								disabled={clineBusy}
-								onClick={() => void signInWithCline()}
+								disabled={nexusBusy}
+								onClick={() => void signInWithNexus()}
 								size="md"
 								tone="accent"
 								type="button"
@@ -582,7 +582,7 @@ function ConnectStep({
 							</Button>
 							{signingIn ? (
 								<Button
-									onClick={cancelSignInWithCline}
+									onClick={cancelSignInWithNexus}
 									size="md"
 									tone="neutral"
 									type="button"
@@ -614,68 +614,68 @@ function ConnectStep({
 					{!user ? (
 						<div className="mt-6 ml-10 -mb-2 max-[720px]:ml-0">
 							<Button
-								aria-controls="onboarding-cline-key-form"
-								aria-expanded={clineKeyFormExpanded}
-								disabled={clineBusy}
+								aria-controls="onboarding-nexus-key-form"
+								aria-expanded={nexusKeyFormExpanded}
+								disabled={nexusBusy}
 								onClick={() => {
-									setSelectedMethod("cline");
-									setClineKeyFormExpanded(!clineKeyFormExpanded);
+									setSelectedMethod("nexus");
+									setNexusKeyFormExpanded(!nexusKeyFormExpanded);
 								}}
 								size="xs"
 								tone="neutral"
 								type="button"
 								variant="ghost"
 							>
-								Use a Cline API key
+								Use a Nexus API key
 								<ChevronDown aria-hidden="true" className="size-3.5" />
 							</Button>
 							<ExpandablePanel
-								data-onboarding-cline-key-form
-								expanded={clineKeyFormExpanded}
-								id="onboarding-cline-key-form"
+								data-onboarding-nexus-key-form
+								expanded={nexusKeyFormExpanded}
+								id="onboarding-nexus-key-form"
 							>
 								<div className="flex flex-col gap-2 pt-3 ml-2 max-[720px]:ml-0">
 									<div className="flex flex-wrap items-center gap-2">
 										<Input
-											aria-label="Cline API key"
+											aria-label="Nexus API key"
 											autoComplete="off"
 											className="min-w-52 flex-1 bg-background"
-											disabled={clineKeySaving}
+											disabled={nexusKeySaving}
 											onChange={(event) => {
-												setClineApiKey(event.target.value);
-												setClineKeyError(null);
+												setNexusApiKey(event.target.value);
+												setNexusKeyError(null);
 											}}
 											onKeyDown={(event) => {
 												if (
 													event.key === "Enter" &&
-													clineApiKey.trim() &&
-													!clineKeySaving
+													nexusApiKey.trim() &&
+													!nexusKeySaving
 												) {
-													void connectWithClineApiKey();
+													void connectWithNexusApiKey();
 												}
 											}}
-											placeholder="Cline API key"
+											placeholder="Nexus API key"
 											type="password"
-											value={clineApiKey}
+											value={nexusApiKey}
 										/>
 										<Button
-											disabled={!clineApiKey.trim() || clineKeySaving}
-											onClick={() => void connectWithClineApiKey()}
+											disabled={!nexusApiKey.trim() || nexusKeySaving}
+											onClick={() => void connectWithNexusApiKey()}
 											size="md"
 											tone="accent"
 											type="button"
 											variant="fill"
 										>
-											{clineKeySaving ? (
+											{nexusKeySaving ? (
 												<Loader2 className="size-4 animate-spin" />
 											) : null}
-											{clineKeySaving ? "Connecting..." : "Connect"}
+											{nexusKeySaving ? "Connecting..." : "Connect"}
 										</Button>
 									</div>
 									<Button
 										className="self-start -ml-1 mt-1"
-										disabled={clineKeySaving}
-										onClick={() => void openExternalUrl(CLINE_DASHBOARD_URL)}
+										disabled={nexusKeySaving}
+										onClick={() => void openExternalUrl(NEXUS_DASHBOARD_URL)}
 										size="xs"
 										tone="neutral"
 										type="button"
@@ -684,9 +684,9 @@ function ConnectStep({
 										Find your key
 										<ExternalLink className="size-3" />
 									</Button>
-									{clineKeyError ? (
+									{nexusKeyError ? (
 										<p className="text-xs text-destructive" role="alert">
-											Failed to save API key: {clineKeyError}
+											Failed to save API key: {nexusKeyError}
 										</p>
 									) : null}
 								</div>
@@ -698,7 +698,7 @@ function ConnectStep({
 					id="api-key"
 					onSelect={() => {
 						setSelectedMethod("api-key");
-						setClineKeyFormExpanded(false);
+						setNexusKeyFormExpanded(false);
 					}}
 					selectLabel="Use your own API key"
 					selected={selectedMethod === "api-key"}
@@ -834,7 +834,7 @@ function DoneStep({
 				<p className="mt-3 text-md text-muted-foreground">
 					{connection?.kind === "provider"
 						? `${connection.providerName} is connected.`
-						: "Your Cline account is connected."}
+						: "Your Nexus account is connected."}
 				</p>
 				<Button
 					className="mt-8 w-full max-w-64"
@@ -852,7 +852,7 @@ function DoneStep({
 }
 
 /**
- * Full-screen first-run experience: welcome, connect a model provider (Cline
+ * Full-screen first-run experience: welcome, connect a model provider (Nexus
  * account or bring-your-own API key), done. Rendered by the app shell while
  * onboarding has not been completed (see lib/onboarding.ts); `onComplete`
  * marks it completed and returns to the chat.

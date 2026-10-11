@@ -19,8 +19,8 @@ import {
 	resolve,
 	sep,
 } from "node:path";
-import type { AgendaTaskScope } from "@cline/shared";
-import { resolveTaskSpecsDir } from "@cline/shared/storage";
+import type { AgendaTaskScope } from "@nexus/shared";
+import { resolveTaskSpecsDir } from "@nexus/shared/storage";
 import {
 	type AgendaTaskSpec,
 	type AgendaTaskSpecParseResult,

@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
-	ClineNotSubscribedError,
-	ClineOrgIndividualInferenceSubscriptionError,
-	ClinePassLimitError,
-	getClineNotSubscribedMessage,
-	getClineOrgIndividualInferenceSubscriptionMessage,
-	isClineNotSubscribedMessage,
-	isClineOrgIndividualInferenceSubscriptionMessage,
-	isClinePassLimitMessage,
+	NexusNotSubscribedError,
+	NexusOrgIndividualInferenceSubscriptionError,
+	NexusPassLimitError,
+	getNexusNotSubscribedMessage,
+	getNexusOrgIndividualInferenceSubscriptionMessage,
+	isNexusNotSubscribedMessage,
+	isNexusOrgIndividualInferenceSubscriptionMessage,
+	isNexusPassLimitMessage,
 } from "./errors";
 import { extractErrorMessage } from "./format";
 
@@ -108,16 +108,16 @@ describe("extractErrorMessage", () => {
 	});
 });
 
-describe("ClineNotSubscribedError", () => {
+describe("NexusNotSubscribedError", () => {
 	it("uses the user-facing subscription message", () => {
-		expect(new ClineNotSubscribedError("cline-pass").message).toBe(
-			getClineNotSubscribedMessage(),
+		expect(new NexusNotSubscribedError("nexus-pass").message).toBe(
+			getNexusNotSubscribedMessage(),
 		);
 	});
 
-	it("detects the ClinePass required-plan message", () => {
+	it("detects the NexusPass required-plan message", () => {
 		expect(
-			isClineNotSubscribedMessage(
+			isNexusNotSubscribedMessage(
 				JSON.stringify({
 					error: {
 						message: "the user is not subscribed to required model plan",
@@ -125,30 +125,30 @@ describe("ClineNotSubscribedError", () => {
 				}),
 			),
 		).toBe(true);
-		expect(isClineNotSubscribedMessage("different forbidden error")).toBe(
+		expect(isNexusNotSubscribedMessage("different forbidden error")).toBe(
 			false,
 		);
 	});
 
-	it("detects the formatted ClinePass subscription message regardless of URL", () => {
+	it("detects the formatted NexusPass subscription message regardless of URL", () => {
 		expect(
-			isClineNotSubscribedMessage(
-				"No access to ClinePass subscription models yet. Subscribe to ClinePass, the low cost open weights model coding plan:",
+			isNexusNotSubscribedMessage(
+				"No access to NexusPass subscription models yet. Subscribe to NexusPass, the low cost open weights model coding plan:",
 			),
 		).toBe(true);
 	});
 });
 
-describe("ClineOrgIndividualInferenceSubscriptionError", () => {
+describe("NexusOrgIndividualInferenceSubscriptionError", () => {
 	it("uses the user-facing organization account message", () => {
 		expect(
-			new ClineOrgIndividualInferenceSubscriptionError("cline").message,
-		).toBe(getClineOrgIndividualInferenceSubscriptionMessage());
+			new NexusOrgIndividualInferenceSubscriptionError("nexus").message,
+		).toBe(getNexusOrgIndividualInferenceSubscriptionMessage());
 	});
 
 	it("detects the organization individual-subscription entitlement message", () => {
 		expect(
-			isClineOrgIndividualInferenceSubscriptionMessage(
+			isNexusOrgIndividualInferenceSubscriptionMessage(
 				JSON.stringify({
 					error: {
 						code: "ENTITLEMENT_ERROR",
@@ -159,40 +159,40 @@ describe("ClineOrgIndividualInferenceSubscriptionError", () => {
 			),
 		).toBe(true);
 		expect(
-			isClineOrgIndividualInferenceSubscriptionMessage(
+			isNexusOrgIndividualInferenceSubscriptionMessage(
 				"the user is not subscribed to required model plan",
 			),
 		).toBe(false);
 	});
 });
 
-describe("ClinePassLimitError", () => {
+describe("NexusPassLimitError", () => {
 	it("preserves the dynamic backend limit message", () => {
 		const message =
-			"You have reached your weekly Clinepass limit. The limit resets in 7d, please try again later.";
-		expect(new ClinePassLimitError(message, "cline-pass").message).toBe(
+			"You have reached your weekly Nexuspass limit. The limit resets in 7d, please try again later.";
+		expect(new NexusPassLimitError(message, "nexus-pass").message).toBe(
 			message,
 		);
 	});
 
-	it("detects ClinePass period limit messages with variable period and reset", () => {
+	it("detects NexusPass period limit messages with variable period and reset", () => {
 		expect(
-			isClinePassLimitMessage(
-				"You have reached your weekly Clinepass limit. The limit resets in 7d, please try again later.",
+			isNexusPassLimitMessage(
+				"You have reached your weekly Nexuspass limit. The limit resets in 7d, please try again later.",
 			),
 		).toBe(true);
 		expect(
-			isClinePassLimitMessage(
-				"You have reached your monthly Clinepass limit. The limit resets in 12h, please try again later.",
+			isNexusPassLimitMessage(
+				"You have reached your monthly Nexuspass limit. The limit resets in 12h, please try again later.",
 			),
 		).toBe(true);
 		expect(
-			isClinePassLimitMessage(
-				`You have reached your\t-\tClinepass limit.The limit resets in\t${"\t".repeat(10_000)}`,
+			isNexusPassLimitMessage(
+				`You have reached your\t-\tNexuspass limit.The limit resets in\t${"\t".repeat(10_000)}`,
 			),
 		).toBe(false);
 		expect(
-			isClinePassLimitMessage(
+			isNexusPassLimitMessage(
 				"the user is not subscribed to required model plan",
 			),
 		).toBe(false);

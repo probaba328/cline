@@ -1,4 +1,4 @@
-import type { ProviderSettings } from "@cline/core";
+import type { ProviderSettings } from "@nexus/core";
 import { describe, expect, it } from "vitest";
 import { isProviderSettingsUsable } from "./provider-readiness";
 
@@ -15,14 +15,14 @@ describe("provider readiness", () => {
 
 	it("requires usable OAuth credentials for OAuth providers", () => {
 		expect(
-			isProviderSettingsUsable("cline", {
-				provider: "cline",
+			isProviderSettingsUsable("nexus", {
+				provider: "nexus",
 				model: "claude-sonnet-4-6",
 			} satisfies ProviderSettings),
 		).toBe(false);
 		expect(
-			isProviderSettingsUsable("cline", {
-				provider: "cline",
+			isProviderSettingsUsable("nexus", {
+				provider: "nexus",
 				auth: { accessToken: "token" },
 			} satisfies ProviderSettings),
 		).toBe(true);

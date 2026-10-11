@@ -1,9 +1,9 @@
-import type { RemoteConfigBundle, RemoteConfigManagedInstructionFile } from "@cline/shared"
+import type { RemoteConfigBundle, RemoteConfigManagedInstructionFile } from "@nexus/shared"
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"
-import { ClineEnv } from "@/config"
+import { NexusEnv } from "@/config"
 import { AuthService } from "@/services/auth/AuthService"
-import { buildBasicClineHeaders } from "@/services/EnvUtils"
-import { CLINE_API_ENDPOINT } from "@/shared/cline/api"
+import { buildBasicNexusHeaders } from "@/services/EnvUtils"
+import { NEXUS_API_ENDPOINT } from "@/shared/nexus/api"
 import { getAxiosSettings } from "@/shared/net"
 import { APIKeySchema, type APIKeySettings, type RemoteConfig, RemoteConfigSchema } from "@/shared/remote-config/schema"
 import { Logger } from "@/shared/services/Logger"
@@ -15,7 +15,7 @@ import { isRemoteConfigEnabled } from "./utils"
 export interface SdkRemoteConfigControlPlaneController {
 	accountService: {
 		switchAccount(organizationId: string): Promise<unknown>
-		fetchUserRemoteConfig(): Promise<import("@/shared/ClineAccount").UserRemoteConfigDiscoveryResponse | null | undefined>
+		fetchUserRemoteConfig(): Promise<import("@/shared/NexusAccount").UserRemoteConfigDiscoveryResponse | null | undefined>
 	}
 	stateManager: {
 		setSecret(key: "remoteLiteLlmApiKey", value: string | undefined): unknown
@@ -51,16 +51,16 @@ async function makeAuthenticatedRequest<T>(endpoint: string, organizationId: str
 	const authService = AuthService.getInstance()
 	const authToken = await authService.getAuthToken()
 	if (!authToken) {
-		throw new Error("No Cline account auth token found")
+		throw new Error("No Nexus account auth token found")
 	}
 
 	const apiEndpoint = endpoint.replace("{id}", organizationId)
-	const url = new URL(apiEndpoint, ClineEnv.config().apiBaseUrl).toString()
+	const url = new URL(apiEndpoint, NexusEnv.config().apiBaseUrl).toString()
 	const requestConfig: AxiosRequestConfig = {
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 			"Content-Type": "application/json",
-			...(await buildBasicClineHeaders()),
+			...(await buildBasicNexusHeaders()),
 		},
 		...getAxiosSettings(),
 	}
@@ -86,7 +86,7 @@ async function makeAuthenticatedRequest<T>(endpoint: string, organizationId: str
 async function fetchRemoteConfigForOrganization(organizationId: string): Promise<RemoteConfig | undefined> {
 	try {
 		const configData = await makeAuthenticatedRequest<{ value: string; enabled: boolean }>(
-			CLINE_API_ENDPOINT.REMOTE_CONFIG,
+			NEXUS_API_ENDPOINT.REMOTE_CONFIG,
 			organizationId,
 		)
 		if (!configData.enabled) {
@@ -113,7 +113,7 @@ async function fetchRemoteConfigForOrganization(organizationId: string): Promise
 
 async function fetchApiKeysForOrganization(organizationId: string): Promise<APIKeySettings> {
 	try {
-		const response = await makeAuthenticatedRequest<{ providerApiKeys: string }>(CLINE_API_ENDPOINT.API_KEYS, organizationId)
+		const response = await makeAuthenticatedRequest<{ providerApiKeys: string }>(NEXUS_API_ENDPOINT.API_KEYS, organizationId)
 		return parseApiKeys(response?.providerApiKeys)
 	} catch (error) {
 		Logger.error(`Failed to fetch API keys for organization ${organizationId}:`, error)
@@ -145,7 +145,7 @@ function isInstructionEnabled(entry: { name: string; alwaysEnabled?: boolean }, 
 }
 
 export class SdkRemoteConfigControlPlane {
-	readonly name = "cline-extension-remote-config"
+	readonly name = "nexus-extension-remote-config"
 	private lastConfiguredKeys: ConfiguredAPIKeys = {}
 	private lastRemoteConfig: RemoteConfig | undefined
 	private remoteConfigAvailable = false

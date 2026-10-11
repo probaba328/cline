@@ -1,164 +1,164 @@
-import { getClineEnvironmentConfig } from "@cline/shared";
+import { getNexusEnvironmentConfig } from "@nexus/shared";
 
-export const CLINE_NOT_SUBSCRIBED_RESPONSE_MESSAGE =
+export const NEXUS_NOT_SUBSCRIBED_RESPONSE_MESSAGE =
 	"the user is not subscribed to required model plan";
-const CLINE_NOT_SUBSCRIBED_FORMATTED_MESSAGE_PREFIX =
-	"no access to clinepass subscription models yet. subscribe to clinepass";
-export const CLINE_ORG_INDIVIDUAL_INFERENCE_SUBSCRIPTION_RESPONSE_MESSAGE =
+const NEXUS_NOT_SUBSCRIBED_FORMATTED_MESSAGE_PREFIX =
+	"no access to nexuspass subscription models yet. subscribe to nexuspass";
+export const NEXUS_ORG_INDIVIDUAL_INFERENCE_SUBSCRIPTION_RESPONSE_MESSAGE =
 	"organization accounts cannot use individual model inference subscriptions";
 
-const CLINE_PASS_LIMIT_PREFIX = "you have reached your";
-const CLINE_PASS_LIMIT_MARKER = "clinepass limit";
-const CLINE_PASS_LIMIT_SUFFIX = "please try again later.";
-const CLINE_FREE_MODEL_LIMIT_MARKER = "free limit reached on model";
-const CLINE_FREE_MODEL_LIMIT_RETRY_MARKER = "try again in ";
-const CLINE_MODEL_NOT_FOUND_MARKER = "model not found";
+const NEXUS_PASS_LIMIT_PREFIX = "you have reached your";
+const NEXUS_PASS_LIMIT_MARKER = "nexuspass limit";
+const NEXUS_PASS_LIMIT_SUFFIX = "please try again later.";
+const NEXUS_FREE_MODEL_LIMIT_MARKER = "free limit reached on model";
+const NEXUS_FREE_MODEL_LIMIT_RETRY_MARKER = "try again in ";
+const NEXUS_MODEL_NOT_FOUND_MARKER = "model not found";
 
-function findClinePassLimitMessageBounds(
+function findNexusPassLimitMessageBounds(
 	text: string,
 ): { start: number; end: number } | undefined {
 	const normalized = text.toLowerCase();
-	const start = normalized.indexOf(CLINE_PASS_LIMIT_PREFIX);
+	const start = normalized.indexOf(NEXUS_PASS_LIMIT_PREFIX);
 	if (start === -1) {
 		return undefined;
 	}
 
-	const suffixStart = normalized.indexOf(CLINE_PASS_LIMIT_SUFFIX, start);
+	const suffixStart = normalized.indexOf(NEXUS_PASS_LIMIT_SUFFIX, start);
 	if (suffixStart === -1) {
 		return undefined;
 	}
 
-	const end = suffixStart + CLINE_PASS_LIMIT_SUFFIX.length;
-	if (!normalized.slice(start, end).includes(CLINE_PASS_LIMIT_MARKER)) {
+	const end = suffixStart + NEXUS_PASS_LIMIT_SUFFIX.length;
+	if (!normalized.slice(start, end).includes(NEXUS_PASS_LIMIT_MARKER)) {
 		return undefined;
 	}
 
 	return { start, end };
 }
 
-export function getClinePassSubscriptionUrl(): string {
+export function getNexusPassSubscriptionUrl(): string {
 	return `${new URL(
 		"/dashboard/subscription?personal=true",
-		getClineEnvironmentConfig().appBaseUrl,
+		getNexusEnvironmentConfig().appBaseUrl,
 	).toString()}`;
 }
 
-export function getClineNotSubscribedMessage(): string {
-	return `No access to ClinePass subscription models yet. Subscribe to ClinePass, the low cost open weights model coding plan: ${getClinePassSubscriptionUrl()}`;
+export function getNexusNotSubscribedMessage(): string {
+	return `No access to NexusPass subscription models yet. Subscribe to NexusPass, the low cost open weights model coding plan: ${getNexusPassSubscriptionUrl()}`;
 }
 
-export class ClineNotSubscribedError extends Error {
+export class NexusNotSubscribedError extends Error {
 	public readonly providerId?: string;
 
 	constructor(providerId?: string) {
-		super(getClineNotSubscribedMessage());
-		this.name = "ClineNotSubscribedError";
+		super(getNexusNotSubscribedMessage());
+		this.name = "NexusNotSubscribedError";
 		this.providerId = providerId;
 	}
 }
 
-export function getClineOrgIndividualInferenceSubscriptionMessage(): string {
-	return "Organization accounts cannot use ClinePass subscriptions. Go to /account -> change account to switch to your personal account for ClinePass";
+export function getNexusOrgIndividualInferenceSubscriptionMessage(): string {
+	return "Organization accounts cannot use NexusPass subscriptions. Go to /account -> change account to switch to your personal account for NexusPass";
 }
 
-export class ClineOrgIndividualInferenceSubscriptionError extends Error {
+export class NexusOrgIndividualInferenceSubscriptionError extends Error {
 	public readonly providerId?: string;
 
 	constructor(providerId?: string) {
-		super(getClineOrgIndividualInferenceSubscriptionMessage());
-		this.name = "ClineOrgIndividualInferenceSubscriptionError";
+		super(getNexusOrgIndividualInferenceSubscriptionMessage());
+		this.name = "NexusOrgIndividualInferenceSubscriptionError";
 		this.providerId = providerId;
 	}
 }
 
-export class ClinePassLimitError extends Error {
+export class NexusPassLimitError extends Error {
 	public readonly providerId?: string;
 
 	constructor(message: string, providerId?: string) {
 		super(message);
-		this.name = "ClinePassLimitError";
+		this.name = "NexusPassLimitError";
 		this.providerId = providerId;
 	}
 }
 
-export class ClineFreeModelLimitError extends Error {
+export class NexusFreeModelLimitError extends Error {
 	public readonly providerId?: string;
 
 	constructor(message: string, providerId?: string) {
 		super(message);
-		this.name = "ClineFreeModelLimitError";
+		this.name = "NexusFreeModelLimitError";
 		this.providerId = providerId;
 	}
 }
 
-export function isClineNotSubscribedError(
+export function isNexusNotSubscribedError(
 	error: unknown,
-): error is ClineNotSubscribedError {
-	return error instanceof ClineNotSubscribedError;
+): error is NexusNotSubscribedError {
+	return error instanceof NexusNotSubscribedError;
 }
 
-export function isClineOrgIndividualInferenceSubscriptionError(
+export function isNexusOrgIndividualInferenceSubscriptionError(
 	error: unknown,
-): error is ClineOrgIndividualInferenceSubscriptionError {
-	return error instanceof ClineOrgIndividualInferenceSubscriptionError;
+): error is NexusOrgIndividualInferenceSubscriptionError {
+	return error instanceof NexusOrgIndividualInferenceSubscriptionError;
 }
 
-export function isClinePassLimitError(
+export function isNexusPassLimitError(
 	error: unknown,
-): error is ClinePassLimitError {
-	return error instanceof ClinePassLimitError;
+): error is NexusPassLimitError {
+	return error instanceof NexusPassLimitError;
 }
 
-export function isClineFreeModelLimitError(
+export function isNexusFreeModelLimitError(
 	error: unknown,
-): error is ClineFreeModelLimitError {
-	return error instanceof ClineFreeModelLimitError;
+): error is NexusFreeModelLimitError {
+	return error instanceof NexusFreeModelLimitError;
 }
 
-export function isClineNotSubscribedMessage(text: string): boolean {
+export function isNexusNotSubscribedMessage(text: string): boolean {
 	const normalized = text.trim().toLowerCase();
 	return (
-		normalized.includes(CLINE_NOT_SUBSCRIBED_RESPONSE_MESSAGE) ||
-		normalized.includes(CLINE_NOT_SUBSCRIBED_FORMATTED_MESSAGE_PREFIX)
+		normalized.includes(NEXUS_NOT_SUBSCRIBED_RESPONSE_MESSAGE) ||
+		normalized.includes(NEXUS_NOT_SUBSCRIBED_FORMATTED_MESSAGE_PREFIX)
 	);
 }
 
-export function isClineOrgIndividualInferenceSubscriptionMessage(
+export function isNexusOrgIndividualInferenceSubscriptionMessage(
 	text: string,
 ): boolean {
 	return text
 		.toLowerCase()
-		.includes(CLINE_ORG_INDIVIDUAL_INFERENCE_SUBSCRIPTION_RESPONSE_MESSAGE);
+		.includes(NEXUS_ORG_INDIVIDUAL_INFERENCE_SUBSCRIPTION_RESPONSE_MESSAGE);
 }
 
-export function isClinePassLimitMessage(text: string): boolean {
-	return findClinePassLimitMessageBounds(text) !== undefined;
+export function isNexusPassLimitMessage(text: string): boolean {
+	return findNexusPassLimitMessageBounds(text) !== undefined;
 }
 
-export function extractClinePassLimitMessage(text: string): string | undefined {
-	const bounds = findClinePassLimitMessageBounds(text);
+export function extractNexusPassLimitMessage(text: string): string | undefined {
+	const bounds = findNexusPassLimitMessageBounds(text);
 	return bounds ? text.slice(bounds.start, bounds.end) : undefined;
 }
 
-export function isClineFreeModelLimitMessage(text: string): boolean {
-	return text.toLowerCase().includes(CLINE_FREE_MODEL_LIMIT_MARKER);
+export function isNexusFreeModelLimitMessage(text: string): boolean {
+	return text.toLowerCase().includes(NEXUS_FREE_MODEL_LIMIT_MARKER);
 }
 
-export function isClineModelNotFoundMessage(text: string): boolean {
-	return text.toLowerCase().includes(CLINE_MODEL_NOT_FOUND_MARKER);
+export function isNexusModelNotFoundMessage(text: string): boolean {
+	return text.toLowerCase().includes(NEXUS_MODEL_NOT_FOUND_MARKER);
 }
 
-export function extractClineFreeModelLimitResetTime(
+export function extractNexusFreeModelLimitResetTime(
 	text: string,
 ): string | undefined {
 	const message = text.toLowerCase();
-	const resetStart = message.indexOf(CLINE_FREE_MODEL_LIMIT_RETRY_MARKER);
+	const resetStart = message.indexOf(NEXUS_FREE_MODEL_LIMIT_RETRY_MARKER);
 	if (resetStart === -1) {
 		return undefined;
 	}
 
 	const resetTime = message
-		.slice(resetStart + CLINE_FREE_MODEL_LIMIT_RETRY_MARKER.length)
+		.slice(resetStart + NEXUS_FREE_MODEL_LIMIT_RETRY_MARKER.length)
 		.trim();
 	return resetTime || undefined;
 }

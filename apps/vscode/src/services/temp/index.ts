@@ -1,1 +1,1 @@
-export { ClineTempManager } from "./ClineTempManager"
+export { NexusTempManager } from "./NexusTempManager"

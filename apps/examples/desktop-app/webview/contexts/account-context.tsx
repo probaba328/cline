@@ -1,6 +1,6 @@
 "use client";
 
-import type { ClineAccountOrganization, ClineAccountUser } from "@cline/core";
+import type { NexusAccountOrganization, NexusAccountUser } from "@nexus/core";
 import {
 	createContext,
 	useCallback,
@@ -9,20 +9,20 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { isClineAccountNotAuthenticatedResult } from "@/lib/cline-account-state";
+import { isNexusAccountNotAuthenticatedResult } from "@/lib/nexus-account-state";
 import { desktopClient } from "@/lib/desktop-client";
 
-export const ACCOUNT_IDENTITY_STORAGE_KEY = "cline.code.account-identity.v1";
+export const ACCOUNT_IDENTITY_STORAGE_KEY = "nexus.code.account-identity.v1";
 
 const SIGNED_OUT_ERROR_MARKERS = [
-	"No Cline account auth token found",
+	"No Nexus account auth token found",
 	"no longer valid",
 ];
 
 type AccountContextValue = {
-	user: ClineAccountUser | null;
-	organizations: ClineAccountOrganization[];
-	activeOrganization: ClineAccountOrganization | null;
+	user: NexusAccountUser | null;
+	organizations: NexusAccountOrganization[];
+	activeOrganization: NexusAccountOrganization | null;
 	refreshAccount: () => Promise<void>;
 };
 
@@ -35,12 +35,12 @@ const AccountContext = createContext<AccountContextValue>({
 
 export function parseCachedAccountUser(
 	raw: string | null,
-): ClineAccountUser | null {
+): NexusAccountUser | null {
 	if (!raw) {
 		return null;
 	}
 	try {
-		const parsed = JSON.parse(raw) as { user?: ClineAccountUser | null };
+		const parsed = JSON.parse(raw) as { user?: NexusAccountUser | null };
 		const user = parsed?.user;
 		if (!user || typeof user !== "object") {
 			return null;
@@ -57,7 +57,7 @@ export function parseCachedAccountUser(
 	}
 }
 
-function readCachedAccountUser(): ClineAccountUser | null {
+function readCachedAccountUser(): NexusAccountUser | null {
 	if (typeof window === "undefined") {
 		return null;
 	}
@@ -70,7 +70,7 @@ function readCachedAccountUser(): ClineAccountUser | null {
 	}
 }
 
-function writeCachedAccountUser(user: ClineAccountUser | null): void {
+function writeCachedAccountUser(user: NexusAccountUser | null): void {
 	if (typeof window === "undefined") {
 		return;
 	}
@@ -94,17 +94,17 @@ export function isSignedOutAccountError(error: unknown): boolean {
 }
 
 export function AccountProvider({ children }: { children: React.ReactNode }) {
-	const [user, setUser] = useState<ClineAccountUser | null>(null);
+	const [user, setUser] = useState<NexusAccountUser | null>(null);
 
 	const refreshAccount = useCallback(async () => {
 		try {
-			const me = await desktopClient.invoke<ClineAccountUser>("cline_account", {
-				action: "clineAccount",
+			const me = await desktopClient.invoke<NexusAccountUser>("nexus_account", {
+				action: "nexusAccount",
 				operation: "fetchMe",
 			});
 			// Signed out arrives as a typed result, not an error: an expected
 			// state that clears the cached identity without any error handling.
-			if (isClineAccountNotAuthenticatedResult(me)) {
+			if (isNexusAccountNotAuthenticatedResult(me)) {
 				setUser(null);
 				writeCachedAccountUser(null);
 				return;

@@ -3,7 +3,7 @@ import {
 	isChatCompatibleModel,
 	type ModelModality,
 	type ModelOperation,
-} from "@cline/shared";
+} from "@nexus/shared";
 
 export type ChatCatalogModel = {
 	readonly operation?: ModelOperation;

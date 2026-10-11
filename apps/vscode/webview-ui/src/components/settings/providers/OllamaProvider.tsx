@@ -1,5 +1,5 @@
 import { openAiModelInfoSafeDefaults } from "@shared/api"
-import { StringRequest } from "@shared/proto/cline/common"
+import { StringRequest } from "@shared/proto/nexus/common"
 import { Mode } from "@shared/storage/types"
 import { VSCodeLink } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -11,6 +11,7 @@ import { ApiKeyField } from "../common/ApiKeyField"
 import { BaseUrlField } from "../common/BaseUrlField"
 import { DebouncedTextField } from "../common/DebouncedTextField"
 import OllamaModelPicker from "../OllamaModelPicker"
+import { OllamaSetupGuide } from "../OllamaSetupGuide"
 import { useApiConfigurationHandlers } from "../utils/useApiConfigurationHandlers"
 import { useProviderApiKeyField } from "../utils/useProviderApiKeyField"
 
@@ -140,12 +141,15 @@ export const OllamaProvider = ({ showModelOptions, isPopup, currentMode }: Ollam
 				selectedModelId={selectedModel.modelId || ""}
 			/>
 
-			{/* Show status message based on model availability */}
+			{/* Show status message and setup guide when no models are available */}
 			{ollamaModels.length === 0 && (
-				<p className="text-sm mt-1 text-description italic">
-					Unable to fetch models from Ollama server. Please ensure Ollama is running and accessible, or enter the model
-					ID manually above.
-				</p>
+				<>
+					<p className="text-sm mt-1 text-description italic">
+						Unable to fetch models from Ollama server. Please ensure Ollama is running and accessible, or enter
+						the model ID manually above.
+					</p>
+					<OllamaSetupGuide />
+				</>
 			)}
 
 			{/* Render only after the provider config RPC has resolved: the
@@ -222,7 +226,7 @@ export const OllamaProvider = ({ showModelOptions, isPopup, currentMode }: Ollam
 					quickstart guide.
 				</VSCodeLink>{" "}
 				<span style={{ color: "var(--vscode-errorForeground)" }}>
-					(<span style={{ fontWeight: 500 }}>Note:</span> Cline uses complex prompts, so behavior can vary across
+					(<span style={{ fontWeight: 500 }}>Note:</span> Nexus uses complex prompts, so behavior can vary across
 					models. Less capable models may not work as expected.)
 				</span>
 			</p>

@@ -1,31 +1,31 @@
 ---
-name: cline-sdk
-description: Comprehensive Cline SDK skill for building AI agents. Covers the Agent runtime, ClineCore sessions, custom tools, plugins, events, LLM providers, scheduling, multi-agent teams, and production deployment. Use for any task involving @cline/sdk or its sub-packages.
+name: nexus-sdk
+description: Comprehensive Nexus SDK skill for building AI agents. Covers the Agent runtime, NexusCore sessions, custom tools, plugins, events, LLM providers, scheduling, multi-agent teams, and production deployment. Use for any task involving @nexus/sdk or its sub-packages.
 metadata:
    references: agent, clinecore
 ---
 
-# Cline SDK Skill
+# Nexus SDK Skill
 
-Consolidated skill for building AI agents with the Cline SDK. Use the decision trees below to find the right entry point and API surface, then load detailed references.
+Consolidated skill for building AI agents with the Nexus SDK. Use the decision trees below to find the right entry point and API surface, then load detailed references.
 
 ## Critical Rules
 
-Follow these rules in all Cline SDK code:
+Follow these rules in all Nexus SDK code:
 
-1. Install with `npm install @cline/sdk`. The `@cline/sdk` package re-exports everything from `@cline/core`, `@cline/agents`, `@cline/llms`, and `@cline/shared`.
+1. Install with `npm install @nexus/sdk`. The `@nexus/sdk` package re-exports everything from `@nexus/core`, `@nexus/agents`, `@nexus/llms`, and `@nexus/shared`.
 2. Requires Node.js 22 or later.
-3. Use `createTool()` from `@cline/sdk` (or `@cline/shared`) to define tools. Tool names must be `snake_case`.
+3. Use `createTool()` from `@nexus/sdk` (or `@nexus/shared`) to define tools. Tool names must be `snake_case`.
 4. Return errors as structured data from tool `execute` functions. Throwing counts as a "mistake" against the agent's mistake limit.
 5. Use `lifecycle: { completesRun: true }` on tools that should end the agent loop (e.g. a "submit answer" tool).
-6. When using `ClineCore`, always call `dispose()` when done to clean up resources.
-7. The standalone `Agent` and `ClineCore` have different event systems. For `Agent`: use `agent.subscribe()` to get `AgentRuntimeEvent` types (text streaming is `"assistant-text-delta"`, result text is `result.outputText`). For `ClineCore`: use `cline.subscribe()` to get `CoreSessionEvent` types (text streaming is `"chunk"` with `payload.type === "text"`, result text is `result.text`). There is no top-level `onEvent` field on `AgentRuntimeConfig` -- use `agent.subscribe()` or `hooks.onEvent` instead. Do not use event types like `"content_update"` or `"content_start"` with `agent.subscribe()` -- those are internal legacy types from the ClineCore adapter layer.
+6. When using `NexusCore`, always call `dispose()` when done to clean up resources.
+7. The standalone `Agent` and `NexusCore` have different event systems. For `Agent`: use `agent.subscribe()` to get `AgentRuntimeEvent` types (text streaming is `"assistant-text-delta"`, result text is `result.outputText`). For `NexusCore`: use `nexus.subscribe()` to get `CoreSessionEvent` types (text streaming is `"chunk"` with `payload.type === "text"`, result text is `result.text`). There is no top-level `onEvent` field on `AgentRuntimeConfig` -- use `agent.subscribe()` or `hooks.onEvent` instead. Do not use event types like `"content_update"` or `"content_start"` with `agent.subscribe()` -- those are internal legacy types from the NexusCore adapter layer.
 
 ## How to Use This Skill
 
 ### Reference File Structure
 
-The two main API surfaces (`Agent` and `ClineCore`) follow a 4-file pattern. Cross-cutting concepts are single-file guides.
+The two main API surfaces (`Agent` and `NexusCore`) follow a 4-file pattern. Cross-cutting concepts are single-file guides.
 
 Each main API surface in `./references/<api>/` contains:
 
@@ -71,9 +71,9 @@ Cross-cutting concepts in `./references/<concept>/` have `REFERENCE.md` as the e
 ```
 Which API?
 +-- I want a simple, stateless agent with custom tools
-|   +-- agent/ (Agent class from @cline/agents)
+|   +-- agent/ (Agent class from @nexus/agents)
 +-- I need session persistence, built-in tools, config discovery
-|   +-- clinecore/ (ClineCore from @cline/core)
+|   +-- clinecore/ (NexusCore from @nexus/core)
 +-- I want built-in file/shell/search/web tools
 |   +-- clinecore/ (has built-in tools; Agent does not)
 +-- I want scheduled or recurring agents
@@ -178,7 +178,7 @@ Production?
 | API | Entry File | Description |
 |-----|------------|-------------|
 | Agent | `./references/agent/REFERENCE.md` | Lightweight stateless agent loop |
-| ClineCore | `./references/clinecore/REFERENCE.md` | Full runtime with sessions, persistence, built-in tools |
+| NexusCore | `./references/clinecore/REFERENCE.md` | Full runtime with sessions, persistence, built-in tools |
 
 ### Cross-Cutting Concepts
 | Concept | Entry File | Description |
@@ -194,15 +194,15 @@ Production?
 ### Package Map
 | Package | Purpose |
 |---------|---------|
-| `@cline/sdk` | Everything you need, install this one |
-| `@cline/core` | Sessions, persistence, built-in tools, config, hub |
-| `@cline/agents` | Stateless agent loop, tool orchestration, streaming |
-| `@cline/llms` | LLM provider gateway |
-| `@cline/shared` | Types, tool helpers, hook engine |
+| `@nexus/sdk` | Everything you need, install this one |
+| `@nexus/core` | Sessions, persistence, built-in tools, config, hub |
+| `@nexus/agents` | Stateless agent loop, tool orchestration, streaming |
+| `@nexus/llms` | LLM provider gateway |
+| `@nexus/shared` | Types, tool helpers, hook engine |
 
 ## Resources
 
-Repository: https://github.com/cline/cline
-SDK Source: https://github.com/cline/cline/tree/main/sdk
-Documentation: https://docs.cline.bot/sdk/overview
-Discord: https://discord.gg/cline
+Repository: https://github.com/nexus/nexus
+SDK Source: https://github.com/nexus/nexus/tree/main/sdk
+Documentation: https://docs.nexus.bot/sdk/overview
+Discord: https://discord.gg/nexus

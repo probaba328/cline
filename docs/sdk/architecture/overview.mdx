@@ -12,22 +12,22 @@ The SDK is split into layered packages. Dependencies flow downward: `core` depen
 Your application / CLI / VS Code / JetBrains
           │
           ▼
-@cline/core
+@nexus/core
 Sessions, storage, built-in tools, hub, automation, telemetry
           │
-          ├── @cline/agents
+          ├── @nexus/agents
           │   Browser-compatible AgentRuntime / Agent loop
           │
-          ├── @cline/llms
+          ├── @nexus/llms
           │   Provider handlers, gateway, model catalogs
           │
-          └── @cline/shared
+          └── @nexus/shared
               Types, schemas, tools, hooks, extension contracts
 ```
 
 ## Packages
 
-### @cline/core
+### @nexus/core
 
 Node runtime/orchestration layer.
 
@@ -35,9 +35,9 @@ Key exports include:
 
 | Export | Description |
 |--------|-------------|
-| `ClineCore` | Main runtime entry point |
-| `ClineCoreOptions` | Constructor options |
-| `ClineCoreStartInput` | Session start input |
+| `NexusCore` | Main runtime entry point |
+| `NexusCoreOptions` | Constructor options |
+| `NexusCoreStartInput` | Session start input |
 | `CoreSessionConfig` | Session configuration |
 | `SessionRecord` | Persisted session metadata |
 | `AgentPlugin` | Public plugin type |
@@ -54,9 +54,9 @@ Capabilities include:
 - plugin/extension loading
 - team/sub-agent tools
 
-Depends on: `@cline/shared`, `@cline/llms`, `@cline/agents`.
+Depends on: `@nexus/shared`, `@nexus/llms`, `@nexus/agents`.
 
-### @cline/agents
+### @nexus/agents
 
 Browser-compatible agent execution loop.
 
@@ -69,13 +69,13 @@ Key exports include:
 | `createAgentRuntime`, `createAgent` | Factory functions |
 | `AgentRuntimeConfig` | Constructor config union |
 | `AgentRunInput`, `AgentEventListener` | Runtime helper types |
-| `createTool` | Re-export from `@cline/shared` |
+| `createTool` | Re-export from `@nexus/shared` |
 
 Methods on `AgentRuntime` include `run`, `continue`, `abort`, `subscribe`, `restore`, and `snapshot`.
 
-Depends on: `@cline/shared`, `@cline/llms`.
+Depends on: `@nexus/shared`, `@nexus/llms`.
 
-### @cline/llms
+### @nexus/llms
 
 Provider and model layer.
 
@@ -89,9 +89,9 @@ Key exports include:
 | `registerProvider`, `registerModel` | Runtime registry extension |
 | `ModelInfo`, `ProviderInfo` | Provider/model metadata |
 
-Depends on: `@cline/shared`.
+Depends on: `@nexus/shared`.
 
-### @cline/shared
+### @nexus/shared
 
 Foundation package for shared contracts and utilities.
 
@@ -113,10 +113,10 @@ No higher-layer dependencies.
 ## Install
 
 ```bash
-npm install @cline/sdk
+npm install @nexus/sdk
 ```
 
-`@cline/sdk` re-exports everything from `@cline/core`. Install `@cline/agents` or `@cline/llms` directly only if you need lower-level control.
+`@nexus/sdk` re-exports everything from `@nexus/core`. Install `@nexus/agents` or `@nexus/llms` directly only if you need lower-level control.
 
 ## Design Principles
 
@@ -126,8 +126,8 @@ Dependencies flow downward only. Lower layers stay embeddable without pulling in
 
 ### Browser-compatible agent loop
 
-`@cline/agents` exposes a browser-compatible runtime. It does not own session storage, built-in file/shell tools, hub transports, or Node-specific orchestration.
+`@nexus/agents` exposes a browser-compatible runtime. It does not own session storage, built-in file/shell tools, hub transports, or Node-specific orchestration.
 
 ### Core as orchestration layer
 
-`@cline/core` owns Node runtime integration: session persistence, built-in tools, automation, hub/remote transports, telemetry, and extension loading.
+`@nexus/core` owns Node runtime integration: session persistence, built-in tools, automation, hub/remote transports, telemetry, and extension loading.

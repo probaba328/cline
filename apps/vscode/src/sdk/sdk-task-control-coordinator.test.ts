@@ -1,4 +1,4 @@
-import type { ClineMessage } from "@shared/ExtensionMessage"
+import type { NexusMessage } from "@shared/ExtensionMessage"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { SdkInteractionCoordinator } from "./sdk-interaction-coordinator"
 import { SdkMessageCoordinator } from "./sdk-message-coordinator"
@@ -35,21 +35,21 @@ describe("SdkTaskControlCoordinator", () => {
 		expect(options.postStateToWebview).toHaveBeenCalledOnce()
 	})
 
-	it("cancels a running Cline task when the user signs out", async () => {
+	it("cancels a running Nexus task when the user signs out", async () => {
 		const activeSession = makeActiveSession()
 		const { coordinator, options } = makeCoordinator({ activeSession })
 
-		await coordinator.cancelClineTaskOnSignOut(true)
+		await coordinator.cancelNexusTaskOnSignOut(true)
 
 		expect(activeSession.sdkHost.abort).toHaveBeenCalledWith("session-123")
 		expect(options.sessions.setRunning).toHaveBeenCalledWith(false)
 	})
 
-	it("does not cancel a non-Cline task when the user signs out", async () => {
+	it("does not cancel a non-Nexus task when the user signs out", async () => {
 		const activeSession = makeActiveSession()
 		const { coordinator, options } = makeCoordinator({ activeSession })
 
-		await coordinator.cancelClineTaskOnSignOut(false)
+		await coordinator.cancelNexusTaskOnSignOut(false)
 
 		expect(activeSession.sdkHost.abort).not.toHaveBeenCalled()
 		expect(options.sessions.setRunning).not.toHaveBeenCalled()
@@ -108,7 +108,7 @@ describe("SdkTaskControlCoordinator", () => {
 			activeSession: makeActiveSession(),
 			task: makeTask("old-task"),
 			hasHistoryItem: true,
-			clineMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
+			nexusMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
 			sessionStatus: "completed",
 		})
 
@@ -122,7 +122,7 @@ describe("SdkTaskControlCoordinator", () => {
 	it("shows a task by creating a proxy, loading messages, and appending a fresh resume ask", async () => {
 		const existingTask = makeTask("old-task")
 		const activeSession = makeActiveSession()
-		const sdkClineMessages: ClineMessage[] = [
+		const sdkNexusMessages: NexusMessage[] = [
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "ask", ask: "completion_result", text: "" },
 		]
@@ -130,7 +130,7 @@ describe("SdkTaskControlCoordinator", () => {
 			activeSession,
 			task: existingTask,
 			hasHistoryItem: true,
-			clineMessages: sdkClineMessages,
+			nexusMessages: sdkNexusMessages,
 			sessionStatus: "completed",
 		})
 
@@ -141,8 +141,8 @@ describe("SdkTaskControlCoordinator", () => {
 		expect(existingTask.messageStateHandler.clear).toHaveBeenCalledOnce()
 		expect(options.resetMessageTranslator).toHaveBeenCalledOnce()
 		expect(state.task?.taskId).toBe("task-1")
-		expect(options.taskHistory.getClineMessages).toHaveBeenCalledWith("task-1")
-		expect(state.task?.messageStateHandler.getClineMessages()).toEqual([
+		expect(options.taskHistory.getNexusMessages).toHaveBeenCalledWith("task-1")
+		expect(state.task?.messageStateHandler.getNexusMessages()).toEqual([
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "ask", ask: "completion_result", text: "" },
 			expect.objectContaining({ type: "ask", ask: "resume_completed_task" }),
@@ -160,7 +160,7 @@ describe("SdkTaskControlCoordinator", () => {
 		const { options } = makeCoordinator({
 			activeSession: makeActiveSession(),
 			hasHistoryItem: true,
-			clineMessages: [],
+			nexusMessages: [],
 		})
 		const coordinator = new SdkTaskControlCoordinator({ ...options, interactions })
 		const approvalPromise = interactions.handleRequestToolApproval({
@@ -172,7 +172,7 @@ describe("SdkTaskControlCoordinator", () => {
 			input: {},
 			policy: { autoApprove: false },
 		})
-		await vi.waitFor(() => expect(pendingTask.messageStateHandler.getClineMessages()).toHaveLength(1))
+		await vi.waitFor(() => expect(pendingTask.messageStateHandler.getNexusMessages()).toHaveLength(1))
 
 		await coordinator.showTaskWithId("new-task")
 
@@ -190,11 +190,11 @@ describe("SdkTaskControlCoordinator", () => {
 		const { options } = makeCoordinator({
 			activeSession: makeActiveSession(),
 			hasHistoryItem: true,
-			clineMessages: [],
+			nexusMessages: [],
 		})
 		const coordinator = new SdkTaskControlCoordinator({ ...options, interactions })
 		const questionPromise = interactions.handleAskQuestion("Which option?", ["A", "B"], {})
-		await vi.waitFor(() => expect(pendingTask.messageStateHandler.getClineMessages()).toHaveLength(1))
+		await vi.waitFor(() => expect(pendingTask.messageStateHandler.getNexusMessages()).toHaveLength(1))
 
 		await coordinator.showTaskWithId("new-task")
 
@@ -203,17 +203,17 @@ describe("SdkTaskControlCoordinator", () => {
 	})
 
 	it("shows a legacy task with a warning and a resume ask", async () => {
-		const legacyMessages: ClineMessage[] = [{ ts: 1, type: "say", say: "task", text: "legacy task" }]
+		const legacyMessages: NexusMessage[] = [{ ts: 1, type: "say", say: "task", text: "legacy task" }]
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: legacyMessages,
+			nexusMessages: legacyMessages,
 			isLegacyTask: true,
 		})
 
 		await coordinator.showTaskWithId("legacy-task")
 
 		expect(options.taskHistory.isLegacyTask).toHaveBeenCalledWith("legacy-task")
-		expect(state.task?.messageStateHandler.getClineMessages()).toEqual([
+		expect(state.task?.messageStateHandler.getNexusMessages()).toEqual([
 			{ ts: 1, type: "say", say: "task", text: "legacy task" },
 			expect.objectContaining({
 				type: "say",
@@ -230,7 +230,7 @@ describe("SdkTaskControlCoordinator", () => {
 		await coordinator.showTaskWithId("missing-task")
 
 		expect(options.setTask).not.toHaveBeenCalled()
-		expect(options.taskHistory.getClineMessages).not.toHaveBeenCalled()
+		expect(options.taskHistory.getNexusMessages).not.toHaveBeenCalled()
 		expect(options.setTurnPhase).not.toHaveBeenCalled()
 	})
 
@@ -238,32 +238,32 @@ describe("SdkTaskControlCoordinator", () => {
 		// History rendering appends a synthetic trailing ask:"completion_result"
 		// to every reopened conversation, so the persisted session status — not
 		// the message tail — must decide the resume affordance.
-		const sdkClineMessages: ClineMessage[] = [
+		const sdkNexusMessages: NexusMessage[] = [
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "ask", ask: "completion_result", text: "" },
 		]
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: sdkClineMessages,
+			nexusMessages: sdkNexusMessages,
 			sessionStatus: "cancelled",
 		})
 
 		await coordinator.showTaskWithId("task-1")
 
-		expect(state.task?.messageStateHandler.getClineMessages().at(-1)).toEqual(
+		expect(state.task?.messageStateHandler.getNexusMessages().at(-1)).toEqual(
 			expect.objectContaining({ type: "ask", ask: "resume_task" }),
 		)
 		expect(options.setTurnPhase).toHaveBeenCalledWith("resumable", expect.any(Number))
 	})
 
 	it("sets the turn phase to resumable when showing a failed task", async () => {
-		const sdkClineMessages: ClineMessage[] = [
+		const sdkNexusMessages: NexusMessage[] = [
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "say", say: "text", text: "partial answer" },
 		]
 		const { coordinator, options } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: sdkClineMessages,
+			nexusMessages: sdkNexusMessages,
 			sessionStatus: "failed",
 		})
 
@@ -273,19 +273,19 @@ describe("SdkTaskControlCoordinator", () => {
 	})
 
 	it("sets the turn phase to completed when showing a completed task", async () => {
-		const sdkClineMessages: ClineMessage[] = [
+		const sdkNexusMessages: NexusMessage[] = [
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "ask", ask: "completion_result", text: "" },
 		]
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: sdkClineMessages,
+			nexusMessages: sdkNexusMessages,
 			sessionStatus: "completed",
 		})
 
 		await coordinator.showTaskWithId("task-1")
 
-		expect(state.task?.messageStateHandler.getClineMessages().at(-1)).toEqual(
+		expect(state.task?.messageStateHandler.getNexusMessages().at(-1)).toEqual(
 			expect.objectContaining({ type: "ask", ask: "resume_completed_task" }),
 		)
 		expect(options.setTurnPhase).toHaveBeenCalledWith("completed", expect.any(Number))
@@ -294,7 +294,7 @@ describe("SdkTaskControlCoordinator", () => {
 	it("sets the turn phase to idle when showing a task with no messages", async () => {
 		const { coordinator, options } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: [],
+			nexusMessages: [],
 		})
 
 		await coordinator.showTaskWithId("task-1")
@@ -305,7 +305,7 @@ describe("SdkTaskControlCoordinator", () => {
 	it("keeps the newest selection when an older open's history lookup resolves last", async () => {
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
+			nexusMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
 			sessionStatus: "cancelled",
 		})
 
@@ -341,16 +341,16 @@ describe("SdkTaskControlCoordinator", () => {
 	it("abandons a superseded showTaskWithId so the newest selection wins", async () => {
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
+			nexusMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
 			sessionStatus: "cancelled",
 		})
 
 		// Park the FIRST open on its message read so a second open can start
 		// and finish while the first is still in flight.
-		let resolveFirstRead: ((messages: ClineMessage[]) => void) | undefined
-		options.taskHistory.getClineMessages.mockImplementationOnce(
+		let resolveFirstRead: ((messages: NexusMessage[]) => void) | undefined
+		options.taskHistory.getNexusMessages.mockImplementationOnce(
 			() =>
-				new Promise<ClineMessage[]>((resolve) => {
+				new Promise<NexusMessage[]>((resolve) => {
 					resolveFirstRead = resolve
 				}),
 		)
@@ -368,21 +368,21 @@ describe("SdkTaskControlCoordinator", () => {
 
 		// The stale open must not replace the newer selection or its turn phase.
 		expect(state.task?.taskId).toBe("task-new")
-		expect(state.task?.messageStateHandler.getClineMessages().length).toBeGreaterThan(0)
+		expect(state.task?.messageStateHandler.getNexusMessages().length).toBeGreaterThan(0)
 		expect(options.setTurnPhase.mock.calls.length).toBe(phaseCallsAfterSecondOpen)
 	})
 
 	it("abandons a superseded showTaskWithId when the user clears the task", async () => {
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
+			nexusMessages: [{ ts: 1, type: "say", say: "task", text: "hello" }],
 			sessionStatus: "cancelled",
 		})
 
-		let resolveRead: ((messages: ClineMessage[]) => void) | undefined
-		options.taskHistory.getClineMessages.mockImplementationOnce(
+		let resolveRead: ((messages: NexusMessage[]) => void) | undefined
+		options.taskHistory.getNexusMessages.mockImplementationOnce(
 			() =>
-				new Promise<ClineMessage[]>((resolve) => {
+				new Promise<NexusMessage[]>((resolve) => {
 					resolveRead = resolve
 				}),
 		)
@@ -398,31 +398,31 @@ describe("SdkTaskControlCoordinator", () => {
 	})
 
 	it("does not install the new task proxy until its messages are loaded", async () => {
-		const sdkClineMessages: ClineMessage[] = [
+		const sdkNexusMessages: NexusMessage[] = [
 			{ ts: 1, type: "say", say: "task", text: "hello" },
 			{ ts: 2, type: "ask", ask: "completion_result", text: "" },
 		]
 
-		let resolveGetClineMessages: ((messages: ClineMessage[]) => void) | undefined
-		const getClineMessagesDeferred = new Promise<ClineMessage[]>((resolve) => {
-			resolveGetClineMessages = resolve
+		let resolveGetNexusMessages: ((messages: NexusMessage[]) => void) | undefined
+		const getNexusMessagesDeferred = new Promise<NexusMessage[]>((resolve) => {
+			resolveGetNexusMessages = resolve
 		})
 
 		const { coordinator, options, state } = makeCoordinator({
 			hasHistoryItem: true,
-			clineMessages: sdkClineMessages,
+			nexusMessages: sdkNexusMessages,
 		})
-		options.taskHistory.getClineMessages.mockReturnValueOnce(getClineMessagesDeferred)
+		options.taskHistory.getNexusMessages.mockReturnValueOnce(getNexusMessagesDeferred)
 
 		let setTaskHadMessages: boolean | undefined
 		options.setTask.mockImplementation((task: any) => {
-			setTaskHadMessages = (task?.messageStateHandler?.getClineMessages?.() ?? []).length > 0
+			setTaskHadMessages = (task?.messageStateHandler?.getNexusMessages?.() ?? []).length > 0
 			state.task = task
 		})
 
 		const inFlight = coordinator.showTaskWithId("task-1")
 
-		// While getClineMessages is still pending, the new task proxy must not be
+		// While getNexusMessages is still pending, the new task proxy must not be
 		// installed — otherwise concurrent postStateToWebview() callers would see
 		// currentTaskItem.id with an empty messageStateHandler.
 		await Promise.resolve()
@@ -430,7 +430,7 @@ describe("SdkTaskControlCoordinator", () => {
 		expect(options.setTask).not.toHaveBeenCalled()
 		expect(state.task).toBeUndefined()
 
-		resolveGetClineMessages?.(sdkClineMessages)
+		resolveGetNexusMessages?.(sdkNexusMessages)
 		await inFlight
 
 		expect(options.setTask).toHaveBeenCalledTimes(1)
@@ -457,7 +457,7 @@ function makeCoordinator(input: Partial<MakeCoordinatorInput> = {}) {
 			appendAndEmit: vi.fn(),
 			appendMessages: vi.fn(),
 			cancelPendingSave: vi.fn(),
-			finalizeMessagesForSave: vi.fn((messages: ClineMessage[]) =>
+			finalizeMessagesForSave: vi.fn((messages: NexusMessage[]) =>
 				messages.map((message) => {
 					if (!message.partial) {
 						return message
@@ -468,7 +468,7 @@ function makeCoordinator(input: Partial<MakeCoordinatorInput> = {}) {
 			),
 		},
 		taskHistory: {
-			getClineMessages: vi.fn().mockResolvedValue(input.clineMessages ?? []),
+			getNexusMessages: vi.fn().mockResolvedValue(input.nexusMessages ?? []),
 			getSessionStatus: vi.fn().mockResolvedValue(input.sessionStatus),
 			isLegacyTask: vi.fn().mockResolvedValue(input.isLegacyTask ?? false),
 			findHistoryItem: vi.fn(() =>
@@ -509,7 +509,7 @@ function makeCoordinator(input: Partial<MakeCoordinatorInput> = {}) {
 		}
 		taskHistory: SdkTaskControlCoordinatorOptions["taskHistory"] & {
 			findHistoryItem: ReturnType<typeof vi.fn>
-			getClineMessages: ReturnType<typeof vi.fn>
+			getNexusMessages: ReturnType<typeof vi.fn>
 			isLegacyTask: ReturnType<typeof vi.fn>
 		}
 		getTask: ReturnType<typeof vi.fn>
@@ -531,7 +531,7 @@ interface MakeCoordinatorInput {
 	activeSession: ReturnType<typeof makeActiveSession>
 	task: ReturnType<typeof makeTask>
 	hasHistoryItem: boolean
-	clineMessages: ClineMessage[]
+	nexusMessages: NexusMessage[]
 	isLegacyTask: boolean
 	sessionStatus: string
 }
@@ -549,11 +549,11 @@ function makeActiveSession() {
 	}
 }
 
-function makeTask(taskId: string, messages: ClineMessage[] = []) {
+function makeTask(taskId: string, messages: NexusMessage[] = []) {
 	return {
 		taskId,
 		messageStateHandler: {
-			getClineMessages: vi.fn(() => messages),
+			getNexusMessages: vi.fn(() => messages),
 			clear: vi.fn(),
 		},
 	}

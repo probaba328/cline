@@ -2,25 +2,25 @@ import { describe, expect, it } from "vitest";
 import {
 	getMainMenuOptions,
 	getOAuthProviderLabel,
-	shouldUseFeaturedClineModelPicker,
+	shouldUseFeaturedNexusModelPicker,
 	toModelEntriesFromKnownModels,
 	toModelEntry,
 	toProviderEntry,
 } from "./model";
 
 describe("onboarding model helpers", () => {
-	it("hides ClinePass from the main menu unless its feature flag is enabled", () => {
+	it("hides NexusPass from the main menu unless its feature flag is enabled", () => {
 		expect(
-			getMainMenuOptions().some((option) => option.value === "cline-pass"),
+			getMainMenuOptions().some((option) => option.value === "nexus-pass"),
 		).toBe(false);
 		expect(
-			getMainMenuOptions({ isClinePassEnabled: false }).some(
-				(option) => option.value === "cline-pass",
+			getMainMenuOptions({ isNexusPassEnabled: false }).some(
+				(option) => option.value === "nexus-pass",
 			),
 		).toBe(false);
 		expect(
-			getMainMenuOptions({ isClinePassEnabled: true }).some(
-				(option) => option.value === "cline-pass",
+			getMainMenuOptions({ isNexusPassEnabled: true }).some(
+				(option) => option.value === "nexus-pass",
 			),
 		).toBe(true);
 	});
@@ -28,16 +28,16 @@ describe("onboarding model helpers", () => {
 	it("maps provider catalog entries into onboarding provider entries", () => {
 		expect(
 			toProviderEntry({
-				id: "cline",
-				name: "Cline",
+				id: "nexus",
+				name: "Nexus",
 				apiKey: "",
 				oauthAccessTokenPresent: true,
 				models: 12,
 				defaultModelId: "openai/gpt-5.3-codex",
 			}),
 		).toEqual({
-			id: "cline",
-			name: "Cline",
+			id: "nexus",
+			name: "Nexus",
 			isOAuth: true,
 			isLocalAuth: false,
 			hasAuth: true,
@@ -154,15 +154,15 @@ describe("onboarding model helpers", () => {
 	});
 
 	it("formats OAuth provider labels for onboarding status views", () => {
-		expect(getOAuthProviderLabel("cline")).toBe("Cline");
-		expect(getOAuthProviderLabel("cline-pass")).toBe("ClinePass");
+		expect(getOAuthProviderLabel("nexus")).toBe("Nexus");
+		expect(getOAuthProviderLabel("nexus-pass")).toBe("NexusPass");
 		expect(getOAuthProviderLabel("openai-codex")).toBe("ChatGPT");
 		expect(getOAuthProviderLabel("oca")).toBe("oca");
 	});
 
-	it("uses the featured Cline model picker for the Cline and ClinePass providers", () => {
-		expect(shouldUseFeaturedClineModelPicker("cline")).toBe(true);
-		expect(shouldUseFeaturedClineModelPicker("cline-pass")).toBe(true);
-		expect(shouldUseFeaturedClineModelPicker("anthropic")).toBe(false);
+	it("uses the featured Nexus model picker for the Nexus and NexusPass providers", () => {
+		expect(shouldUseFeaturedNexusModelPicker("nexus")).toBe(true);
+		expect(shouldUseFeaturedNexusModelPicker("nexus-pass")).toBe(true);
+		expect(shouldUseFeaturedNexusModelPicker("anthropic")).toBe(false);
 	});
 });

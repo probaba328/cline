@@ -1,10 +1,10 @@
 {
-	"name": "@cline/core",
-	"description": "Cline Core SDK for Node Runtime",
+	"name": "@nexus/core",
+	"description": "Nexus Core SDK for Node Runtime",
 	"version": "0.0.78",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cline/cline",
+		"url": "https://github.com/probaba328/cline",
 		"directory": "sdk/packages/core"
 	},
 	"type": "module",
@@ -49,9 +49,9 @@
 		"test:watch": "vitest --config vitest.config.ts"
 	},
 	"dependencies": {
-		"@cline/agents": "workspace:*",
-		"@cline/shared": "workspace:*",
-		"@cline/llms": "workspace:*",
+		"@nexus/agents": "workspace:*",
+		"@nexus/shared": "workspace:*",
+		"@nexus/llms": "workspace:*",
 		"@modelcontextprotocol/sdk": "^1.29.0",
 		"@opentelemetry/api": "^1.9.0",
 		"@opentelemetry/api-logs": "^0.214.0",

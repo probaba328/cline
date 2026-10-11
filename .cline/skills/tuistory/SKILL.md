@@ -1,10 +1,10 @@
 ---
 name: tuistory
 description: |
-  Drive and test terminal apps (especially the Cline CLI TUI in apps/cli) through tuistory — named background PTY sessions that agents can read, wait on, snapshot, screenshot, and type into. Like Playwright/tmux for terminals, with reactive waiting instead of blind `sleep`.
+  Drive and test terminal apps (especially the Nexus CLI TUI in apps/cli) through tuistory — named background PTY sessions that agents can read, wait on, snapshot, screenshot, and type into. Like Playwright/tmux for terminals, with reactive waiting instead of blind `sleep`.
 
   Use this skill when you need to:
-  - Manually test or reproduce bugs in the interactive Cline TUI (`bun run cli -i`) from a headless environment
+  - Manually test or reproduce bugs in the interactive Nexus TUI (`bun run cli -i`) from a headless environment
   - Run a dev server or any long-lived/interactive process in the background without hanging your tool call
   - Write or extend Playwright-style e2e tests for the TUI (`bun run test:e2e:tuistory` in apps/cli)
   - Capture text snapshots or styled PNG screenshots of a TUI screen as evidence
@@ -12,9 +12,9 @@ description: |
 
 # tuistory
 
-[tuistory](https://github.com/remorses/tuistory) wraps any terminal command in a named background PTY session backed by a Ghostty terminal emulator. Agents interact with the session via short CLI calls that return instantly; humans can `tuistory attach` to the same session to watch or intervene. No real terminal or display (`DISPLAY`) is needed — it works fully headless, which makes it the preferred way for cloud agents to exercise the Cline TUI.
+[tuistory](https://github.com/remorses/tuistory) wraps any terminal command in a named background PTY session backed by a Ghostty terminal emulator. Agents interact with the session via short CLI calls that return instantly; humans can `tuistory attach` to the same session to watch or intervene. No real terminal or display (`DISPLAY`) is needed — it works fully headless, which makes it the preferred way for cloud agents to exercise the Nexus TUI.
 
-It is installed as a devDependency of `@cline/cli`, so the pinned binary resolves when you run from `apps/cli`:
+It is installed as a devDependency of `@nexus/cli`, so the pinned binary resolves when you run from `apps/cli`:
 
 ```bash
 cd apps/cli
@@ -23,43 +23,43 @@ bunx tuistory --help   # source of truth for commands, options, and syntax
 
 For full upstream docs: `curl -s https://raw.githubusercontent.com/remorses/tuistory/refs/heads/main/README.md`
 
-## Driving the Cline TUI headlessly
+## Driving the Nexus TUI headlessly
 
-Launch the TUI in an isolated environment so you don't touch real user config (`~/.cline`):
+Launch the TUI in an isolated environment so you don't touch real user config (`~/.nexus`):
 
 ```bash
 cd apps/cli
 DATA_DIR=$(mktemp -d) && HOME_DIR=$(mktemp -d)
-bunx tuistory -s cline --cols 120 --rows 36 \
-  --env HOME=$HOME_DIR --env CLINE_DATA_DIR=$DATA_DIR \
-  --env CLINE_DISABLE_CLINE_PASS_NOTICE=1 --env CLINE_TELEMETRY_DISABLED=1 \
+bunx tuistory -s nexus --cols 120 --rows 36 \
+  --env HOME=$HOME_DIR --env NEXUS_DATA_DIR=$DATA_DIR \
+  --env NEXUS_DISABLE_NEXUS_PASS_NOTICE=1 --env NEXUS_TELEMETRY_DISABLED=1 \
   -- bun src/index.ts --provider anthropic -m claude-sonnet-4-6 -k test-key
 ```
 
-The dummy `-k test-key` renders the full chat UI; only an actual agent turn would fail. For recorded LLM turns, use the VCR cassettes described in `apps/cli/src/tests/helpers/env.ts` (`CLINE_VCR=playback` + `CLINE_VCR_CASSETTE`). Real turns need a provider credential (e.g. `ANTHROPIC_API_KEY`, `CLINE_API_KEY`).
+The dummy `-k test-key` renders the full chat UI; only an actual agent turn would fail. For recorded LLM turns, use the VCR cassettes described in `apps/cli/src/tests/helpers/env.ts` (`NEXUS_VCR=playback` + `NEXUS_VCR_CASSETTE`). Real turns need a provider credential (e.g. `ANTHROPIC_API_KEY`, `NEXUS_API_KEY`).
 
 Then use an **observe → act → observe** loop:
 
 ```bash
 # Wait reactively for the chat view — never use sleep
-bunx tuistory -s cline wait "What can I do for you?" --timeout 30000
+bunx tuistory -s nexus wait "What can I do for you?" --timeout 30000
 
 # Act, then always observe the resulting screen state
-bunx tuistory -s cline type "/settings"
-bunx tuistory -s cline snapshot --trim
-bunx tuistory -s cline press enter
-bunx tuistory -s cline snapshot --trim
+bunx tuistory -s nexus type "/settings"
+bunx tuistory -s nexus snapshot --trim
+bunx tuistory -s nexus press enter
+bunx tuistory -s nexus snapshot --trim
 
 # Styled PNG of the current screen (prints the file path) — good for artifacts
-bunx tuistory -s cline screenshot
+bunx tuistory -s nexus screenshot
 
 # Full raw output stream (snapshot shows only the visible screen)
-bunx tuistory read -s cline --all
+bunx tuistory read -s nexus --all
 
 # Tear down a session YOU started (double Ctrl+C exits the TUI cleanly)
-bunx tuistory -s cline press ctrl c
-bunx tuistory -s cline press ctrl c
-bunx tuistory -s cline close
+bunx tuistory -s nexus press ctrl c
+bunx tuistory -s nexus press ctrl c
+bunx tuistory -s nexus close
 ```
 
 ## Background processes (instead of tmux)

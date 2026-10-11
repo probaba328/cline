@@ -1,5 +1,5 @@
-import { Empty } from "@shared/proto/cline/common"
-import { RemoteConfigType } from "@shared/proto/cline/remote_config"
+import { Empty } from "@shared/proto/nexus/common"
+import { RemoteConfigType } from "@shared/proto/nexus/remote_config"
 import { describe, expect, it, vi } from "vitest"
 import { getRemoteConfigSettings } from "./getRemoteConfigSettings"
 
@@ -84,6 +84,6 @@ describe("getRemoteConfigSettings", () => {
 		readiness.resolve()
 
 		const response = await read
-		expect(response.settings.map((setting) => setting.name)).toEqual(["Loaded before read"])
+		expect(response.settings.map((setting: any) => setting.name)).toEqual(["Loaded before read"])
 	})
 })

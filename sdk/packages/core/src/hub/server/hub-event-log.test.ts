@@ -1,8 +1,8 @@
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { HubEventEnvelope } from "@cline/shared";
-import { loadSqliteDb } from "@cline/shared/db";
+import type { HubEventEnvelope } from "@nexus/shared";
+import { loadSqliteDb } from "@nexus/shared/db";
 import { describe, expect, it } from "vitest";
 import { HubEventLogStore } from "./hub-event-log";
 
@@ -24,7 +24,7 @@ function envelope(
 describe("HubEventLogStore", () => {
 	it("opens its database in WAL mode", () => {
 		const dbPath = join(
-			mkdtempSync(join(tmpdir(), "cline-hub-events-")),
+			mkdtempSync(join(tmpdir(), "nexus-hub-events-")),
 			"hub-events.db",
 		);
 		const log = new HubEventLogStore({ dbPath });

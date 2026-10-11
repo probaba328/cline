@@ -9,16 +9,16 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import {
-	getClineCliMigrationNotice,
-	markClineCliMigrationNoticeShown,
+	getNexusCliMigrationNotice,
+	markNexusCliMigrationNoticeShown,
 	resolveCliNoticeStatePath,
-	shouldSuppressClineCliMigrationNoticeForActiveProvider,
+	shouldSuppressNexusCliMigrationNoticeForActiveProvider,
 } from "./notice";
 
 const tempDirs: string[] = [];
 
 function createTempDataDir(): string {
-	const dir = mkdtempSync(join(tmpdir(), "cline-cli-notice-"));
+	const dir = mkdtempSync(join(tmpdir(), "nexus-cli-notice-"));
 	tempDirs.push(dir);
 	return dir;
 }
@@ -33,7 +33,7 @@ describe("migration notice", () => {
 	it("returns the notice for a fresh data dir", () => {
 		const dataDir = createTempDataDir();
 
-		expect(getClineCliMigrationNotice(dataDir)?.title).toBe("Try ClinePass");
+		expect(getNexusCliMigrationNotice(dataDir)?.title).toBe("Try NexusPass");
 	});
 
 	it("shows when only the old Kanban notice was marked as shown", () => {
@@ -43,34 +43,34 @@ describe("migration notice", () => {
 		writeFileSync(
 			noticePath,
 			`${JSON.stringify(
-				{ shown: { "cline-cli-tui-default": true } },
+				{ shown: { "nexus-cli-tui-default": true } },
 				null,
 				2,
 			)}\n`,
 			"utf8",
 		);
 
-		expect(getClineCliMigrationNotice(dataDir)?.id).toBe(
-			"cline-cli-cline-pass-intro",
+		expect(getNexusCliMigrationNotice(dataDir)?.id).toBe(
+			"nexus-cli-nexus-pass-intro",
 		);
 	});
 
 	it("does not show after the notice is marked as shown", () => {
 		const dataDir = createTempDataDir();
 
-		markClineCliMigrationNoticeShown(dataDir);
+		markNexusCliMigrationNoticeShown(dataDir);
 
-		expect(getClineCliMigrationNotice(dataDir)).toBeUndefined();
+		expect(getNexusCliMigrationNotice(dataDir)).toBeUndefined();
 	});
 
 	it("shows after the notice is marked as shown when forced", () => {
 		const dataDir = createTempDataDir();
 
-		markClineCliMigrationNoticeShown(dataDir);
+		markNexusCliMigrationNoticeShown(dataDir);
 
 		expect(
-			getClineCliMigrationNotice(dataDir, {
-				CLINE_FORCE_CLINE_PASS_NOTICE: "1",
+			getNexusCliMigrationNotice(dataDir, {
+				NEXUS_FORCE_NEXUS_PASS_NOTICE: "1",
 			}),
 		).toBeDefined();
 	});
@@ -79,46 +79,46 @@ describe("migration notice", () => {
 		const dataDir = createTempDataDir();
 
 		expect(
-			getClineCliMigrationNotice(dataDir, {
-				CLINE_DISABLE_CLINE_PASS_NOTICE: "1",
+			getNexusCliMigrationNotice(dataDir, {
+				NEXUS_DISABLE_NEXUS_PASS_NOTICE: "1",
 			}),
 		).toBeUndefined();
 	});
 
-	it("does not show when ClinePass is already the active provider", () => {
+	it("does not show when NexusPass is already the active provider", () => {
 		const dataDir = createTempDataDir();
 
 		expect(
-			getClineCliMigrationNotice(
+			getNexusCliMigrationNotice(
 				dataDir,
 				{},
-				{ activeProviderId: "cline-pass" },
+				{ activeProviderId: "nexus-pass" },
 			),
 		).toBeUndefined();
 	});
 
-	it("suppresses the active ClinePass provider even when the provider id has surrounding whitespace", () => {
+	it("suppresses the active NexusPass provider even when the provider id has surrounding whitespace", () => {
 		expect(
-			shouldSuppressClineCliMigrationNoticeForActiveProvider(" cline-pass "),
+			shouldSuppressNexusCliMigrationNoticeForActiveProvider(" nexus-pass "),
 		).toBe(true);
 	});
 
-	it("does not suppress the active ClinePass provider when forced", () => {
+	it("does not suppress the active NexusPass provider when forced", () => {
 		expect(
-			shouldSuppressClineCliMigrationNoticeForActiveProvider("cline-pass", {
-				CLINE_FORCE_CLINE_PASS_NOTICE: "1",
+			shouldSuppressNexusCliMigrationNoticeForActiveProvider("nexus-pass", {
+				NEXUS_FORCE_NEXUS_PASS_NOTICE: "1",
 			}),
 		).toBe(false);
 	});
 
-	it("shows for the active ClinePass provider when forced", () => {
+	it("shows for the active NexusPass provider when forced", () => {
 		const dataDir = createTempDataDir();
 
 		expect(
-			getClineCliMigrationNotice(
+			getNexusCliMigrationNotice(
 				dataDir,
-				{ CLINE_FORCE_CLINE_PASS_NOTICE: "1" },
-				{ activeProviderId: "cline-pass" },
+				{ NEXUS_FORCE_NEXUS_PASS_NOTICE: "1" },
+				{ activeProviderId: "nexus-pass" },
 			),
 		).toBeDefined();
 	});
@@ -127,9 +127,9 @@ describe("migration notice", () => {
 		const dataDir = createTempDataDir();
 
 		expect(
-			getClineCliMigrationNotice(dataDir, {
-				CLINE_DISABLE_CLINE_PASS_NOTICE: "1",
-				CLINE_FORCE_CLINE_PASS_NOTICE: "1",
+			getNexusCliMigrationNotice(dataDir, {
+				NEXUS_DISABLE_NEXUS_PASS_NOTICE: "1",
+				NEXUS_FORCE_NEXUS_PASS_NOTICE: "1",
 			}),
 		).toBeDefined();
 	});
@@ -137,10 +137,10 @@ describe("migration notice", () => {
 	it("marks the notice as shown", () => {
 		const dataDir = createTempDataDir();
 
-		markClineCliMigrationNoticeShown(dataDir);
+		markNexusCliMigrationNoticeShown(dataDir);
 
 		const rawState = readFileSync(resolveCliNoticeStatePath(dataDir), "utf8");
-		expect(rawState).toContain("cline-cli-cline-pass-intro");
-		expect(getClineCliMigrationNotice(dataDir)).toBeUndefined();
+		expect(rawState).toContain("nexus-cli-nexus-pass-intro");
+		expect(getNexusCliMigrationNotice(dataDir)).toBeUndefined();
 	});
 });

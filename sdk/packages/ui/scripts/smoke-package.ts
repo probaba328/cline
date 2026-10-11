@@ -22,24 +22,24 @@ import {
 	AgentQuickActions,
 	SearchCombobox,
 	SessionStatus,
-} from "@cline/ui";
-import { Conversation, Message } from "@cline/ui/components/agent-chat";
-import { ToolFileDiff } from "@cline/ui/components/agent-chat/tool-diff";
-import { buildToolSummary } from "@cline/ui/components/agent-chat/tool-summary";
+} from "@nexus/ui";
+import { Conversation, Message } from "@nexus/ui/components/agent-chat";
+import { ToolFileDiff } from "@nexus/ui/components/agent-chat/tool-diff";
+import { buildToolSummary } from "@nexus/ui/components/agent-chat/tool-summary";
 
 for (const specifier of [
-	"@cline/ui/components.css",
-	"@cline/ui/components/markdown.css",
-	"@cline/ui/theme/palette.css",
-	"@cline/ui/theme/scoped-tokens.css",
+	"@nexus/ui/components.css",
+	"@nexus/ui/components/markdown.css",
+	"@nexus/ui/theme/palette.css",
+	"@nexus/ui/theme/scoped-tokens.css",
 ]) {
 	if (!existsSync(fileURLToPath(import.meta.resolve(specifier)))) {
 		throw new Error("packed CSS export does not exist: " + specifier);
 	}
 }
 
-const css = import.meta.resolve("@cline/ui/components/agent-chat.css");
-const tokens = import.meta.resolve("@cline/ui/theme/tokens.css");
+const css = import.meta.resolve("@nexus/ui/components/agent-chat.css");
+const tokens = import.meta.resolve("@nexus/ui/theme/tokens.css");
 const summary = buildToolSummary({
 	toolName: "read_files",
 	input: { files: [{ path: "src/app.tsx", start_line: 10, end_line: 80 }] },
@@ -84,7 +84,7 @@ function createConsumer(root: string): void {
 	mkdirSync(root, { recursive: true });
 	writeFileSync(
 		join(root, "package.json"),
-		`${JSON.stringify({ name: "cline-ui-smoke", private: true, type: "module" }, null, 2)}\n`,
+		`${JSON.stringify({ name: "nexus-ui-smoke", private: true, type: "module" }, null, 2)}\n`,
 	);
 }
 
@@ -123,8 +123,8 @@ async function verifyTailwindContract(
 		"tailwind",
 		[
 			'@import "tailwindcss";',
-			'@import "@cline/ui/theme/scoped-tokens.css";',
-			'@import "@cline/ui/components.css";',
+			'@import "@nexus/ui/theme/scoped-tokens.css";',
+			'@import "@nexus/ui/components.css";',
 			"@theme inline {",
 			"\t--color-background: var(--host-background);",
 			"\t--radius-lg: var(--host-radius-lg);",
@@ -135,10 +135,10 @@ async function verifyTailwindContract(
 		runner,
 	);
 	for (const candidate of [
-		"bg-cline-ui-background/95",
-		"border-cline-ui-border/60",
-		"text-cline-ui-muted-foreground",
-		"bg-cline-ui-primary/10",
+		"bg-nexus-ui-background/95",
+		"border-nexus-ui-border/60",
+		"text-nexus-ui-muted-foreground",
+		"bg-nexus-ui-primary/10",
 		"max-h-64",
 		"leading-none",
 		"max-h-44",
@@ -163,8 +163,8 @@ async function verifyTailwindContract(
 		[
 			"@layer theme, base, components, utilities;",
 			'@import "tailwindcss/theme.css" layer(theme);',
-			'@import "@cline/ui/theme/scoped-tokens.css";',
-			'@import "@cline/ui/components.css";',
+			'@import "@nexus/ui/theme/scoped-tokens.css";',
+			'@import "@nexus/ui/components.css";',
 			'@import "tailwindcss/utilities.css" layer(utilities);',
 		],
 		runner,
@@ -180,7 +180,7 @@ async function verifyTailwindContract(
 	}
 }
 
-const temporaryRoot = mkdtempSync(join(tmpdir(), "cline-ui-package-"));
+const temporaryRoot = mkdtempSync(join(tmpdir(), "nexus-ui-package-"));
 
 try {
 	let archive = process.argv[2] ? resolve(process.argv[2]) : undefined;

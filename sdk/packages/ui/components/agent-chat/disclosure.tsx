@@ -91,18 +91,18 @@ export function DisclosureContent({
 	return (
 		<div
 			aria-hidden={!isOpen}
-			className="cline-chat-disclosure-content-motion"
+			className="nexus-chat-disclosure-content-motion"
 			data-state={isOpen ? "open" : "closed"}
 			id={panelId}
 			inert={inert as boolean | undefined}
 		>
-			<div className="cline-chat-disclosure-content-motion-inner">
+			<div className="nexus-chat-disclosure-content-motion-inner">
 				{shouldRenderContent ? (
 					<div
 						{...props}
 						className={classNames(
 							contentClassName,
-							presentation === "rail" && "cline-chat-panel-rail",
+							presentation === "rail" && "nexus-chat-panel-rail",
 							className,
 						)}
 					/>

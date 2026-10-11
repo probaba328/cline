@@ -1,0 +1,19 @@
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_url: "https://api.crowdin.com"
+base_path: "."
+
+files:
+  - source: /apps/vscode/webview-ui/src/i18n/locales/en.json
+    translation: /apps/vscode/webview-ui/src/i18n/locales/%two_letters_code%.json
+    # Regional variants override the two-letter fallback
+    languages_mapping:
+      two_letters_code:
+        pt-BR: pt-BR
+        zh-CN: zh-CN
+        zh-TW: zh-TW
+    # Keys inside _meta are internal — do not send to translators
+    excluded_target_languages:
+      - en
+    ignore:
+      - /_info/

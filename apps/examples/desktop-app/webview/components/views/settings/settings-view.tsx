@@ -1,4 +1,4 @@
-import { providerOffersModelTool } from "@cline/llms/browser";
+import { providerOffersModelTool } from "@nexus/llms/browser";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -558,7 +558,7 @@ export function SettingsView({
 
 /**
  * Swatches shown in the accent picker. The swatch color is the accent's
- * light-mode primary (see the [data-cline-accent] blocks in globals.css);
+ * light-mode primary (see the [data-nexus-accent] blocks in globals.css);
  * violet reads the live brand token so it always matches the default theme.
  */
 const ACCENT_OPTIONS: { id: HubAccent; label: string; swatch: string }[] = [
@@ -908,7 +908,7 @@ function GeneralSettingsContent({
 					<div className="flex flex-col gap-1">
 						<p className="text-base font-semibold text-foreground">App icon</p>
 						<p className="text-sm text-muted-foreground">
-							Pick the icon Cline shows in the Dock.
+							Pick the icon Nexus shows in the Dock.
 						</p>
 						{appIconError ? (
 							<p className="mt-2 text-xs text-destructive" role="alert">
@@ -980,7 +980,7 @@ function GeneralSettingsContent({
 									Connect a provider
 								</button>{" "}
 								that supports it, such as Anthropic, OpenAI, Google Gemini, or
-								Cline.
+								Nexus.
 							</p>
 						)}
 						{webSearchError ? (
@@ -1002,7 +1002,7 @@ function GeneralSettingsContent({
 							Keep CLI up to date
 						</p>
 						<p className="text-sm text-muted-foreground">
-							Automatically update the cline terminal command, which shares your
+							Automatically update the nexus terminal command, which shares your
 							sessions and settings with this app. The app itself updates
 							separately.
 						</p>
@@ -1023,7 +1023,7 @@ function GeneralSettingsContent({
 					<div className="flex flex-col gap-1">
 						<p className="text-base font-semibold text-foreground">Telemetry</p>
 						<p className="text-sm text-muted-foreground">
-							Enable error and usage reports to help improve Cline.
+							Enable error and usage reports to help improve Nexus.
 						</p>
 						{telemetryError ? (
 							<p className="mt-2 text-xs text-destructive" role="alert">
@@ -1044,7 +1044,7 @@ function GeneralSettingsContent({
 							New user experience
 						</p>
 						<p className="text-sm text-muted-foreground">
-							Replay the first-run experience new users see when they open Cline
+							Replay the first-run experience new users see when they open Nexus
 							for the first time.
 						</p>
 					</div>

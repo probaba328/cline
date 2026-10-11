@@ -1,4 +1,4 @@
-import { formatUserCommandBlock } from "@cline/shared";
+import { formatUserCommandBlock } from "@nexus/shared";
 import type { InteractiveSlashCommand } from "../interactive-welcome";
 
 export type SlashCommandSource =
@@ -69,7 +69,7 @@ const TUI_LOCAL_COMMANDS: Array<{
 	},
 	{
 		name: "account",
-		description: "View Cline account",
+		description: "View Nexus account",
 	},
 	{
 		name: "mcp",
@@ -110,7 +110,7 @@ const TUI_LOCAL_COMMANDS: Array<{
 	},
 	{
 		name: "quit",
-		description: "Exit Cline",
+		description: "Exit Nexus",
 	},
 ];
 
